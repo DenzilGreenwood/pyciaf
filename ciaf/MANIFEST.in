@@ -1,0 +1,20 @@
+include README.md
+include LICENSE
+include CHANGELOG.md
+include pyproject.toml
+recursive-include ciaf *.py
+recursive-include ciaf *.md
+recursive-include ciaf *.txt
+recursive-include ciaf *.json
+recursive-exclude ciaf __pycache__
+recursive-exclude ciaf *.pyc
+recursive-exclude ciaf *.pyo
+recursive-exclude ciaf .DS_Store
+exclude .gitignore
+exclude .pre-commit-config.yaml
+exclude pytest.ini
+exclude tox.ini
+prune tests
+prune docs/_build
+prune .git
+prune .github
