@@ -2,7 +2,7 @@
 
 ## 🔒 Security Overview
 
-CIAF (Cognitive Insight AI Framework) is designed with security as a fundamental principle. This document outlines our security practices, vulnerability reporting procedures, and security considerations for users.
+CIAF (Cognitive Insight Audit Framework) is designed with security as a fundamental principle. This document outlines our security practices, vulnerability reporting procedures, and security considerations for users.
 
 ## 🛡️ Supported Versions
 

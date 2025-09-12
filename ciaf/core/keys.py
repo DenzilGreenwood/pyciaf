@@ -1,5 +1,5 @@
 """
-Key derivation and management for the Cognitive Insight AI Framework.
+Key derivation and management for the Cognitive Insight Audit Framework.
 
 This module provides secure key derivation using PBKDF2HMAC and key management
 utilities for the lazy capsule materialization system.

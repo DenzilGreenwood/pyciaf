@@ -1,7 +1,7 @@
 """
 CIAF API Framework
 
-High-level API for the Cognitive Insight AI Framework.
+High-level API for the Cognitive Insight Audit Framework.
 
 Created: 2025-09-09
 Last Modified: 2025-09-11

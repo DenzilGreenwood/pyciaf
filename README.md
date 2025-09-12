@@ -1,17 +1,17 @@
-# 🔒 CIAF - Cognitive Insight AI Framework
+# 🔒 CIAF - Cognitive Insight Audit Framework
 
 **Version 1.0.0**
 
 A comprehensive Python framework for creating verifiable AI training and inference pipelines with cryptographic provenance tracking, regulatory compliance, and lazy capsule materialization.
 
-[![License: MIT (Non-Commercial)](https://img.shields.io/badge/License-MIT%20(Non--Commercial)-yellow.svg)](LICENSE)
+[![License: Modified MIT Non-Commercial and Commercial](https://img.shields.io/badge/License-Modified_MIT_Non_Commercial_and_Commercial_License-yellow.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Security Policy](https://img.shields.io/badge/security-policy-blue.svg)](SECURITY.md)
+[![Security Policy](https://img.shields.io/badge/security-policy-blue.svg)](ciaf/SECURITY.md)
 
 ## 🌟 Overview
 
-CIAF (Cognitive Insight AI Framework) is a modular framework designed to address the critical challenges of AI transparency, auditability, and compliance in production environments. It provides cryptographically verifiable provenance tracking, lazy data materialization, and comprehensive compliance validation across multiple regulatory frameworks.
+CIAF (Cognitive Insight Audit Framework) is a modular framework designed to address the critical challenges of AI transparency, auditability, and compliance in production environments. It provides cryptographically verifiable provenance tracking, lazy data materialization, and comprehensive compliance validation across multiple regulatory frameworks.
 
 ### 🎯 Key Features
 
@@ -298,11 +298,11 @@ ciaf-compliance-report eu_ai_act my_model_id --format html --output compliance_r
 - **API Reference**: Comprehensive API documentation
 - **Integration Examples**: Real-world use cases and patterns
 - **Security Best Practices**: Guidelines for secure deployment
-- **[SECURITY.md](SECURITY.md)**: Comprehensive security policy and vulnerability reporting
+- **[ciaf/SECURITY.md](ciaf/SECURITY.md)**: Comprehensive security policy and vulnerability reporting
 
 ## 🔒 Security Features
 
-> **🛡️ For comprehensive security information, vulnerability reporting, and security best practices, see our [SECURITY.md](SECURITY.md) file.**
+> **🛡️ For comprehensive security information, vulnerability reporting, and security best practices, see our [ciaf/SECURITY.md](ciaf/SECURITY.md) file.**
 
 ### Cryptographic Security
 - **AES-256-GCM**: Industry-standard authenticated encryption with optional AAD support
@@ -439,7 +439,7 @@ For complete license terms, see the [LICENSE](LICENSE) file.
 - **Documentation**: [https://ciaf.readthedocs.io](https://ciaf.readthedocs.io)
 - **Issues**: [GitHub Issues](https://github.com/cognitiveinsights/ciaf/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/cognitiveinsights/ciaf/discussions)
-- **Security**: [Security Policy](SECURITY.md)
+- **Security**: [Security Policy](ciaf/SECURITY.md)
 
 ## 🙏 Acknowledgments
 

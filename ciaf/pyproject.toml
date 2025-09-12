@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ciaf"
 version = "1.0.0"
-description = "Cognitive Insight AI Framework - A comprehensive framework for verifiable AI training and inference pipelines (Non-Commercial License)"
+description = "Cognitive Insight Audit Framework - A comprehensive framework for verifiable AI training and inference pipelines (Non-Commercial License)"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [

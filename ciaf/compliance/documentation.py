@@ -210,7 +210,7 @@ class ComplianceDocumentationGenerator:
                 title="Executive Summary",
                 content=f"""This technical specification document outlines the compliance implementation 
             for the {self.model_name} AI model with respect to {framework.value} requirements. 
-            The document provides detailed technical information about how the Cognitive Insight AI Framework (CIAF) 
+            The document provides detailed technical information about how the Cognitive Insight Audit Framework (CIAF) 
             addresses regulatory requirements through automated provenance tracking, cryptographic integrity, 
             and comprehensive audit capabilities.""",
                 subsections=[],

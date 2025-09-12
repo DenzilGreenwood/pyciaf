@@ -1,5 +1,5 @@
 """
-CIAF - Cognitive Insight AI Framework
+CIAF - Cognitive Insight Audit Framework
 
 This setup.py exists for backward compatibility.
 The package is configured using pyproject.toml.

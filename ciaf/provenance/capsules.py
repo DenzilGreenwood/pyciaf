@@ -1,5 +1,5 @@
 """
-Provenance Capsule implementation for the Cognitive Insight AI Framework.
+Provenance Capsule implementation for the Cognitive Insight Audit Framework.
 
 This module contains the ProvenanceCapsule class which provides verifiable data lineage
 without exposing raw sensitive data. HIPAA compliant through data minimization and

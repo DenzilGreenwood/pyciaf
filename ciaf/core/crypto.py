@@ -1,5 +1,5 @@
 """
-Core cryptographic utilities for the Cognitive Insight AI Framework.
+Core cryptographic utilities for the Cognitive Insight Audit Framework.
 
 This module provides essential cryptographic functions including AES-GCM encryption/decryption,
 SHA256 hashing, and secure random number generation.

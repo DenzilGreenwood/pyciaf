@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Cognitive Insight AI Framework (CIAF) will be documented in this file.
+All notable changes to the Cognitive Insight Audit Framework (CIAF) will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2025-09-09
 
 ### Added
-- Initial public release of CIAF (Cognitive Insight AI Framework)
+- Initial public release of CIAF (Cognitive Insight Audit Framework)
 - Core cryptographic utilities with AES-256-GCM encryption and SHA256 hashing
 - Hierarchical anchor management system for secure data provenance
 - Lazy capsule materialization system for efficient data handling

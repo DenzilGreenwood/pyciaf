@@ -1,5 +1,5 @@
 """
-Cognitive Insight AI Framework (CIAF)
+Cognitive Insight Audit Framework (CIAF)
 
 A modular framework for creating verifiable AI training and inference pipelines
 with lazy capsule materialization and cryptographic provenance tracking.

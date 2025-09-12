@@ -1,5 +1,5 @@
 """
-Base Anchor Derivation and Management for the Cognitive Insight AI Framework.
+Base Anchor Derivation and Management for the Cognitive Insight Audit Framework.
 
 This module provides secure anchor derivation using PBKDF2HMAC and anchor management
 utilities for the lazy capsule materialization system. An anchor represents a
