@@ -4,7 +4,9 @@
 
 A comprehensive Python framework for creating verifiable AI training and inference pipelines with cryptographic provenance tracking, regulatory compliance, and lazy capsule materialization.
 
-[![License: Modified MIT Non-Commercial and Commercial](https://img.shields.io/badge/License-Modified_MIT_Non_Commercial_and_Commercial_License-yellow.svg)](LICENSE)
+[![License: MIT Non-Commercial](https://img.shields.io/badge/License-MIT%20Non--Commercial-yellow.svg)](LICENSE)
+[![Commercial License](https://img.shields.io/badge/Commercial%20License-Available-green.svg)](COMMERCIAL_LICENSE.md)
+
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Security Policy](https://img.shields.io/badge/security-policy-blue.svg)](ciaf/SECURITY.md)
@@ -397,16 +399,15 @@ We welcome contributions to CIAF! Please see our contributing guidelines:
 ### Development Setup
 
 ```bash
-git clone https://github.com/your-org/ciaf.git
-cd ciaf
-pip install -e ".[dev]"
-pre-commit install
+git clone https://github.com/DenzilGreenwood/pyciaf.git
+cd pyciaf
+pip install -e .
 ```
 
 ## 📝 License
 
 ### MIT License (Non-Commercial Use)
-**Copyright © 2025 MyImaginaryFriends.ai and CognitiveInsight.AI**
+**Copyright © 2025 CognitiveInsight.AI**
 
 This project is licensed under a **Non-Commercial MIT License**. 
 
@@ -428,7 +429,7 @@ This project is licensed under a **Non-Commercial MIT License**.
 - Enterprise or commercial deployments
 - Any monetization of the software
 
-**📧 Commercial License Contact:** legal@MyImaginaryFriends.ai
+**📧 Commercial License Contact:** Founder@CognitiveInsight.ai
 
 For complete license terms, see the [LICENSE](LICENSE) file.
 
@@ -437,8 +438,8 @@ For complete license terms, see the [LICENSE](LICENSE) file.
 ## 🆘 Support & Community
 
 - **Documentation**: [https://ciaf.readthedocs.io](https://ciaf.readthedocs.io)
-- **Issues**: [GitHub Issues](https://github.com/cognitiveinsights/ciaf/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/cognitiveinsights/ciaf/discussions)
+- **Issues**: [GitHub Issues](https://github.com/DenzilGreenwood/pyciaf/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/DenzilGreenwood/pyciaf/discussions)
 - **Security**: [Security Policy](ciaf/SECURITY.md)
 
 ## 🙏 Acknowledgments
@@ -448,9 +449,10 @@ CIAF is built on the shoulders of giants. We acknowledge the following projects 
 - **Cryptography**: Built on the excellent `cryptography` library
 - **Regulatory Frameworks**: Implements guidelines from EU AI Act, NIST AI RMF, and others
 
-## Personal Note 
+---
 
-- **Personal Note**: This project is a work in progress and reflects my passion for secure and compliant AI systems. Feedback and contributions are highly appreciated! 
-- - Claude 4
+**Personal Note**: This project is a work in progress and reflects my passion for secure and compliant AI systems. Feedback and contributions are highly appreciated!
+
+*- Denzil James Greenwood*
 
 

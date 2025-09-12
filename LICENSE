@@ -1,32 +1,20 @@
-# LICENSE
+MIT License (Non-Commercial Use)
+Copyright © 2025 CognitiveInsight.AI
 
-## MIT License (Non-Commercial Use)
-### Copyright © 2025 CognitiveInsight.AI
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+and associated documentation files (the "Software"), to deal in the Software for personal, 
+educational, and non-commercial research purposes only, subject to the following conditions:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software for personal, educational, and non-commercial research purposes only, subject to the following conditions:
+- The above copyright notice and this permission notice shall be included 
+  in all copies or substantial portions of the Software.
+- Attribution must be given to CognitiveInsight.AI.
+- Commercial use, redistribution, or monetization of this Software 
+  is not permitted under this license.
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
+PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, 
+DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
 
-Attribution must be given to CognitiveInsight.AI.
-
-**Commercial** use, redistribution, or monetization of this Software is not permitted under this license.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
-
-# **Commercial License**
-
-Use of this Software in commercial products, services, or monetization activities requires a separate commercial license from CognitiveInsight.ai.
-
-- Examples of commercial use include (but are not limited to):
-
-- Integration into proprietary platforms or SaaS products
-
-- Use in paid consulting services or monetized solutions
-
-- Redistribution or resale of the Software in any form
-
-To obtain a commercial license, please contact:
-📧 Founder@CognitiveInsight.ai
-
-## **Jurisdiction**
-This License shall be governed by the laws of the State of Oklahoma, United States.
+For commercial licensing, see the file `COMMERCIAL_LICENSE.md`.
+[View Commercial License](COMMERCIAL_LICENSE.md)
