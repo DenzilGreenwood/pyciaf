@@ -4,13 +4,15 @@ CIAF Command Line Interface
 Provides command-line tools for CIAF operations.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-09-12
 Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
 import argparse
+import json
 import sys
+from dataclasses import asdict
 from pathlib import Path
 from typing import Optional
 
@@ -55,7 +57,8 @@ def compliance_report_cli():
     try:
         # Try to import compliance tools
         try:
-            from .compliance import ComplianceReportGenerator
+            from .compliance import ComplianceReportGenerator, ComplianceFramework
+            from .compliance.audit_trails import AuditTrailGenerator
         except ImportError:
             print("❌ Compliance reporting tools not found")
             print(
@@ -63,18 +66,107 @@ def compliance_report_cli():
             )
             sys.exit(1)
 
-        reporter = ComplianceReportGenerator(args.storage)
-        output_path = reporter.generate_framework_report(
-            framework=args.framework,
-            model_id=args.model_id,
-            output_path=args.output,
-            format=args.format if hasattr(args, "format") else "json",
+        # Map framework string to enum
+        framework_map = {
+            "eu_ai_act": ComplianceFramework.EU_AI_ACT,
+            "nist_ai_rmf": ComplianceFramework.NIST_AI_RMF,
+            "gdpr": ComplianceFramework.GDPR,
+            "hipaa": ComplianceFramework.HIPAA,
+            "sox": ComplianceFramework.SOX,
+            "iso_27001": ComplianceFramework.ISO_27001,
+        }
+        
+        framework_enum = framework_map.get(args.framework)
+        if not framework_enum:
+            print(f"❌ Unknown framework: {args.framework}")
+            sys.exit(1)
+
+        # Initialize components
+        reporter = ComplianceReportGenerator(args.model_id)
+        audit_generator = AuditTrailGenerator(args.model_id, [args.framework])
+        
+        # Generate report
+        print(f"🚀 Generating {args.framework} compliance report for {args.model_id}...")
+        report = reporter.generate_executive_summary_report(
+            frameworks=[framework_enum],
+            audit_generator=audit_generator,
+            model_version="1.0.0",  # Default version
         )
+        
+        # Save report
+        output_path = args.output or f"compliance_report_{args.framework}_{args.model_id}.json"
+        
+        if args.format == "json":
+            report_dict = asdict(report)
+            with open(output_path, 'w') as f:
+                json.dump(report_dict, f, indent=2, default=str)
+        elif args.format == "html":
+            # Generate basic HTML report
+            html_content = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CIAF Compliance Report - {args.framework.upper()}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        .header {{ background-color: #f0f0f0; padding: 20px; border-radius: 5px; }}
+        .section {{ margin: 20px 0; }}
+        .metric {{ background-color: #e8f4f8; padding: 10px; margin: 5px 0; border-radius: 3px; }}
+        .compliant {{ color: green; font-weight: bold; }}
+        .non-compliant {{ color: red; font-weight: bold; }}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CIAF Compliance Report</h1>
+        <p><strong>Framework:</strong> {args.framework.upper()}</p>
+        <p><strong>Model:</strong> {args.model_id}</p>
+        <p><strong>Generated:</strong> {report.generated_date}</p>
+    </div>
+    
+    <div class="section">
+        <h2>Executive Summary</h2>
+        <div class="metric">
+            <strong>Overall Compliance Score:</strong> {report.executive_summary['overall_compliance_score']:.1f}%
+        </div>
+        <div class="metric">
+            <strong>Status:</strong> 
+            <span class="{'compliant' if report.compliance_status['overall_status'] == 'compliant' else 'non-compliant'}">
+                {report.compliance_status['overall_status'].upper()}
+            </span>
+        </div>
+        <div class="metric">
+            <strong>Requirements Satisfied:</strong> {report.executive_summary['satisfied_requirements']} / {report.executive_summary['total_requirements']}
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Key Findings</h2>
+        <ul>
+            {''.join(['<li>' + finding + '</li>' for finding in report.executive_summary.get('key_findings', ['No findings available'])])}
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2>Recommendations</h2>
+        <ul>
+            {''.join(['<li>' + rec['description'] + '</li>' for rec in report.recommendations[:5]])}
+        </ul>
+    </div>
+</body>
+</html>"""
+            with open(output_path, 'w') as f:
+                f.write(html_content)
+        else:
+            print(f"❌ Format '{args.format}' not supported. Available: json, html")
+            sys.exit(1)
 
         print(f"✅ Compliance report generated: {output_path}")
 
     except Exception as e:
         print(f"❌ Error generating report: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 

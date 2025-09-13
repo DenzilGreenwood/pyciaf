@@ -12,7 +12,7 @@ Version: 1.0.0
 
 import json
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
@@ -101,7 +101,7 @@ class ComplianceReportGenerator:
         """Generate executive summary compliance report."""
 
         end_date = datetime.now(timezone.utc)
-        start_date = end_date.replace(day=end_date.day - reporting_period_days)
+        start_date = end_date - timedelta(days=reporting_period_days)
 
         # Get compliance coverage
         coverage = self.regulatory_mapper.get_ciaf_coverage(frameworks)

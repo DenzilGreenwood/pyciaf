@@ -70,7 +70,6 @@ docs = [
 "Repository" = "https://github.com/myimaginaryfriends/ciaf"
 "Bug Tracker" = "https://github.com/myimaginaryfriends/ciaf/issues"
 "Changelog" = "https://github.com/myimaginaryfriends/ciaf/blob/main/CHANGELOG.md"
-"Commercial License" = "mailto:legal@myimaginaryfriends.ai"
 
 [project.scripts]
 ciaf-setup-metadata = "ciaf.cli:setup_metadata_cli"

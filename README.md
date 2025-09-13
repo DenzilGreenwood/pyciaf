@@ -212,10 +212,10 @@ print("Inference receipts:", audit_trail["inference_chain"]["total_receipts"])
 
 ```bash
 # Setup metadata storage
-ciaf-setup-metadata my_project --backend sqlite --template production
+python -m ciaf.cli setup my_project --backend sqlite --template production
 
 # Generate compliance report
-ciaf-compliance-report eu_ai_act my_model_id --format html --output compliance_report.html
+python -m ciaf.cli compliance eu_ai_act my_model_id --format html --output compliance_report.html
 ```
 
 ---
