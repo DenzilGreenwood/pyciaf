@@ -5,7 +5,31 @@ All notable changes to the Cognitive Insight Audit Framework (CIAF) will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-09-11
+## [Unreleased] - 2025-09-12
+
+### Documentation
+- **Major Documentation Enhancement**: Created comprehensive README files for all CIAF framework modules
+- Added detailed module documentation for `api/` folder with CIAFFramework integration examples
+- Added comprehensive README for `anchoring/` module covering DatasetAnchor and lazy management systems
+- Added detailed documentation for `core/` module including cryptographic primitives and utilities
+- Added extensive README for `compliance/` module with regulatory framework examples
+- Added comprehensive documentation for `inference/` module covering audit trails and ZKE chains
+- Added detailed README for `provenance/` module with capsule and snapshot documentation
+- Added comprehensive documentation for `simulation/` module covering testing utilities
+- Added detailed README for `wrappers/` module with ML model integration examples
+- Added extensive documentation for `uncertainty/` module covering quantification methods
+- Added comprehensive README for `explainability/` module with SHAP and explainable AI examples
+- Added detailed documentation for `preprocessing/` module covering data vectorization and model adapters
+- Added extensive README for `metadata_tags/` module covering AI content tagging (EXIF-like for AI)
+- Enhanced all README files with:
+  - Comprehensive usage examples and code snippets
+  - Integration patterns with CIAF ecosystem
+  - Security and compliance features documentation
+  - Performance optimization guidance
+  - Testing and validation examples
+  - Advanced usage scenarios
+  - Contributing guidelines
+  - Cross-references to related modules
 
 ### Fixed
 - Fixed critical bug in `showcase_example.py` where `DatasetFamilyMetadata` was called with incorrect `dataset_id` parameter (should be `name`)
@@ -38,12 +62,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Test evaluation metrics tracking
   - Source control tracking with git commit information
   - Enhanced root computation with complete audit trail
-
-### Documentation
-- Enhanced file-level documentation with proper authorship and versioning
-- Updated README.md with new license information and usage restrictions
-- Updated license badge in README.md to reflect non-commercial status
-- Added clear commercial licensing path and contact information
+- Comprehensive module-level documentation covering all 12 major CIAF components
+- Standardized documentation format across all modules with consistent structure
+- Cross-module integration examples and usage patterns
+- Developer onboarding documentation with clear entry points for each module
 
 ## [1.0.0] - 2025-09-09
 

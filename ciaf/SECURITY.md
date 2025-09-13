@@ -54,6 +54,11 @@ We maintain a security hall of fame for researchers who responsibly disclose vul
 - Secure salt generation for key derivation
 
 ### Anchor Management Security
+The CIAF uses anchors as immutable cryptographic fingerprints for every key artifact in the AI lifecycle. Each anchor is deterministically derived from its components (e.g., data hashes, metadata, or a master anchor) using cryptographic algorithms.
+
+- **Tamper Evidence**: An anchor cannot be changed without detection. If an anchor's underlying data is altered, the recomputed anchor hash will not match the original, making the tampering immediately evident to the system and auditors. This principle forms the basis of the tamper-evident audit trails.
+- **Hierarchical Derivation**: Anchors are derived in a hierarchy (Master → Dataset → Capsule → Model) to create a consistent and verifiable lineage.
+
 ```python
 # Example of secure anchor derivation
 from ciaf.core import derive_master_anchor, AnchorManager
@@ -66,16 +71,22 @@ anchor_manager = AnchorManager()
 ## 🏗️ Architecture Security
 
 ### Data Protection
-- **Encryption at Rest**: All sensitive data encrypted using AES-256-GCM
-- **Encryption in Transit**: TLS 1.3 recommended for all network communications
-- **Memory Protection**: Sensitive data cleared from memory after use
-- **Secure Defaults**: All security features enabled by default
+- **Data Protection by Design**: The framework is built to support data protection principles, particularly for sensitive information like PII
+- **Encryption at Rest**: All sensitive data is encrypted using AES-256-GCM
+- **Encryption in Transit**: TLS 1.3 is recommended for all network communications
+- **Memory Protection**: Sensitive data is cleared from memory after use
+- **Secure Defaults**: All security features are enabled by default
 
 ### Access Controls
-- **Role-Based Access Control (RBAC)**: Granular permission management
-- **Audit Logging**: Comprehensive security event logging
+- **Role-Based Access Control (RBAC)**: Supports granular permission management
+- **Audit Logging**: Comprehensive security event logging, including the explicit use of access control information and user roles in audit records
 - **Session Management**: Secure session handling with timeout controls
-- **Principle of Least Privilege**: Minimal required permissions
+- **Principle of Least Privilege**: Ensures minimal required permissions
+
+### Continuous Monitoring
+The framework includes a RiskAssessmentEngine and CybersecurityComplianceEngine to continuously monitor for security vulnerabilities and other risks.
+
+It is designed to be configurable to generate automated alerts and trigger corrective actions, which is a recommended security practice for mitigating risks.
 
 ### Compliance Security
 - **GDPR Compliance**: Data minimization and privacy by design
@@ -204,13 +215,13 @@ salt = secrets.token_bytes(32)
 
 For security-related questions and concerns:
 
-- **Security Team**: `security@ciaf-framework.org`
-- **General Support**: `support@ciaf-framework.org`
-- **GitHub Security Advisories**: [Create Security Advisory](https://github.com/your-org/ciaf/security/advisories)
+- **Security Team**: `founder@cognitiveinsight.ai`
+- **General Support**: `founder@cognitiveinsight.ai`
+- **GitHub Security Advisories**: [Create Security Advisory](https://github.com/denzilgreenwood/ciaf/security/advisories)
 
 ---
 
-**Last Updated**: September 10, 2025  
+**Last Updated**: September 12, 2025  
 **Next Review**: December 10, 2025
 
 > **Note**: This security policy is a living document and will be updated as the project evolves and new security considerations emerge.

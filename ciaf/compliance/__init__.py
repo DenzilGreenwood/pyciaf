@@ -93,6 +93,13 @@ from .visualization import (
     VisualizationNode,
     VisualizationType,
 )
+from .bias_validator import (
+    BiasValidator,
+    BiasMetric,
+    BiasResult,
+    BiasAssessment,
+    generate_bias_report,
+)
 
 # New Enhanced Modules for 360° AI Governance Compliance
 
@@ -140,4 +147,10 @@ __all__ = [
     "ValidationIssue",
     "BiasDetectionResult",
     "PreIngestionValidator",
+    # Bias Validation
+    "BiasValidator",
+    "BiasMetric",
+    "BiasResult",
+    "BiasAssessment",
+    "generate_bias_report",
 ]
