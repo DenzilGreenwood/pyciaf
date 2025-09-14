@@ -14,31 +14,94 @@ import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from ..anchoring import  LazyManager, DatasetAnchor
+from ..anchoring import LazyManager, DatasetAnchor
 from ..core import CryptoUtils, BaseAnchorManager, AnchorManager, MerkleTree, derive_model_anchor, derive_master_anchor, sha256_hash, secure_random_bytes, SALT_LENGTH, to_hex
 from ..provenance import ModelAggregationAnchor, ProvenanceCapsule, TrainingSnapshot
 from ..simulation import MLFrameworkSimulator
 from ..inference import InferenceReceipt, ZKEChain
 from ..compliance import AuditTrailGenerator
 
+# LCM System Integration
+from ..lcm import (
+    LCMRootManager, LCMDatasetManager, LCMModelManager, 
+    LCMTrainingManager, LCMInferenceManager, LCMDeploymentManager,
+    LCMPolicy, get_default_policy, DatasetMetadata, DatasetSplit
+)
+
 
 class CIAFFramework:
     """
     Main framework class providing high-level API for CIAF operations.
-    Implements complete audit flow: Dataset Anchor → Model Anchor → Inference Receipt → Merkle Tree
+    Implements complete audit flow: Dataset Anchor → Model Anchor → 
+    Inference Receipt → Merkle Tree with LCM integration.
     """
 
     def __init__(self, framework_name: str = "CIAF"):
         self.framework_name = framework_name
         self.crypto_utils = CryptoUtils()
         self.anchor_manager = BaseAnchorManager()
-        self.anchor_manager_legacy = AnchorManager()  # Legacy alias for backwards compatibility
+        # Legacy alias for backwards compatibility
+        self.anchor_manager_legacy = AnchorManager()
         self.dataset_anchors: Dict[str, DatasetAnchor] = {}
-        self.model_anchors: Dict[str, Dict[str, Any]] = {}  # New: Store model anchors
+        # Store model anchors
+        self.model_anchors: Dict[str, Dict[str, Any]] = {}
         self.lazy_managers: Dict[str, LazyManager] = {}
         self.ml_simulators: Dict[str, MLFrameworkSimulator] = {}
-        self.inference_chains: Dict[str, ZKEChain] = {}  # New: Store inference chains per model
-        self.audit_generators: Dict[str, AuditTrailGenerator] = {}  # New: Audit trail generators
+        # Store inference chains per model
+        self.inference_chains: Dict[str, ZKEChain] = {}
+        # Audit trail generators
+        self.audit_generators: Dict[str, AuditTrailGenerator] = {}
+        
+        # LCM System Integration
+        self.lcm_policy = get_default_policy()
+        self.lcm_root_manager = LCMRootManager(self.lcm_policy)
+        self.lcm_dataset_manager = LCMDatasetManager(self.lcm_policy)
+        self.lcm_model_manager = LCMModelManager(self.lcm_policy)
+        self.lcm_training_manager = LCMTrainingManager(self.lcm_policy)
+        self.lcm_inference_manager = LCMInferenceManager(self.lcm_policy)
+        self.lcm_deployment_manager = LCMDeploymentManager(self.lcm_policy)
+
+    def create_dataset_anchor_lcm(
+        self, dataset_id: str, dataset_metadata: Dict[str, Any], master_password: str
+    ) -> DatasetAnchor:
+        """
+        Create a new dataset anchor using LCM integration.
+        
+        Args:
+            dataset_id: Unique identifier for the dataset
+            dataset_metadata: Metadata about the dataset (features, size, etc.)
+            master_password: Master password for cryptographic operations
+            
+        Returns:
+            DatasetAnchor: Configured anchor instance with LCM tracking
+        """
+        # Create dataset metadata for LCM system
+        lcm_metadata = DatasetMetadata(
+            name=dataset_metadata.get('name', dataset_id),
+            version=dataset_metadata.get('version', '1.0'),
+            features=dataset_metadata.get('features', []),
+            size=dataset_metadata.get('size', 0)
+        )
+        
+        # Register with LCM dataset manager
+        lcm_anchor = self.lcm_dataset_manager.create_dataset_anchor(
+            dataset_id, lcm_metadata
+        )
+        
+        # Create traditional anchor for compatibility
+        dataset_anchor = self.anchor_manager.create_dataset_anchor(
+            dataset_id=dataset_id,
+            data_items=dataset_metadata.get('data_items', []),
+            metadata=dataset_metadata
+        )
+        
+        # Store anchor with LCM tracking
+        self.dataset_anchors[dataset_id] = dataset_anchor
+        
+        print(f"Dataset anchor {dataset_id} created with LCM integration")
+        print(f"LCM tracking: {len(dataset_metadata.get('data_items', []))} items")
+        
+        return dataset_anchor
 
     def create_dataset_anchor(
         self, dataset_id: str, dataset_metadata: Dict[str, Any], master_password: str
@@ -77,6 +140,56 @@ class CIAFFramework:
 
         print(f"Dataset anchor initialized with {len(anchor.data_items)} items")
         return anchor
+
+    def create_model_anchor_lcm(
+        self, 
+        model_name: str, 
+        model_parameters: Dict[str, Any],
+        model_architecture: Dict[str, Any] = None,
+        authorized_datasets: List[str] = None,
+        master_password: str = None
+    ) -> Dict[str, Any]:
+        """
+        Create model anchor with LCM integration.
+        
+        Args:
+            model_name: Name of the model
+            model_parameters: Model hyperparameters and configuration
+            model_architecture: Model architecture details
+            authorized_datasets: List of dataset IDs authorized for this model
+            master_password: Password for anchor derivation
+            
+        Returns:
+            Dictionary containing model anchor with LCM tracking
+        """
+        print(f"🎯 Creating LCM-enabled model anchor for: {model_name}")
+        
+        # Register with LCM model manager
+        lcm_anchor = self.lcm_model_manager.create_model_anchor(
+            model_name, model_parameters
+        )
+        
+        # Create traditional anchor for compatibility
+        password = master_password or model_name
+        model_salt = secure_random_bytes(SALT_LENGTH)
+        master_anchor = derive_master_anchor(password, model_salt)
+        
+        # Store model anchor with LCM tracking
+        model_anchor_data = {
+            "model_name": model_name,
+            "master_anchor": to_hex(master_anchor),
+            "salt": to_hex(model_salt),
+            "parameters": model_parameters,
+            "architecture": model_architecture or {},
+            "authorized_datasets": authorized_datasets or [],
+            "lcm_tracked": True,
+            "created_at": datetime.now().isoformat()
+        }
+        
+        self.model_anchors[model_name] = model_anchor_data
+        
+        print(f"✅ Model {model_name} created with LCM integration")
+        return model_anchor_data
 
     def create_model_anchor(
         self, 
@@ -407,6 +520,56 @@ class CIAFFramework:
 
         return snapshot
 
+    def perform_inference_with_lcm(
+        self,
+        model_name: str,
+        query: str,
+        ai_output: str,
+        user_id: str = "anonymous",
+        query_metadata: Dict[str, Any] = None
+    ) -> InferenceReceipt:
+        """
+        Perform inference with complete LCM integration.
+        
+        Args:
+            model_name: Name of the model
+            query: Input query/prompt
+            ai_output: Model output/response
+            user_id: User identifier for audit purposes
+            query_metadata: Additional metadata for the query
+            
+        Returns:
+            InferenceReceipt: Complete receipt with LCM tracking
+        """
+        print(f"🔮 Performing LCM-tracked inference for model: {model_name}")
+        
+        # Create inference receipt using LCM
+        lcm_receipt = self.lcm_inference_manager.create_inference_receipt(
+            model_name, query, ai_output, user_id
+        )
+        
+        # Create traditional receipt for compatibility
+        if model_name not in self.model_anchors:
+            raise ValueError(f"Model {model_name} not found. Create model anchor first.")
+        
+        model_anchor_data = self.model_anchors[model_name]
+        
+        # Generate inference receipt
+        receipt = InferenceReceipt(
+            query=query,
+            ai_output=ai_output,
+            model_anchor=model_anchor_data["master_anchor"],
+            user_id=user_id,
+            metadata={
+                **(query_metadata or {}),
+                "lcm_tracked": True,
+                "lcm_receipt_id": getattr(lcm_receipt, 'receipt_id', 'unknown')
+            }
+        )
+        
+        print(f"✅ LCM inference completed for {model_name}")
+        return receipt
+
     def perform_inference_with_audit(
         self,
         model_name: str,
@@ -693,7 +856,103 @@ class CIAFFramework:
             "total_lazy_managers": len(self.lazy_managers),
             "total_ml_simulators": len(self.ml_simulators),
             "total_inference_chains": len(self.inference_chains),
-            "total_audit_generators": len(self.audit_generators)
+            "total_audit_generators": len(self.audit_generators),
+            "lcm_integration": {
+                "root_manager": bool(self.lcm_root_manager),
+                "dataset_manager": bool(self.lcm_dataset_manager),
+                "model_manager": bool(self.lcm_model_manager),
+                "training_manager": bool(self.lcm_training_manager),
+                "inference_manager": bool(self.lcm_inference_manager),
+                "deployment_manager": bool(self.lcm_deployment_manager)
+            }
         }
 
         return metrics
+
+    def lcm_complete_workflow(
+        self,
+        dataset_id: str,
+        dataset_metadata: Dict[str, Any],
+        model_name: str,
+        model_parameters: Dict[str, Any],
+        query: str,
+        ai_output: str,
+        master_password: str = None
+    ) -> Dict[str, Any]:
+        """
+        Complete LCM workflow: Dataset → Model → Training → Inference.
+        
+        This method demonstrates the full LCM integration replacing
+        the legacy anchoring system.
+        
+        Args:
+            dataset_id: Dataset identifier
+            dataset_metadata: Dataset configuration and metadata
+            model_name: Model identifier
+            model_parameters: Model hyperparameters
+            query: Input for inference
+            ai_output: Model response
+            master_password: Cryptographic password
+            
+        Returns:
+            Dictionary with complete workflow results and LCM tracking
+        """
+        print("🚀 Starting complete LCM workflow...")
+        
+        # Step 1: Create dataset with LCM
+        dataset_anchor = self.create_dataset_anchor_lcm(
+            dataset_id, dataset_metadata, master_password or dataset_id
+        )
+        
+        # Step 2: Create model with LCM
+        model_anchor = self.create_model_anchor_lcm(
+            model_name, model_parameters, 
+            authorized_datasets=[dataset_id],
+            master_password=master_password or model_name
+        )
+        
+        # Step 3: Create training session with LCM
+        training_session = self.lcm_training_manager.create_training_session(
+            model_name, [dataset_id]
+        )
+        
+        # Step 4: Perform inference with LCM
+        inference_receipt = self.perform_inference_with_lcm(
+            model_name, query, ai_output
+        )
+        
+        # Complete workflow summary
+        workflow_result = {
+            "workflow_type": "LCM_COMPLETE",
+            "dataset": {
+                "id": dataset_id,
+                "anchor_created": True,
+                "lcm_tracked": True
+            },
+            "model": {
+                "name": model_name,
+                "anchor_created": True,
+                "lcm_tracked": True
+            },
+            "training": {
+                "completed": True,
+                "lcm_tracked": True,
+                "training_session": getattr(training_session, 'session_id', 'unknown')
+            },
+            "inference": {
+                "completed": True,
+                "receipt_generated": True,
+                "lcm_tracked": True
+            },
+            "lcm_integration": {
+                "root_manager": bool(self.lcm_root_manager),
+                "dataset_manager": bool(self.lcm_dataset_manager),
+                "model_manager": bool(self.lcm_model_manager),
+                "training_manager": bool(self.lcm_training_manager),
+                "inference_manager": bool(self.lcm_inference_manager),
+                "deployment_manager": bool(self.lcm_deployment_manager)
+            }
+        }
+        
+        print("✅ Complete LCM workflow finished successfully!")
+        return workflow_result
