@@ -109,6 +109,38 @@ def secure_random_bytes(length: int) -> bytes:
     return os.urandom(length)
 
 
+def derive_anchor_from_master(master_password: str, dataset_id: str) -> str:
+    """
+    Derive a dataset anchor from master password and dataset ID.
+    
+    Args:
+        master_password: Master password for derivation
+        dataset_id: Dataset identifier
+        
+    Returns:
+        Hex-encoded anchor string
+    """
+    # Use the master password as HMAC key, dataset_id as data
+    key_bytes = master_password.encode('utf-8')
+    data_bytes = dataset_id.encode('utf-8')
+    return hmac_sha256(key_bytes, data_bytes)
+
+
+def generate_master_password() -> str:
+    """
+    Generate a secure master password.
+    
+    Returns:
+        A secure random password string
+    """
+    import secrets
+    import string
+    
+    # Generate a 32-character password with letters and digits
+    alphabet = string.ascii_letters + string.digits
+    return ''.join(secrets.choice(alphabet) for _ in range(32))
+
+
 class CryptoUtils:
     """
     Utility class providing cryptographic operations for CIAF.

@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyciaf"
+version = "0.1.0"
+description = "Cognitive Insight Audit Framework (CIAF) with Lazy Capsule Materialization"
+readme = "README.md"
+authors = [{ name = "Denzil James Greenwood", email = "founder@cognitiveinsight.ai" }]
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = [
+    "cryptography>=42.0.0",
+    "pydantic>=2.5.0",
+    "numpy>=1.26",
+    "typing-extensions>=4.8.0",
+    "scikit-learn>=1.0.0",
+    "rich>=13.0.0",
+    "click>=8.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+dev = [
+    "mypy>=1.8.0",
+    "ruff>=0.1.0",
+    "black>=23.0.0",
+    "pre-commit>=3.0.0",
+]
+docs = [
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.0.0",
+    "mkdocs-mermaid2-plugin>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/DenzilGreenwood/pyciaf"
+Documentation = "https://ciaf.readthedocs.io"
+Repository = "https://github.com/DenzilGreenwood/pyciaf"
+Issues = "https://github.com/DenzilGreenwood/pyciaf/issues"
+Changelog = "https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/CHANGELOG.md"
+
+[project.scripts]
+ciaf = "ciaf.cli:main"
+
+[tool.setuptools.package-data]
+ciaf = ["py.typed", "*.md", "*.json"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ciaf*"]
+exclude = ["tests*", "docs*", "examples*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "S", "B", "A", "C4", "ICN", "PIE", "T20", "Q"]
+ignore = ["S101", "S608", "E501"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

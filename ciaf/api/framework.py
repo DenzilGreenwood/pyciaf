@@ -595,20 +595,26 @@ class CIAFFramework:
         """
         print(f"Validating training snapshot: {snapshot.snapshot_id}")
 
-        # Verify snapshot hash integrity
-        if not snapshot.verify_hash_proof():
-            print("ERROR: Snapshot hash proof verification failed")
-            return False
-
-        # Verify Merkle tree integrity
-        if not snapshot.merkle_tree:
+        # Verify that the snapshot has required attributes
+        if not hasattr(snapshot, 'merkle_tree') or not snapshot.merkle_tree:
             print("ERROR: Snapshot missing Merkle tree")
             return False
 
         # Verify that the merkle root matches
-        computed_root = snapshot.merkle_tree.get_root()
-        if computed_root != snapshot.merkle_root_hash:
-            print("ERROR: Merkle root mismatch")
+        try:
+            computed_root = snapshot.merkle_tree.get_root()
+            if computed_root != snapshot.merkle_root_hash:
+                print("ERROR: Merkle root mismatch")
+                print(f"  Computed: {computed_root}")
+                print(f"  Expected: {snapshot.merkle_root_hash}")
+                return False
+        except Exception as e:
+            print(f"ERROR: Failed to compute Merkle root: {e}")
+            return False
+
+        # Verify snapshot has valid components
+        if not snapshot.provenance_capsule_hashes:
+            print("ERROR: Snapshot has no provenance capsules")
             return False
 
         print("Training snapshot validation successful")

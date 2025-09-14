@@ -1,0 +1,41 @@
+{
+  "storage_backend": "json",
+  "storage_path": "test_project_metadata",
+  "enable_compression": false,
+  "max_file_size_mb": 100,
+  "db_connection_timeout": 30,
+  "db_journal_mode": "WAL",
+  "db_cache_size": 10000,
+  "metadata_retention_days": 365,
+  "compliance_retention_days": 2555,
+  "auto_cleanup_enabled": true,
+  "cleanup_schedule": "daily",
+  "default_export_format": "json",
+  "export_batch_size": 1000,
+  "include_metadata_hash": true,
+  "encrypt_sensitive_data": true,
+  "encryption_key_path": null,
+  "audit_all_access": true,
+  "cache_size": 1000,
+  "async_writes": false,
+  "batch_size": 100,
+  "compliance_frameworks": [
+    "GDPR",
+    "FDA",
+    "EEOC",
+    "FCRA",
+    "HIPAA",
+    "ISO_13485"
+  ],
+  "required_metadata_fields": [
+    "model_name",
+    "stage",
+    "event_type",
+    "timestamp"
+  ],
+  "compliance_score_threshold": 0.8,
+  "enable_metrics": true,
+  "metrics_endpoint": null,
+  "alert_on_compliance_failure": true,
+  "alert_webhook_url": null
+}

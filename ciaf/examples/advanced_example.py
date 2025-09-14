@@ -15,7 +15,6 @@ Version: 1.0.0
 import sys
 import os
 import json
-import random
 from datetime import datetime
 
 # Add the parent directory to Python path to import ciaf
