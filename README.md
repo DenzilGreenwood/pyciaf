@@ -2,9 +2,8 @@
 
 **Version:** 1.0.0
 
-A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and compliance-ready audit receipts.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and 
+(LICENSE)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 ![Code Style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-informational.svg)](ciaf/SECURITY.md)
