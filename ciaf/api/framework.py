@@ -138,7 +138,7 @@ class CIAFFramework:
         lazy_manager = LazyManager(anchor)
         self.lazy_managers[dataset_id] = lazy_manager
 
-        print(f"Dataset anchor initialized with {len(anchor.data_items)} items")
+        print(f"Dataset anchor initialized")
         return anchor
 
     def create_model_anchor_lcm(

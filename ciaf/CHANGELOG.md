@@ -5,7 +5,24 @@ All notable changes to the Cognitive Insight Audit Framework (CIAF) will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-09-12
+## [Unreleased] - 2025-09-19
+
+### Fixed
+- **Terminology Standardization**: Comprehensive codebase review and correction of acronym definitions
+  - Ensured all references to CIAF consistently define it as "Cognitive Insight Audit Framework"
+  - Corrected all LCM references to properly define it as "Lazy Capsule Materialization" (previously incorrectly referenced as "Lifecycle Management" in some files)
+  - Updated 6 files with incorrect LCM definitions:
+    - `DEPLOYABLE_MODEL_DEMO_GUIDE.md` - Fixed LCM definition in documentation
+    - `examples/lcm_integration_demo.py` - Corrected LCM definition in demo header
+    - `ciaf/lcm/__init__.py` - Updated both title and description for accuracy
+    - `docs/WHITEPAPER.md` - Fixed LCM section header definition
+    - `ciaf/examples/basic_example.py` - Corrected LCM definition in docstring
+    - `ciaf/lcm/policy.py` - Updated docstring to reference "Lazy Capsule Materialization"
+
+### Changed
+- Updated project configuration in `pyproject.toml` (manual edits)
+
+## [Previous Release] - 2025-09-12
 
 ### Documentation
 - **Major Documentation Enhancement**: Created comprehensive README files for all CIAF framework modules

@@ -1,0 +1,34 @@
+{
+  "deployment_info": {
+    "model_name": "Production_Fraud_Detection_Model",
+    "deployment_timestamp": "2025-09-19T09:05:30.424518",
+    "model_version": "1.0.0-production",
+    "compliance_mode": "financial",
+    "deployment_id": "deploy_20250919_090530"
+  },
+  "model_files": {
+    "model_pickle": "Production_Fraud_Detection_Model_20250919_090530.pkl",
+    "audit_trail": "Production_Fraud_Detection_Model_audit_trail_20250919_090530.json"
+  },
+  "lcm_summary": {
+    "lcm_enabled": true,
+    "training_capsules": 5,
+    "inference_receipts": 5,
+    "connections_count": 1,
+    "enhanced_features": {
+      "preprocessing_enabled": true,
+      "explainability_enabled": true,
+      "uncertainty_enabled": true,
+      "metadata_tags_enabled": true,
+      "compliance_mode": "financial",
+      "connections_enabled": true
+    },
+    "integrity_verified": true
+  },
+  "production_readiness": {
+    "audit_trail_complete": true,
+    "pickle_preservation_verified": true,
+    "compliance_ready": true,
+    "inference_tracking_enabled": true
+  }
+}

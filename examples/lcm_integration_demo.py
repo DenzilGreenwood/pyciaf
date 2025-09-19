@@ -2,7 +2,7 @@
 """
 CIAF LCM Integration Demo
 
-Demonstrates the new LCM (Lifecycle Management) integration
+Demonstrates the new LCM (Lazy Capsule Materialization) integration
 in the CIAF Framework, showing how the modern LCM system
 replaces the legacy anchoring approach.
 

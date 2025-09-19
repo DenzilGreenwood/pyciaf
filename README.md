@@ -2,6 +2,9 @@
 
 **Version:** 1.0.0
 
+> **⚠️ WORK IN PROGRESS DISCLAIMER**  
+> This framework is actively under development and will be updated periodically as needed. APIs, documentation, and features may change. The current version provides core functionality for cryptographic provenance tracking and audit compliance, but should be considered a development release. Production deployments should carefully evaluate current capabilities against requirements.
+
 A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and compliance mapping.
 
 ![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)
@@ -25,6 +28,7 @@ CIAF (Cognitive Insight Audit Framework) addresses AI transparency, auditability
 - **Transparency & Explainability** — Hooks for decision transparency and receipt generation.  
 - **Healthcare Patterns** — PHI minimization and consent-tracking patterns (final compliance depends on deployment).  
 - **Performance Monitoring** — Basic metrics for LCM operations.
+- **Metadata Traceability** — Complete inference-to-model lineage tracking with single receipt lookup.
 
 ---
 
@@ -121,6 +125,10 @@ CIAF Framework
 │  ├─ Bias & Fairness patterns
 │  ├─ Uncertainty-quantification scaffolding
 │  └─ Security-assessment hooks
+├─ Inference Management
+│  ├─ Inference Receipts (verifiable prediction records)
+│  ├─ ZKE Connections (privacy-preserving audit connections)
+│  └─ Metadata Reveal (complete lineage tracing)
 ├─ Metadata Management
 │  ├─ Storage backends (JSON, SQLite, Pickle)
 │  ├─ Configuration templates
@@ -214,6 +222,9 @@ python -m ciaf.cli setup my_project --backend sqlite --template production
 
 # Generate a compliance report
 python -m ciaf.cli compliance eu_ai_act my_model_id --format html --output compliance_report.html
+
+# Trace metadata lineage from inference receipt
+python -m ciaf.examples.metadata_reveal
 ```
 
 ---
@@ -230,6 +241,20 @@ model = RandomForestClassifier()
 wrapped = CIAFModelWrapper(model, "fraud_detection_v1")
 wrapped.fit(X_train, y_train)
 preds = wrapped.predict(X_test)
+```
+
+### Metadata Lineage Tracing
+
+```python
+from ciaf.examples.metadata_reveal import MetadataReveal
+
+# Trace complete lineage from single inference receipt
+revealer = MetadataReveal()
+trail = revealer.reveal_metadata_trail("r_a1b2c3d4")
+
+# Verify integrity and generate compliance report
+integrity_ok = revealer.verify_trail_integrity(trail)
+report = revealer.export_trail_report(trail, "compliance_report.json")
 ```
 
 ### TensorFlow / PyTorch (simulated)
@@ -346,12 +371,14 @@ pip install -e .
 | **Model Anchoring** | ✅ Working | Param/arch fingerprints |
 | **Audit Trails** | ✅ Working | Hash-connected events |
 | **Lazy Materialization** | ✅ Working | On-demand capsules |
+| **Inference Connections** | ✅ Working | ZKE connections system |
+| **Metadata Traceability** | ✅ Working | Complete lineage tracking |
 | **Basic CLI** | 🧪 Prototype | Setup & compliance |
 | **Compliance Mapping** | 🧪 Prototype | EU AI Act, NIST |
 | **Receipt Verification** | ✅ Working | Independent verifier |
 | **Healthcare Patterns** | 🧪 Prototype | PHI scaffolding |
 
-### Near-term Roadmap (Q4 2024)
+### Near-term Roadmap 
 
 | Feature | Priority | Target |
 |---------|----------|--------|
@@ -361,7 +388,7 @@ pip install -e .
 | **Performance Optimization** | 🟡 Medium | LCM efficiency |
 | **CLI Enhancement** | 🟡 Medium | Full-featured CLI |
 
-### Medium-term Roadmap (2025)
+### Medium-term Roadmap 
 
 | Feature | Priority | Target |
 |---------|----------|--------|
@@ -374,7 +401,7 @@ pip install -e .
 ### Research Areas
 
 - **Zero-Knowledge Proofs** (ZK-SNARKs) for privacy-preserving verification
-- **Distributed ledger** anchoring for audit immutability
+- **Immutable Audit Ledgers** for tamper-evident audit storage 
 - **Homomorphic encryption** for computation on encrypted data
 - **Formal verification** of cryptographic correctness
 
@@ -387,7 +414,7 @@ This project is licensed under a Proprietary License by CognitiveInsight.AI — 
 **Key restrictions:**
 - Non-commercial research and evaluation use only
 - No redistribution or commercial use without written consent
-- Contact 📧 legal@cognitiveinsight.ai for commercial licensing
+- Contact 📧 founder@cognitiveinsight.ai for commercial licensing
 
 ---
 
@@ -396,6 +423,6 @@ This project is licensed under a Proprietary License by CognitiveInsight.AI — 
 - **cryptography** library and the broader Python security ecosystem
 - **Regulatory frameworks**: EU AI Act, NIST AI RMF, GDPR/HIPAA, ISO/IEC 27001, SOX (for mapping inspiration)
 
-> **Personal note:** This project is a work in progress and reflects a commitment to secure, verifiable, and compliant AI systems. Feedback and contributions are highly appreciated!
+> **Personal note:** This project is a work in progress and reflects a commitment to secure, verifiable, and compliant AI systems. The framework is updated periodically as needed to maintain relevance with evolving regulatory requirements and technological advances. Feedback is highly appreciated!
 > 
 > *— Denzil James Greenwood*

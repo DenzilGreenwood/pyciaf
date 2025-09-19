@@ -1,31 +1,51 @@
-# Proprietary License – CognitiveInsight.AIMIT LicenseMIT License 
+# Proprietary License – CognitiveInsight.AI
 
+Copyright © 2025 CognitiveInsight.AI  
+All rights reserved.
 
+This software and associated documentation (the “Software”) are the confidential and proprietary information of CognitiveInsight.AI.
 
-Copyright © 2025 CognitiveInsight.AI  Copyright © 2025 Denzil James Greenwood Founder@CognitiveInsight.AI
+## Grant
+Subject to these terms, CognitiveInsight.AI grants you a limited, revocable, non-exclusive, non-transferable, non-sublicensable license to use the Software internally for evaluation or non-commercial research purposes only.
 
-(Denzil James Greenwood, Founder)  
+## Restrictions
+You shall not, and shall not permit any third party to:
+- copy, modify, merge, translate, adapt, create derivative works of, publish, distribute, or disclose the Software;
+- use the Software for **Commercial Use** without prior written consent from CognitiveInsight.AI;
+- reverse engineer, decompile, disassemble, or attempt to derive source code, algorithms, or design (except to the limited extent any applicable law expressly permits despite this limitation);
+- benchmark, publicly perform, or disclose results of tests or performance data without prior written consent;
+- remove or alter any proprietary notices or confidentiality legends.
 
-All rights reserved.Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+**Commercial Use** means any use that is intended for or directed toward commercial advantage or monetary compensation, including use in or for a product or service provided to third parties, or use on behalf of a commercial entity.
 
+## Ownership & Confidentiality
+CognitiveInsight.AI retains all right, title, and interest in and to the Software, including all intellectual property rights. You acknowledge the Software constitutes proprietary trade secrets and agree to protect it with at least the same care you use for your own confidential information, and in no event less than reasonable care.
 
+## Termination
+This license terminates automatically if you breach these terms. Upon termination, you must immediately cease all use and destroy all copies of the Software. Sections titled **Restrictions, Ownership & Confidentiality, Termination, Warranty Disclaimer, Compliance Disclaimer, Limitation of Liability,** and **General** survive termination.
 
-This software and associated documentation files (the "Software") are theThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+## Warranty Disclaimer
+THE SOFTWARE IS PROVIDED “AS IS” AND “AS AVAILABLE,” WITHOUT WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
 
-confidential and proprietary information of CognitiveInsight.AI.
+## Compliance Disclaimer
+The Software is designed as a tool to assist users in implementing processes that may support compliance with applicable laws, regulations, or standards (including, without limitation, the EU AI Act, NIST AI RMF, ISO/IEC 42001, HIPAA, or similar frameworks).
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-You may:
-- Use the Software internally for evaluation or non-commercial research purposes only, unless otherwise authorized in writing.
+### No Guarantee of Compliance
+CognitiveInsight.AI makes no representations or warranties that the use of the Software will ensure or guarantee compliance with any legal, regulatory, or contractual obligations.
 
-You may not:
-- Copy, modify, merge, publish, distribute, sublicense, or sell any portion of the Software.
-- Use the Software for any commercial purposes without prior written consent from CognitiveInsight.AI.
-- Reverse engineer, decompile, disassemble, or attempt to derive the source code, algorithms, or design.
+### User Responsibility
+The Licensee is solely responsible for:
+- determining the applicability of laws and regulations to its business and use of the Software,
+- configuring, operating, and implementing the Software appropriately within its own systems and processes, and
+- ensuring ongoing compliance with all legal, regulatory, and contractual requirements.
 
-The Software is provided "AS IS", without warranty of any kind, express or implied.
-In no event shall the authors or copyright holders be liable for any claim,
-damages, or other liability arising from the use of the Software.
+CognitiveInsight.AI shall have no liability arising from the Licensee’s failure to achieve or maintain compliance.
+
+## Limitation of Liability
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, IN NO EVENT WILL COGNITIVEINSIGHT.AI BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, REVENUE, DATA, OR GOODWILL, EVEN IF ADVISED OF THE POSSIBILITY. COGNITIVEINSIGHT.AI’S AGGREGATE LIABILITY ARISING OUT OF OR RELATED TO THE SOFTWARE SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS (US$100).
+
+## General
+You may not assign or transfer this license, by operation of law or otherwise, without prior written consent. You agree to comply with applicable export control and sanctions laws. This license is governed by the laws of the State of Oklahoma, without regard to conflicts of law. Exclusive venue and jurisdiction shall lie in the state or federal courts located in Oklahoma County, Oklahoma.
 
 For commercial licensing inquiries, contact:  
-📧 legal@cognitiveinsight.ai
+📧 founder@cognitiveinsight.ai

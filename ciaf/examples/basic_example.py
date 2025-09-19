@@ -1,7 +1,7 @@
 """
 CIAF LCM Basic Example - Getting Started
 
-This example demonstrates the basic usage of the CIAF LCM (Lifecycle Management) system,
+This example demonstrates the basic usage of the CIAF LCM (Lazy Capsule Materialization) system,
 showing how to create a simple dataset family with splits and a model with basic training.
 
 Usage: python basic_example.py

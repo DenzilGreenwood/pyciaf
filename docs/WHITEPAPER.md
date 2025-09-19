@@ -27,7 +27,7 @@ CIAF's Anchoring System [(README)](../ciaf/anchoring/README.md) provides a hiera
 
 This architecture powers Lazy Capsule Materialization (LCM) [(README)](../ciaf/lcm/README.md), where cryptographic receipts are generated only when verification is required.
 
-## 3. Lifecycle Management (LCM System)
+## 3. Lazy Capsule Materialization (LCM System)
 
 CIAF implements full AI lifecycle cryptographic management [(README)](../ciaf/lcm/README.md):
 

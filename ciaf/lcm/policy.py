@@ -2,7 +2,7 @@
 CIAF LCM Policy Framework
 
 Defines the canonical policies for hashing, domains, Merkle trees, and commitments
-used throughout the CIAF Lifecycle Management system.
+used throughout the CIAF Lazy Capsule Materialization system.
 
 Created: 2025-09-09
 Last Modified: 2025-09-11

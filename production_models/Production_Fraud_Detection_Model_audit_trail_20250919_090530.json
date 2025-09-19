@@ -1,0 +1,107 @@
+{
+  "model_name": "Production_Fraud_Detection_Model",
+  "model_version": "1.0.0-production",
+  "extraction_timestamp": "2025-09-19T09:05:30.411512",
+  "lcm_enabled": true,
+  "training_metadata": {
+    "snapshot_id": "b4e240e50541afd3e4247f4bf8938b8ceb4ce7c67afddf237cd7b8a1aa959ffb",
+    "merkle_root_hash": "4a3d18a7902b5fc927bcd6adc052b8052c1f896150f7c5456dfd650ccdb5bfb2",
+    "capsule_count": 1000,
+    "training_params": {},
+    "model_version": "1.0.0-production"
+  },
+  "inference_metadata": {
+    "last_receipt_hash": "9f40a6af32c819d2ba95003f4c09d4e75e40d1f0367d53f5b5e641b39e319c03",
+    "last_query": "[-2.0506518451087983, 9.36352947299772, 3.3021937190014774, 1.3891186539374605, 3.8433820679516257, -2.7195181910642736, 0.7401764644951092, 4.826749581855873, 2.861705874708603, -3.0022499340346194, 3.669654420403344, -0.8427947100465156, -1.138828079994997, -3.9580447836014745, 1.6651789801545878, -7.150974474282366, -4.466780628168948, -2.976897740429549, 1.0296166291615436, -1.9985682676086198]",
+    "receipt_timestamp": "2025-09-19T09:05:30.409517",
+    "model_version": "1.0.0-production",
+    "enhanced_info": {
+      "explainability": {
+        "method": "CIAF Fallback",
+        "explanation": "Model prediction based on trained features",
+        "confidence": 0.75
+      },
+      "uncertainty": {
+        "total_uncertainty": 0.12,
+        "confidence_level": "HIGH",
+        "method": "Bootstrap estimation"
+      },
+      "metadata_tag": {
+        "tag_id": "CIAF_TAG_0401",
+        "compliance_level": "STANDARD",
+        "timestamp": "2025-08-02T12:00:00Z"
+      }
+    }
+  },
+  "deployment_metadata": {
+    "maa_info": {
+      "model_name": "N/A",
+      "authorized_datasets": [],
+      "anchor_hash": "N/A"
+    }
+  },
+  "connections_metadata": {
+    "total_connections": 1,
+    "batch_windows": 0,
+    "connections_summary": [
+      {
+        "connections_id": "Production_Fraud_Detection_Model_connections",
+        "receipt_count": 1,
+        "final_digest": "664157a9c9097b9a65023a3883cc8955aaa02c4c9f8dacc16d33d16cec7ebfc4",
+        "integrity_valid": true
+      }
+    ]
+  },
+  "enhanced_features": {
+    "preprocessing_enabled": true,
+    "explainability_enabled": true,
+    "uncertainty_enabled": true,
+    "metadata_tags_enabled": true,
+    "compliance_mode": "financial",
+    "connections_enabled": true
+  },
+  "detailed_receipts": [
+    {
+      "connections_id": "Production_Fraud_Detection_Model_connections",
+      "receipts": [
+        {
+          "receipt_id": "9f40a6af32c819d2ba95003f4c09d4e75e40d1f0367d53f5b5e641b39e319c03",
+          "model_anchor_ref": "b4e240e50541afd3e4247f4bf8938b8ceb4ce7c67afddf237cd7b8a1aa959ffb",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_9f40a6af",
+          "timestamp": "2025-09-19T09:05:30.410513",
+          "receipt_digest": "36248bf8ecc5501adbbb5906eb95917e518a7344577e22f263b364f6129aa3f2",
+          "connections_digest": "664157a9c9097b9a65023a3883cc8955aaa02c4c9f8dacc16d33d16cec7ebfc4",
+          "anchor_id": "r_36248bf8...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "125162de372347ef..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a5412601fb1ca87d..."
+          }
+        }
+      ]
+    }
+  ],
+  "audit_summary": {
+    "model_name": "Production_Fraud_Detection_Model",
+    "model_version": "1.0.0-production",
+    "total_training_capsules": 1000,
+    "total_inference_receipts": 1,
+    "compliance_features": {
+      "explainability": true,
+      "uncertainty_quantification": true,
+      "metadata_tagging": true,
+      "compliance_mode": "financial"
+    },
+    "lcm_integrity_status": "VERIFIED"
+  },
+  "pickle_metadata": {
+    "pickle_ready": true,
+    "preserved_during_serialization": false,
+    "serialization_timestamp": null,
+    "restoration_status": "PENDING"
+  }
+}

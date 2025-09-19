@@ -450,8 +450,15 @@ def auto_preprocess_data(X, y=None, store_preprocessor=None):
             import numpy as np
             from sklearn.preprocessing import StandardScaler
 
+            # Convert to numpy array and preserve original shape
+            X_array = np.array(X)
+            
+            # Ensure we have a 2D array for sklearn
+            if X_array.ndim == 1:
+                X_array = X_array.reshape(-1, 1)
+            
             scaler = StandardScaler()
-            X_processed = scaler.fit_transform(np.array(X).reshape(-1, 1))
+            X_processed = scaler.fit_transform(X_array)
 
             # Store the fitted scaler
             if store_preprocessor is not None:

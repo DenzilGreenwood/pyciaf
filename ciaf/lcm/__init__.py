@@ -1,7 +1,7 @@
 """
-CIAF Lifecycle Management (LCM) System
+CIAF Lazy Capsule Materialization (LCM) System
 
-Complete end-to-end lifecycle management for AI models with proper anchoring,
+Complete end-to-end lazy capsule materialization for AI models with proper anchoring,
 dataset families with splits, deployment stages, and audit trails.
 
 Created: 2025-09-09
