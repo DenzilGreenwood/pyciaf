@@ -6,7 +6,7 @@ A standalone tool for verifying CIAF receipts and audit trails.
 This verifier can independently validate:
 - Dataset split leaves → Merkle root
 - Model parameter/architecture fingerprints
-- Audit chain linkage (hash-chaining event IDs)
+- Audit connections linkage (hash-connecting event IDs)
 
 This tool demonstrates that CIAF produces verifiable artifacts that can be
 validated independently of the main framework.
@@ -14,7 +14,7 @@ validated independently of the main framework.
 Usage:
     python tools/verify_receipt.py <receipt_file.json>
     python tools/verify_receipt.py --verify-merkle <data_file.json>
-    python tools/verify_receipt.py --verify-audit-chain <audit_file.json>
+    python tools/verify_receipt.py --verify-audit-connections <audit_file.json>
 
 Created: 2025-09-12
 Author: Denzil James Greenwood
@@ -92,15 +92,15 @@ class CIAFVerifier:
         return calculated_fingerprint == expected_fingerprint
     
     @staticmethod
-    def verify_audit_chain(audit_records: List[Dict[str, Any]]) -> bool:
+    def verify_audit_connections(audit_records: List[Dict[str, Any]]) -> bool:
         """
-        Verify audit chain integrity.
-        
+        Verify audit connections integrity.
+
         Args:
-            audit_records: List of audit records with hash chaining
-            
+            audit_records: List of audit records with hash connecting
+
         Returns:
-            True if audit chain is valid
+            True if audit connections is valid
         """
         if not audit_records:
             return False
@@ -110,14 +110,14 @@ class CIAFVerifier:
             record = audit_records[0]
             return CIAFVerifier._verify_record_hash(record)
         
-        # Verify chain linkage
+        # Verify connections linkage
         for i in range(1, len(audit_records)):
             current = audit_records[i]
             previous = audit_records[i - 1]
             
             # Verify current record's previous_hash matches previous record's hash
             if current.get('previous_hash') != previous.get('hash'):
-                print(f"❌ Chain break at record {i}: previous_hash mismatch")
+                print(f"❌ Connections break at record {i}: previous_hash mismatch")
                 return False
             
             # Verify current record's hash
@@ -194,15 +194,15 @@ class CIAFVerifier:
                 print(f"🏗️  Model architecture: {'✅ Valid' if arch_valid else '❌ Invalid'}")
                 valid = valid and arch_valid
         
-        # Verify audit chain
-        if 'audit_chain' in receipt_data:
-            audit_records = receipt_data['audit_chain']
+        # Verify audit connections
+        if 'audit_connections' in receipt_data:
+            audit_records = receipt_data['audit_connections']
             if audit_records:
-                audit_valid = CIAFVerifier.verify_audit_chain(audit_records)
-                print(f"📋 Audit chain: {'✅ Valid' if audit_valid else '❌ Invalid'}")
+                audit_valid = CIAFVerifier.verify_audit_connections(audit_records)
+                print(f"📋 Audit connections: {'✅ Valid' if audit_valid else '❌ Invalid'}")
                 valid = valid and audit_valid
             else:
-                print("⚠️  Audit chain is empty")
+                print("⚠️  Audit connections is empty")
         
         print("=" * 40)
         print(f"🎯 Overall Receipt: {'✅ VALID' if valid else '❌ INVALID'}")
@@ -230,7 +230,7 @@ def create_sample_receipt() -> Dict[str, Any]:
             "architecture": {"type": "logreg"},
             "architecture_fingerprint": "calculated_arch_hash"
         },
-        "audit_chain": [
+        "audit_connections": [
             {
                 "event_id": "train_001",
                 "event_type": "training_started",
@@ -255,7 +255,7 @@ def main():
     parser.add_argument("receipt_file", nargs="?", help="Receipt JSON file to verify")
     parser.add_argument("--create-sample", action="store_true", help="Create sample receipt")
     parser.add_argument("--verify-merkle", help="Verify Merkle root from data file")
-    parser.add_argument("--verify-audit-chain", help="Verify audit chain from file")
+    parser.add_argument("--verify-audit-connections", help="Verify audit connections from file")
     
     args = parser.parse_args()
     
@@ -280,17 +280,17 @@ def main():
             print(f"❌ Error verifying Merkle root: {e}")
         return
     
-    if args.verify_audit_chain:
+    if args.verify_audit_connections:
         try:
-            with open(args.verify_audit_chain, 'r') as f:
+            with open(args.verify_audit_connections, 'r') as f:
                 data = json.load(f)
             
             audit_records = data.get('audit_records', [])
-            result = CIAFVerifier.verify_audit_chain(audit_records)
-            print(f"📋 Audit chain verification: {'✅ Valid' if result else '❌ Invalid'}")
+            result = CIAFVerifier.verify_audit_connections(audit_records)
+            print(f"📋 Audit connections verification: {'✅ Valid' if result else '❌ Invalid'}")
             
         except Exception as e:
-            print(f"❌ Error verifying audit chain: {e}")
+            print(f"❌ Error verifying audit connections: {e}")
         return
     
     if args.receipt_file:

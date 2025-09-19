@@ -2,8 +2,9 @@
 
 **Version:** 1.0.0
 
-A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and 
-(LICENSE)
+A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and compliance mapping.
+
+![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 ![Code Style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-informational.svg)](ciaf/SECURITY.md)
@@ -16,7 +17,7 @@ CIAF (Cognitive Insight Audit Framework) addresses AI transparency, auditability
 
 ### Key Features
 
-- **Cryptographic Provenance Tracking** — End-to-end verifiable data lineage with Merkle trees and hash chains.  
+- **Cryptographic Provenance Tracking** — End-to-end verifiable data lineage with Merkle trees and hash connections.  
 - **Lazy Capsule Materialization (LCM)** — On-demand proof capsule materialization to minimize storage and exposure.  
 - **Compliance Mapping** — Artifacts designed to map to EU AI Act, NIST AI RMF, GDPR/HIPAA, SOX, ISO/IEC 27001 (see `docs/compliance/`).  
 - **Security-First Design** — Optional AES-256-GCM, secure anchor derivation, tamper-evident audit trails.  
@@ -187,7 +188,7 @@ training_snapshot = framework.train_model_with_audit(
     user_id="data_scientist_alice"
 )
 
-# 2) Perform inference with audit chain
+# 2) Perform inference with audit connections
 receipt = framework.perform_inference_with_audit(
     model_name="sentiment_classifier",
     query="This product is amazing!",
@@ -200,7 +201,7 @@ receipt = framework.perform_inference_with_audit(
 audit_trail = framework.get_complete_audit_trail("sentiment_classifier")
 print("Datasets:", audit_trail["verification"]["total_datasets"])
 print("Audit records:", audit_trail["verification"]["total_audit_records"])
-print("Inference receipts:", audit_trail["inference_chain"]["total_receipts"])
+print("Inference receipts:", audit_trail["inference_connections"]["total_receipts"])
 ```
 
 ---
@@ -343,7 +344,7 @@ pip install -e .
 | **Merkle Trees** | ✅ Working | Deterministic proofs |
 | **Dataset Anchoring** | ✅ Working | Hierarchical derivation |
 | **Model Anchoring** | ✅ Working | Param/arch fingerprints |
-| **Audit Trails** | ✅ Working | Hash-chained events |
+| **Audit Trails** | ✅ Working | Hash-connected events |
 | **Lazy Materialization** | ✅ Working | On-demand capsules |
 | **Basic CLI** | 🧪 Prototype | Setup & compliance |
 | **Compliance Mapping** | 🧪 Prototype | EU AI Act, NIST |
@@ -381,7 +382,12 @@ pip install -e .
 
 ## License
 
-This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
+This project is licensed under a Proprietary License by CognitiveInsight.AI — see [LICENSE](LICENSE) for details.
+
+**Key restrictions:**
+- Non-commercial research and evaluation use only
+- No redistribution or commercial use without written consent
+- Contact 📧 legal@cognitiveinsight.ai for commercial licensing
 
 ---
 

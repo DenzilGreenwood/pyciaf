@@ -1,7 +1,7 @@
 """
-Test audit trail chain validation.
+Test audit trail connections validation.
 
-This test ensures that audit trail chains maintain integrity
+This test ensures that audit trail connections maintain integrity
 across train → inference cycles.
 """
 
@@ -26,12 +26,12 @@ class MockAuditRecord:
         return sha256_hash(data.encode())
 
 
-class TestAuditChain:
-    """Test audit trail chain validation."""
+class TestAuditConnections:
+    """Test audit trail connections validation."""
     
-    def test_audit_chain_integrity(self):
-        """Test that audit chain maintains integrity through multiple events."""
-        # Create audit chain
+    def test_audit_connections_integrity(self):
+        """Test that audit connections maintain integrity through multiple events."""
+        # Create audit connections
         records = []
         
         # Genesis record (training start)
@@ -69,58 +69,58 @@ class TestAuditChain:
         )
         records.append(inference2)
         
-        # Validate chain integrity
-        assert self._validate_chain(records)
+        # Validate connections integrity
+        assert self._validate_connections(records)
     
-    def test_audit_chain_tampering_detection(self):
-        """Test that tampering is detected in audit chain."""
-        # Create valid chain
+    def test_audit_connections_tampering_detection(self):
+        """Test that tampering is detected in audit connections."""
+        # Create valid connections
         record1 = MockAuditRecord("event_1", "type_1", "2025-09-12T10:00:00Z")
         record2 = MockAuditRecord("event_2", "type_2", "2025-09-12T10:01:00Z", record1.hash)
         record3 = MockAuditRecord("event_3", "type_3", "2025-09-12T10:02:00Z", record2.hash)
         
-        valid_chain = [record1, record2, record3]
-        assert self._validate_chain(valid_chain)
+        valid_connections = [record1, record2, record3]
+        assert self._validate_connections(valid_connections)
         
         # Tamper with middle record
         record2_tampered = MockAuditRecord("event_2_modified", "type_2", "2025-09-12T10:01:00Z", record1.hash)
-        tampered_chain = [record1, record2_tampered, record3]
+        tampered_connections = [record1, record2_tampered, record3]
         
-        # Chain should be invalid due to broken link
-        assert not self._validate_chain(tampered_chain)
+        # Connections should be invalid due to broken link
+        assert not self._validate_connections(tampered_connections)
     
-    def test_audit_chain_missing_link(self):
-        """Test detection of missing links in audit chain."""
+    def test_audit_connections_missing_link(self):
+        """Test detection of missing links in audit connections."""
         record1 = MockAuditRecord("event_1", "type_1", "2025-09-12T10:00:00Z")
         record2 = MockAuditRecord("event_2", "type_2", "2025-09-12T10:01:00Z", record1.hash)
         # Skip record, creating gap
         record4 = MockAuditRecord("event_4", "type_4", "2025-09-12T10:03:00Z", "fake_hash")
         
-        broken_chain = [record1, record2, record4]
+        broken_connections = [record1, record2, record4]
         
-        # Chain should be invalid due to missing link
-        assert not self._validate_chain(broken_chain)
+        # Connections should be invalid due to missing link
+        assert not self._validate_connections(broken_connections)
     
-    def test_audit_chain_single_record(self):
+    def test_audit_connections_single_record(self):
         """Test validation of single record (genesis)."""
         genesis = MockAuditRecord("genesis", "system_init", "2025-09-12T09:00:00Z")
-        single_chain = [genesis]
+        single_connections = [genesis]
         
-        assert self._validate_chain(single_chain)
+        assert self._validate_connections(single_connections)
     
-    def test_audit_chain_duplicate_detection(self):
-        """Test detection of duplicate records in chain."""
+    def test_audit_connections_duplicate_detection(self):
+        """Test detection of duplicate records in connections."""
         record1 = MockAuditRecord("event_1", "type_1", "2025-09-12T10:00:00Z")
         record2 = MockAuditRecord("event_2", "type_2", "2025-09-12T10:01:00Z", record1.hash)
         
         # Duplicate the second record
-        duplicate_chain = [record1, record2, record2]
+        duplicate_connections = [record1, record2, record2]
         
         # Should detect duplicate
-        assert not self._validate_chain_no_duplicates(duplicate_chain)
+        assert not self._validate_connections_no_duplicates(duplicate_connections)
     
-    def _validate_chain(self, records) -> bool:
-        """Validate audit chain integrity."""
+    def _validate_connections(self, records) -> bool:
+        """Validate audit connections integrity."""
         if not records:
             return False
         
@@ -144,8 +144,8 @@ class TestAuditChain:
         
         return True
     
-    def _validate_chain_no_duplicates(self, records) -> bool:
-        """Check for duplicate records in chain."""
+    def _validate_connections_no_duplicates(self, records) -> bool:
+        """Check for duplicate records in connections."""
         seen_hashes = set()
         for record in records:
             if record.hash in seen_hashes:

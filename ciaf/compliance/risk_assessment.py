@@ -446,7 +446,7 @@ class RiskAssessmentEngine:
             evidence=[f"Integrity issues rate: {integrity_rate:.1%}"],
             mitigation_measures=[
                 "Cryptographic integrity",
-                "Hash chain verification",
+                "Hash connections verification",
                 "Immutable logging",
             ],
             residual_risk=RiskLevel.MINIMAL,

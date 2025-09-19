@@ -90,7 +90,7 @@ class CIAFModelWrapper:
         self,
         model: Any,
         model_name: str,
-        enable_chaining: bool = True,
+        enable_connections: bool = True,
         compliance_mode: str = "general",
         enable_preprocessing: bool = True,
         enable_explainability: bool = True,
@@ -104,7 +104,7 @@ class CIAFModelWrapper:
         Args:
             model: The existing machine learning model object
             model_name: A unique identifier for the model
-            enable_chaining: Whether to enable receipt chaining for inference tracking
+            enable_connections: Whether to enable receipt connections for inference tracking
             compliance_mode: Compliance preset ("healthcare", "financial", "general")
             enable_preprocessing: Enable automatic preprocessing/vectorization
             enable_explainability: Enable SHAP/LIME explanations
@@ -117,7 +117,7 @@ class CIAFModelWrapper:
 
         self.model = model
         self.model_name = model_name.strip()
-        self.enable_chaining = enable_chaining
+        self.enable_connections = enable_connections
         self.compliance_mode = compliance_mode
 
         # Enhanced features
@@ -417,8 +417,8 @@ class CIAFModelWrapper:
                         "timestamp": "2025-08-02T12:00:00Z",
                     }
 
-            # Create inference receipt with optional chaining
-            if self.enable_chaining and self.last_receipt:
+            # Create inference receipt with optional connections
+            if self.enable_connections and self.last_receipt:
                 receipt = InferenceReceipt.issue(
                     query=query_str,
                     ai_output=output_str,
@@ -478,9 +478,9 @@ class CIAFModelWrapper:
                 self.framework.validate_training_integrity(self.training_snapshot)
             )
 
-        # Add chain verification if chaining is enabled
-        if self.enable_chaining:
-            verification_results["chain_valid"] = receipt.verify_integrity()
+        # Add connections verification if connections are enabled
+        if self.enable_connections:
+            verification_results["connections_valid"] = receipt.verify_integrity()
 
         return verification_results
 
@@ -492,7 +492,7 @@ class CIAFModelWrapper:
             "model_version": self.model_version,
             "is_trained": self.training_snapshot is not None,
             "compliance_mode": self.compliance_mode,
-            "chaining_enabled": self.enable_chaining,
+            "connections_enabled": self.enable_connections,
             "last_receipt": (
                 self.last_receipt.receipt_hash if self.last_receipt else None
             ),

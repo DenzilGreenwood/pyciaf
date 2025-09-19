@@ -3,7 +3,7 @@ Inference receipt implementation for the CIAF framework.
 
 This module contains the InferenceReceipt class which provides verifiable records
 of AI model inferences, linking them to specific training snapshots and data provenance.
-It also includes the ZKEChain class for managing chains of receipts with tamper detection.
+It also includes the ZKEConnections class for managing connections of receipts with tamper detection.
 
 Created: 2025-09-09
 Last Modified: 2025-09-11
@@ -21,7 +21,7 @@ class InferenceReceipt:
     """
     Represents a verifiable receipt for an AI model inference.
     Links the inference to specific training data and model versions for full traceability.
-    Supports chaining to previous receipts for tamper-evident audit trails.
+    Supports connections to previous receipts for tamper-evident audit trails.
     """
 
     def __init__(
@@ -42,7 +42,7 @@ class InferenceReceipt:
             model_version: Version identifier of the model used.
             training_snapshot_id: ID of the training snapshot used for this model.
             training_snapshot_merkle_root: Merkle root hash from the training snapshot.
-            prev_receipt_hash: Optional hash of the previous receipt in the chain.
+            prev_receipt_hash: Optional hash of the previous receipt in the connections.
         """
         self.query = query
         self.ai_output = ai_output
@@ -53,7 +53,7 @@ class InferenceReceipt:
         self.timestamp = datetime.now().isoformat()
         self.crypto_utils = CryptoUtils()
 
-        # Compute receipt hash including previous receipt hash for chaining
+        # Compute receipt hash including previous receipt hash for connections
         self.receipt_hash = self._compute_hash()
         print(f"Inference Receipt '{self.receipt_hash}' created.")
 
@@ -62,7 +62,7 @@ class InferenceReceipt:
         Compute the hash for this receipt.
 
         Includes all receipt fields including the previous receipt hash to ensure
-        tamper-evident chaining.
+        tamper-evident connections.
 
         Returns:
             SHA256 hash of the receipt contents.
@@ -93,7 +93,7 @@ class InferenceReceipt:
         prev_receipt: Optional["InferenceReceipt"] = None,
     ) -> "InferenceReceipt":
         """
-        Factory method to create a new inference receipt with optional chaining.
+        Factory method to create a new inference receipt with optional connections.
 
         Args:
             query: The input query/prompt given to the AI model.
@@ -101,7 +101,7 @@ class InferenceReceipt:
             model_version: Version identifier of the model used.
             training_snapshot_id: ID of the training snapshot used for this model.
             training_snapshot_merkle_root: Merkle root hash from the training snapshot.
-            prev_receipt: Optional previous receipt to chain to.
+            prev_receipt: Optional previous receipt to connect to.
 
         Returns:
             New InferenceReceipt instance.
@@ -170,17 +170,17 @@ class InferenceReceipt:
         return expected_hash == self.receipt_hash
 
 
-class ZKEChain:
+class ZKEConnections:
     """
-    Manages a chain of inference receipts with tamper-evident linking.
+    Manages a connections of inference receipts with tamper-evident linking.
 
     This class simplifies issuing new receipts and verifying the integrity
-    of the entire chain. Each receipt is linked to the previous one through
+    of the entire connections. Each receipt is linked to the previous one through
     cryptographic hashing, making tampering detectable.
     """
 
     def __init__(self) -> None:
-        """Initialize an empty receipt chain."""
+        """Initialize an empty receipt connections."""
         self.receipts: List[InferenceReceipt] = []
 
     def add_receipt(
@@ -192,7 +192,7 @@ class ZKEChain:
         training_snapshot_merkle_root: str,
     ) -> InferenceReceipt:
         """
-        Issue a new receipt and append it to the chain.
+        Issue a new receipt and append it to the connections.
 
         Args:
             query: The input query/prompt given to the AI model.
@@ -202,7 +202,7 @@ class ZKEChain:
             training_snapshot_merkle_root: Merkle root hash from the training snapshot.
 
         Returns:
-            The newly created and chained InferenceReceipt.
+            The newly created and connected InferenceReceipt.
         """
         prev_receipt = self.receipts[-1] if self.receipts else None
         receipt = InferenceReceipt.issue(
@@ -216,48 +216,48 @@ class ZKEChain:
         self.receipts.append(receipt)
         return receipt
 
-    def verify_chain(self) -> bool:
+    def verify_connections(self) -> bool:
         """
-        Verify the integrity of all receipts in the chain.
+        Verify the integrity of all receipts in the connections.
 
         Checks that:
         1. Each receipt's hash is valid
         2. Each receipt's prev_receipt_hash matches the previous receipt's hash
-        3. The chain structure is consistent
+        3. The connections structure is consistent
 
         Returns:
-            True if the entire chain is valid, False otherwise.
+            True if the entire connections is valid, False otherwise.
         """
         if not self.receipts:
-            return True  # Empty chain is valid
+            return True  # Empty connections is valid
 
         prev_hash: Optional[str] = None
         for i, receipt in enumerate(self.receipts):
             # Verify receipt's internal integrity
             if not receipt.verify_integrity():
-                print(f"Chain verification failed: Receipt {i} has invalid hash")
+                print(f"Connections verification failed: Receipt {i} has invalid hash")
                 return False
 
-            # Verify chaining
+            # Verify connecting
             if receipt.prev_receipt_hash != prev_hash:
-                print(f"Chain verification failed: Receipt {i} has incorrect prev_hash")
+                print(f"Connections verification failed: Receipt {i} has incorrect prev_hash")
                 return False
 
             prev_hash = receipt.receipt_hash
 
         return True
 
-    def get_chain_summary(self) -> dict:
+    def get_connections_summary(self) -> dict:
         """
-        Get a summary of the receipt chain.
+        Get a summary of the receipt connections.
 
         Returns:
-            Dictionary with chain statistics and information.
+            Dictionary with connections statistics and information.
         """
         if not self.receipts:
             return {
                 "total_receipts": 0,
-                "chain_valid": True,
+                "connections_valid": True,
                 "first_receipt": None,
                 "last_receipt": None,
                 "model_versions_used": [],
@@ -267,7 +267,7 @@ class ZKEChain:
 
         return {
             "total_receipts": len(self.receipts),
-            "chain_valid": self.verify_chain(),
+            "connections_valid": self.verify_connections(),
             "first_receipt": self.receipts[0].receipt_hash,
             "last_receipt": self.receipts[-1].receipt_hash,
             "model_versions_used": model_versions,
@@ -279,29 +279,29 @@ class ZKEChain:
 
     def to_json(self) -> dict:
         """
-        Serialize the entire chain to JSON.
+        Serialize the entire connections to JSON.
 
         Returns:
-            Dictionary representation of the chain.
+            Dictionary representation of the connections.
         """
         return {
             "receipts": [receipt.to_json() for receipt in self.receipts],
-            "chain_summary": self.get_chain_summary(),
+            "connections_summary": self.get_connections_summary(),
         }
 
     @classmethod
-    def from_json(cls, json_data: dict) -> "ZKEChain":
+    def from_json(cls, json_data: dict) -> "ZKEConnections":
         """
-        Reconstruct a ZKEChain from JSON data.
+        Reconstruct a ZKEConnections from JSON data.
 
         Args:
             json_data: Dictionary representation from to_json().
 
         Returns:
-            Reconstructed ZKEChain instance.
+            Reconstructed ZKEConnections instance.
         """
-        chain = cls()
+        connections = cls()
         for receipt_data in json_data["receipts"]:
             receipt = InferenceReceipt.from_json(receipt_data)
-            chain.receipts.append(receipt)
-        return chain
+            connections.receipts.append(receipt)
+        return connections

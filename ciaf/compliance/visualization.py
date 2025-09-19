@@ -2,7 +2,7 @@
 Visualization Component Module for CIAF
 
 This module provides interactive 3D visualization capabilities for CIAF metadata,
-provenance chains, and compliance data to enhance regulatory transparency.
+provenance connections, and compliance data to enhance regulatory transparency.
 
 Created: 2025-09-09
 Last Modified: 2025-09-11
@@ -435,7 +435,7 @@ class CIAFVisualizationEngine:
                     "accessibility_standards": "WCAG 2.1 AA compliance for inclusive access",
                 },
                 "patent_protection": {
-                    "invention_claim": "Interactive 3D visualization of cryptographically anchored model metadata chains",
+                    "invention_claim": "Interactive 3D visualization of cryptographically anchored model metadata connections",
                     "differentiator": "Real-time traceability of AI decision paths for regulatory compliance",
                     "technical_advantage": "Zero-knowledge provenance visualization without exposing sensitive data",
                 },

@@ -163,7 +163,7 @@ class AuditTrailGenerator:
             "query_hash": hashlib.sha256(receipt.query.encode()).hexdigest(),
             "output_hash": hashlib.sha256(receipt.ai_output.encode()).hexdigest(),
             "model_version": receipt.model_version,
-            "chained_to_previous": receipt.prev_receipt_hash is not None,
+            "connected_to_previous": receipt.prev_receipt_hash is not None,
             "metadata": query_metadata,
         }
 
@@ -299,7 +299,7 @@ class AuditTrailGenerator:
         verification_results = {
             "total_records": len(self.audit_records),
             "integrity_verified": True,
-            "broken_chains": [],
+            "broken_connections": [],
             "hash_mismatches": [],
             "timestamp_issues": [],
         }
@@ -308,10 +308,10 @@ class AuditTrailGenerator:
         previous_timestamp = None
 
         for i, record in enumerate(self.audit_records):
-            # Check hash chain
+            # Check hash connections
             if record.previous_hash != previous_hash:
                 verification_results["integrity_verified"] = False
-                verification_results["broken_chains"].append(
+                verification_results["broken_connections"].append(
                     {
                         "record_index": i,
                         "event_id": record.event_id,

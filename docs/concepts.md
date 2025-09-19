@@ -23,7 +23,7 @@ graph LR
 ### Properties
 
 - **Deterministic**: Same inputs always produce same anchors
-- **Hierarchical**: Clear derivation chain from master to capsule
+- **Hierarchical**: Clear derivation connections from master to capsule
 - **Secure**: Uses HMAC-SHA256 for cryptographic strength
 - **Verifiable**: Anyone with the anchor can verify derivation
 
@@ -102,9 +102,9 @@ fingerprint = sha256_hash(json.dumps(architecture, sort_keys=True))
 
 ## Audit Trails
 
-### Hash Chaining
+### Hash Connections
 
-Audit events are linked in a hash chain:
+Audit events are linked in hash connections:
 
 ```
 Event 1: hash = SHA256(event_data + "0000...0000")
@@ -114,9 +114,9 @@ Event 3: hash = SHA256(event_data + Event2.hash)
 
 ### Properties
 
-- **Tamper Evident**: Changes to any event break the chain
-- **Append Only**: New events extend the chain
-- **Verifiable**: Chain integrity can be independently verified
+- **Tamper Evident**: Changes to any event break the connections
+- **Append Only**: New events extend the connections
+- **Verifiable**: Connections integrity can be independently verified
 - **Auditable**: Complete history from genesis to current
 
 ## Training Snapshots
@@ -156,7 +156,7 @@ Each inference produces a verifiable receipt:
   "input_hash": "hash_of_input_data",
   "output_hash": "hash_of_model_output",
   "timestamp": "when_inference_occurred",
-  "audit_event": "link_to_audit_chain"
+  "audit_event": "link_to_audit_connections"
 }
 ```
 
@@ -165,7 +165,7 @@ Each inference produces a verifiable receipt:
 Receipts can be independently verified:
 1. Training snapshot integrity
 2. Input/output hash correctness
-3. Audit chain linkage
+3. Audit connections linkage
 4. Timestamp validation
 
 ## Compliance Integration

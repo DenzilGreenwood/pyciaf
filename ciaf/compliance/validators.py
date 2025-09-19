@@ -244,20 +244,20 @@ class ComplianceValidator:
         )
         results.append(result)
 
-        # Validation 2: Hash chain continuity
-        broken_chains = len(integrity_check.get("broken_chains", []))
+        # Validation 2: Hash connections continuity
+        broken_connections = len(integrity_check.get("broken_connections", []))
         result = ValidationResult(
             validation_id="AI_002",
-            requirement_id="hash_chain_continuity",
+            requirement_id="hash_connections_continuity",
             framework="audit_controls",
-            title="Hash Chain Continuity",
+            title="Hash Connections Continuity",
             severity=ValidationSeverity.HIGH,
-            status="pass" if broken_chains == 0 else "fail",
-            message=f"Hash chain continuity: {broken_chains} breaks found",
-            details={"broken_chains_count": broken_chains},
-            evidence=[f"Hash chain integrity: {broken_chains} breaks"],
+            status="pass" if broken_connections == 0 else "fail",
+            message=f"Hash connections continuity: {broken_connections} breaks found",
+            details={"broken_connections_count": broken_connections},
+            evidence=[f"Hash connections integrity: {broken_connections} breaks"],
             recommendations=(
-                ["Restore audit trail from backup"] if broken_chains > 0 else []
+                ["Restore audit trail from backup"] if broken_connections > 0 else []
             ),
             timestamp=datetime.now(timezone.utc).isoformat(),
         )

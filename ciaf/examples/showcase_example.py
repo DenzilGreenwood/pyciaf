@@ -342,16 +342,16 @@ def main():
     input_commitment = f"ic_{random.randint(1000000000, 9999999999):x}"
     output_commitment = f"oc_{random.randint(1000000000, 9999999999):x}"
     
-    # Add inference chain digest and batch root
-    inference_chain_digest = f"icd_{sha256_hash('inference_chain_rolling'.encode('utf-8'))[:8]}"
+    # Add inference connections digest and batch root
+    inference_connections_digest = f"icd_{sha256_hash('inference_connections_rolling'.encode('utf-8'))[:8]}"
     inference_batch_root = f"ibr_{sha256_hash(inference_receipt_hex.encode('utf-8'))[:8]}"
     
     print(f"  input_commitment=salted, output_commitment=salted")
     print(f"  receipt: r_{inference_receipt_hex[:8]}...")
     print(f"  inference_receipt_domain=\"CIAF|inference\"")
-    print(f"  Chain digest: {inference_chain_digest}... (rolling)")
+    print(f"  Connections digest: {inference_connections_digest}... (rolling)")
     print(f"  Batch root: {inference_batch_root}... (time window)")
-    print(f"  chain_mode: chained")
+    print(f"  connections_mode: connected")
     
     # Create quick integrity root with inference
     quick_leaves = [
@@ -462,8 +462,8 @@ def main():
                     "deployment_anchor_ref": f"{deploy_anchor}..."
                 }
             ],
-            "chain_mode": "chained",
-            "chain_digest": f"{inference_chain_digest}...",
+            "connections_mode": "connected",
+            "connections_digest": f"{inference_connections_digest}...",
             "batch_root": f"{inference_batch_root}..."
         },
         "roots": {

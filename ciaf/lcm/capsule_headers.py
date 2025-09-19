@@ -199,7 +199,6 @@ class LCMCapsuleManager:
                 "inference_id": inference_receipt.inference_id,
                 "inference_type": inference_receipt.inference_type,
                 "receipt_hash": inference_receipt.receipt_hash[:8] + "...",
-                "chain_index": inference_receipt.chain_index,
                 "prev_receipt_hash": inference_receipt.prev_receipt_hash[:8] + "..." if inference_receipt.prev_receipt_hash else "genesis"
             }
         

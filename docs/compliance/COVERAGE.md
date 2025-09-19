@@ -32,7 +32,7 @@
 | **GOV (Govern)** | 🔄 | System inventory via **model anchors**; append-only logs. *(Link: ciaf/lcm/model_manager.py, ciaf/api/framework.py)* | Define roles, RACI, policy bindings, change control. |
 | **MAP (Map Context)** | 🔄 | Dataset lineage + consent tagging; usage context captured in metadata. *(Link: ciaf/anchoring/dataset_anchor.py, ciaf/metadata_integration.py)* | DPIA templates, stakeholder/context capture forms. |
 | **MEAS (Measure)** | 🔄 | LCM performance metrics; fairness/uncertainty prototypes. *(Link: ciaf/compliance/validators.py, ciaf/metadata_integration.py)* | Calibrated metrics set, acceptance thresholds, periodic re-measurement jobs. |
-| **MANAGE (Manage)** | 🔄 | Evidence chain enables CAPA auditing. *(Link: ciaf/compliance/corrective_action_log.py, ciaf/compliance/audit_trails.py)* | Risk register, mitigation tracking, risk comms playbooks. |
+| **MANAGE (Manage)** | 🔄 | Evidence connections enable CAPA auditing. *(Link: ciaf/compliance/corrective_action_log.py, ciaf/compliance/audit_trails.py)* | Risk register, mitigation tracking, risk comms playbooks. |
 
 *Note:* Sub-category numbering (e.g., "MAP-X.Y") is omitted here; when you adopt it, mirror NIST labels exactly.
 

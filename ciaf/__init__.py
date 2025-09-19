@@ -13,7 +13,7 @@ Version: 1.0.0
 from .anchoring import DatasetAnchor, LazyManager, LazyProvenanceManager
 from .api.framework import CIAFFramework
 from .core import CryptoUtils, BaseAnchorManager, AnchorManager, MerkleTree
-from .inference import InferenceReceipt, ZKEChain
+from .inference import InferenceReceipt, ZKEConnections
 from .metadata_config import (
     MetadataConfig,
     create_config_template,
@@ -90,7 +90,7 @@ __all__ = [
     "MockLLM",
     "MLFrameworkSimulator",
     "InferenceReceipt",
-    "ZKEChain",
+    "ZKEConnections",
     "CIAFModelWrapper",
     "CIAFFramework",
     # Enhanced audit components

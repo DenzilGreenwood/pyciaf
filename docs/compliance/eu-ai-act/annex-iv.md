@@ -19,7 +19,7 @@
 | **(d) Description of the data** | | | |
 | Training, validation, testing datasets | Dataset anchors, provenance capsules | ✅ | `ciaf/anchoring/dataset_anchor.py`, capsule metadata |
 | Information about data sources | Dataset metadata | ✅ | `dataset_metadata` in anchors |
-| Data preparation and labeling procedures | Provenance chain, processing metadata | 🔄 | Extend capsules for labeling provenance |
+| Data preparation and labeling procedures | Provenance connections, processing metadata | 🔄 | Extend capsules for labeling provenance |
 | **(e) Assessment of risks** | | | |
 | Risk management measures | Risk assessment patterns, bias detection | 🔄 | `ciaf/compliance/risk_assessment.py` |
 | Residual risks and risk mitigation measures | Risk logs, corrective actions | 🔄 | `ciaf/compliance/corrective_action_log.py` |

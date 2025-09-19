@@ -18,7 +18,7 @@ from ..anchoring import LazyManager, DatasetAnchor
 from ..core import CryptoUtils, BaseAnchorManager, AnchorManager, MerkleTree, derive_model_anchor, derive_master_anchor, sha256_hash, secure_random_bytes, SALT_LENGTH, to_hex
 from ..provenance import ModelAggregationAnchor, ProvenanceCapsule, TrainingSnapshot
 from ..simulation import MLFrameworkSimulator
-from ..inference import InferenceReceipt, ZKEChain
+from ..inference import InferenceReceipt, ZKEConnections
 from ..compliance import AuditTrailGenerator
 
 # LCM System Integration
@@ -47,8 +47,8 @@ class CIAFFramework:
         self.model_anchors: Dict[str, Dict[str, Any]] = {}
         self.lazy_managers: Dict[str, LazyManager] = {}
         self.ml_simulators: Dict[str, MLFrameworkSimulator] = {}
-        # Store inference chains per model
-        self.inference_chains: Dict[str, ZKEChain] = {}
+        # Store inference connections per model
+        self.inference_connections: Dict[str, ZKEConnections] = {}
         # Audit trail generators
         self.audit_generators: Dict[str, AuditTrailGenerator] = {}
         
@@ -290,8 +290,8 @@ class CIAFFramework:
             compliance_frameworks=["AI_AUDIT", "TRANSPARENCY"]
         )
         
-        # Create inference chain for this model
-        self.inference_chains[model_name] = ZKEChain()
+        # Create inference connections for this model
+        self.inference_connections[model_name] = ZKEConnections()
         
         print(f"✅ Model anchor created with fingerprint: {model_anchor_record['parameters_fingerprint'][:16]}...")
         print(f"🔗 Linked to {len(authorized_datasets or [])} authorized datasets")
@@ -601,22 +601,22 @@ class CIAFFramework:
         if model_name not in self.model_anchors:
             raise ValueError(f"Model anchor not found for {model_name}. Create model anchor first.")
         
-        if model_name not in self.inference_chains:
-            self.inference_chains[model_name] = ZKEChain()
+        if model_name not in self.inference_connections:
+            self.inference_connections[model_name] = ZKEConnections()
         
         if model_name not in self.audit_generators:
             self.audit_generators[model_name] = AuditTrailGenerator(model_name)
         
         model_anchor_record = self.model_anchors[model_name]
-        inference_chain = self.inference_chains[model_name]
+        inference_connections = self.inference_connections[model_name]
         audit_generator = self.audit_generators[model_name]
         
         query_metadata = query_metadata or {}
         
         print(f"📝 Creating inference receipt for query: {query[:50]}...")
         
-        # Create inference receipt using the chain
-        receipt = inference_chain.add_receipt(
+        # Create inference receipt using the connections
+        receipt = inference_connections.add_receipt(
             query=query,
             ai_output=ai_output,
             model_version=training_snapshot.model_version,
@@ -632,8 +632,8 @@ class CIAFFramework:
         )
         
         print(f"✅ Inference completed and audit record created: {inference_audit_record.event_id}")
-        print(f"🔗 Chained to previous receipt: {receipt.prev_receipt_hash is not None}")
-        print(f"📊 Total receipts in chain: {len(inference_chain.receipts)}")
+        print(f"🔗 Connected to previous receipt: {receipt.prev_receipt_hash is not None}")
+        print(f"📊 Total receipts in connections: {len(inference_connections.receipts)}")
         
         return receipt
 
@@ -684,11 +684,11 @@ class CIAFFramework:
                         "verification": MerkleTree.verify_proof(sample_hash, merkle_tree.get_root(), proof)
                     }
         
-        # Get inference chain summary
+        # Get inference connections summary
         inference_summary = {}
-        if model_name in self.inference_chains:
-            inference_chain = self.inference_chains[model_name]
-            inference_summary = inference_chain.get_chain_summary()
+        if model_name in self.inference_connections:
+            inference_connections = self.inference_connections[model_name]
+            inference_summary = inference_connections.get_connections_summary()
         
         # Get audit trail records
         audit_records = []
@@ -723,8 +723,8 @@ class CIAFFramework:
             # Dataset Anchor Information
             "dataset_anchors": dataset_audit_info,
             
-            # Inference Chain Information
-            "inference_chain": inference_summary,
+            # Inference Connections Information
+            "inference_connections": inference_summary,
             
             # Audit Trail Records
             "audit_records": audit_records,
@@ -733,8 +733,8 @@ class CIAFFramework:
             "verification": {
                 "total_datasets": len(dataset_audit_info),
                 "total_audit_records": len(audit_records),
-                "chain_integrity": inference_summary.get("chain_valid", True),
-                "audit_chain_length": len(audit_records)
+                "connections_integrity": inference_summary.get("connections_valid", True),
+                "audit_connections_length": len(audit_records)
             }
         }
         
@@ -834,9 +834,9 @@ class CIAFFramework:
                 }
                 
                 # Add inference metrics
-                if model_name in self.inference_chains:
-                    chain_summary = self.inference_chains[model_name].get_chain_summary()
-                    metrics["model"]["inference_chain"] = chain_summary
+                if model_name in self.inference_connections:
+                    connections_summary = self.inference_connections[model_name].get_connections_summary()
+                    metrics["model"]["inference_connections"] = connections_summary
                 
                 # Add audit metrics
                 if model_name in self.audit_generators:
@@ -855,7 +855,7 @@ class CIAFFramework:
             "total_models": len(self.model_anchors),
             "total_lazy_managers": len(self.lazy_managers),
             "total_ml_simulators": len(self.ml_simulators),
-            "total_inference_chains": len(self.inference_chains),
+            "total_inference_connections": len(self.inference_connections),
             "total_audit_generators": len(self.audit_generators),
             "lcm_integration": {
                 "root_manager": bool(self.lcm_root_manager),

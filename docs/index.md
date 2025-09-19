@@ -17,7 +17,7 @@ CIAF provides cryptographically verifiable provenance tracking for AI systems wi
 - **Dataset Anchoring**: Cryptographic roots for data lineage
 - **Lazy Capsule Materialization**: Efficient on-demand proof generation
 - **Model Anchoring**: Immutable parameter and architecture fingerprinting
-- **Audit Trails**: Hash-chained event logging
+- **Audit Trails**: Hash-connected event logging
 - **Compliance Mapping**: Ready-to-use regulatory framework mappings
 
 ## Architecture
@@ -36,7 +36,7 @@ graph TB
     H --> I
     
     I --> J[Inference Receipt]
-    J --> K[Audit Chain]
+    J --> K[Audit Connections]
 ```
 
 ## Getting Started
@@ -78,7 +78,7 @@ graph TB
 ### 🔍 Verifiable Artifacts
 - Independent receipt verification
 - Merkle proof validation
-- Audit chain integrity checks
+- Audit connections integrity checks
 
 ## Support
 

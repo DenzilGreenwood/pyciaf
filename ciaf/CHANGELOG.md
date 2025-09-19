@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added comprehensive README for `anchoring/` module covering DatasetAnchor and lazy management systems
 - Added detailed documentation for `core/` module including cryptographic primitives and utilities
 - Added extensive README for `compliance/` module with regulatory framework examples
-- Added comprehensive documentation for `inference/` module covering audit trails and ZKE chains
+- Added comprehensive documentation for `inference/` module covering audit trails and ZKE connections
 - Added detailed README for `provenance/` module with capsule and snapshot documentation
 - Added comprehensive documentation for `simulation/` module covering testing utilities
 - Added detailed README for `wrappers/` module with ML model integration examples
@@ -37,14 +37,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added creation and modification dates to main framework files
 
 ### Changed
-- **BREAKING**: Updated license from standard MIT to MIT License (Non-Commercial Use)
-- Updated copyright ownership to MyImaginaryFriends.ai and CognitiveInsight.AI
+- **BREAKING**: Updated license to Proprietary License by CognitiveInsight.AI (non-commercial research use only)
+- Updated copyright ownership to CognitiveInsight.AI
 - Updated all project URLs and contact information in `pyproject.toml`
-- Changed license classifier from OSI-approved to "Other/Proprietary License" in `pyproject.toml`
+- Changed license classifier to "Other/Proprietary License" in `pyproject.toml`
 - Removed emojis from `showcase_example.py` output for more professional console display
 - Enhanced `showcase_example.py` with comprehensive productionization features:
   - Added deployment pipeline with predeploy/deploy/test_eval domains
-  - Enhanced inference pipeline with chaining and batch root capabilities
+  - Enhanced inference pipeline with connections and batch root capabilities
   - Added complete root computation including training session roots and release roots
   - Updated policy domains to include all lifecycle phases
   - Added finalized cryptographic signatures and TSA timestamps
@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `ciaf/__init__.py`
   - `ciaf/api/framework.py` 
   - `ciaf/core/crypto.py`
-- Commercial license contact information (`legal@myimaginaryfriends.ai`)
+- Commercial license contact information (`legal@cognitiveinsight.ai`)
 - New license section in README.md with clear commercial/non-commercial usage guidelines
 - Enhanced production features in showcase example:
   - Deployment anchors and intent-actual binding

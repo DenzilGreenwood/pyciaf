@@ -461,9 +461,9 @@ def main():
         }
     ]
     
-    # Create inference chain for the session
-    chain_id = "fraud_detection_production_chain"
-    inference_manager.create_inference_chain(chain_id)
+    # Create inference connections for the session
+    connections_id = "fraud_detection_production_connections"
+    inference_manager.create_inference_connections(connections_id)
     
     inference_receipts = []
     for i, query in enumerate(production_queries, 1):
@@ -472,7 +472,7 @@ def main():
         decisions = ["FRAUD", "LEGITIMATE", "FRAUD"]
         
         receipt = inference_manager.perform_inference_with_audit(
-            chain_id=chain_id,
+            connections_id=connections_id,
             receipt_id=f"fraud_inference_{query['transaction_id']}",
             model_anchor_ref=model_anchor.model_hash,
             deployment_anchor_ref=deployment_anchor.anchor_id,

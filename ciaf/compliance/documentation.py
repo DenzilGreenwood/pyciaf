@@ -230,7 +230,7 @@ class ComplianceDocumentationGenerator:
             **Core Components:**
             - **Provenance Engine**: Tracks complete data lineage and model decisions
             - **Cryptographic Layer**: Ensures integrity using AES-GCM, HMAC-SHA256, and PBKDF2
-            - **Audit System**: Maintains tamper-evident audit trails with hash chaining
+            - **Audit System**: Maintains tamper-evident audit trails with hash connections
             - **Compliance Validators**: Automated compliance checking against multiple frameworks
             - **Risk Assessment Engine**: Continuous risk monitoring and assessment
             
@@ -347,7 +347,7 @@ class ComplianceDocumentationGenerator:
             **Audit Trail Generation:**
             - Immutable audit logs with cryptographic integrity
             - Complete event tracking (data access, model predictions, system changes)
-            - Hash chain verification for tamper detection
+            - Hash connections verification for tamper detection
             - Automated audit report generation
             
             **Transparency Features:**

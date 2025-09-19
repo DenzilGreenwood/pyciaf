@@ -17,7 +17,7 @@ from ciaf.compliance import (
     ComplianceFramework
 )
 import numpy as np
-from typing import Dict, List, Any
+
 
 def demonstrate_risk_assessment():
     """
@@ -62,6 +62,7 @@ def demonstrate_risk_assessment():
         {
             "content": "chest_xray_001.dcm",
             "metadata": {
+                "id": "chest_xray_001",
                 "patient_id": "ANON_001",
                 "consent_status": "explicit_research_consent",
                 "data_sensitivity": "high",
@@ -73,6 +74,7 @@ def demonstrate_risk_assessment():
         {
             "content": "chest_xray_002.dcm", 
             "metadata": {
+                "id": "chest_xray_002",
                 "patient_id": "ANON_002",
                 "consent_status": "explicit_research_consent",
                 "data_sensitivity": "high",
@@ -125,6 +127,14 @@ def demonstrate_risk_assessment():
     
     # Step 4: Training with risk monitoring
     print("\n🎯 Step 4: Risk-Monitored Training")
+    
+    # Extract safety thresholds for risk monitoring
+    safety_thresholds = {
+        "min_sensitivity": 0.95,
+        "min_specificity": 0.90,
+        "max_false_negative_rate": 0.05
+    }
+    
     training_snapshot = framework.train_model(
         model_name="pneumonia_detection_ai",
         capsules=capsules,
@@ -136,7 +146,7 @@ def demonstrate_risk_assessment():
             "risk_monitoring": {
                 "track_bias_metrics": True,
                 "uncertainty_estimation": True,
-                "performance_thresholds": model_anchor["model_parameters"]["risk_profile"]["safety_thresholds"]
+                "performance_thresholds": safety_thresholds
             }
         },
         model_version="v1.0_risk_assessed"
@@ -162,21 +172,25 @@ def demonstrate_risk_assessment():
     )
     
     # Uncertainty quantification
-    uncertainty_quantifier = UncertaintyQuantifier()
-    uncertainty_metrics = uncertainty_quantifier.calculate_metrics(
-        predictions=test_predictions,
-        labels=test_labels,
-        method="entropy"
+    uncertainty_quantifier = UncertaintyQuantifier("pneumonia_detection_ai")
+    uncertainty_metrics = uncertainty_quantifier.quantify_monte_carlo_dropout(
+        prediction_samples=test_predictions.tolist(),
+        confidence_level=0.95
     )
     
     # Overall risk assessment
-    risk_engine = RiskAssessmentEngine()
-    risk_assessment = risk_engine.comprehensive_assessment(
-        model_metadata=model_anchor,
-        training_snapshot=training_snapshot,
-        bias_results=bias_results,
-        uncertainty_metrics=uncertainty_metrics,
-        compliance_framework=ComplianceFramework.EU_AI_ACT
+    risk_engine = RiskAssessmentEngine("pneumonia_detection_ai")
+    # Create a minimal audit generator for the assessment
+    from ciaf.compliance.audit_trails import AuditTrailGenerator
+    audit_generator = AuditTrailGenerator("pneumonia_detection_ai")
+    
+    risk_assessment = risk_engine.conduct_comprehensive_assessment(
+        model_version="v1.0_risk_assessed",
+        audit_generator=audit_generator,
+        assessment_period_days=1,
+        include_bias_assessment=True,
+        include_performance_assessment=True,
+        include_security_assessment=True
     )
     
     # Step 6: Risk-aware inference with audit trail
@@ -185,18 +199,18 @@ def demonstrate_risk_assessment():
     inference_receipt = framework.perform_inference_with_audit(
         model_name="pneumonia_detection_ai",
         query="new_chest_xray.dcm",
-        ai_output={
-            "prediction": "pneumonia_detected",
-            "confidence": 0.87,
-            "uncertainty_score": 0.15,
-            "risk_factors": ["low_image_quality", "rare_presentation"]
-        },
+        ai_output="pneumonia_detected (confidence: 0.87, uncertainty: 0.15)",
         training_snapshot=training_snapshot,
         user_id="radiologist_dr_smith",
-        risk_metadata={
+        query_metadata={
             "clinical_context": "emergency_department",
             "oversight_required": True,
-            "decision_support_only": True
+            "decision_support_only": True,
+            "prediction_details": {
+                "confidence": 0.87,
+                "uncertainty_score": 0.15,
+                "risk_factors": ["low_image_quality", "rare_presentation"]
+            }
         }
     )
     
@@ -219,9 +233,9 @@ def demonstrate_risk_assessment():
     }
     
     print(f"✅ Risk Assessment Complete!")
-    print(f"   - Bias metrics calculated: {len(bias_results)} demographic groups")
-    print(f"   - Uncertainty quantification: {uncertainty_metrics['mean_uncertainty']:.3f}")
-    print(f"   - Risk level: {risk_assessment['overall_risk_level']}")
+    print(f"   - Bias assessment: fairness score {bias_results.overall_fairness_score:.3f}")
+    print(f"   - Uncertainty quantification: variance {uncertainty_metrics.prediction_variance:.3f}")
+    print(f"   - Risk level: {risk_assessment.overall_risk_level}")
     print(f"   - Compliance status: {risk_documentation['compliance_status']['eu_ai_act_article_9']}")
     
     # Step 8: Audit trail verification
@@ -233,7 +247,7 @@ def demonstrate_risk_assessment():
     print(f"✅ Audit Trail Verification:")
     print(f"   - Training integrity: {'VERIFIED' if integrity_verified else 'FAILED'}")
     print(f"   - Total audit records: {audit_trail['verification']['total_audit_records']}")
-    print(f"   - Inference receipts: {audit_trail['inference_chain']['total_receipts']}")
+    print(f"   - Inference receipts: {audit_trail['inference_connections']['total_receipts']}")
     print(f"   - Risk assessments: {len([r for r in audit_trail.get('risk_assessments', [])])}")
     
     return {

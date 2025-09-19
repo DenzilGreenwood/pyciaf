@@ -1,0 +1,121 @@
+{
+  "version": "1.1",
+  "generated_at": "2025-09-19T07:26:37.744080",
+  "policy": {
+    "hash": "SHA-256",
+    "canon": "json(sorted,utf-8)",
+    "domains": [
+      "CIAF|dataset|family",
+      "CIAF|dataset|split",
+      "CIAF|model",
+      "CIAF|train",
+      "CIAF|deploy",
+      "CIAF|inference"
+    ],
+    "anchor_schema_version": "1.0",
+    "merkle_policy_version": "1.0",
+    "hash_fn_id": "sha256",
+    "audit_standard": "CIAF_LCM_v1.1"
+  },
+  "anchor_domains": {
+    "dataset_family": "CIAF|dataset|family",
+    "dataset_split": "CIAF|dataset|split",
+    "model": "CIAF|model",
+    "train": "CIAF|train",
+    "deploy": "CIAF|deploy",
+    "inference": "CIAF|inference"
+  },
+  "dataset": {
+    "family_anchor": "d_f_09353f04...",
+    "datasets_root_anchor": "bfeaa1e36ac2b68330ad8809d9bce55ce4b77edaa001542a63e2dbfd6e6ab569",
+    "enhanced_split_map_digest": "53e064cc963af0ba28b82f85d6700366d6fae5122e7b39903d4692a346ae7ac7",
+    "splits": {
+      "train": {
+        "anchor": "d_s_train_8a5f8ba3...",
+        "rng_seed": 7116,
+        "rng_source": "random",
+        "stratify_by": [
+          "fraud_label",
+          "merchant_category",
+          "risk_score_bin"
+        ],
+        "stratify_method": "stratified_balanced",
+        "split_ratio": 0.8,
+        "split_assignment_digest": "8b40180932231e308d4a4539aea8e42cc3665bdaf5120b2a91eac9f78621d757"
+      },
+      "val": {
+        "anchor": "d_s_val_e22ecb5e...",
+        "rng_seed": 2832,
+        "rng_source": "random",
+        "stratify_by": [
+          "fraud_label",
+          "temporal_quarter"
+        ],
+        "stratify_method": "stratified",
+        "split_ratio": 0.1,
+        "split_assignment_digest": "8f8d872cbee3562340b4d3cdb3383d72244c033fb75b91018b983ab84d8461cf"
+      },
+      "test": {
+        "anchor": "d_s_test_e30e87c9...",
+        "rng_seed": 5523,
+        "rng_source": "random",
+        "stratify_by": [
+          "fraud_label",
+          "geographical_region"
+        ],
+        "stratify_method": "stratified_holdout",
+        "split_ratio": 0.1,
+        "split_assignment_digest": "88fec7432e7ab8191a5bcfd19b4f66be60b8cb73c3da79bf05bdddae5010babd"
+      }
+    }
+  },
+  "model": {
+    "anchor": "228415f4d00780169f9acb5914229487d91c3e6304bd361ad4e0cfe356b1c9ea",
+    "authorized_dataset_family": "financial_transactions@v3.2.1",
+    "authorized_splits": [
+      "train",
+      "val",
+      "test"
+    ]
+  },
+  "training": {
+    "anchor": "fraud_training_production_v3"
+  },
+  "deployment": {
+    "pre_deployment_anchor": "pd_a4048e18...",
+    "deployment_anchor": "dp_21eb9cc6..."
+  },
+  "inference": {
+    "receipts": [
+      "fraud_inference_txn_001_4A7B9C",
+      "fraud_inference_txn_002_8D3E1F",
+      "fraud_inference_txn_003_B2C4A7"
+    ]
+  },
+  "verification": {
+    "merkle_root": "ddab0f47de21d42a4b506e819abb4c1ca69613d50a57d5e26dfab063a6547982",
+    "component_count": 7,
+    "leaves": [
+      "d_f_09353f04...",
+      "bfeaa1e36ac2b68330ad8809d9bce55ce4b77edaa001542a63e2dbfd6e6ab569",
+      "53e064cc963af0ba28b82f85d6700366d6fae5122e7b39903d4692a346ae7ac7",
+      "228415f4d00780169f9acb5914229487d91c3e6304bd361ad4e0cfe356b1c9ea",
+      "fraud_training_production_v3",
+      "pd_a4048e18...",
+      "dp_21eb9cc6..."
+    ],
+    "verification_status": "PASSED"
+  },
+  "rng_reproducibility": {
+    "status": "enabled",
+    "split_assignment_verification": "tamper_evident"
+  },
+  "compliance": {
+    "data_lineage": "verified",
+    "model_integrity": "verified",
+    "training_provenance": "verified",
+    "deployment_validation": "verified",
+    "inference_auditability": "verified",
+    "randomization_audit": "verified"
+  }
+}

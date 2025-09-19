@@ -4,7 +4,7 @@
 
 Artificial Intelligence is rapidly being adopted in high-stakes sectors such as healthcare, finance, and government. Yet AI systems today lack cryptographic auditability — regulators cannot independently verify compliance, auditors cannot reconstruct lineage, and AI builders face increasing pressure to demonstrate trustworthiness.
 
-The Cognitive Insight Audit Framework (CIAF) introduces a unified, cryptographically verifiable approach to AI lifecycle governance. Through innovations such as Lazy Capsule Materialization (LCM), Anchored Provenance Capsules, and Zero-Knowledge Evidence (ZKE) Chains, CIAF enables end-to-end traceability from raw data through model inference, while minimizing storage, preserving privacy, and aligning with global regulatory frameworks (EU AI Act, NIST AI RMF, GDPR/HIPAA, ISO 27001, SOX).
+The Cognitive Insight Audit Framework (CIAF) introduces a unified, cryptographically verifiable approach to AI lifecycle governance. Through innovations such as Lazy Capsule Materialization (LCM), Anchored Provenance Capsules, and Zero-Knowledge Evidence (ZKE) Connections, CIAF enables end-to-end traceability from raw data through model inference, while minimizing storage, preserving privacy, and aligning with global regulatory frameworks (EU AI Act, NIST AI RMF, GDPR/HIPAA, ISO 27001, SOX).
 
 ## 1. Core Cryptographic Foundations
 
@@ -37,7 +37,7 @@ CIAF implements full AI lifecycle cryptographic management [(README)](../ciaf/lc
 - **Deployment Anchors** for artifacts, configurations, SBOMs, and approvals
 - **Inference Receipts** and batch roots linking predictions to training provenance
 
-The result is an immutable audit chain from dataset ingestion to model deployment and inference.
+The result is an immutable audit connections trail from dataset ingestion to model deployment and inference.
 
 ## 4. Provenance System
 
@@ -54,16 +54,16 @@ This design enables privacy-preserving verification — auditors can check compl
 To extend auditability into production, CIAF introduces the Inference System [(README)](../ciaf/inference/README.md):
 
 - **Inference Receipts**: cryptographic receipts for each prediction, including input/output commitments, timestamps, and model fingerprints
-- **Zero-Knowledge Evidence (ZKE) Chains**: link inference receipts into privacy-preserving audit chains
+- **Zero-Knowledge Evidence (ZKE) Connections**: link inference receipts into privacy-preserving audit connections
 - **Batch Processing**: efficient verification of large-scale inference workloads
 
-This creates a verifiable chain-of-custody for every AI prediction.
+This creates a verifiable connections-of-custody for every AI prediction.
 
 ## 6. Compliance Engine
 
 CIAF's Compliance Engine [(README)](../ciaf/compliance/README.md) maps cryptographic audit artifacts to regulatory requirements:
 
-- **Audit Trails** (WORM, cryptographically chained)
+- **Audit Trails** (WORM, cryptographically connected)
 - **Bias Validators** with fairness metrics (demographic parity, equalized odds, etc.)
 - **Risk Assessments** covering technical, ethical, and security risks
 - **Regulatory Mapping** (EU AI Act, NIST RMF, GDPR/HIPAA, SOX, ISO 27001)

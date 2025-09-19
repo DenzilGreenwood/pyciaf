@@ -376,13 +376,13 @@ def quick_test_final():
                         "deployment_anchor_ref": "deploy_not_implemented"
                     }
                 ],
-                "chain_mode": "none"
+                "connections_mode": "none"
             },
             "roots": {
                 "integrity_root": f"mr_{merkle_root[:4]}...{merkle_root[-4:]}",
                 "quick_integrity_root": f"qir_{quick_merkle_root[:4]}...{quick_merkle_root[-4:]}",
                 "timestamp": {
-                    "authority": "rfc3161|notary|onchain", 
+                    "authority": "audit_service|notary|immutable_ledger", 
                     "evidence_id": None,
                     "notarization_pending": True
                 }

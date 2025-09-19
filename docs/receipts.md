@@ -54,7 +54,7 @@ Captures the complete state of a model training operation.
     "integrity_verified": true
   },
   
-  "audit_chain": [
+  "audit_connections": [
     {
       "event_id": "train_start_001",
       "event_type": "training_started",
@@ -82,7 +82,7 @@ Captures the complete state of a model training operation.
   "verification": {
     "merkle_verification": "passed",
     "anchor_verification": "passed",
-    "audit_chain_verification": "passed",
+    "audit_connections_verification": "passed",
     "overall_status": "verified"
   }
 }
@@ -149,7 +149,7 @@ python tools/verify_receipt.py training_receipt.json
 
 # Verify specific components
 python tools/verify_receipt.py --verify-merkle dataset_merkle.json
-python tools/verify_receipt.py --verify-audit-chain audit_chain.json
+python tools/verify_receipt.py --verify-audit-connections audit_connections.json
 ```
 
 ### Programmatic Verification
@@ -195,15 +195,15 @@ expected_fingerprint = receipt['model']['parameter_fingerprint']
 is_valid = CIAFVerifier.verify_parameter_fingerprint(parameters, expected_fingerprint)
 ```
 
-### 3. Audit Chain Verification
+### 3. Audit Connections Verification
 
-Verifies hash-chained audit events:
+Verifies hash-connected audit events:
 
 ```python
-audit_records = receipt['audit_chain']
+audit_records = receipt['audit_connections']
 
-# Verify chain integrity
-is_valid = CIAFVerifier.verify_audit_chain(audit_records)
+# Verify connections integrity
+is_valid = CIAFVerifier.verify_audit_connections(audit_records)
 ```
 
 ## Receipt Properties
@@ -217,7 +217,7 @@ is_valid = CIAFVerifier.verify_audit_chain(audit_records)
 ### Completeness
 
 - **Full Provenance**: From raw data to model output
-- **Audit Trail**: Complete chain of events
+- **Audit Trail**: Complete connections of events
 - **Verification Data**: All info needed for independent verification
 
 ### Verifiability
@@ -241,11 +241,11 @@ is_valid = CIAFVerifier.verify_audit_chain(audit_records)
 - Incorrect leaf ordering
 - Hash function mismatch
 
-### Audit Chain Break
+### Audit Connections Break
 
 ```
-❌ Audit chain: Invalid
-   Chain break at record 2: previous_hash mismatch
+❌ Audit connections: Invalid
+   Connections break at record 2: previous_hash mismatch
 ```
 
 **Causes:**
