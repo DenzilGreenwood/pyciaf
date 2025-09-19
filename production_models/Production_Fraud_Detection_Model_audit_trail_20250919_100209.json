@@ -1,0 +1,2069 @@
+{
+  "model_name": "Production_Fraud_Detection_Model",
+  "model_version": "1.0.0-production",
+  "extraction_timestamp": "2025-09-19T10:02:09.967743",
+  "lcm_enabled": true,
+  "training_metadata": {
+    "snapshot_id": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+    "merkle_root_hash": "4a3d18a7902b5fc927bcd6adc052b8052c1f896150f7c5456dfd650ccdb5bfb2",
+    "capsule_count": 1000,
+    "training_params": {},
+    "model_version": "1.0.0-production"
+  },
+  "inference_metadata": {
+    "last_receipt_hash": "54c6854429d00d688ada74b02a53455e70adf30dad8c4ba6ac15bb7886ea70f2",
+    "last_query": "[-8.546689547949534, 0.9952938971296691, 1.973374057697615, -1.7450148843348814, 0.06761850951297932, 1.9647577127213256, -0.6906901247184412, 0.7878079811314833, -2.2372446398677264, 4.975628636882163, 0.5755748227992308, 6.556418036954027, 1.2305694580210744, -3.7404755266585825, -2.172491432189749, 3.85499263429948, -0.5281259388192292, -0.9759011309827663, -0.5368346502244501, 6.676252690337392]",
+    "receipt_timestamp": "2025-09-19T10:01:56.319586",
+    "model_version": "1.0.0-production",
+    "enhanced_info": {
+      "explainability": {
+        "method": "CIAF Fallback",
+        "explanation": "Model prediction based on trained features",
+        "confidence": 0.75
+      },
+      "uncertainty": {
+        "total_uncertainty": 0.12,
+        "confidence_level": "HIGH",
+        "method": "Bootstrap estimation"
+      },
+      "metadata_tag": {
+        "tag_id": "CIAF_TAG_0402",
+        "compliance_level": "STANDARD",
+        "timestamp": "2025-08-02T12:00:00Z"
+      }
+    }
+  },
+  "deployment_metadata": {
+    "maa_info": {
+      "model_name": "N/A",
+      "authorized_datasets": [],
+      "anchor_hash": "N/A"
+    }
+  },
+  "connections_metadata": {
+    "total_connections": 1,
+    "batch_windows": 0,
+    "connections_summary": [
+      {
+        "connections_id": "Production_Fraud_Detection_Model_connections",
+        "receipt_count": 110,
+        "final_digest": "63568560590ef43a0d591b4904ed578c8fdd94e8ee739cda4e2626bddb428a3e",
+        "integrity_valid": true
+      }
+    ]
+  },
+  "enhanced_features": {
+    "preprocessing_enabled": true,
+    "explainability_enabled": true,
+    "uncertainty_enabled": true,
+    "metadata_tags_enabled": true,
+    "compliance_mode": "financial",
+    "connections_enabled": true
+  },
+  "detailed_receipts": [
+    {
+      "connections_id": "Production_Fraud_Detection_Model_connections",
+      "receipts": [
+        {
+          "receipt_id": "12891ce8cd83ef09f75714b31385ca7f864150f0b24d017d1bf1f641d3d8fdeb",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_12891ce8",
+          "timestamp": "2025-09-19T10:01:56.102936",
+          "receipt_digest": "418783740e6ba7dfe905a4c6b3f57f9e0d69a3fe02f234455915bfb8c442706f",
+          "connections_digest": "16bfcd4344835eff5ff0fd6c9bbb580aa80233437d034e1859a9bd5a2f58b436",
+          "anchor_id": "r_41878374...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2c19a95fcbbec07d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2cd1d4363f82f16f..."
+          }
+        },
+        {
+          "receipt_id": "997bf05f9bde3a02495a8a574d9ae11d309ec3d88bb69276c1019dad9a6b7ab1",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_997bf05f",
+          "timestamp": "2025-09-19T10:01:56.104935",
+          "receipt_digest": "1eea0cd692224bc8ca7ae65b3349382d9e970e89991f2dbebe112ba6c99af277",
+          "connections_digest": "6cded21bd856abb2d7fa8e15bf95d1225617abec2110f1dc7d06d65544c8164f",
+          "anchor_id": "r_1eea0cd6...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "340079155a82431e..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "37fdcae4655091f6..."
+          }
+        },
+        {
+          "receipt_id": "252413028f569bcc6c0adbb40683aa8b949e2caee939a28d1b7e2697d887210d",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_25241302",
+          "timestamp": "2025-09-19T10:01:56.106943",
+          "receipt_digest": "b036adbdc6ffce1666051a9b58578672dd05a7f59d1389ec5c45db9670c2c873",
+          "connections_digest": "37be0e00691c0d435a9bdee00211998b05eee5764d8d48c0030e301ebf54ef6e",
+          "anchor_id": "r_b036adbd...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9abd4b15f912687d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "daff5ac8bc192d68..."
+          }
+        },
+        {
+          "receipt_id": "060310d3d1fd93f313c487b97ca61376d3140a417a65332366c7f7442835d913",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_060310d3",
+          "timestamp": "2025-09-19T10:01:56.108935",
+          "receipt_digest": "421b084df7530da678bd9e4b8af54270a186849fee39ddab00e4ce30a1c3b66e",
+          "connections_digest": "fdb247c97c1347e4e694b2b82ce37cc789d01b8eafd9d6752265395b9551e174",
+          "anchor_id": "r_421b084d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "6f84e8131057fa23..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5bad66741542a231..."
+          }
+        },
+        {
+          "receipt_id": "f25f9edb4d2dbe30f3b497d9e327e9dcef685fd49fede473c2ff2261530d579f",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_f25f9edb",
+          "timestamp": "2025-09-19T10:01:56.110935",
+          "receipt_digest": "f9c57ceb00cd45aa5202f4956edecb21ab763b184cf10ad68e6f18f88254bd67",
+          "connections_digest": "c0012488c2cf5c90141e3717b03e85e6cf99dd14d87bb923bb2187ac3b9a300a",
+          "anchor_id": "r_f9c57ceb...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5f691a6a2fadf140..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c8c79c38bda35060..."
+          }
+        },
+        {
+          "receipt_id": "cb947871a876d8641180260288e43539f40c1483036c55648293633867fe0010",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_cb947871",
+          "timestamp": "2025-09-19T10:01:56.112935",
+          "receipt_digest": "e35255396ea08c05aef4f3aba4c318da56bca4cdda067091f9c51adb3c9dd0b6",
+          "connections_digest": "97ebb169912c0ff25407466e073453a8ea375c2f4d21f7de3a601634f37b7511",
+          "anchor_id": "r_e3525539...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "831a387a29dfd95c..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "b63a7514797fa8d1..."
+          }
+        },
+        {
+          "receipt_id": "b7b1507ecbcd7f2c711bc62b3cc422594241208978be63858917e6727858442e",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_b7b1507e",
+          "timestamp": "2025-09-19T10:01:56.114937",
+          "receipt_digest": "d382aa1c8475fbb0410e05f80056043d9febe53b7b2e47e5179fd4e27c87a046",
+          "connections_digest": "e7b9b66364405b507690da5cfcbcd551ae424e72bc903b8ee0713406410d06ad",
+          "anchor_id": "r_d382aa1c...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "1b8e74a495624ad1..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "f98eb3ac51d7255c..."
+          }
+        },
+        {
+          "receipt_id": "868a7d3f21a29eaacbc92b40a20795eceebd62dca913cf86ea7276d9428a82a7",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_868a7d3f",
+          "timestamp": "2025-09-19T10:01:56.116935",
+          "receipt_digest": "9e2f028062595cd3e369aef4c34cff379a0616e3b51635f2fe22d2f5b49a442e",
+          "connections_digest": "ff06fc74ffb3134837c45ca16d633483950d6a4ed1aca519a4cc9e56395bce2e",
+          "anchor_id": "r_9e2f0280...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7c7b61152db70934..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "62bb0a79347cff99..."
+          }
+        },
+        {
+          "receipt_id": "10809dde6e03962a4db456c7052cdc3556561f026d7a09de11b9ab3e5417d27a",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_10809dde",
+          "timestamp": "2025-09-19T10:01:56.118935",
+          "receipt_digest": "502d5f615e1d7da66f4be1137a6be7d12e2ac8608cdc6a310baa12310a0fcf40",
+          "connections_digest": "8f8076f7513ac56e227b225d16b1638a68517999960220b996140efd42550b27",
+          "anchor_id": "r_502d5f61...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "21c93bb20be8b961..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "da9f9740b9f1c324..."
+          }
+        },
+        {
+          "receipt_id": "e6eef3d37c9ee2d911c0d6e27e1422ce13f94a919416ce1c3fb645d802fa8ab2",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e6eef3d3",
+          "timestamp": "2025-09-19T10:01:56.120943",
+          "receipt_digest": "915e51290c3ff139ae301726d1a7a7a4d2e5d54e17caaded98f36bf10a205e85",
+          "connections_digest": "f73be205a975279f9ae747fec8ac7f45c3f9708842583d6232a59358595caa21",
+          "anchor_id": "r_915e5129...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "27d00c2834b119da..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "fe0c7b2509b46d2c..."
+          }
+        },
+        {
+          "receipt_id": "167bebd131620b87874dce3c7a231a526375e3528f7544f9968ecf33faccebbe",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_167bebd1",
+          "timestamp": "2025-09-19T10:01:56.122935",
+          "receipt_digest": "e45ba64692a3ac025b25d7ac6c641857340b52433aacf6d49bc354c735e4865d",
+          "connections_digest": "3e0b779ebf80c769aed5a6767571ed67e2fa338820d52d2d119c8b7ab77f53ee",
+          "anchor_id": "r_e45ba646...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "430f839bccf166e0..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "4620253821f3a111..."
+          }
+        },
+        {
+          "receipt_id": "464d8c2c7f342a9223ec091c8e2fc7faca533bca1d2d2f3915a5ea4f1de78d45",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_464d8c2c",
+          "timestamp": "2025-09-19T10:01:56.125262",
+          "receipt_digest": "6f9b74f7937e7c9b520e153a5032b40199d2014397ef168d87c26ddaa0fc3ba7",
+          "connections_digest": "862a2e19cc3459a28720c4a826ae9ae95b33d615fbae13b499b0e5c484313dc3",
+          "anchor_id": "r_6f9b74f7...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "e18b23ea8c991b34..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2f8567f91124c2e9..."
+          }
+        },
+        {
+          "receipt_id": "91ab147b9ee08b162cc0be349ced0c9fa6236e31675393e10127eb67bd200ccc",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_91ab147b",
+          "timestamp": "2025-09-19T10:01:56.127265",
+          "receipt_digest": "ef2aa50c4dbbc6934b0c9b021ed800ec10bf9b1956fe193fa06ffc196df27049",
+          "connections_digest": "3deb37045c5610d20d758495baacc7f1bbfe1977ef9d40c9b331224f1df4ad60",
+          "anchor_id": "r_ef2aa50c...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d2372740867b6451..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "4256e13c22a8afe9..."
+          }
+        },
+        {
+          "receipt_id": "710fa648c370e979e352ff991c793f4cced9a850a4c924589914be9adad86680",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_710fa648",
+          "timestamp": "2025-09-19T10:01:56.128265",
+          "receipt_digest": "4a0b012d6bfc835efe4b994c0b6c441330f1b5f82c71dd5a9617d9229fda73cf",
+          "connections_digest": "c20ec0d48613c93af98d151ba1c9de4284d30aadee788e9c6a72d8648b6cb168",
+          "anchor_id": "r_4a0b012d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ba2f0d95b4c18b48..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ac8d574b102e806f..."
+          }
+        },
+        {
+          "receipt_id": "82ee2e034b49e61f511f6ab7d2ba09dee3f5430591ec59178b3866752641b774",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_82ee2e03",
+          "timestamp": "2025-09-19T10:01:56.130265",
+          "receipt_digest": "763f638302c4dc444e11e137ba860df445f2592f34f5755fcd599f954da06e31",
+          "connections_digest": "c02db12f360415649f3b3397e0b08dbc4edbd52dd4beb870ea5ca4075ed8840a",
+          "anchor_id": "r_763f6383...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7160c0811770f012..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "f72bc17af8e2a603..."
+          }
+        },
+        {
+          "receipt_id": "3c56232b806ee5916660fd57ce369c8265fd5cb77b78515fc5a379fe49e99d98",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_3c56232b",
+          "timestamp": "2025-09-19T10:01:56.133266",
+          "receipt_digest": "f858698c3f9374816f1c713134b1eaa610bfd9ea1950d269eaecaea9052af819",
+          "connections_digest": "e98ad8fb72002a2a66b65f4d4839beeb12baa3578315a8f5325540fd3ed84de5",
+          "anchor_id": "r_f858698c...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "056125608e3ca43e..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "cb4291767c714fe1..."
+          }
+        },
+        {
+          "receipt_id": "2d3ac2c68ab7481894a652a711aef00ed2fc01c2df2f17cbc96964fbcb47c8b9",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_2d3ac2c6",
+          "timestamp": "2025-09-19T10:01:56.135265",
+          "receipt_digest": "20a93a93f85ed375e066c9113363810db018611ffe2b5673c1477dbb7bfd38c3",
+          "connections_digest": "d9da6b40b792cfb883f7eba043e1335b462e5c23a07e365d6de020ad182c9617",
+          "anchor_id": "r_20a93a93...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "188d5185156c3610..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "cfff74218442d5db..."
+          }
+        },
+        {
+          "receipt_id": "c0d9a9eaafcca061ea67318605fa75f81ea6e908b3db13fcae08993cf7e3ea91",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_c0d9a9ea",
+          "timestamp": "2025-09-19T10:01:56.136266",
+          "receipt_digest": "783284d8d7c6634fb29a09153a2574a8fad0849791b708da48b99fceb87ee46a",
+          "connections_digest": "5b07cd58650f2bf36448169a49e66f62e2237ca81929609d6fff0da4264bc785",
+          "anchor_id": "r_783284d8...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "4024e195a12c699a..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "faf450a0b2142e81..."
+          }
+        },
+        {
+          "receipt_id": "36acb71401986b4a634fb99fd370e05226261cbfda90b79a551aac5862572210",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_36acb714",
+          "timestamp": "2025-09-19T10:01:56.138265",
+          "receipt_digest": "f19a1b1e026d0aa375c0bce401258d4b32149f8f1881566307b99acf71277c2e",
+          "connections_digest": "e0826fc649b1ffce61b609b9caef8be3f04d3c597e8f4e65180690ee00027043",
+          "anchor_id": "r_f19a1b1e...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "635f04728ba2f8dd..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c574f0f70578509c..."
+          }
+        },
+        {
+          "receipt_id": "c869e98de43d8287c1c0e360eabb0e1f24af02990156f33906bed43a674856f8",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_c869e98d",
+          "timestamp": "2025-09-19T10:01:56.140265",
+          "receipt_digest": "509a20d26a26f2bb072c5a2a3c493456063edf96b720f94b3272e5fc785266dd",
+          "connections_digest": "7e67d6279cfeda74946b8f80b0e6392aa3d2b5220f95fc55509bc9956d34370e",
+          "anchor_id": "r_509a20d2...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "10f90d84adc701ae..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "be9e2970f3b01973..."
+          }
+        },
+        {
+          "receipt_id": "ff9c5d8138cac14c8287a5ea39891e5294d461b9ec74581adb96d6be753c0bc9",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_ff9c5d81",
+          "timestamp": "2025-09-19T10:01:56.142275",
+          "receipt_digest": "a2bdcf962a87020ed92873f5ad98069c64926f78277f5d6e8562f8aa58af9c37",
+          "connections_digest": "a59098918d243cd69934e3234c80a991807a058b4a8e940b0fcd9bc8dd012457",
+          "anchor_id": "r_a2bdcf96...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ecddbc89eec7a269..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "cbd42b86fe84c5eb..."
+          }
+        },
+        {
+          "receipt_id": "007aeb1f72dfbe5b78c2496a60cf8be22689b447ebf030f7aaf5bb454d38e283",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_007aeb1f",
+          "timestamp": "2025-09-19T10:01:56.144266",
+          "receipt_digest": "8c312f9c655b579a6ac4e6e5d68187944d56a92cd7bf461185b3531f6eb923fc",
+          "connections_digest": "33456153e1b0db82ef86bb7fa5e7bba89520fec66540d2c17fe828be60f7a2e5",
+          "anchor_id": "r_8c312f9c...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ca2a6c4907178840..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "80cf83cca7ef3861..."
+          }
+        },
+        {
+          "receipt_id": "7df5cdb5513b0e9fd809a0c9243896a9bb9a2ca2712df2c1418a4331ea50c7d7",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7df5cdb5",
+          "timestamp": "2025-09-19T10:01:56.146273",
+          "receipt_digest": "b3f34f69b2a82896a742fb5f1672570c15a29b505c87775ab33f8924a2e42ff5",
+          "connections_digest": "ded5fc25a46266b85393e0030c130ae70920939ae189862b02153fd8ef407654",
+          "anchor_id": "r_b3f34f69...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "096404ceec970c79..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5230d4254783eed3..."
+          }
+        },
+        {
+          "receipt_id": "2be84c9efdad3131ce1da608a852fda5317cd4f2d980737a3b5724cf6dc9316f",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_2be84c9e",
+          "timestamp": "2025-09-19T10:01:56.148265",
+          "receipt_digest": "5e43fcdccd1b6c0b2910c51cdae3017d9fe4208631c549a7e59989a23bb8af86",
+          "connections_digest": "008d0a3cb6b8749c1aedd5764e3ec3b477a8e7a591d8441ae73a1d1532543dca",
+          "anchor_id": "r_5e43fcdc...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "b04a1e45fdfb7cf3..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9f4cd212187034c8..."
+          }
+        },
+        {
+          "receipt_id": "8bcbbdeb4d64606516b353b6672c70cdfe9636dd6e1383136addffa4514620f5",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_8bcbbdeb",
+          "timestamp": "2025-09-19T10:01:56.150272",
+          "receipt_digest": "270a2cc0bd0fcdc0d8cb469e354e83bdf915a0749e90bdd20c28a58b25118e58",
+          "connections_digest": "76989cebdbcdad0b61e02e4007576da2e0a039e525120beb9141958267d15fa2",
+          "anchor_id": "r_270a2cc0...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "8960dfdf03572c8a..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "31c6fa84a8f43d0d..."
+          }
+        },
+        {
+          "receipt_id": "94dc85f86819c705570a05ce6de12bd4d3576d4bf8e452f0ce953ebfd39a4b8f",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_94dc85f8",
+          "timestamp": "2025-09-19T10:01:56.152265",
+          "receipt_digest": "b6bf8cbdf4d8eba62eebd719f8b3304d2c3a77b232db89642f81fd93a9b9e626",
+          "connections_digest": "16951b682d6ae0125546ef832b1d3e7f4f77545e9db4faecbd19c9407e2fc79d",
+          "anchor_id": "r_b6bf8cbd...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7a60828fc64add5d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "91f0f73df9722767..."
+          }
+        },
+        {
+          "receipt_id": "0aa81febf85f090047278254c14a281cf1c325b6146f9419f57dc5345fffe60d",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_0aa81feb",
+          "timestamp": "2025-09-19T10:01:56.154266",
+          "receipt_digest": "115da7dc0c83851d17d85710727d64332813ab9594940ab3526d3528254272c3",
+          "connections_digest": "b769550a86b6c8b8202e8b5c2148d405d28f20149128ed4231c9c5ad0e241583",
+          "anchor_id": "r_115da7dc...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "fccb5ef3fe8fe8c9..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "6a144cc2f8035951..."
+          }
+        },
+        {
+          "receipt_id": "7e28361d78ec4973bce32b38dcc4e9d0a9bff2e0787e3979211fc954695dbc61",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7e28361d",
+          "timestamp": "2025-09-19T10:01:56.156265",
+          "receipt_digest": "5d454a6d457c97d0619973d41bdfa4b02dc1763b468b133c2b8fc31cf1a690d9",
+          "connections_digest": "a0e00022f26b0a5cc6de913c17d0b3e5ad5bad478f912882b210b8cf7bd93155",
+          "anchor_id": "r_5d454a6d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "1fb13dd9ffc0a5c8..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ea8a00347aa29be3..."
+          }
+        },
+        {
+          "receipt_id": "5a0e113ad258cdecda2682aa9439e4c2ac6b1de05d2282c0ec3b2da1aa745132",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_5a0e113a",
+          "timestamp": "2025-09-19T10:01:56.158265",
+          "receipt_digest": "d4b87b7a6152aa2906f01534cc935e02079ac98e93fd1ae2c811e62111b57daa",
+          "connections_digest": "ea953dbc9168e98d70bb446bbbebe784be31b0a37147d2e8a3f8fc2ee6ee8995",
+          "anchor_id": "r_d4b87b7a...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "28f2cde451426b07..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "bfc7954198891524..."
+          }
+        },
+        {
+          "receipt_id": "daa4646a4c6119b9753ff49923a983dc24181d0b2584abe9564e0064e9f322f7",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_daa4646a",
+          "timestamp": "2025-09-19T10:01:56.160273",
+          "receipt_digest": "5e84f47e169f7ca3618d5239a3e70a12bf84a56f97b0fce07eecf7c5b7baa07a",
+          "connections_digest": "4f01c7ff15c70e5b8acb5716b22da3e3f4b3d44a53b63fd08a37104010a2fc20",
+          "anchor_id": "r_5e84f47e...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "737890b0598bc9d0..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "cd27f8ac8d663882..."
+          }
+        },
+        {
+          "receipt_id": "34ea8d06da2374cc09477192e2b46b11d21edb823e48273d579f930324ec07d6",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_34ea8d06",
+          "timestamp": "2025-09-19T10:01:56.162265",
+          "receipt_digest": "2c660ac81a5e59038474b798dc2b570c170065af1babd51edace6f04631c7bc5",
+          "connections_digest": "46cad4c98473fcf92cc259dc0ad467de279cd1d848293051ee4a00dfcdf9b376",
+          "anchor_id": "r_2c660ac8...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "198b35607e5a7f0d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0f4a3608dcc8772f..."
+          }
+        },
+        {
+          "receipt_id": "ddf56d1a7c24962b58d74cee067194ff1a0d0a1f25cb486ac3a0028aca3dc65a",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_ddf56d1a",
+          "timestamp": "2025-09-19T10:01:56.164266",
+          "receipt_digest": "40ed786fab1755351ff647fa5da02fc92bf4cabba54e93823bbc557be89fae41",
+          "connections_digest": "7c9a08b738c3188f115398676ef1363fdbb1bd3aebe95755fb11049d276fd6ee",
+          "anchor_id": "r_40ed786f...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d4c209cac75559ca..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "cb99f77a21bdb80f..."
+          }
+        },
+        {
+          "receipt_id": "3c9362b8f060810399ad60b2a933577a8764cc279cb75f037c66ff9c46ca7ce1",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_3c9362b8",
+          "timestamp": "2025-09-19T10:01:56.166265",
+          "receipt_digest": "b9762fefa8343de875b07f6dd999d37f0f9e636afe3f745daaac90ec6cef8b8b",
+          "connections_digest": "ae03b58ef5b68f344394ec9c1f9ac30f6524c7cad74a5b8bb4084fc635478b43",
+          "anchor_id": "r_b9762fef...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "3cd46cba3b93985a..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7b8cbba42bff5344..."
+          }
+        },
+        {
+          "receipt_id": "dab8ba67497673c1f1bdcd291a99ba2540efcaba845d3ec872e07149dd72815c",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_dab8ba67",
+          "timestamp": "2025-09-19T10:01:56.168279",
+          "receipt_digest": "56e68b9580c4e092c1425b849dc72ad863b7361e6326f8af97d31cba519165ee",
+          "connections_digest": "acfa74e3e105eda0988766521d6ad2acbc8c83897e7556429aa96edf5d39d283",
+          "anchor_id": "r_56e68b95...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "1c9ddbe6927b5af4..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "34db3d01f1168492..."
+          }
+        },
+        {
+          "receipt_id": "665f8842c13665aaaa9a7bc09c64a4b1ea7c34fd1511efe94f8b2d9eb2808855",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_665f8842",
+          "timestamp": "2025-09-19T10:01:56.170266",
+          "receipt_digest": "a42838f8121fa68f4ec49f500f5c5e0f375a613f2ba77f5a1956484b7fee9ba0",
+          "connections_digest": "1f24752f5b0868bd2e7f2f966289e04abe30ba3a69961d10c89d2d8ae43b0bdd",
+          "anchor_id": "r_a42838f8...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "012ce72fc39a0152..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2de01e419bc7a36a..."
+          }
+        },
+        {
+          "receipt_id": "0825494fa6e83dcba2b5caa5541f21033da912f4e4c86f87933fa03f37ada1f6",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_0825494f",
+          "timestamp": "2025-09-19T10:01:56.172273",
+          "receipt_digest": "a8fb37a66417fb996d625dc75ac50f757e5aec5ce35d1f385e489174d8972a55",
+          "connections_digest": "fee0e90d580379af3212eeebcd05819797f02f499216dd56a6099865cc3d5505",
+          "anchor_id": "r_a8fb37a6...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "eab9eab232b38a6d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "76b9bf9dcab8b382..."
+          }
+        },
+        {
+          "receipt_id": "91029b528eda80ce6a833f355f81f74935045e3503bdb6545728ee4883777f5b",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_91029b52",
+          "timestamp": "2025-09-19T10:01:56.173266",
+          "receipt_digest": "b60e63738c30ec944ae8dc6e9921a98ba5c51b80310207e255812dab2e5b618f",
+          "connections_digest": "f773316f6db401a3ca54d2c302e80d14595024e9b73e1874cbb9447002b6366d",
+          "anchor_id": "r_b60e6373...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "329e490500115724..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "24285d066ca45177..."
+          }
+        },
+        {
+          "receipt_id": "1f597aa812558a65687a245982515d060fbd4d2b9bc5c85ff0ed63133dd4508a",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_1f597aa8",
+          "timestamp": "2025-09-19T10:01:56.175274",
+          "receipt_digest": "37d19aa02ff9d7a8b054086ab1dfa669158e552ff47f6a2990caa96fbaf7e523",
+          "connections_digest": "91f064d0662865888771de2c6184468c439ff1eaadcf8f8bfe3c515ab1f84ff4",
+          "anchor_id": "r_37d19aa0...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d2095ca7149e385d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "b2fecc9677d22351..."
+          }
+        },
+        {
+          "receipt_id": "e8a44afeeaf7309a995b131d472a23d6e475843d184e4181e7ab0a8aed263cd6",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e8a44afe",
+          "timestamp": "2025-09-19T10:01:56.177265",
+          "receipt_digest": "825aa0bc068e96960dc549c8c2e6c3dc0a001bd1b89792f0a2260a86d5fdb37b",
+          "connections_digest": "e8db99be905ef8cc3175422194091e389b511c393391b73d6b0a25c5d0d7f65d",
+          "anchor_id": "r_825aa0bc...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "afa9e2d1f8826193..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "4c936b72afe1b56c..."
+          }
+        },
+        {
+          "receipt_id": "0b71396fadd0b677d0dca5a1b8213ef0d957bd3207476039cb714c49424973ba",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_0b71396f",
+          "timestamp": "2025-09-19T10:01:56.179889",
+          "receipt_digest": "d31884504516d742277cbde2260a34585b09c4b58b39e79387c456e08e5f70a9",
+          "connections_digest": "83d83edf3dab6c1a3f92277810788c58554e92f6a84e93f6d697f9148004b5ed",
+          "anchor_id": "r_d3188450...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "16da76883b8a8130..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "f26789748799dbdd..."
+          }
+        },
+        {
+          "receipt_id": "aeb55bf1bf5eeed761cf04e1283ed88b40e0327e526735842a2499922927ad1b",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_aeb55bf1",
+          "timestamp": "2025-09-19T10:01:56.180895",
+          "receipt_digest": "47fbc2274607b72795dabe73e74b4df9887c0d2a60730b7713e7b8dc88536321",
+          "connections_digest": "3497b06f08675ffa846999f9d48be36dab0ca77651660752ae9648df85e0f6f7",
+          "anchor_id": "r_47fbc227...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "6db0f85a0ebf8682..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5c1aa8744d975203..."
+          }
+        },
+        {
+          "receipt_id": "280ffb434b1698aba54666e6fcbf6ce9aa7e3cac7086b121cce78cfd0f52f1ea",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_280ffb43",
+          "timestamp": "2025-09-19T10:01:56.182895",
+          "receipt_digest": "33042c80d3c2bccb0544449cee1b6558e4af5bb01d48e7f3a6ebe1e241b2d463",
+          "connections_digest": "42427332833c2dd2258f2ba7c4f11cada4dbd1c656d87f34154b5b9a2d194bb2",
+          "anchor_id": "r_33042c80...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "f1cee96287e4b6e7..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "96de23b51c614a96..."
+          }
+        },
+        {
+          "receipt_id": "255cc924189f8a7841825ce639fd04c682e7c6c6a2a8e4483bcf004d065e3f76",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_255cc924",
+          "timestamp": "2025-09-19T10:01:56.184895",
+          "receipt_digest": "7ed0e9d0903949d17bf220fa87e76b1b82b652169146462fb04bb0f2a263ecab",
+          "connections_digest": "9a89ad4769aa03963c496dc50820ed597333f1912f59d04fce75b25fc535c41b",
+          "anchor_id": "r_7ed0e9d0...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c71df554fc9748b7..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "3a95e4a4b4de9abc..."
+          }
+        },
+        {
+          "receipt_id": "5f71c9a1916ae15fb1b606c7dca7829aaddf30f672aaf39aaf61dc59f06a0682",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_5f71c9a1",
+          "timestamp": "2025-09-19T10:01:56.186894",
+          "receipt_digest": "dba542fbfc9cca7cdc825a8a03ce6c41ed645522499bd93399d436affd86fc75",
+          "connections_digest": "35865012c2fd4104f8ccea6b01a6cfb7264ed2517b6b7a75c072ecac65ab58cd",
+          "anchor_id": "r_dba542fb...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "8d0c3096b9d2e6b6..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5f16fd3c9426b6ff..."
+          }
+        },
+        {
+          "receipt_id": "00d5220d9ea33a3b47f6fe26fbef59e55bf79c3b174f3fa3ab284c4e60eb4a51",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_00d5220d",
+          "timestamp": "2025-09-19T10:01:56.188895",
+          "receipt_digest": "59756fe220236ac68d95af7c5dc8c1a949afd3b2472c11c22d1c34e1bb98ac9d",
+          "connections_digest": "43a23509e87e0092ddf7413f5e3ca3d23fbe7b02c3881756a8f268433d43fe42",
+          "anchor_id": "r_59756fe2...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ccd768ef30a4ff0b..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5ea72f29a5e557f6..."
+          }
+        },
+        {
+          "receipt_id": "7d02c62ddfb391074ee66eb72ac939cc537fe1bb10442825d8d1417835871992",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7d02c62d",
+          "timestamp": "2025-09-19T10:01:56.190895",
+          "receipt_digest": "03469d8a4a8b741a13a9684e6698a5c0b91073b36919ba60a7bc2c210251e567",
+          "connections_digest": "f9cbacb13f8be81bb388741063585d12d5d7dcc20eeed0e53c1350867c7e1985",
+          "anchor_id": "r_03469d8a...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "aa092f4c8d5860b1..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7e84ece7ac859acd..."
+          }
+        },
+        {
+          "receipt_id": "547d5537ecfa816e556028dd92d7dbbd3e64e3e12a0b75e4a17e87fb5e4fbebc",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_547d5537",
+          "timestamp": "2025-09-19T10:01:56.193218",
+          "receipt_digest": "14299b65b0412ab0d1ae4666f76810c24eb142addc2c3228a144864082432af6",
+          "connections_digest": "79f360b2f344bfdf9d9d965c785f6612e033dc0ed9d4ed6ff328e93b818dfe10",
+          "anchor_id": "r_14299b65...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7270eade90b9ce72..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a45df3dd8d43b254..."
+          }
+        },
+        {
+          "receipt_id": "17cc1d5f67b9a88ed781b9857e0b44ab4ed8a4c2387245a9c45dbd8fbcc30161",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_17cc1d5f",
+          "timestamp": "2025-09-19T10:01:56.195217",
+          "receipt_digest": "e9f26f845a8cd43d6e4dcd9ff8524e2ab4fc74fa0e196244e977cdd964d8a9b3",
+          "connections_digest": "0ce93b5f19127fe10c14ebf1b2bad48e0c952185a5d38ef1b973541bf15b8c6e",
+          "anchor_id": "r_e9f26f84...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ea6e365db55095a5..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c0452925d5008dfd..."
+          }
+        },
+        {
+          "receipt_id": "e89902e87c7bef520a54192ae088af82facf79318cf8f73d2105aa5cf0b32fc2",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e89902e8",
+          "timestamp": "2025-09-19T10:01:56.197217",
+          "receipt_digest": "e3d4df012a0c5da3dedb40be2ca30064798815465fc496414c609f279eb4c462",
+          "connections_digest": "5057afe4fd77a274c971d3e2176e7da20c7ce60cb61a56a7dbeb43428359d4ea",
+          "anchor_id": "r_e3d4df01...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "95a6d843e7fd7dfd..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2dcf39b96ef98744..."
+          }
+        },
+        {
+          "receipt_id": "6cd4380711c9dc0d659684208cd03e73f68433a7114a198f40d24a3ff862d42b",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_6cd43807",
+          "timestamp": "2025-09-19T10:01:56.199216",
+          "receipt_digest": "47b400046510b5287db1f0fee38d2181b43659817e84c4edb6c34ed5cff0597c",
+          "connections_digest": "8f899b1bff9404127e1fc25a37e28ba8ed96cac76e404de5fd54a4a7b2d9a666",
+          "anchor_id": "r_47b40004...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a7bb352571123c6c..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9cb7ac6e57de875a..."
+          }
+        },
+        {
+          "receipt_id": "eb6842df7c07c1ddcda5c655af361fcaf654d3393fc3a259dcaa4b2cf2c7847e",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_eb6842df",
+          "timestamp": "2025-09-19T10:01:56.201216",
+          "receipt_digest": "68ef00f1f385e43d1501441e919161bda12f6224d8c2da4b7851debb41200487",
+          "connections_digest": "033c2f7d64589415c220111e62bc22171379a41e8a803bcf195d5ca07e16c1e0",
+          "anchor_id": "r_68ef00f1...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c7c000597b602d85..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2a86059192b35b62..."
+          }
+        },
+        {
+          "receipt_id": "38263019ebd35db50d622bb86327f270e0f0148c4c407f46d1409a8005560e78",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_38263019",
+          "timestamp": "2025-09-19T10:01:56.203220",
+          "receipt_digest": "2a960811588b1648e2cd01e72cd18936dfd18a0aa2a550cd55336774851ed522",
+          "connections_digest": "530f2b6b6735882eee218e881e2d8dfe0321f62b029efe05cfba9164e627608a",
+          "anchor_id": "r_2a960811...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "95da8ee68e6d082d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a8a3652c41ffc497..."
+          }
+        },
+        {
+          "receipt_id": "9c53de9b43e140ed4823bd2389646324a8bd224d4606ec6bc1ae42b392de80d6",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_9c53de9b",
+          "timestamp": "2025-09-19T10:01:56.205225",
+          "receipt_digest": "7dda19f4db529bc6d986c0d53b31440c20ec4db33c0c3f53a48e58c9a1819b7d",
+          "connections_digest": "6c44fae42aaaa870bf4c540c1a7cff759c2332822dca4b24b82ef2753377c386",
+          "anchor_id": "r_7dda19f4...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d2b33628d0ba456f..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5e3a3e9f3846eb7b..."
+          }
+        },
+        {
+          "receipt_id": "5f9238928ed7e3d73e32b164d5ff549ec125ce1c7300ee5e1ae289a99a9f18b8",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_5f923892",
+          "timestamp": "2025-09-19T10:01:56.207218",
+          "receipt_digest": "047c6167c6bac9e3d4b20d60e1ac4d29c7426545e2396c7fb74d2c1a211f6132",
+          "connections_digest": "c529926fc854349a40474b96418b47879f6675c6046a2c85d136f410911dac9e",
+          "anchor_id": "r_047c6167...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c82984f9a9cf6d8a..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "dd852020f9e39b82..."
+          }
+        },
+        {
+          "receipt_id": "a3be2a4d3d6f85ce7095bbde20e973006d06eb464c1333dbf20f19c1b29c007e",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_a3be2a4d",
+          "timestamp": "2025-09-19T10:01:56.209673",
+          "receipt_digest": "7209dd4b19bb2bbe2c90979fdfecf2ef01428d22d1bcac4f00f6fd90c694e9b7",
+          "connections_digest": "a0e6a9cc6450e3abe2889ae8ee78ff7676257fbeafb7678d377ab66aa967eb4f",
+          "anchor_id": "r_7209dd4b...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0af7d24d38ef0448..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ff3796236bbc2e39..."
+          }
+        },
+        {
+          "receipt_id": "8b16f3bc581af375205fab55535ed84b6b31d8f64486197f4702d25b2f8488fd",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_8b16f3bc",
+          "timestamp": "2025-09-19T10:01:56.210679",
+          "receipt_digest": "06fe8836134f9cdc122872b964adae91fcab19e2b3de1bb53a682f3371ddf665",
+          "connections_digest": "65b671c3279b23f8fc2397257df61184187a1d180d6634353c46a5ca7ab5ac70",
+          "anchor_id": "r_06fe8836...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ff95e13810a5b508..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a932b1b827d28184..."
+          }
+        },
+        {
+          "receipt_id": "e161240c6365ce12dec4045a57b2b1b4ae43143b0ff11b76c7e08baae0768ed0",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e161240c",
+          "timestamp": "2025-09-19T10:01:56.213678",
+          "receipt_digest": "ccd80f062f5c2d2e71e2adad926c506db8af3b7021e3b31fd5954a0e21196037",
+          "connections_digest": "7d1f68bc96a084d32602d1028745ce7aa7ca51f1bb28dd9671764ff0cbcfa1fd",
+          "anchor_id": "r_ccd80f06...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "f1bedcbfe919d766..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "79099164d5f5ebba..."
+          }
+        },
+        {
+          "receipt_id": "a4048eaacbfb3e7d9f1027927924512bdd1cf7d461178de5e990c6ef23b63654",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_a4048eaa",
+          "timestamp": "2025-09-19T10:01:56.215686",
+          "receipt_digest": "72d8496211bf83b2fc142e5ce0ffd48a4be23df381f1d89b0f21cdb8b271a6e6",
+          "connections_digest": "ebdaec1bf39edb626ba1a883a76e8ef954574f2011302b1928f79e87789c84ca",
+          "anchor_id": "r_72d84962...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "72aa3d3392647807..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c478eff7edffdf1d..."
+          }
+        },
+        {
+          "receipt_id": "7ab31de609f94eda7dc7ae626f9a4f034a25fde05267f2ff928621aa5ecc6f8e",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7ab31de6",
+          "timestamp": "2025-09-19T10:01:56.217690",
+          "receipt_digest": "ee13476def0b7a2cfe9b68cba84c02d8b33185f307638447146e0c50e18f75aa",
+          "connections_digest": "2e72bb09d6605b1e28a3b87116d24731f0eae2071a1bfe323fea3696e4afbb55",
+          "anchor_id": "r_ee13476d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "79875aa9686cc3d2..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5c82df9785b2162a..."
+          }
+        },
+        {
+          "receipt_id": "7e981859bd1b292906b083f0ff3729ad7c39cd4260ff452d628641ec940b9882",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7e981859",
+          "timestamp": "2025-09-19T10:01:56.218679",
+          "receipt_digest": "a1115b390852d757b84af0cebf670b2409e661d669413dd5a44feead8c845ca6",
+          "connections_digest": "1ae8f32827b8b4107aa20e971dba82e01dc1d18e8715d578b5a94511ec1922e0",
+          "anchor_id": "r_a1115b39...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5599dc7f1cf6e5ca..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "4ea6d177661494ac..."
+          }
+        },
+        {
+          "receipt_id": "e9724bb3efb1d71249f5dd5a80a346dff724b03af39091665c06c6a5f06c304e",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e9724bb3",
+          "timestamp": "2025-09-19T10:01:56.220686",
+          "receipt_digest": "b38b7aa3eb5aba180dcd832edbbc62cf7afb9687efb039d4811b980128ed25e2",
+          "connections_digest": "3dde8422dc54b836af5bf31b6edee2c14ccef97bc009ee397c931863b729ff42",
+          "anchor_id": "r_b38b7aa3...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "3515270758979f13..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ce331d350960419f..."
+          }
+        },
+        {
+          "receipt_id": "87c238047c364ccfd97e03ac9d3bba7c80906c6c179fabb77c90380af47b0c05",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_87c23804",
+          "timestamp": "2025-09-19T10:01:56.223679",
+          "receipt_digest": "49fea4d971aed6a15dd77d12a83e874c07bd945211f7218827bd922a436bb2b3",
+          "connections_digest": "bb4ff249d7dedf0caef2065e2c8057463587cf413eed31fc06659121ec9bf1c1",
+          "anchor_id": "r_49fea4d9...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "3a1a116a915a9447..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "10edb876c75ec1d9..."
+          }
+        },
+        {
+          "receipt_id": "127f7a71c74625854d3dfa0bce97025875cd0fd74402ba79381605089a24ec68",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_127f7a71",
+          "timestamp": "2025-09-19T10:01:56.225678",
+          "receipt_digest": "c8bf227de55f8f511c2150a33214f3cd4aa4867860d8e738523dff7f0048e0de",
+          "connections_digest": "e5493732531fb842facfe7370f55b0eade7ba5674e892e35d5ca44f7a7317952",
+          "anchor_id": "r_c8bf227d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ff08cd156e0e62c0..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0b0d35dee1d212b4..."
+          }
+        },
+        {
+          "receipt_id": "3dd632d6828167b2ce2f097267704fc28e1db56ac2969c6bea13b41216e2aaee",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_3dd632d6",
+          "timestamp": "2025-09-19T10:01:56.227685",
+          "receipt_digest": "50d6657e30276022fdd928a1095b264dd5c105b88aba722db2026a95f5324a56",
+          "connections_digest": "2705b79060caad0941dd8a88ce3079c29ae36ce99e4c77a402808fbee3316c58",
+          "anchor_id": "r_50d6657e...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ca869f4ad13bd888..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "b2f577c13e64ce4f..."
+          }
+        },
+        {
+          "receipt_id": "73792b4e4428490ea5505a9d8015f5384f1cb2378afeacc27af3c4be18f3a403",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_73792b4e",
+          "timestamp": "2025-09-19T10:01:56.229679",
+          "receipt_digest": "b334048b8c22baa0ab9412967fc52a2856187e0cdb868b0f678851ba0b4ad97a",
+          "connections_digest": "b1214af5224937f5e5545e9b648472b8443f886d8a17a7c70fc9e0ca8bf1045f",
+          "anchor_id": "r_b334048b...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "3965ba82f161a833..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a6fd2be9d081158c..."
+          }
+        },
+        {
+          "receipt_id": "85885935155c8c2007df5417ce6c5b7c733d4450d9537cbcd115db8b31ced681",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_85885935",
+          "timestamp": "2025-09-19T10:01:56.231663",
+          "receipt_digest": "358426b40b7e0949a6111b16bcc5b61fff559a22f7de149724d79ce5a6ab5140",
+          "connections_digest": "d1f2d1d103477188982ca409a1292c688b3e54984d4b800724fecd6b6d23e932",
+          "anchor_id": "r_358426b4...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0e5d96b9e0645b86..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d254b9bb8f75c39b..."
+          }
+        },
+        {
+          "receipt_id": "28de42296a8a6715ee6e3732080449655ee528b40206366a0d19e1f81ee949dc",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_28de4229",
+          "timestamp": "2025-09-19T10:01:56.233668",
+          "receipt_digest": "d00a024d069b2a8d4a7fa075e2c04b96cb913efa559c6d88bebe7be256bc79a9",
+          "connections_digest": "bfb23bd887ae10fef9d8af9fad1608deed42b106e796f786bf0548912195499e",
+          "anchor_id": "r_d00a024d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "6202062c05013ddc..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "1c4abc41a85f0a19..."
+          }
+        },
+        {
+          "receipt_id": "e90a10b0023c39f6e768fba9c2b3f80545d83f47328bc2ead5cff17f57da68c2",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e90a10b0",
+          "timestamp": "2025-09-19T10:01:56.235172",
+          "receipt_digest": "1b1f3af235a4d39127efdac5f02b34e2da95e742efb322fd80bdd32605f88d23",
+          "connections_digest": "2565dd44c7827bc875eb8bd3c61b1981d3f33fabbf5c90d629e6ce75bd5fa29e",
+          "anchor_id": "r_1b1f3af2...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d75d4f9797ae695d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9792344dc3261c6f..."
+          }
+        },
+        {
+          "receipt_id": "b5ce791ca719c9483257d92d0f3a5e0be9fdd4f6076de5a8a85ed45cf8546aad",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_b5ce791c",
+          "timestamp": "2025-09-19T10:01:56.237182",
+          "receipt_digest": "e43cd6c295435c60bb990412bbaf8233b845d5a21a378b3bd443a19c6fe0c323",
+          "connections_digest": "b8a8f4f8ebf085a4f22ec76d6bdb15eda766b3a8c4fcdf2fdf7e4b12522e95d0",
+          "anchor_id": "r_e43cd6c2...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "cb37e8e83b9d0e98..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "acca85275f26a104..."
+          }
+        },
+        {
+          "receipt_id": "1a3e96adbcef21e94c436ab40e2d07a9fcf57e6b469730aeabe390fca95e1832",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_1a3e96ad",
+          "timestamp": "2025-09-19T10:01:56.239182",
+          "receipt_digest": "799deee736ea714f2d5c58a091f516b4657e1787f196beb456ef83d324d94809",
+          "connections_digest": "d6448db4848f414c1074a4eccc95d8f8fa2abc8017eaa5c6216b5b743c5b534b",
+          "anchor_id": "r_799deee7...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d576ed3d68323cdf..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "88ac05de7e554b4b..."
+          }
+        },
+        {
+          "receipt_id": "dd10c38d44fb035320df89481d66e420881e7ba7125ebe56b5411f4ef86f8a29",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_dd10c38d",
+          "timestamp": "2025-09-19T10:01:56.241174",
+          "receipt_digest": "b48f89661ee7c972a7b7fbad6bb7cf708da494dbee0d32785597ec37f26afa7e",
+          "connections_digest": "6ede5c5393f525e79f3d09aca7f568ec78ae03843dd9ac101a623f2157d7ab3d",
+          "anchor_id": "r_b48f8966...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "36ac07351e39c9b5..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "315fe7434a680d06..."
+          }
+        },
+        {
+          "receipt_id": "20f164a715380924c00fafcdc2352eddd473bdb19406064c11da2945e1fe330d",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_20f164a7",
+          "timestamp": "2025-09-19T10:01:56.243176",
+          "receipt_digest": "05226f107f789d225466bace99901be7f46350fa0993df22984b51ced40fc29d",
+          "connections_digest": "772a852b4856451c91834b97114051200593f0961414d509f7536dffff0e9634",
+          "anchor_id": "r_05226f10...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "82d1a38ea0f40bbb..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "865ffe3bc2b05b2a..."
+          }
+        },
+        {
+          "receipt_id": "2791b91284a3097e26320bd399340460e9a96c39d65c081b5f1a92febfd42b14",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_2791b912",
+          "timestamp": "2025-09-19T10:01:56.245176",
+          "receipt_digest": "412738860bcaa0fb9cff31de6618b8c58b18a90f52b7548f4195074b3c68997b",
+          "connections_digest": "b579391d9281b5974dc567a2699ed656ee7b080e46a31cf0fc44447e6975ebd2",
+          "anchor_id": "r_41273886...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ce71df33219fd635..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5a0bc31c9e88a396..."
+          }
+        },
+        {
+          "receipt_id": "5d2505ba807f1b627b75ede6288d9373b856d140cf32feef41183088374fab28",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_5d2505ba",
+          "timestamp": "2025-09-19T10:01:56.247182",
+          "receipt_digest": "ccd87c7f658847f53a5443faeca212892696d53348497fef9990b4a193628d3c",
+          "connections_digest": "45f8e7551cefb2e23c9a31464aaf74673d0cd98ceb1749eded52eb73d4583a30",
+          "anchor_id": "r_ccd87c7f...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "65b397fb0ea51551..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "33544166d3949caf..."
+          }
+        },
+        {
+          "receipt_id": "0a5b2dde571032cbe037ae87eba4cb92a1d7cb5bb35ef814477defc254cc89e4",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_0a5b2dde",
+          "timestamp": "2025-09-19T10:01:56.249182",
+          "receipt_digest": "2e02aee19291884e1d13851130276709a8f31ff52136631e9e74e490cfc6bf2e",
+          "connections_digest": "4cf33397075e7ea86f76d4dcae51b19ece8c9e2525a87874057c7f5ac4f81f49",
+          "anchor_id": "r_2e02aee1...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "c14075410843e3b6..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "daa2db6353e448b0..."
+          }
+        },
+        {
+          "receipt_id": "48a242064e6f6291f30c2c09a837daea47a8a2139d9f19c4d00ce4b2a0ae829d",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_48a24206",
+          "timestamp": "2025-09-19T10:01:56.251174",
+          "receipt_digest": "c71fbf8f5be7589f3215a63c8ec8da569db22ddff0a412b7b5d6ee77482b6b7f",
+          "connections_digest": "5dbaec15b40f985fa98472e5f681b250e601dacbe4c6b3e187264005d58bc7f8",
+          "anchor_id": "r_c71fbf8f...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "df84bb33b4b30810..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2c82de57531fc71b..."
+          }
+        },
+        {
+          "receipt_id": "7b318b4ede12ad58fc9663b27969f85852ee8191d364bfd4e2b1c936ddc71bcc",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7b318b4e",
+          "timestamp": "2025-09-19T10:01:56.253202",
+          "receipt_digest": "bcd487febc442ca17bcd66487a94318a50b10bcde5837b39687853d2a00b641b",
+          "connections_digest": "6b8c31f0497c18baef9e46b789064f6b5918aec82742d6500a770566430d4692",
+          "anchor_id": "r_bcd487fe...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0c8fabc39405ca0d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "061843c81ca37868..."
+          }
+        },
+        {
+          "receipt_id": "c187d51de0d036304fc53cf41e0dc0637da85a67782c140e56a2e76576fac48f",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_c187d51d",
+          "timestamp": "2025-09-19T10:01:56.255175",
+          "receipt_digest": "1e9e6bca918161c0ab53abb4f37886cfccb50109855002e15df7c20db4caff3b",
+          "connections_digest": "7f337418602d7d93da731f5c724cbd3e573cc9652aedbb6b92e659d56bb28da4",
+          "anchor_id": "r_1e9e6bca...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a17349f7e6ff8a9d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "263e9d8446422df1..."
+          }
+        },
+        {
+          "receipt_id": "49729984c105bcdf77fa7ec783feea389f3389a5a0a4ab8ff6b926d5354b7d49",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_49729984",
+          "timestamp": "2025-09-19T10:01:56.257174",
+          "receipt_digest": "3c65e8fd2eb2caca481451c55ac7930146d960831b9623a0bc80c2813edb839f",
+          "connections_digest": "e47e970997d6e56c627ec8cc4e877aa74a4428fc8b61c790f9882014c5e5f737",
+          "anchor_id": "r_3c65e8fd...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "05a627d021de4ddb..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "67c6c948bd2bdab3..."
+          }
+        },
+        {
+          "receipt_id": "bbb27b03aa30679768ecb481c96bbec3349c2a818f15c432746994ef9fff8341",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_bbb27b03",
+          "timestamp": "2025-09-19T10:01:56.259174",
+          "receipt_digest": "91f108d152bbd733e71ac0e78a2cab8c881cc234784ee12f27e165d77693907c",
+          "connections_digest": "03c172f3a7d13446bb56f09450e2356d96d520ac2d47c9e2d17dcbf62cea50ce",
+          "anchor_id": "r_91f108d1...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "03b82934dc8bf486..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "5c5f7ec42b23777c..."
+          }
+        },
+        {
+          "receipt_id": "432291617464593ffb535209333369fd73c8a6ca199555e6720206b41e4e0248",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_43229161",
+          "timestamp": "2025-09-19T10:01:56.261175",
+          "receipt_digest": "4692c1133c027bb7e6302980b5a482d6dd1669713080647c658da24c9e93e554",
+          "connections_digest": "673d51782a156ef4327dbdba9cfceaa0ffc303031ecd077e3f8eaa3d98a00543",
+          "anchor_id": "r_4692c113...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d562d99f9ec5ec68..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "43264a4b908b846f..."
+          }
+        },
+        {
+          "receipt_id": "b496b50a615327c277d963618b4f40ef1760a4cb4258a091581f08023af2cda5",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_b496b50a",
+          "timestamp": "2025-09-19T10:01:56.263175",
+          "receipt_digest": "e13189fc1de37139daa2b7b8deb4e3587aeacc1437206b8ea1d98ee22df43ccf",
+          "connections_digest": "c35d73372b9bc6ea1f12d0e03de84b9dea2bf9b8f3117b2abc2e4b484a26cbec",
+          "anchor_id": "r_e13189fc...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "606627ca5d497bc9..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0a1720b8af9dbfe4..."
+          }
+        },
+        {
+          "receipt_id": "4b7de7732baa30743f73a6cc3b54b5dff00c05625627311513c6122020053e4e",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_4b7de773",
+          "timestamp": "2025-09-19T10:01:56.265182",
+          "receipt_digest": "a17efe6d1d1ad5837fd9d1d40ac75a0658ef7fac919fe0481325eee3ad9ed591",
+          "connections_digest": "97640665c9fa6002f7cca781dbc120f5a5bcb6349c8958c3102623ad8162c1e8",
+          "anchor_id": "r_a17efe6d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9bde456888f3b5c1..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a21c9ff9d3dbab2d..."
+          }
+        },
+        {
+          "receipt_id": "24a338c316249faac98cebc2fc4314c05e6ae83cf6086417e0de273673db114c",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_24a338c3",
+          "timestamp": "2025-09-19T10:01:56.267174",
+          "receipt_digest": "13d674e0aa3f9d83c51e2a435506b4a3c3a422fd9c6d9471c54220fdaa303d44",
+          "connections_digest": "79808ccca0963c808c435ce510a66f2a257b409ee11d84d647bad2a3d560ee93",
+          "anchor_id": "r_13d674e0...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "3c108407bd5ece5a..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "f08130042b2b7d1c..."
+          }
+        },
+        {
+          "receipt_id": "8652e8c473160bddb3055ec7789f2f14d1026de09c9e1cf130124fb3ae0550a3",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_8652e8c4",
+          "timestamp": "2025-09-19T10:01:56.269174",
+          "receipt_digest": "d9a56c016064994a08e564efb1cd277ddd2c2436fc852350b248d0bed52441b6",
+          "connections_digest": "4acce06f9256cd52de61a614cc984427815f4b5015486bf873844a31eefd2e0d",
+          "anchor_id": "r_d9a56c01...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9c189d6271199451..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "018518d4ffa92e49..."
+          }
+        },
+        {
+          "receipt_id": "fd803d90beae63a0dd65b9acedc089ddfe161ea02f6384245cfa488c191d55d6",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_fd803d90",
+          "timestamp": "2025-09-19T10:01:56.271174",
+          "receipt_digest": "b1ad047207b2971872e117015ea7e982431f20cbd5affa4ab6e0df094fcc4e9c",
+          "connections_digest": "f0e538987236eb4a4a3826c57d2ea0fa767836c15799d7229409ced82e51bf04",
+          "anchor_id": "r_b1ad0472...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "f01690c58851bc54..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "1133c2700a76627b..."
+          }
+        },
+        {
+          "receipt_id": "954408d35b4234883735e6e11a2122b57134bef00d1a6faec8668c8c01a13b77",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_954408d3",
+          "timestamp": "2025-09-19T10:01:56.273177",
+          "receipt_digest": "ed17bbf0f086a9a43e2f507eed9d590b25254317cb500f4431a14260a28adb0a",
+          "connections_digest": "32a316a4de02763c5aa4e4c8abdab35df55fbe13454140272c375c06bc74622c",
+          "anchor_id": "r_ed17bbf0...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "922e95b5b3849d3e..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "8002f371586915d5..."
+          }
+        },
+        {
+          "receipt_id": "7fb5b33c895599a464edce0faed35515c0a18d50c9ef8d2e3470671d932ae6c7",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7fb5b33c",
+          "timestamp": "2025-09-19T10:01:56.275176",
+          "receipt_digest": "c94bcc7d5dd3e2b4aa1b4dda3c8487571a1e5ac2008b52befdf8ac2b1cc7a351",
+          "connections_digest": "a776ee06f64d240e54d2d9fee819e7a06b2e4d72e7229da2ec4d041ba3d59859",
+          "anchor_id": "r_c94bcc7d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "8c58590a7a8f26fe..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "908b87e295d71af1..."
+          }
+        },
+        {
+          "receipt_id": "25c3215232bd4095d111fc62c7ed17de0e37fb01d066ab04eafe97433b9c4fbf",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_25c32152",
+          "timestamp": "2025-09-19T10:01:56.277182",
+          "receipt_digest": "e20b6fbcc2a7e530c719359d5a108e17c8a98ba5ae23c5e5b47110805d834f55",
+          "connections_digest": "284e80e6c02028817e896ae846ba39de5b65034007baf2d1bb463b14a3fc54ca",
+          "anchor_id": "r_e20b6fbc...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d1f8fea01103fc78..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7a89ce4ae0a3c6e0..."
+          }
+        },
+        {
+          "receipt_id": "c74a48ffb5bc358c714cfffd7bd82c063d18ea5423af4883bbcb45bcd6c4f561",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_c74a48ff",
+          "timestamp": "2025-09-19T10:01:56.279182",
+          "receipt_digest": "119d36033ae809d2c1a6321b4bbd47845f0ab6dfa7c4225d4a81fe878a40c1c8",
+          "connections_digest": "e228ae8a22414aaef1c3b7e59aa301683a56bafcb9bb2d560a6ace9e12f9e530",
+          "anchor_id": "r_119d3603...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0b901c1fc8023f2c..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "94441444d7ab053a..."
+          }
+        },
+        {
+          "receipt_id": "3379c4e768bcac7a2c05b08a3376b2de9a032629bf1e32892efc08153a77bfe9",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_3379c4e7",
+          "timestamp": "2025-09-19T10:01:56.281174",
+          "receipt_digest": "ce5f92dd75dd5bc8173f48cadb3d166bf1b704eafa869556ee26b8089cdfdb7d",
+          "connections_digest": "ecd30e153a5c5f01eb0f389ba11626b171e7f1ef34d55e0824bada4729ef9e25",
+          "anchor_id": "r_ce5f92dd...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "d18eaac1fef6d71c..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "bc31e5280876e9e2..."
+          }
+        },
+        {
+          "receipt_id": "9876caf2b266c0e58c2e9b9c0ca59a4be82887e8ed39dc209ba160fbbaa39647",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_9876caf2",
+          "timestamp": "2025-09-19T10:01:56.283175",
+          "receipt_digest": "48450930b7f88b2e706e67b2a42d7dfaff3076a8d62885db7a1f1a34fee60349",
+          "connections_digest": "bf896e29984bb5326910f59046cd5982ca69e187b360ec4c738d3f5574224384",
+          "anchor_id": "r_48450930...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9af1232a08882640..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "b72faa95428cc41b..."
+          }
+        },
+        {
+          "receipt_id": "7b84c80f3f7a0fafe32c4ec53911b051114addb93c6442d74599e10f5b99d77c",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7b84c80f",
+          "timestamp": "2025-09-19T10:01:56.285188",
+          "receipt_digest": "29462b10ca648e87f1b8bd3c2bd1d2c4870d32c5110811650d4b66db921b93b8",
+          "connections_digest": "4b3170d9c81fa9fda08acbd1b20ce263a2d53a810bad412e3e023833b6686778",
+          "anchor_id": "r_29462b10...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "84f6d7ba8ff70e4c..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "26b3060488f235a0..."
+          }
+        },
+        {
+          "receipt_id": "fafb877b4462dfcdf555d1c6f00f5a7a546c3fee7fc548fd4ea1ff0acf24592f",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_fafb877b",
+          "timestamp": "2025-09-19T10:01:56.287579",
+          "receipt_digest": "ce4195814b23d400e0a98c2cb3ae24f987d7371fab7e4971982e73e31e5e4ae0",
+          "connections_digest": "b73b8bbd6d8455de4023950bda7f2f43da6693bf8f03856554c6d285fdfe7f60",
+          "anchor_id": "r_ce419581...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "3117734c3029e0a1..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "80394060096dd740..."
+          }
+        },
+        {
+          "receipt_id": "70ded31c5253be1c7c468960867ac0776fd5a0ea215003557c021aff3adc9d10",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_70ded31c",
+          "timestamp": "2025-09-19T10:01:56.289586",
+          "receipt_digest": "6e06cc3cfc3c72ef0c96f897716f485eb9bd1e76dfef759ffed42152671f49d0",
+          "connections_digest": "edead02a7103067d678c127b87fbfff354805d53985dd8124e337f8bc5cc6dc8",
+          "anchor_id": "r_6e06cc3c...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "4b81facc3d211512..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "01ae67d1d0dcc770..."
+          }
+        },
+        {
+          "receipt_id": "a064992577ca7a90c8587f56c1ab4eef8f95bbe7f9b262287a9a86f4aecc5def",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_a0649925",
+          "timestamp": "2025-09-19T10:01:56.291594",
+          "receipt_digest": "79ef5e8fd55de17be30e6378d16c829b09890f11735a3aa843e8bc1a3d9be18d",
+          "connections_digest": "1ee389e827893fb9b380681868fb6b13d63ac97d1c2be387feace56a5dbddcdf",
+          "anchor_id": "r_79ef5e8f...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "6f81246985ab32e8..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "e1960c685ad4b50c..."
+          }
+        },
+        {
+          "receipt_id": "e81bbfe16e2425739a5730095a072391ebff84d02394ea2997b10a4198f96cb1",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e81bbfe1",
+          "timestamp": "2025-09-19T10:01:56.293585",
+          "receipt_digest": "020a272e0fdcb7f06b272e3e4b1f445263d9d612e669ec8cee6af2323ef3566a",
+          "connections_digest": "bcdefdd62d60bdbd80e17df29f58e7321c2530bc852f974b06280a60779fae80",
+          "anchor_id": "r_020a272e...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ee8cd3e9d419ac85..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "8f86a93543e03d5d..."
+          }
+        },
+        {
+          "receipt_id": "8acd93a788c8df2b53b7c1b84ca814e09dc1a18ccc57b2ecef3d87cfd5a771f3",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_8acd93a7",
+          "timestamp": "2025-09-19T10:01:56.295586",
+          "receipt_digest": "d62df7c3e1159d8bab2965cbd831144c946628d6017d7233a0879f10a4d983b9",
+          "connections_digest": "8579f52b51754f58fc89fa2dfe57965ef1f87462408975a7d90461cd738170b1",
+          "anchor_id": "r_d62df7c3...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "fe9070d921123188..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "384643fee8bc5434..."
+          }
+        },
+        {
+          "receipt_id": "cf9db9a4854d4ac29deb0477a54e75a91a3099e4b153788ad144de2551374549",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_cf9db9a4",
+          "timestamp": "2025-09-19T10:01:56.297586",
+          "receipt_digest": "fee331a6e2840cbc6d5903f4b1e45dcc249e4993fcdee179b9b21277ae85ba3f",
+          "connections_digest": "64696a03e3c5dcd57404683ff752e0f13c7847c70bd647f4cf4c200783da50e6",
+          "anchor_id": "r_fee331a6...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "22a33fabbb8ed7a2..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "112de8ad26d2c971..."
+          }
+        },
+        {
+          "receipt_id": "a5e97dd254ea82152c4df9bf34624c0e643651beb79b9a3731f3df4a08d7daa1",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_a5e97dd2",
+          "timestamp": "2025-09-19T10:01:56.299585",
+          "receipt_digest": "7d420006901bf0f41adea5335a3d855ae2c9f65ae81263df31f133fd6ff1b05b",
+          "connections_digest": "3619700c0142a5f5ac5b2587ae4d7b28c5a886e62598f00b099cab3d6772fa2c",
+          "anchor_id": "r_7d420006...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "e9efa835a6a06d16..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "e656dbc37dccbaf7..."
+          }
+        },
+        {
+          "receipt_id": "d349468103ffcd14e5f2c1daee2f64de434995d985fcd9c10afc1a2befd92ca1",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_d3494681",
+          "timestamp": "2025-09-19T10:01:56.300585",
+          "receipt_digest": "f8cf69fe22e576c5da06e49b052d9ee3c9bbb45013df71077136b36a77769175",
+          "connections_digest": "b5188a00e8126a084d3c2bd2abd04f37ae02fae036abdfbfa1d03fbd2000e1e0",
+          "anchor_id": "r_f8cf69fe...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "bb21c887eecad54d..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "354a0b7caabf1329..."
+          }
+        },
+        {
+          "receipt_id": "f106bdbcc655ea4f842f57ce323683fead63db0a4cd2525beb478e43e0bad401",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_f106bdbc",
+          "timestamp": "2025-09-19T10:01:56.302585",
+          "receipt_digest": "a5af524db09003ab29524ef4c45cc46dde0d3acb69ef4ef5a026b87a2b70ab6b",
+          "connections_digest": "0eeef59f56ce874901b84bb158d353c28447c87573ce9244f3849069877c4329",
+          "anchor_id": "r_a5af524d...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "a1de3ecff5483493..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "9ceaefdee81d6784..."
+          }
+        },
+        {
+          "receipt_id": "d21d4281c0b3d30a3befc9f4afaa15a733ac17468d4875cd2ad998177d6ee66a",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_d21d4281",
+          "timestamp": "2025-09-19T10:01:56.305585",
+          "receipt_digest": "75cd460e0c0d7e7d3232bd42975348ec4bbb984fb41d9c0586809daf0bcbd9e7",
+          "connections_digest": "6d37b7473bf2f1e7e31516d432acd37b04a338320f000f00a1e7796b1981c7b1",
+          "anchor_id": "r_75cd460e...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "4bc78fb0b631a182..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "2b7219f3bb41fff2..."
+          }
+        },
+        {
+          "receipt_id": "f7f00b2999de4211d7f9515deb9eaedfcacd82955b5c527a9227d217eaab3243",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_f7f00b29",
+          "timestamp": "2025-09-19T10:01:56.307599",
+          "receipt_digest": "c584107b1535cd698ae5259ccbf69f1818b77ff53896103e6845f93b7ea30779",
+          "connections_digest": "7d33a530a09b021e5b7e8b8b3388f458621f237c8a429a928c49c02970045569",
+          "anchor_id": "r_c584107b...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "8be9cb11febaf162..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "80fa628abf4572e3..."
+          }
+        },
+        {
+          "receipt_id": "1a3813c9c19ced6bd68ac868618c48307dd17cc656e6feab020ae40024a00652",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_1a3813c9",
+          "timestamp": "2025-09-19T10:01:56.308586",
+          "receipt_digest": "e0b6af100be0dd392d4b81a6bb2cbe61eeca5fceddf3507f791ad4ceb0dad6d2",
+          "connections_digest": "67366b02b03ce0f473c9827a8b4041a76d4c53b520113d9d8e54d6c6b2571930",
+          "anchor_id": "r_e0b6af10...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "878bc12a8a1425f0..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "08784cb5237ef81f..."
+          }
+        },
+        {
+          "receipt_id": "d44a11aa06ec7b3f8f16628be4aeee9012cea1d0771965075c666e24c9412a49",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_d44a11aa",
+          "timestamp": "2025-09-19T10:01:56.310594",
+          "receipt_digest": "551123c3bca5acc58fab867167c616671e3dbab2f6faadb6674db6c304dba1d5",
+          "connections_digest": "59708836b57c1f60891fdfaa670ae0ddd96d27fc56a14c42871866bad4af7f15",
+          "anchor_id": "r_551123c3...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "19c5be6b91968b5c..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0b8fb76b40aa400b..."
+          }
+        },
+        {
+          "receipt_id": "e10ff69ffb5cf98f5943a6517e7407ebed4b0fc58ebf9d4df187269db2cdf407",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_e10ff69f",
+          "timestamp": "2025-09-19T10:01:56.313586",
+          "receipt_digest": "5d71b72e579f0a38e1debfe9e5d206ae18cc77809e4df187d294a922021a4254",
+          "connections_digest": "a17cf65e86e8b97760c158ab934848bdb937bfde403b5d4ad1a7cfc2a96586bc",
+          "anchor_id": "r_5d71b72e...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "7f155e4151566413..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "87c1f6205f2cd41c..."
+          }
+        },
+        {
+          "receipt_id": "7ca2d59fdff713a452f6ff2325fad0a9c9967923ce0125187b5d687379b07d45",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_7ca2d59f",
+          "timestamp": "2025-09-19T10:01:56.315585",
+          "receipt_digest": "3e0c0d799b596f57277420e93377e8bb082501941feadc41ba1f8b55a61617bc",
+          "connections_digest": "53ae5e82b87a2ea51b99fa2af37eac808e727f04134d080257388323f50e0e50",
+          "anchor_id": "r_3e0c0d79...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "670ea6be9757ea05..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "66eeb65abc4a8445..."
+          }
+        },
+        {
+          "receipt_id": "94a0e1856267e9ac6e5c153814eb548520bc08f1ca569866e33fca0503660a08",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_94a0e185",
+          "timestamp": "2025-09-19T10:01:56.317584",
+          "receipt_digest": "eca330a7d24fc5d2df466ef1e4c71e0af5bb4f31dcd0ca7444f0b889005120e7",
+          "connections_digest": "c366b0e49fd8516a48d3ec61240549f2976d167262993bd4bb1f93b3c6ff4663",
+          "anchor_id": "r_eca330a7...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "cac3e194c22b7d12..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "1a089cdf65cf40d1..."
+          }
+        },
+        {
+          "receipt_id": "54c6854429d00d688ada74b02a53455e70adf30dad8c4ba6ac15bb7886ea70f2",
+          "model_anchor_ref": "8c3992812b10a64e1e6bd15876476d5a07edc68d1d60b013bfcf8a80a28c48ba",
+          "deployment_anchor_ref": "Production_Fraud_Detection_Model",
+          "request_id": "req_54c68544",
+          "timestamp": "2025-09-19T10:01:56.319586",
+          "receipt_digest": "548c0b33f5a5b124111cf9b54adc579b438d7eb692a0b808b6e6312ef03fe3a2",
+          "connections_digest": "63568560590ef43a0d591b4904ed578c8fdd94e8ee739cda4e2626bddb428a3e",
+          "anchor_id": "r_548c0b33...",
+          "input_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "ecc7343682d4dcfb..."
+          },
+          "output_commitment": {
+            "commitment_type": "CommitmentType.SALTED",
+            "commitment_value": "0621d821f1a7b927..."
+          }
+        }
+      ]
+    }
+  ],
+  "audit_summary": {
+    "model_name": "Production_Fraud_Detection_Model",
+    "model_version": "1.0.0-production",
+    "total_training_capsules": 1000,
+    "total_inference_receipts": 110,
+    "compliance_features": {
+      "explainability": true,
+      "uncertainty_quantification": true,
+      "metadata_tagging": true,
+      "compliance_mode": "financial"
+    },
+    "lcm_integrity_status": "VERIFIED"
+  },
+  "pickle_metadata": {
+    "pickle_ready": true,
+    "preserved_during_serialization": false,
+    "serialization_timestamp": null,
+    "restoration_status": "PENDING"
+  }
+}

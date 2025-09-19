@@ -1,14 +1,14 @@
 {
   "deployment_info": {
     "model_name": "Production_Fraud_Detection_Model",
-    "deployment_timestamp": "2025-09-19T09:07:29.218283",
+    "deployment_timestamp": "2025-09-19T10:02:09.977744",
     "model_version": "1.0.0-production",
     "compliance_mode": "financial",
-    "deployment_id": "deploy_20250919_090729"
+    "deployment_id": "deploy_20250919_100209"
   },
   "model_files": {
-    "model_pickle": "Production_Fraud_Detection_Model_20250919_090729.pkl",
-    "audit_trail": "Production_Fraud_Detection_Model_audit_trail_20250919_090729.json"
+    "model_pickle": "Production_Fraud_Detection_Model_20250919_100209.pkl",
+    "audit_trail": "Production_Fraud_Detection_Model_audit_trail_20250919_100209.json"
   },
   "lcm_summary": {
     "lcm_enabled": true,
@@ -30,5 +30,9 @@
     "pickle_preservation_verified": true,
     "compliance_ready": true,
     "inference_tracking_enabled": true
+  },
+  "benchmark_results": {
+    "audit_export": 0.003320600022561848,
+    "model_serialization": 0.006568599957972765
   }
 }

@@ -24,10 +24,31 @@ class MetadataConfig:
         "storage_path": "ciaf_metadata",
         "enable_compression": False,
         "max_file_size_mb": 100,
+        # Performance optimization settings
+        "enable_lazy_materialization": True,  # Only create full audit trails when needed
+        "batch_size": 100,  # Batch metadata operations
+        "async_writes": True,  # Use async I/O for better performance
+        "cache_size": 10000,  # Large in-memory cache
+        "defer_validation": True,  # Skip expensive validations during training
+        "fast_inference_mode": True,  # Optimize for inference speed
+        "memory_buffer_size": 50,  # Buffer operations in memory
+        # Deferred LCM settings
+        "enable_deferred_lcm": True,  # Enable deferred LCM processing
+        "default_lcm_mode": "adaptive",  # Options: "immediate", "deferred", "adaptive"
+        "lcm_batch_size": 50,  # Number of receipts to process in each batch
+        "lcm_processing_interval": 2.0,  # Seconds between batch processing
+        "lcm_queue_max_size": 10000,  # Maximum queue size for lightweight receipts
+        "lcm_immediate_threshold_ms": 50.0,  # Threshold for adaptive mode switching
+        "lcm_cpu_threshold_percent": 80.0,  # CPU threshold for adaptive decisions
+        "lcm_memory_threshold_mb": 500.0,  # Memory threshold for adaptive decisions
+        "lcm_enable_persistence": True,  # Persist queue on shutdown
+        "lcm_storage_dir": "deferred_lcm_storage",  # Directory for LCM storage
+        "lcm_audit_batch_format": "json",  # Format for audit batch files
         # Database settings (for SQLite backend)
         "db_connection_timeout": 30,
         "db_journal_mode": "WAL",
         "db_cache_size": 10000,
+        "db_connection_pool_size": 5,  # Connection pooling
         # Retention settings
         "metadata_retention_days": 365,
         "compliance_retention_days": 2555,  # 7 years for compliance
@@ -41,10 +62,10 @@ class MetadataConfig:
         "encrypt_sensitive_data": False,
         "encryption_key_path": None,
         "audit_all_access": True,
-        # Performance settings
-        "cache_size": 1000,
-        "async_writes": False,
-        "batch_size": 100,
+        # Performance settings (legacy - kept for compatibility)
+        "cache_size": 10000,  # Duplicated above for compatibility
+        "async_writes": True,  # Duplicated above for compatibility
+        "batch_size": 100,    # Duplicated above for compatibility
         # Compliance settings
         "compliance_frameworks": ["GDPR", "FDA", "EEOC", "FCRA", "HIPAA", "ISO_13485"],
         "required_metadata_fields": ["model_name", "stage", "event_type", "timestamp"],
@@ -256,6 +277,46 @@ CONFIG_TEMPLATES = {
         "cache_size": 10000,
         "db_cache_size": 50000,
         "enable_compression": True,
+        "enable_lazy_materialization": True,
+        "defer_validation": True,
+        "fast_inference_mode": True,
+        "memory_buffer_size": 100,
+        "db_connection_pool_size": 10,
+    },
+    "ultra_fast": {
+        "storage_backend": "sqlite", 
+        "storage_path": "ciaf_metadata_ultrafast",
+        "async_writes": True,
+        "batch_size": 1000,
+        "cache_size": 50000,
+        "db_cache_size": 100000,
+        "enable_compression": False,  # Disable compression for speed
+        "enable_lazy_materialization": True,
+        "defer_validation": True,
+        "fast_inference_mode": True,
+        "memory_buffer_size": 200,
+        "db_connection_pool_size": 20,
+        "audit_all_access": False,  # Reduce audit overhead
+        "enable_metrics": False,    # Disable metrics collection
+        "include_metadata_hash": False,  # Skip hash calculations
+    },
+    "inference_optimized": {
+        "storage_backend": "sqlite",
+        "storage_path": "ciaf_metadata_inference",
+        "async_writes": True,
+        "batch_size": 50,  # Smaller batches for inference
+        "cache_size": 20000,
+        "db_cache_size": 100000,
+        "enable_compression": False,
+        "enable_lazy_materialization": True,
+        "defer_validation": True,
+        "fast_inference_mode": True,
+        "memory_buffer_size": 300,  # Large buffer for inference
+        "db_connection_pool_size": 15,
+        "audit_all_access": False,
+        "enable_metrics": False,
+        "include_metadata_hash": False,
+        "compliance_frameworks": [],  # Skip compliance checks during inference
     },
 }
 
