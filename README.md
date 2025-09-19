@@ -214,6 +214,166 @@ print("Inference receipts:", audit_trail["inference_connections"]["total_receipt
 
 ---
 
+## Tools & Verification
+
+CIAF includes a comprehensive suite of tools for demonstration, verification, and audit compliance located in the `tools/` directory.
+
+### 🔧 Verification Tools
+
+#### Independent Receipt Verification
+```bash
+# Verify any CIAF receipt with detailed cryptographic validation
+cd tools/
+python verify_receipt.py path/to/receipt.json
+```
+
+The verification tool provides detailed output including:
+- **Dataset Merkle root validation** with expected vs calculated hashes
+- **Model parameter fingerprints** with complete parameter display
+- **Model architecture verification** with full architecture specs
+- **Audit connection integrity** with hash chain validation for each event
+
+#### Enhanced Verification Features
+- ✅ **Complete hash transparency** - Shows expected vs calculated values for all cryptographic operations
+- ✅ **Parameter visibility** - Displays full model configuration and architecture
+- ✅ **Audit chain details** - Individual event validation with hash linking verification
+- ✅ **Error diagnostics** - Clear indication of validation failures with specific details
+- ✅ **Compliance ready** - Output suitable for regulatory audits and forensic investigation
+
+### 🚀 Demo & Benchmarking Tools
+
+#### Deferred LCM Performance Demo
+```bash
+cd tools/
+python deferred_lcm_benchmark.py
+```
+
+This benchmark demonstrates:
+- **Performance comparison** between standard CIAF, high-performance deferred LCM, and adaptive LCM
+- **Real-world fraud detection** scenario with 1000+ predictions
+- **Adaptive mode switching** based on system load and processing requirements
+- **Comprehensive metrics** including throughput (samples/sec) and latency analysis
+
+#### Receipt Verification Workflow Demo
+```bash
+cd tools/
+python demo_receipt_verification.py
+```
+
+Complete workflow demonstration:
+1. **Extracts receipts** from deferred LCM audit batches
+2. **Converts to verifiable format** compatible with independent verification
+3. **Runs verification** using the enhanced verification tool
+4. **Shows detailed results** with full audit trail information
+
+#### Receipt Extraction Tool
+```bash
+cd tools/
+python extract_receipt_for_verification.py
+```
+
+Converts deferred LCM audit batches into standalone CIAF receipts for independent verification:
+- **Merkle tree construction** from training data samples
+- **Model fingerprint generation** for parameters and architecture
+- **Audit chain creation** with proper hash linking
+- **Deferred LCM metadata** preservation for compliance tracking
+
+### 📊 Demo Features
+
+The tools demonstrate:
+
+#### **Enhanced Model Wrapper** (`enhanced_model_wrapper.py`)
+- **Deferred LCM integration** with background audit materialization
+- **Adaptive mode switching** between immediate and deferred processing
+- **Performance optimization** while maintaining full compliance
+- **Receipt generation** with lightweight audit creation
+
+#### **Performance Benchmarking**
+Example output from deferred LCM benchmark:
+```
+Performance Comparison Results:
+=====================================
+Standard CIAF: 0.0006s avg (1723 samples/sec)
+High-performance: 0.0016s avg (625 samples/sec)  
+Adaptive LCM: 0.0029s avg (548 samples/sec)
+
+Audit Trail Generation: 50 receipts created
+Verification: All receipts independently verified ✅
+```
+
+#### **Verification Transparency**
+Example verification output:
+```
+🔍 Verifying CIAF Receipt...
+========================================
+📊 Dataset Merkle root: ✅ Valid
+   📋 Dataset ID: deferred_lcm_demo_dataset
+   🌿 Leaf count: 4
+   🔍 Expected root: 3d1081642ad6c5e2f327f8f288dafaba...
+   🧮 Calculated root: 3d1081642ad6c5e2f327f8f288dafaba...
+🤖 Model parameters: ✅ Valid
+   📝 Model name: Enhanced_CIAF_Demo_Model
+   🔧 Parameters: {'model_type': 'RandomForestClassifier'...}
+   🔍 Expected fingerprint: 94c603d9c0c024cf124ecd9dc136107b...
+   🧮 Calculated fingerprint: 94c603d9c0c024cf124ecd9dc136107b...
+📋 Audit connections: ✅ Valid
+   🔗 Event count: 2
+   📄 Event 1: training_started (✅)
+      🆔 Event ID: training_start
+      ⏰ Timestamp: 2025-09-19T10:00:00Z
+      🔍 Expected hash: 3ae6ac3adf1cf3579d9c99fb4c1d52bf...
+      🧮 Calculated hash: 3ae6ac3adf1cf3579d9c99fb4c1d52bf...
+========================================
+🎯 Overall Receipt: ✅ VALID
+```
+
+### 🎯 Usage Instructions
+
+1. **Run the benchmark** to see deferred LCM performance improvements:
+   ```bash
+   cd tools/
+   python deferred_lcm_benchmark.py
+   ```
+
+2. **Verify generated receipts** using the independent verification tool:
+   ```bash
+   python verify_receipt.py ../extracted_ciaf_receipt_for_verification.json
+   ```
+
+3. **Complete workflow demo** from generation to verification:
+   ```bash
+   python demo_receipt_verification.py
+   ```
+
+4. **Extract custom receipts** from any audit batch:
+   ```bash
+   python extract_receipt_for_verification.py
+   ```
+
+### 📁 Tools Directory Structure
+```
+tools/
+├── verify_receipt.py              # Independent receipt verification
+├── deferred_lcm_benchmark.py      # Performance demonstration  
+├── enhanced_model_wrapper.py      # Enhanced CIAF wrapper
+├── demo_receipt_verification.py   # Complete workflow demo
+├── extract_receipt_for_verification.py  # Receipt extraction
+├── verification_enhancement_summary.py  # Feature summary
+└── examples/                      # Additional examples
+    ├── quickstart.py
+    ├── lcm_integration_demo.py
+    └── credit_model_demo.py
+```
+
+These tools provide everything needed to:
+- **Understand CIAF capabilities** through working demonstrations
+- **Verify audit integrity** with independent cryptographic validation
+- **Benchmark performance** across different LCM configurations
+- **Generate compliance reports** suitable for regulatory review
+- **Debug verification issues** with detailed diagnostic output
+
+---
+
 ## CLI Tools
 
 ```bash

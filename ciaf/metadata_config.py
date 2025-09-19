@@ -192,6 +192,29 @@ class MetadataConfig:
         if self.config["batch_size"] < 1:
             errors["batch_size"] = "Must be at least 1"
 
+        # Validate deferred LCM settings
+        valid_lcm_modes = ["immediate", "deferred", "adaptive"]
+        if self.config["default_lcm_mode"] not in valid_lcm_modes:
+            errors["default_lcm_mode"] = f"Must be one of: {valid_lcm_modes}"
+            
+        if self.config["lcm_batch_size"] < 1:
+            errors["lcm_batch_size"] = "Must be at least 1"
+            
+        if self.config["lcm_processing_interval"] < 0.1:
+            errors["lcm_processing_interval"] = "Must be at least 0.1 seconds"
+            
+        if self.config["lcm_queue_max_size"] < 100:
+            errors["lcm_queue_max_size"] = "Must be at least 100"
+            
+        if self.config["lcm_immediate_threshold_ms"] < 0:
+            errors["lcm_immediate_threshold_ms"] = "Must be non-negative"
+            
+        if not (0 <= self.config["lcm_cpu_threshold_percent"] <= 100):
+            errors["lcm_cpu_threshold_percent"] = "Must be between 0 and 100"
+            
+        if self.config["lcm_memory_threshold_mb"] < 0:
+            errors["lcm_memory_threshold_mb"] = "Must be non-negative"
+
         # Validate compliance score threshold
         threshold = self.config["compliance_score_threshold"]
         if not (0.0 <= threshold <= 1.0):
@@ -333,6 +356,81 @@ def create_config_template(template_name: str, output_path: str):
     config.save_to_file(output_path)
 
     return output_path
+
+
+def create_deferred_lcm_config(
+    mode: str = "adaptive",
+    batch_size: int = 50,
+    processing_interval: float = 2.0,
+    enable_fast_inference: bool = True
+) -> Dict[str, Any]:
+    """
+    Create a configuration optimized for deferred LCM processing.
+    
+    Args:
+        mode: LCM mode ("immediate", "deferred", "adaptive")
+        batch_size: Number of receipts to process in each batch
+        processing_interval: Seconds between batch processing
+        enable_fast_inference: Enable optimizations for fast inference
+        
+    Returns:
+        Configuration dictionary
+    """
+    config = {
+        "enable_deferred_lcm": True,
+        "default_lcm_mode": mode,
+        "lcm_batch_size": batch_size,
+        "lcm_processing_interval": processing_interval,
+        "fast_inference_mode": enable_fast_inference,
+        "enable_lazy_materialization": True,
+        "async_writes": True,
+        "cache_size": 20000 if enable_fast_inference else 10000,
+        "memory_buffer_size": 100 if enable_fast_inference else 50,
+    }
+    
+    if mode == "adaptive":
+        config.update({
+            "lcm_immediate_threshold_ms": 50.0,
+            "lcm_cpu_threshold_percent": 80.0,
+            "lcm_memory_threshold_mb": 500.0,
+        })
+    elif mode == "deferred":
+        config.update({
+            "lcm_queue_max_size": 20000,
+            "lcm_enable_persistence": True,
+        })
+        
+    return config
+
+
+def create_high_performance_config() -> Dict[str, Any]:
+    """Create configuration optimized for maximum performance."""
+    return create_deferred_lcm_config(
+        mode="deferred",
+        batch_size=100,
+        processing_interval=1.0,
+        enable_fast_inference=True
+    )
+
+
+def create_compliance_first_config() -> Dict[str, Any]:
+    """Create configuration prioritizing compliance over performance."""
+    return create_deferred_lcm_config(
+        mode="immediate",
+        batch_size=10,
+        processing_interval=5.0,
+        enable_fast_inference=False
+    )
+
+
+def create_balanced_config() -> Dict[str, Any]:
+    """Create balanced configuration between performance and compliance."""
+    return create_deferred_lcm_config(
+        mode="adaptive",
+        batch_size=50,
+        processing_interval=2.0,
+        enable_fast_inference=True
+    )
 
 
 if __name__ == "__main__":

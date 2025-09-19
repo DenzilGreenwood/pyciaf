@@ -1,0 +1,51 @@
+{
+  "receipt_id": "b482cab5ec97b7af2b48185747cb8f9c7ef9b309861805d816c0ac9f1efe6ef6",
+  "timestamp": "2025-09-19T10:49:32.866641",
+  "dataset": {
+    "dataset_id": "deferred_lcm_demo_dataset",
+    "leaves": [
+      "56fcf0143ce773ce7f77b33a52e962c962369dd9341b4ea3342db4843666dcc0",
+      "20df68800e0197c84e92c3e624e35de9d6391e940aa3f6978762dd8733962d32",
+      "24babd6d69414f4f42368ced5738b960eb0492cd994bb424dd68dbbd638dfc8b",
+      "32db59017effb6cca6a7947f6fc1145716ce1ecf2b7d79207768733016acdcad"
+    ],
+    "merkle_root": "3d1081642ad6c5e2f327f8f288dafaba3aa9ceaa0cc0a6553e9e85576ad9b9c1"
+  },
+  "model": {
+    "model_name": "Enhanced_CIAF_Demo_Model",
+    "parameters": {
+      "model_type": "RandomForestClassifier",
+      "n_estimators": 100,
+      "max_depth": 10,
+      "random_state": 42
+    },
+    "parameter_fingerprint": "94c603d9c0c024cf124ecd9dc136107bc0630ef664349403953b67af28afbcd6",
+    "architecture": {
+      "architecture_type": "ensemble",
+      "base_estimator": "decision_tree",
+      "voting": "soft"
+    },
+    "architecture_fingerprint": "5a6fc20d3e81254066909f47e5f528cd1d6c20c8cd9c43e9107fe855a2268cc8"
+  },
+  "audit_connections": [
+    {
+      "event_id": "training_start",
+      "event_type": "training_started",
+      "timestamp": "2025-09-19T10:00:00Z",
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "3ae6ac3adf1cf3579d9c99fb4c1d52bffe0efe1c6fbda293fe2a2450456a2747"
+    },
+    {
+      "event_id": "req_e56e756c",
+      "event_type": "inference_executed",
+      "timestamp": "2025-09-19T10:49:32.866641",
+      "previous_hash": "3ae6ac3adf1cf3579d9c99fb4c1d52bffe0efe1c6fbda293fe2a2450456a2747",
+      "hash": "29623f757b4e8d94fc01a31df5860e6c639e6d7e8cdc5e1058d49e166a7be454"
+    }
+  ],
+  "deferred_lcm_metadata": {
+    "priority": "normal",
+    "materialization_timestamp": "2025-09-19T10:49:32.968236",
+    "deferred": true
+  }
+}

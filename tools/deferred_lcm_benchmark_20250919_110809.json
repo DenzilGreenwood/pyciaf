@@ -1,0 +1,162 @@
+{
+  "benchmark_timestamp": "2025-09-19T11:08:09.752420",
+  "sklearn_available": true,
+  "ciaf_available": true,
+  "results": {
+    "standard_ciaf_training_time": 14.045910120010376,
+    "high_performance_training_time": 14.094894170761108,
+    "adaptive_training_time": 10.663198232650757,
+    "standard_ciaf_single_predictions": {
+      "total_time": 0.0612797737121582,
+      "average_time": 0.0006127977371215821,
+      "min_time": 0.0,
+      "max_time": 0.0019986629486083984,
+      "std_time": 0.0005103011467821639,
+      "samples": 100
+    },
+    "high_performance_single_predictions": {
+      "total_time": 0.16757488250732422,
+      "average_time": 0.0016757488250732423,
+      "min_time": 0.0009920597076416016,
+      "max_time": 0.002061605453491211,
+      "std_time": 0.0004652751686308368,
+      "samples": 100
+    },
+    "adaptive_single_predictions": {
+      "total_time": 0.2989814281463623,
+      "average_time": 0.002989814281463623,
+      "min_time": 0.0009922981262207031,
+      "max_time": 0.1034085750579834,
+      "std_time": 0.010107640679036174,
+      "samples": 100
+    },
+    "standard_ciaf_batch_predictions": {
+      "total_time": 0.029999732971191406,
+      "average_per_sample": 0.0005999946594238281,
+      "batch_size": 50,
+      "throughput": 1666.6815017325237
+    },
+    "high_performance_batch_predictions": {
+      "total_time": 0.08000063896179199,
+      "average_per_sample": 0.0016000127792358397,
+      "batch_size": 50,
+      "throughput": 624.99500815087
+    },
+    "adaptive_batch_predictions": {
+      "total_time": 0.19080591201782227,
+      "average_per_sample": 0.003816118240356445,
+      "batch_size": 50,
+      "throughput": 262.0463877205741
+    },
+    "priority_handling": {
+      "critical": {
+        "average_time": 0.0044002532958984375,
+        "modes_used": [
+          "immediate"
+        ],
+        "samples": 10
+      },
+      "high": {
+        "average_time": 0.004199671745300293,
+        "modes_used": [
+          "deferred"
+        ],
+        "samples": 10
+      },
+      "normal": {
+        "average_time": 0.004400563240051269,
+        "modes_used": [
+          "deferred"
+        ],
+        "samples": 10
+      },
+      "low": {
+        "average_time": 0.0040999650955200195,
+        "modes_used": [
+          "deferred"
+        ],
+        "samples": 10
+      }
+    },
+    "standard_ciaf_stats": {
+      "total_predictions": 150,
+      "deferred_predictions": 0,
+      "immediate_predictions": 150,
+      "total_inference_time": 0.09028029441833496,
+      "total_lcm_time": 0.0,
+      "average_inference_time": 0.0,
+      "performance_improvement": 0.0,
+      "estimated_speedup": 1.0
+    },
+    "high_performance_stats": {
+      "total_predictions": 150,
+      "deferred_predictions": 150,
+      "immediate_predictions": 0,
+      "total_inference_time": 0.20602965354919434,
+      "total_lcm_time": 0.03853797912597656,
+      "average_inference_time": 0.0013735310236612957,
+      "performance_improvement": 0.0,
+      "lcm_details": {
+        "total_predictions": 150,
+        "immediate_lcm_count": 0,
+        "deferred_lcm_count": 150,
+        "total_inference_time": 0.20602965354919434,
+        "total_lcm_time": 0.03853797912597656,
+        "mode_switches": 0,
+        "avg_inference_time": 0.0013735310236612957,
+        "avg_lcm_time": 0.00025691986083984373,
+        "immediate_percentage": 0.0,
+        "deferred_percentage": 100.0,
+        "deferred_processor": {
+          "total_processed": 0,
+          "total_batches": 0,
+          "average_batch_time": 0.0,
+          "queue_overflows": 0,
+          "queue_size": 150,
+          "is_running": true
+        },
+        "system_load": {
+          "cpu_percent": 1.5,
+          "memory_mb": 24530.60546875,
+          "memory_percent": 37.5
+        }
+      },
+      "estimated_speedup": 1.9
+    },
+    "adaptive_stats": {
+      "total_predictions": 190,
+      "deferred_predictions": 180,
+      "immediate_predictions": 10,
+      "total_inference_time": 0.4701991081237793,
+      "total_lcm_time": 0.0764777660369873,
+      "average_inference_time": 0.002474732148019891,
+      "performance_improvement": 0.0,
+      "lcm_details": {
+        "total_predictions": 190,
+        "immediate_lcm_count": 10,
+        "deferred_lcm_count": 180,
+        "total_inference_time": 0.4701991081237793,
+        "total_lcm_time": 0.0764777660369873,
+        "mode_switches": 100,
+        "avg_inference_time": 0.002474732148019891,
+        "avg_lcm_time": 0.00040251455808940686,
+        "immediate_percentage": 5.263157894736842,
+        "deferred_percentage": 94.73684210526315,
+        "deferred_processor": {
+          "total_processed": 50,
+          "total_batches": 1,
+          "average_batch_time": 0.029993295669555664,
+          "queue_overflows": 0,
+          "queue_size": 130,
+          "is_running": true
+        },
+        "system_load": {
+          "cpu_percent": 1.3,
+          "memory_mb": 24530.44921875,
+          "memory_percent": 37.5
+        }
+      },
+      "estimated_speedup": 1.8526315789473684
+    }
+  }
+}

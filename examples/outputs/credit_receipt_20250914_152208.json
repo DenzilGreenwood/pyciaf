@@ -1,7 +1,0 @@
-{
-  "receipt_id": "N/A",
-  "timestamp": "20250914_152208",
-  "decision": "APPROVED",
-  "query": "Credit application: {\"application_id\": \"TEST001\", \"income\": 60000, \"credit_score\": 700, \"debt_to_income\": 0.3, \"loan_amount\": 200000}",
-  "ai_output": "Decision: APPROVED"
-}

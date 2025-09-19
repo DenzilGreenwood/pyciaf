@@ -11,6 +11,11 @@ import warnings
 import numpy as np
 from typing import Any, Dict, List, Optional, Union
 from datetime import datetime
+import sys
+from pathlib import Path
+
+# Add the parent directory to the path so we can import from ciaf
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
     from ciaf.wrappers.model_wrapper import CIAFModelWrapper
@@ -116,9 +121,9 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
             'performance_improvement': 0.0
         }
         
-        print(f"🚀 Enhanced CIAF Model Wrapper initialized for '{model_name}'")
+        print(f"[INIT] Enhanced CIAF Model Wrapper initialized for '{model_name}'")
         if enable_deferred_lcm:
-            print(f"  ⚡ Deferred LCM enabled (mode: {default_lcm_mode.value})")
+            print(f"  [LCM] Deferred LCM enabled (mode: {default_lcm_mode.value})")
         
     def train(self,
               X_train: Union[List, np.ndarray, Any],
@@ -132,21 +137,60 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
         wrapper after training is complete.
         """
         
-        print(f"🚀 [{self.model_name}] Starting verifiable training for version '{version}'...")
+        print(f"[TRAIN] [{self.model_name}] Starting verifiable training for version '{version}'...")
         
-        # Call parent train method
-        snapshot_id = super().train(X_train, y_train, version, **kwargs)
+        # Convert numpy arrays to the format expected by base CIAF
+        training_data = self._prepare_training_data(X_train, y_train)
+        
+        # Generate a dataset ID
+        dataset_id = f"{self.model_name}_dataset_{version}"
+        
+        # Use a default master password (in production, this should be properly managed)
+        master_password = kwargs.get('master_password', 'ciaf_demo_password')
+        
+        # Call parent train method with correct signature
+        training_snapshot = super().train(
+            dataset_id=dataset_id,
+            training_data=training_data,
+            master_password=master_password,
+            model_version=version,
+            **{k: v for k, v in kwargs.items() if k != 'master_password'}
+        )
         
         # Set up adaptive LCM wrapper after training
         if self.enable_deferred_lcm:
             self._setup_adaptive_lcm()
             
-        return snapshot_id
+        return training_snapshot.snapshot_id if hasattr(training_snapshot, 'snapshot_id') else str(training_snapshot)
+        
+    def _prepare_training_data(self, X_train, y_train) -> List[Dict[str, Any]]:
+        """Convert numpy arrays to CIAF training data format"""
+        training_data = []
+        
+        # Convert to numpy if not already
+        if not isinstance(X_train, np.ndarray):
+            X_train = np.array(X_train)
+        if not isinstance(y_train, np.ndarray):
+            y_train = np.array(y_train)
+            
+        # Create training data in expected format
+        for i in range(len(X_train)):
+            training_data.append({
+                'content': X_train[i].tolist() if isinstance(X_train[i], np.ndarray) else X_train[i],
+                'metadata': {
+                    'id': f'sample_{i}',  # Required id field
+                    'target': y_train[i].item() if isinstance(y_train[i], np.ndarray) else y_train[i],
+                    'sample_id': i,
+                    'enhanced_wrapper': True
+                }
+            })
+            
+        return training_data
         
     def _setup_adaptive_lcm(self):
         """Set up adaptive LCM wrapper after training"""
         if not self.training_snapshot:
-            print("⚠️ No training snapshot available for LCM setup")
+            print("WARNING: No training snapshot available for LCM setup")
             return
             
         self.adaptive_lcm = AdaptiveLCMWrapper(
@@ -156,7 +200,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
             model_version=self.model_version or "1.0.0"
         )
         
-        print(f"⚡ Adaptive LCM wrapper configured")
+        print(f"[LCM] Adaptive LCM wrapper configured")
         
     def predict(self,
                 X: Union[List, np.ndarray, Any],
@@ -208,7 +252,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
             'lcm_mode': 'immediate',
             'model_version': self.model_version,
             'timestamp': datetime.now().isoformat(),
-            'receipt_id': self.last_receipt.receipt_id if self.last_receipt else None
+            'receipt_id': self.last_receipt.receipt_hash if self.last_receipt else None
         }
         
     def _adaptive_predict(self, X, priority, enable_fast_mode, return_enhanced_info, **kwargs):
@@ -342,7 +386,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
         batch_start = time.time()
         
         if show_progress:
-            print(f"🔮 Processing batch of {len(X_batch)} predictions...")
+            print(f"[BATCH] Processing batch of {len(X_batch)} predictions...")
             
         for i, x in enumerate(X_batch):
             result = self.predict(
@@ -360,7 +404,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
         
         if show_progress:
             avg_time = batch_time / len(X_batch)
-            print(f"✅ Batch complete: {batch_time:.3f}s total, {avg_time:.4f}s avg per prediction")
+            print(f"[SUCCESS] Batch complete: {batch_time:.3f}s total, {avg_time:.4f}s avg per prediction")
             
         return results
         
@@ -387,10 +431,10 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
         """Set LCM processing mode"""
         if self.adaptive_lcm:
             self.adaptive_lcm.set_mode(mode)
-            print(f"🔄 LCM mode set to: {mode.value}")
+            print(f"[MODE] LCM mode set to: {mode.value}")
         else:
             self.lcm_config.default_mode = mode
-            print(f"🔄 LCM mode configured for next initialization: {mode.value}")
+            print(f"[CONFIG] LCM mode configured for next initialization: {mode.value}")
             
     def enable_fast_inference(self):
         """Enable fast inference mode (primarily deferred LCM)"""
@@ -404,7 +448,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
         """Gracefully shutdown the enhanced wrapper"""
         if self.adaptive_lcm:
             self.adaptive_lcm.shutdown()
-        print(f"✅ Enhanced CIAF wrapper '{self.model_name}' shutdown complete")
+        print(f"[SHUTDOWN] Enhanced CIAF wrapper '{self.model_name}' shutdown complete")
 
 # Convenience function for quick setup
 def create_enhanced_ciaf_wrapper(model: Any, 
@@ -424,11 +468,12 @@ def create_enhanced_ciaf_wrapper(model: Any,
         Configured EnhancedCIAFModelWrapper
     """
     
-    default_mode = LCMMode.DEFERRED if fast_inference else LCMMode.IMMEDIATE
+    # Handle default_lcm_mode conflict - prioritize explicit kwargs over fast_inference
+    if 'default_lcm_mode' not in kwargs:
+        kwargs['default_lcm_mode'] = LCMMode.DEFERRED if fast_inference else LCMMode.IMMEDIATE
     
     return EnhancedCIAFModelWrapper(
         model=model,
         model_name=model_name,
-        default_lcm_mode=default_mode,
         **kwargs
     )
