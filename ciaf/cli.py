@@ -127,13 +127,13 @@ def setup_command(args):
         for subdir in subdirs:
             (project_dir / subdir).mkdir(exist_ok=True)
 
-        print("\n✅ Setup completed successfully!")
-        print(f"   🔸 Project: {args.project_name}")
-        print(f"   🔸 Backend: {args.backend}")
-        print(f"   🔸 Storage: {storage_path}")
-        print(f"   🔸 Config: {config_file}")
+        print("\n[SUCCESS] Setup completed successfully!")
+        print(f"   [POINT] Project: {args.project_name}")
+        print(f"   [POINT] Backend: {args.backend}")
+        print(f"   [POINT] Storage: {storage_path}")
+        print(f"   [POINT] Config: {config_file}")
 
-        print("\n🚀 Next Steps:")
+        print("\n[LAUNCH] Next Steps:")
         print(f"1. Review the configuration in '{config_file}'")
         print("2. Import CIAF in your project:")
         print("   from ciaf import CIAFFramework")
