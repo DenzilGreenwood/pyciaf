@@ -1,405 +1,405 @@
--#-!-/-u-s-r-/-b-i-n-/-e-n-v- -p-y-t-h-o-n-3-
--"-"-"-
--C-I-A-F- -R-e-c-e-i-p-t- -V-e-r-i-f-i-e-r-
--
--A- -s-t-a-n-d-a-l-o-n-e- -t-o-o-l- -f-o-r- -v-e-r-i-f-y-i-n-g- -C-I-A-F- -r-e-c-e-i-p-t-s- -a-n-d- -a-u-d-i-t- -t-r-a-i-l-s-.-
--T-h-i-s- -v-e-r-i-f-i-e-r- -c-a-n- -i-n-d-e-p-e-n-d-e-n-t-l-y- -v-a-l-i-d-a-t-e-:-
---- -D-a-t-a-s-e-t- -s-p-l-i-t- -l-e-a-v-e-s- --->- -M-e-r-k-l-e- -r-o-o-t-
---- -M-o-d-e-l- -p-a-r-a-m-e-t-e-r-/-a-r-c-h-i-t-e-c-t-u-r-e- -f-i-n-g-e-r-p-r-i-n-t-s-
---- -A-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s- -l-i-n-k-a-g-e- -(-h-a-s-h---c-o-n-n-e-c-t-i-n-g- -e-v-e-n-t- -I-D-s-)-
--
--T-h-i-s- -t-o-o-l- -d-e-m-o-n-s-t-r-a-t-e-s- -t-h-a-t- -C-I-A-F- -p-r-o-d-u-c-e-s- -v-e-r-i-f-i-a-b-l-e- -a-r-t-i-f-a-c-t-s- -t-h-a-t- -c-a-n- -b-e-
--v-a-l-i-d-a-t-e-d- -i-n-d-e-p-e-n-d-e-n-t-l-y- -o-f- -t-h-e- -m-a-i-n- -f-r-a-m-e-w-o-r-k-.-
--
--U-s-a-g-e-:-
-- - - - -p-y-t-h-o-n- -t-o-o-l-s-/-v-e-r-i-f-y-_-r-e-c-e-i-p-t-.-p-y- -<-r-e-c-e-i-p-t-_-f-i-l-e-.-j-s-o-n->-
-- - - - -p-y-t-h-o-n- -t-o-o-l-s-/-v-e-r-i-f-y-_-r-e-c-e-i-p-t-.-p-y- -----v-e-r-i-f-y---m-e-r-k-l-e- -<-d-a-t-a-_-f-i-l-e-.-j-s-o-n->-
-- - - - -p-y-t-h-o-n- -t-o-o-l-s-/-v-e-r-i-f-y-_-r-e-c-e-i-p-t-.-p-y- -----v-e-r-i-f-y---a-u-d-i-t---c-o-n-n-e-c-t-i-o-n-s- -<-a-u-d-i-t-_-f-i-l-e-.-j-s-o-n->-
--
--C-r-e-a-t-e-d-:- -2-0-2-5---0-9---1-2-
--A-u-t-h-o-r-:- -D-e-n-z-i-l- -J-a-m-e-s- -G-r-e-e-n-w-o-o-d-
--"-"-"-
--
--i-m-p-o-r-t- -j-s-o-n-
--i-m-p-o-r-t- -s-y-s-
--i-m-p-o-r-t- -a-r-g-p-a-r-s-e-
--i-m-p-o-r-t- -h-a-s-h-l-i-b-
--f-r-o-m- -p-a-t-h-l-i-b- -i-m-p-o-r-t- -P-a-t-h-
--f-r-o-m- -t-y-p-i-n-g- -i-m-p-o-r-t- -D-i-c-t-,- -L-i-s-t-,- -A-n-y-,- -O-p-t-i-o-n-a-l-
--
--
--c-l-a-s-s- -C-I-A-F-V-e-r-i-f-i-e-r-:-
-- - - - -"-"-"-I-n-d-e-p-e-n-d-e-n-t- -C-I-A-F- -r-e-c-e-i-p-t- -a-n-d- -a-u-d-i-t- -t-r-a-i-l- -v-e-r-i-f-i-e-r-.-"-"-"-
-- - - - -
-- - - - -@-s-t-a-t-i-c-m-e-t-h-o-d-
-- - - - -d-e-f- -s-h-a-2-5-6-_-h-a-s-h-(-d-a-t-a-:- -s-t-r-)- --->- -s-t-r-:-
-- - - - - - - - -"-"-"-C-a-l-c-u-l-a-t-e- -S-H-A-2-5-6- -h-a-s-h- -o-f- -s-t-r-i-n-g- -d-a-t-a-.-"-"-"-
-- - - - - - - - -r-e-t-u-r-n- -h-a-s-h-l-i-b-.-s-h-a-2-5-6-(-d-a-t-a-.-e-n-c-o-d-e-(-'-u-t-f---8-'-)-)-.-h-e-x-d-i-g-e-s-t-(-)-
-- - - - -
-- - - - -@-s-t-a-t-i-c-m-e-t-h-o-d-
-- - - - -d-e-f- -v-e-r-i-f-y-_-m-e-r-k-l-e-_-r-o-o-t-(-l-e-a-v-e-s-:- -L-i-s-t-[-s-t-r-]-,- -e-x-p-e-c-t-e-d-_-r-o-o-t-:- -s-t-r-)- --->- -b-o-o-l-:-
-- - - - - - - - -"-"-"-
-- - - - - - - - -V-e-r-i-f-y- -M-e-r-k-l-e- -r-o-o-t- -c-a-l-c-u-l-a-t-i-o-n- -f-r-o-m- -l-e-a-v-e-s-.-
-- - - - - - - - -
-- - - - - - - - -A-r-g-s-:-
-- - - - - - - - - - - - -l-e-a-v-e-s-:- -L-i-s-t- -o-f- -l-e-a-f- -h-a-s-h-e-s-
-- - - - - - - - - - - - -e-x-p-e-c-t-e-d-_-r-o-o-t-:- -E-x-p-e-c-t-e-d- -M-e-r-k-l-e- -r-o-o-t- -h-a-s-h-
-- - - - - - - - - - - - -
-- - - - - - - - -R-e-t-u-r-n-s-:-
-- - - - - - - - - - - - -T-r-u-e- -i-f- -c-a-l-c-u-l-a-t-e-d- -r-o-o-t- -m-a-t-c-h-e-s- -e-x-p-e-c-t-e-d- -r-o-o-t-
-- - - - - - - - -"-"-"-
-- - - - - - - - -i-f- -n-o-t- -l-e-a-v-e-s-:-
-- - - - - - - - - - - - -r-e-t-u-r-n- -F-a-l-s-e-
-- - - - - - - - -
-- - - - - - - - -i-f- -l-e-n-(-l-e-a-v-e-s-)- -=-=- -1-:-
-- - - - - - - - - - - - -r-e-t-u-r-n- -l-e-a-v-e-s-[-0-]- -=-=- -e-x-p-e-c-t-e-d-_-r-o-o-t-
-- - - - - - - - -
-- - - - - - - - -#- -B-u-i-l-d- -M-e-r-k-l-e- -t-r-e-e- -b-o-t-t-o-m---u-p-
-- - - - - - - - -c-u-r-r-e-n-t-_-l-e-v-e-l- -=- -l-e-a-v-e-s-[-:-]-
-- - - - - - - - -
-- - - - - - - - -w-h-i-l-e- -l-e-n-(-c-u-r-r-e-n-t-_-l-e-v-e-l-)- ->- -1-:-
-- - - - - - - - - - - - -n-e-x-t-_-l-e-v-e-l- -=- -[-]-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -#- -P-r-o-c-e-s-s- -p-a-i-r-s-
-- - - - - - - - - - - - -f-o-r- -i- -i-n- -r-a-n-g-e-(-0-,- -l-e-n-(-c-u-r-r-e-n-t-_-l-e-v-e-l-)-,- -2-)-:-
-- - - - - - - - - - - - - - - - -l-e-f-t- -=- -c-u-r-r-e-n-t-_-l-e-v-e-l-[-i-]-
-- - - - - - - - - - - - - - - - -r-i-g-h-t- -=- -c-u-r-r-e-n-t-_-l-e-v-e-l-[-i- -+- -1-]- -i-f- -i- -+- -1- -<- -l-e-n-(-c-u-r-r-e-n-t-_-l-e-v-e-l-)- -e-l-s-e- -l-e-f-t-
-- - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - -#- -H-a-s-h- -c-o-n-c-a-t-e-n-a-t-i-o-n- -o-f- -l-e-f-t- -a-n-d- -r-i-g-h-t-
-- - - - - - - - - - - - - - - - -c-o-m-b-i-n-e-d- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-s-h-a-2-5-6-_-h-a-s-h-(-l-e-f-t- -+- -r-i-g-h-t-)-
-- - - - - - - - - - - - - - - - -n-e-x-t-_-l-e-v-e-l-.-a-p-p-e-n-d-(-c-o-m-b-i-n-e-d-)-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -c-u-r-r-e-n-t-_-l-e-v-e-l- -=- -n-e-x-t-_-l-e-v-e-l-
-- - - - - - - - -
-- - - - - - - - -c-a-l-c-u-l-a-t-e-d-_-r-o-o-t- -=- -c-u-r-r-e-n-t-_-l-e-v-e-l-[-0-]-
-- - - - - - - - -r-e-t-u-r-n- -c-a-l-c-u-l-a-t-e-d-_-r-o-o-t- -=-=- -e-x-p-e-c-t-e-d-_-r-o-o-t-
-- - - - -
-- - - - -@-s-t-a-t-i-c-m-e-t-h-o-d-
-- - - - -d-e-f- -_-c-a-l-c-u-l-a-t-e-_-m-e-r-k-l-e-_-r-o-o-t-_-f-r-o-m-_-l-e-a-v-e-s-(-l-e-a-v-e-s-:- -L-i-s-t-[-s-t-r-]-)- --->- -s-t-r-:-
-- - - - - - - - -"-"-"-
-- - - - - - - - -C-a-l-c-u-l-a-t-e- -M-e-r-k-l-e- -r-o-o-t- -f-r-o-m- -l-e-a-v-e-s- -(-i-n-t-e-r-n-a-l- -h-e-l-p-e-r-)-.-
-- - - - - - - - -
-- - - - - - - - -A-r-g-s-:-
-- - - - - - - - - - - - -l-e-a-v-e-s-:- -L-i-s-t- -o-f- -l-e-a-f- -h-a-s-h-e-s-
-- - - - - - - - - - - - -
-- - - - - - - - -R-e-t-u-r-n-s-:-
-- - - - - - - - - - - - -C-a-l-c-u-l-a-t-e-d- -M-e-r-k-l-e- -r-o-o-t- -h-a-s-h-
-- - - - - - - - -"-"-"-
-- - - - - - - - -i-f- -n-o-t- -l-e-a-v-e-s-:-
-- - - - - - - - - - - - -r-e-t-u-r-n- -"-"-
-- - - - - - - - -
-- - - - - - - - -i-f- -l-e-n-(-l-e-a-v-e-s-)- -=-=- -1-:-
-- - - - - - - - - - - - -r-e-t-u-r-n- -l-e-a-v-e-s-[-0-]-
-- - - - - - - - -
-- - - - - - - - -#- -B-u-i-l-d- -M-e-r-k-l-e- -t-r-e-e- -b-o-t-t-o-m---u-p-
-- - - - - - - - -c-u-r-r-e-n-t-_-l-e-v-e-l- -=- -l-e-a-v-e-s-[-:-]-
-- - - - - - - - -
-- - - - - - - - -w-h-i-l-e- -l-e-n-(-c-u-r-r-e-n-t-_-l-e-v-e-l-)- ->- -1-:-
-- - - - - - - - - - - - -n-e-x-t-_-l-e-v-e-l- -=- -[-]-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -#- -P-r-o-c-e-s-s- -p-a-i-r-s- -o-f- -n-o-d-e-s-
-- - - - - - - - - - - - -f-o-r- -i- -i-n- -r-a-n-g-e-(-0-,- -l-e-n-(-c-u-r-r-e-n-t-_-l-e-v-e-l-)-,- -2-)-:-
-- - - - - - - - - - - - - - - - -l-e-f-t- -=- -c-u-r-r-e-n-t-_-l-e-v-e-l-[-i-]-
-- - - - - - - - - - - - - - - - -r-i-g-h-t- -=- -c-u-r-r-e-n-t-_-l-e-v-e-l-[-i- -+- -1-]- -i-f- -i- -+- -1- -<- -l-e-n-(-c-u-r-r-e-n-t-_-l-e-v-e-l-)- -e-l-s-e- -l-e-f-t-
-- - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - -#- -C-o-m-b-i-n-e- -a-n-d- -h-a-s-h-
-- - - - - - - - - - - - - - - - -c-o-m-b-i-n-e-d- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-s-h-a-2-5-6-_-h-a-s-h-(-l-e-f-t- -+- -r-i-g-h-t-)-
-- - - - - - - - - - - - - - - - -n-e-x-t-_-l-e-v-e-l-.-a-p-p-e-n-d-(-c-o-m-b-i-n-e-d-)-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -c-u-r-r-e-n-t-_-l-e-v-e-l- -=- -n-e-x-t-_-l-e-v-e-l-
-- - - - - - - - -
-- - - - - - - - -r-e-t-u-r-n- -c-u-r-r-e-n-t-_-l-e-v-e-l-[-0-]-
-- - - - -
-- - - - -@-s-t-a-t-i-c-m-e-t-h-o-d-
-- - - - -d-e-f- -v-e-r-i-f-y-_-p-a-r-a-m-e-t-e-r-_-f-i-n-g-e-r-p-r-i-n-t-(-p-a-r-a-m-e-t-e-r-s-:- -D-i-c-t-[-s-t-r-,- -A-n-y-]-,- -e-x-p-e-c-t-e-d-_-f-i-n-g-e-r-p-r-i-n-t-:- -s-t-r-)- --->- -b-o-o-l-:-
-- - - - - - - - -"-"-"-
-- - - - - - - - -V-e-r-i-f-y- -m-o-d-e-l- -p-a-r-a-m-e-t-e-r- -f-i-n-g-e-r-p-r-i-n-t-.-
-- - - - - - - - -
-- - - - - - - - -A-r-g-s-:-
-- - - - - - - - - - - - -p-a-r-a-m-e-t-e-r-s-:- -M-o-d-e-l- -p-a-r-a-m-e-t-e-r-s- -d-i-c-t-i-o-n-a-r-y-
-- - - - - - - - - - - - -e-x-p-e-c-t-e-d-_-f-i-n-g-e-r-p-r-i-n-t-:- -E-x-p-e-c-t-e-d- -p-a-r-a-m-e-t-e-r- -f-i-n-g-e-r-p-r-i-n-t-
-- - - - - - - - - - - - -
-- - - - - - - - -R-e-t-u-r-n-s-:-
-- - - - - - - - - - - - -T-r-u-e- -i-f- -c-a-l-c-u-l-a-t-e-d- -f-i-n-g-e-r-p-r-i-n-t- -m-a-t-c-h-e-s- -e-x-p-e-c-t-e-d-
-- - - - - - - - -"-"-"-
-- - - - - - - - -#- -S-o-r-t- -p-a-r-a-m-e-t-e-r-s- -f-o-r- -d-e-t-e-r-m-i-n-i-s-t-i-c- -h-a-s-h-i-n-g-
-- - - - - - - - -s-o-r-t-e-d-_-p-a-r-a-m-s- -=- -j-s-o-n-.-d-u-m-p-s-(-p-a-r-a-m-e-t-e-r-s-,- -s-o-r-t-_-k-e-y-s-=-T-r-u-e-,- -s-e-p-a-r-a-t-o-r-s-=-(-'-,-'-,- -'-:-'-)-)-
-- - - - - - - - -c-a-l-c-u-l-a-t-e-d-_-f-i-n-g-e-r-p-r-i-n-t- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-s-h-a-2-5-6-_-h-a-s-h-(-s-o-r-t-e-d-_-p-a-r-a-m-s-)-
-- - - - - - - - -r-e-t-u-r-n- -c-a-l-c-u-l-a-t-e-d-_-f-i-n-g-e-r-p-r-i-n-t- -=-=- -e-x-p-e-c-t-e-d-_-f-i-n-g-e-r-p-r-i-n-t-
-- - - - -
-- - - - -@-s-t-a-t-i-c-m-e-t-h-o-d-
-- - - - -d-e-f- -v-e-r-i-f-y-_-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-(-a-u-d-i-t-_-r-e-c-o-r-d-s-:- -L-i-s-t-[-D-i-c-t-[-s-t-r-,- -A-n-y-]-]-)- --->- -b-o-o-l-:-
-- - - - - - - - -"-"-"-
-- - - - - - - - -V-e-r-i-f-y- -a-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s- -i-n-t-e-g-r-i-t-y-.-
--
-- - - - - - - - -A-r-g-s-:-
-- - - - - - - - - - - - -a-u-d-i-t-_-r-e-c-o-r-d-s-:- -L-i-s-t- -o-f- -a-u-d-i-t- -r-e-c-o-r-d-s- -w-i-t-h- -h-a-s-h- -c-o-n-n-e-c-t-i-n-g-
--
-- - - - - - - - -R-e-t-u-r-n-s-:-
-- - - - - - - - - - - - -T-r-u-e- -i-f- -a-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s- -i-s- -v-a-l-i-d-
-- - - - - - - - -"-"-"-
-- - - - - - - - -i-f- -n-o-t- -a-u-d-i-t-_-r-e-c-o-r-d-s-:-
-- - - - - - - - - - - - -r-e-t-u-r-n- -F-a-l-s-e-
-- - - - - - - - -
-- - - - - - - - -i-f- -l-e-n-(-a-u-d-i-t-_-r-e-c-o-r-d-s-)- -=-=- -1-:-
-- - - - - - - - - - - - -#- -S-i-n-g-l-e- -r-e-c-o-r-d- --- -v-e-r-i-f-y- -i-t-s- -h-a-s-h-
-- - - - - - - - - - - - -r-e-c-o-r-d- -=- -a-u-d-i-t-_-r-e-c-o-r-d-s-[-0-]-
-- - - - - - - - - - - - -r-e-t-u-r-n- -C-I-A-F-V-e-r-i-f-i-e-r-.-_-v-e-r-i-f-y-_-r-e-c-o-r-d-_-h-a-s-h-(-r-e-c-o-r-d-)-
-- - - - - - - - -
-- - - - - - - - -#- -V-e-r-i-f-y- -c-o-n-n-e-c-t-i-o-n-s- -l-i-n-k-a-g-e-
-- - - - - - - - -f-o-r- -i- -i-n- -r-a-n-g-e-(-1-,- -l-e-n-(-a-u-d-i-t-_-r-e-c-o-r-d-s-)-)-:-
-- - - - - - - - - - - - -c-u-r-r-e-n-t- -=- -a-u-d-i-t-_-r-e-c-o-r-d-s-[-i-]-
-- - - - - - - - - - - - -p-r-e-v-i-o-u-s- -=- -a-u-d-i-t-_-r-e-c-o-r-d-s-[-i- --- -1-]-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -#- -V-e-r-i-f-y- -c-u-r-r-e-n-t- -r-e-c-o-r-d-'-s- -p-r-e-v-i-o-u-s-_-h-a-s-h- -m-a-t-c-h-e-s- -p-r-e-v-i-o-u-s- -r-e-c-o-r-d-'-s- -h-a-s-h-
-- - - - - - - - - - - - -i-f- -c-u-r-r-e-n-t-.-g-e-t-(-'-p-r-e-v-i-o-u-s-_-h-a-s-h-'-)- -!-=- -p-r-e-v-i-o-u-s-.-g-e-t-(-'-h-a-s-h-'-)-:-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"-❌- -C-o-n-n-e-c-t-i-o-n-s- -b-r-e-a-k- -a-t- -r-e-c-o-r-d- -{-i-}-:- -p-r-e-v-i-o-u-s-_-h-a-s-h- -m-i-s-m-a-t-c-h-"-)-
-- - - - - - - - - - - - - - - - -r-e-t-u-r-n- -F-a-l-s-e-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -#- -V-e-r-i-f-y- -c-u-r-r-e-n-t- -r-e-c-o-r-d-'-s- -h-a-s-h-
-- - - - - - - - - - - - -i-f- -n-o-t- -C-I-A-F-V-e-r-i-f-i-e-r-.-_-v-e-r-i-f-y-_-r-e-c-o-r-d-_-h-a-s-h-(-c-u-r-r-e-n-t-)-:-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"-❌- -I-n-v-a-l-i-d- -h-a-s-h- -a-t- -r-e-c-o-r-d- -{-i-}-"-)-
-- - - - - - - - - - - - - - - - -r-e-t-u-r-n- -F-a-l-s-e-
-- - - - - - - - -
-- - - - - - - - -r-e-t-u-r-n- -T-r-u-e-
-- - - - -
-- - - - -@-s-t-a-t-i-c-m-e-t-h-o-d-
-- - - - -d-e-f- -_-v-e-r-i-f-y-_-r-e-c-o-r-d-_-h-a-s-h-(-r-e-c-o-r-d-:- -D-i-c-t-[-s-t-r-,- -A-n-y-]-)- --->- -b-o-o-l-:-
-- - - - - - - - -"-"-"-V-e-r-i-f-y- -i-n-d-i-v-i-d-u-a-l- -a-u-d-i-t- -r-e-c-o-r-d- -h-a-s-h-.-"-"-"-
-- - - - - - - - -e-x-p-e-c-t-e-d-_-h-a-s-h- -=- -r-e-c-o-r-d-.-g-e-t-(-'-h-a-s-h-'-)-
-- - - - - - - - -i-f- -n-o-t- -e-x-p-e-c-t-e-d-_-h-a-s-h-:-
-- - - - - - - - - - - - -r-e-t-u-r-n- -F-a-l-s-e-
-- - - - - - - - -
-- - - - - - - - -#- -R-e-c-o-n-s-t-r-u-c-t- -r-e-c-o-r-d- -d-a-t-a- -f-o-r- -h-a-s-h-i-n-g-
-- - - - - - - - -e-v-e-n-t-_-i-d- -=- -r-e-c-o-r-d-.-g-e-t-(-'-e-v-e-n-t-_-i-d-'-,- -'-'-)-
-- - - - - - - - -e-v-e-n-t-_-t-y-p-e- -=- -r-e-c-o-r-d-.-g-e-t-(-'-e-v-e-n-t-_-t-y-p-e-'-,- -'-'-)-
-- - - - - - - - -t-i-m-e-s-t-a-m-p- -=- -r-e-c-o-r-d-.-g-e-t-(-'-t-i-m-e-s-t-a-m-p-'-,- -'-'-)-
-- - - - - - - - -p-r-e-v-i-o-u-s-_-h-a-s-h- -=- -r-e-c-o-r-d-.-g-e-t-(-'-p-r-e-v-i-o-u-s-_-h-a-s-h-'-,- -'-0-'- -*- -6-4-)-
-- - - - - - - - -
-- - - - - - - - -d-a-t-a- -=- -f-"-{-e-v-e-n-t-_-i-d-}-|-{-e-v-e-n-t-_-t-y-p-e-}-|-{-t-i-m-e-s-t-a-m-p-}-|-{-p-r-e-v-i-o-u-s-_-h-a-s-h-}-"-
-- - - - - - - - -c-a-l-c-u-l-a-t-e-d-_-h-a-s-h- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-s-h-a-2-5-6-_-h-a-s-h-(-d-a-t-a-)-
-- - - - - - - - -
-- - - - - - - - -r-e-t-u-r-n- -c-a-l-c-u-l-a-t-e-d-_-h-a-s-h- -=-=- -e-x-p-e-c-t-e-d-_-h-a-s-h-
-- - - - -
-- - - - -@-s-t-a-t-i-c-m-e-t-h-o-d-
-- - - - -d-e-f- -v-e-r-i-f-y-_-r-e-c-e-i-p-t-(-r-e-c-e-i-p-t-_-d-a-t-a-:- -D-i-c-t-[-s-t-r-,- -A-n-y-]-)- --->- -b-o-o-l-:-
-- - - - - - - - -"-"-"-
-- - - - - - - - -V-e-r-i-f-y- -c-o-m-p-l-e-t-e- -C-I-A-F- -r-e-c-e-i-p-t-.-
-- - - - - - - - -
-- - - - - - - - -A-r-g-s-:-
-- - - - - - - - - - - - -r-e-c-e-i-p-t-_-d-a-t-a-:- -C-o-m-p-l-e-t-e- -r-e-c-e-i-p-t- -d-a-t-a-
-- - - - - - - - - - - - -
-- - - - - - - - -R-e-t-u-r-n-s-:-
-- - - - - - - - - - - - -T-r-u-e- -i-f- -r-e-c-e-i-p-t- -i-s- -v-a-l-i-d-
-- - - - - - - - -"-"-"-
-- - - - - - - - -p-r-i-n-t-(-"-V-e-r-i-f-y-i-n-g- -C-I-A-F- -R-e-c-e-i-p-t-.-.-.-"-)-
-- - - - - - - - -p-r-i-n-t-(-"-=-"- -*- -4-0-)-
-- - - - - - - - -
-- - - - - - - - -v-a-l-i-d- -=- -T-r-u-e-
-- - - - - - - - -
-- - - - - - - - -#- -V-e-r-i-f-y- -d-a-t-a-s-e-t- -M-e-r-k-l-e- -r-o-o-t-
-- - - - - - - - -i-f- -'-d-a-t-a-s-e-t-'- -i-n- -r-e-c-e-i-p-t-_-d-a-t-a-:-
-- - - - - - - - - - - - -d-a-t-a-s-e-t-_-i-n-f-o- -=- -r-e-c-e-i-p-t-_-d-a-t-a-[-'-d-a-t-a-s-e-t-'-]-
-- - - - - - - - - - - - -l-e-a-v-e-s- -=- -d-a-t-a-s-e-t-_-i-n-f-o-.-g-e-t-(-'-l-e-a-v-e-s-'-,- -[-]-)-
-- - - - - - - - - - - - -e-x-p-e-c-t-e-d-_-r-o-o-t- -=- -d-a-t-a-s-e-t-_-i-n-f-o-.-g-e-t-(-'-m-e-r-k-l-e-_-r-o-o-t-'-)-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -i-f- -l-e-a-v-e-s- -a-n-d- -e-x-p-e-c-t-e-d-_-r-o-o-t-:-
-- - - - - - - - - - - - - - - - -c-a-l-c-u-l-a-t-e-d-_-r-o-o-t- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-_-c-a-l-c-u-l-a-t-e-_-m-e-r-k-l-e-_-r-o-o-t-_-f-r-o-m-_-l-e-a-v-e-s-(-l-e-a-v-e-s-)-
-- - - - - - - - - - - - - - - - -m-e-r-k-l-e-_-v-a-l-i-d- -=- -c-a-l-c-u-l-a-t-e-d-_-r-o-o-t- -=-=- -e-x-p-e-c-t-e-d-_-r-o-o-t-
-- - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"-D-a-t-a-s-e-t- -M-e-r-k-l-e- -r-o-o-t-:- -{-'-V-a-l-i-d-'- -i-f- -m-e-r-k-l-e-_-v-a-l-i-d- -e-l-s-e- -'-I-n-v-a-l-i-d-'-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -📋- -D-a-t-a-s-e-t- -I-D-:- -{-d-a-t-a-s-e-t-_-i-n-f-o-.-g-e-t-(-'-d-a-t-a-s-e-t-_-i-d-'-,- -'-N-/-A-'-)-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🌿- -L-e-a-f- -c-o-u-n-t-:- -{-l-e-n-(-l-e-a-v-e-s-)-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🔍- -E-x-p-e-c-t-e-d- -r-o-o-t-:- -{-e-x-p-e-c-t-e-d-_-r-o-o-t-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🧮- -C-a-l-c-u-l-a-t-e-d- -r-o-o-t-:- -{-c-a-l-c-u-l-a-t-e-d-_-r-o-o-t-}-"-)-
-- - - - - - - - - - - - - - - - -i-f- -n-o-t- -m-e-r-k-l-e-_-v-a-l-i-d-:-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -❌- -M-e-r-k-l-e- -r-o-o-t- -m-i-s-m-a-t-c-h-!-"-)-
-- - - - - - - - - - - - - - - - -v-a-l-i-d- -=- -v-a-l-i-d- -a-n-d- -m-e-r-k-l-e-_-v-a-l-i-d-
-- - - - - - - - - - - - -e-l-s-e-:-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-"-⚠-️- - -D-a-t-a-s-e-t- -M-e-r-k-l-e- -d-a-t-a- -n-o-t- -f-o-u-n-d-"-)-
-- - - - - - - - -
-- - - - - - - - -#- -V-e-r-i-f-y- -m-o-d-e-l- -f-i-n-g-e-r-p-r-i-n-t-s-
-- - - - - - - - -i-f- -'-m-o-d-e-l-'- -i-n- -r-e-c-e-i-p-t-_-d-a-t-a-:-
-- - - - - - - - - - - - -m-o-d-e-l-_-i-n-f-o- -=- -r-e-c-e-i-p-t-_-d-a-t-a-[-'-m-o-d-e-l-'-]-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -#- -P-a-r-a-m-e-t-e-r-s- -f-i-n-g-e-r-p-r-i-n-t-
-- - - - - - - - - - - - -p-a-r-a-m-s- -=- -m-o-d-e-l-_-i-n-f-o-.-g-e-t-(-'-p-a-r-a-m-e-t-e-r-s-'-,- -{-}-)-
-- - - - - - - - - - - - -p-a-r-a-m-_-f-i-n-g-e-r-p-r-i-n-t- -=- -m-o-d-e-l-_-i-n-f-o-.-g-e-t-(-'-p-a-r-a-m-e-t-e-r-_-f-i-n-g-e-r-p-r-i-n-t-'-)-
-- - - - - - - - - - - - -i-f- -p-a-r-a-m-s- -a-n-d- -p-a-r-a-m-_-f-i-n-g-e-r-p-r-i-n-t-:-
-- - - - - - - - - - - - - - - - -s-o-r-t-e-d-_-p-a-r-a-m-s- -=- -j-s-o-n-.-d-u-m-p-s-(-p-a-r-a-m-s-,- -s-o-r-t-_-k-e-y-s-=-T-r-u-e-,- -s-e-p-a-r-a-t-o-r-s-=-(-'-,-'-,- -'-:-'-)-)-
-- - - - - - - - - - - - - - - - -c-a-l-c-u-l-a-t-e-d-_-p-a-r-a-m-_-f-i-n-g-e-r-p-r-i-n-t- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-s-h-a-2-5-6-_-h-a-s-h-(-s-o-r-t-e-d-_-p-a-r-a-m-s-)-
-- - - - - - - - - - - - - - - - -p-a-r-a-m-_-v-a-l-i-d- -=- -c-a-l-c-u-l-a-t-e-d-_-p-a-r-a-m-_-f-i-n-g-e-r-p-r-i-n-t- -=-=- -p-a-r-a-m-_-f-i-n-g-e-r-p-r-i-n-t-
-- - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"-🤖- -M-o-d-e-l- -p-a-r-a-m-e-t-e-r-s-:- -{-'-✅- -V-a-l-i-d-'- -i-f- -p-a-r-a-m-_-v-a-l-i-d- -e-l-s-e- -'-❌- -I-n-v-a-l-i-d-'-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -📝- -M-o-d-e-l- -n-a-m-e-:- -{-m-o-d-e-l-_-i-n-f-o-.-g-e-t-(-'-m-o-d-e-l-_-n-a-m-e-'-,- -'-N-/-A-'-)-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🔧- -P-a-r-a-m-e-t-e-r-s-:- -{-p-a-r-a-m-s-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🔍- -E-x-p-e-c-t-e-d- -f-i-n-g-e-r-p-r-i-n-t-:- -{-p-a-r-a-m-_-f-i-n-g-e-r-p-r-i-n-t-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🧮- -C-a-l-c-u-l-a-t-e-d- -f-i-n-g-e-r-p-r-i-n-t-:- -{-c-a-l-c-u-l-a-t-e-d-_-p-a-r-a-m-_-f-i-n-g-e-r-p-r-i-n-t-}-"-)-
-- - - - - - - - - - - - - - - - -i-f- -n-o-t- -p-a-r-a-m-_-v-a-l-i-d-:-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -❌- -P-a-r-a-m-e-t-e-r- -f-i-n-g-e-r-p-r-i-n-t- -m-i-s-m-a-t-c-h-!-"-)-
-- - - - - - - - - - - - - - - - -v-a-l-i-d- -=- -v-a-l-i-d- -a-n-d- -p-a-r-a-m-_-v-a-l-i-d-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -#- -A-r-c-h-i-t-e-c-t-u-r-e- -f-i-n-g-e-r-p-r-i-n-t-
-- - - - - - - - - - - - -a-r-c-h- -=- -m-o-d-e-l-_-i-n-f-o-.-g-e-t-(-'-a-r-c-h-i-t-e-c-t-u-r-e-'-,- -{-}-)-
-- - - - - - - - - - - - -a-r-c-h-_-f-i-n-g-e-r-p-r-i-n-t- -=- -m-o-d-e-l-_-i-n-f-o-.-g-e-t-(-'-a-r-c-h-i-t-e-c-t-u-r-e-_-f-i-n-g-e-r-p-r-i-n-t-'-)-
-- - - - - - - - - - - - -i-f- -a-r-c-h- -a-n-d- -a-r-c-h-_-f-i-n-g-e-r-p-r-i-n-t-:-
-- - - - - - - - - - - - - - - - -s-o-r-t-e-d-_-a-r-c-h- -=- -j-s-o-n-.-d-u-m-p-s-(-a-r-c-h-,- -s-o-r-t-_-k-e-y-s-=-T-r-u-e-,- -s-e-p-a-r-a-t-o-r-s-=-(-'-,-'-,- -'-:-'-)-)-
-- - - - - - - - - - - - - - - - -c-a-l-c-u-l-a-t-e-d-_-a-r-c-h-_-f-i-n-g-e-r-p-r-i-n-t- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-s-h-a-2-5-6-_-h-a-s-h-(-s-o-r-t-e-d-_-a-r-c-h-)-
-- - - - - - - - - - - - - - - - -a-r-c-h-_-v-a-l-i-d- -=- -c-a-l-c-u-l-a-t-e-d-_-a-r-c-h-_-f-i-n-g-e-r-p-r-i-n-t- -=-=- -a-r-c-h-_-f-i-n-g-e-r-p-r-i-n-t-
-- - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"-🏗-️- - -M-o-d-e-l- -a-r-c-h-i-t-e-c-t-u-r-e-:- -{-'-✅- -V-a-l-i-d-'- -i-f- -a-r-c-h-_-v-a-l-i-d- -e-l-s-e- -'-❌- -I-n-v-a-l-i-d-'-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🏛-️- -A-r-c-h-i-t-e-c-t-u-r-e-:- -{-a-r-c-h-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🔍- -E-x-p-e-c-t-e-d- -f-i-n-g-e-r-p-r-i-n-t-:- -{-a-r-c-h-_-f-i-n-g-e-r-p-r-i-n-t-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -🧮- -C-a-l-c-u-l-a-t-e-d- -f-i-n-g-e-r-p-r-i-n-t-:- -{-c-a-l-c-u-l-a-t-e-d-_-a-r-c-h-_-f-i-n-g-e-r-p-r-i-n-t-}-"-)-
-- - - - - - - - - - - - - - - - -i-f- -n-o-t- -a-r-c-h-_-v-a-l-i-d-:-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -❌- -A-r-c-h-i-t-e-c-t-u-r-e- -f-i-n-g-e-r-p-r-i-n-t- -m-i-s-m-a-t-c-h-!-"-)-
-- - - - - - - - - - - - - - - - -v-a-l-i-d- -=- -v-a-l-i-d- -a-n-d- -a-r-c-h-_-v-a-l-i-d-
-- - - - - - - - -
-- - - - - - - - -#- -V-e-r-i-f-y- -a-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s-
-- - - - - - - - -i-f- -'-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-'- -i-n- -r-e-c-e-i-p-t-_-d-a-t-a-:-
-- - - - - - - - - - - - -a-u-d-i-t-_-r-e-c-o-r-d-s- -=- -r-e-c-e-i-p-t-_-d-a-t-a-[-'-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-'-]-
-- - - - - - - - - - - - -i-f- -a-u-d-i-t-_-r-e-c-o-r-d-s-:-
-- - - - - - - - - - - - - - - - -a-u-d-i-t-_-v-a-l-i-d- -=- -T-r-u-e-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"-📋- -A-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s-:- -{-'-✅- -V-a-l-i-d-'- -i-f- -C-I-A-F-V-e-r-i-f-i-e-r-.-v-e-r-i-f-y-_-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-(-a-u-d-i-t-_-r-e-c-o-r-d-s-)- -e-l-s-e- -'-❌- -I-n-v-a-l-i-d-'-}-"-)-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -�- -E-v-e-n-t- -c-o-u-n-t-:- -{-l-e-n-(-a-u-d-i-t-_-r-e-c-o-r-d-s-)-}-"-)-
-- - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - -#- -S-h-o-w- -d-e-t-a-i-l-s- -f-o-r- -e-a-c-h- -a-u-d-i-t- -e-v-e-n-t-
-- - - - - - - - - - - - - - - - -f-o-r- -i-,- -r-e-c-o-r-d- -i-n- -e-n-u-m-e-r-a-t-e-(-a-u-d-i-t-_-r-e-c-o-r-d-s-)-:-
-- - - - - - - - - - - - - - - - - - - - -e-v-e-n-t-_-i-d- -=- -r-e-c-o-r-d-.-g-e-t-(-'-e-v-e-n-t-_-i-d-'-,- -'-N-/-A-'-)-
-- - - - - - - - - - - - - - - - - - - - -e-v-e-n-t-_-t-y-p-e- -=- -r-e-c-o-r-d-.-g-e-t-(-'-e-v-e-n-t-_-t-y-p-e-'-,- -'-N-/-A-'-)-
-- - - - - - - - - - - - - - - - - - - - -t-i-m-e-s-t-a-m-p- -=- -r-e-c-o-r-d-.-g-e-t-(-'-t-i-m-e-s-t-a-m-p-'-,- -'-N-/-A-'-)-
-- - - - - - - - - - - - - - - - - - - - -e-x-p-e-c-t-e-d-_-h-a-s-h- -=- -r-e-c-o-r-d-.-g-e-t-(-'-h-a-s-h-'-,- -'-N-/-A-'-)-
-- - - - - - - - - - - - - - - - - - - - -p-r-e-v-i-o-u-s-_-h-a-s-h- -=- -r-e-c-o-r-d-.-g-e-t-(-'-p-r-e-v-i-o-u-s-_-h-a-s-h-'-,- -'-0-'- -*- -6-4-)-
-- - - - - - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - - - - - -#- -C-a-l-c-u-l-a-t-e- -e-x-p-e-c-t-e-d- -h-a-s-h-
-- - - - - - - - - - - - - - - - - - - - -d-a-t-a- -=- -f-"-{-e-v-e-n-t-_-i-d-}-|-{-e-v-e-n-t-_-t-y-p-e-}-|-{-t-i-m-e-s-t-a-m-p-}-|-{-p-r-e-v-i-o-u-s-_-h-a-s-h-}-"-
-- - - - - - - - - - - - - - - - - - - - -c-a-l-c-u-l-a-t-e-d-_-h-a-s-h- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-s-h-a-2-5-6-_-h-a-s-h-(-d-a-t-a-)-
-- - - - - - - - - - - - - - - - - - - - -r-e-c-o-r-d-_-v-a-l-i-d- -=- -c-a-l-c-u-l-a-t-e-d-_-h-a-s-h- -=-=- -e-x-p-e-c-t-e-d-_-h-a-s-h-
-- - - - - - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - -📄- -E-v-e-n-t- -{-i-+-1-}-:- -{-e-v-e-n-t-_-t-y-p-e-}- -(-{-'-✅-'- -i-f- -r-e-c-o-r-d-_-v-a-l-i-d- -e-l-s-e- -'-❌-'-}-)-"-)-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - - - - -🆔- -E-v-e-n-t- -I-D-:- -{-e-v-e-n-t-_-i-d-}-"-)-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - - - - -⏰- -T-i-m-e-s-t-a-m-p-:- -{-t-i-m-e-s-t-a-m-p-}-"-)-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - - - - -🔗- -P-r-e-v-i-o-u-s- -h-a-s-h-:- -{-p-r-e-v-i-o-u-s-_-h-a-s-h-}-"-)-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - - - - -🔍- -E-x-p-e-c-t-e-d- -h-a-s-h-:- -{-e-x-p-e-c-t-e-d-_-h-a-s-h-}-"-)-
-- - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - - - - -🧮- -C-a-l-c-u-l-a-t-e-d- -h-a-s-h-:- -{-c-a-l-c-u-l-a-t-e-d-_-h-a-s-h-}-"-)-
-- - - - - - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - - - - - -i-f- -n-o-t- -r-e-c-o-r-d-_-v-a-l-i-d-:-
-- - - - - - - - - - - - - - - - - - - - - - - - -p-r-i-n-t-(-f-"- - - - - - -❌- -H-a-s-h- -v-e-r-i-f-i-c-a-t-i-o-n- -f-a-i-l-e-d-!-"-)-
-- - - - - - - - - - - - - - - - - - - - - - - - -a-u-d-i-t-_-v-a-l-i-d- -=- -F-a-l-s-e-
-- - - - - - - - - - - - - - - - -
-- - - - - - - - - - - - - - - - -v-a-l-i-d- -=- -v-a-l-i-d- -a-n-d- -a-u-d-i-t-_-v-a-l-i-d-
-- - - - - - - - - - - - -e-l-s-e-:-
-- - - - - - - - - - - - - - - - -p-r-i-n-t-(-"-⚠-️- - -A-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s- -i-s- -e-m-p-t-y-"-)-
-- - - - - - - - -
-- - - - - - - - -p-r-i-n-t-(-"-=-"- -*- -4-0-)-
-- - - - - - - - -p-r-i-n-t-(-f-"-🎯- -O-v-e-r-a-l-l- -R-e-c-e-i-p-t-:- -{-'-✅- -V-A-L-I-D-'- -i-f- -v-a-l-i-d- -e-l-s-e- -'-❌- -I-N-V-A-L-I-D-'-}-"-)-
-- - - - - - - - -
-- - - - - - - - -r-e-t-u-r-n- -v-a-l-i-d-
--
--
--d-e-f- -c-r-e-a-t-e-_-s-a-m-p-l-e-_-r-e-c-e-i-p-t-(-)- --->- -D-i-c-t-[-s-t-r-,- -A-n-y-]-:-
-- - - - -"-"-"-C-r-e-a-t-e- -a- -s-a-m-p-l-e- -r-e-c-e-i-p-t- -f-o-r- -t-e-s-t-i-n-g-.-"-"-"-
-- - - - -r-e-t-u-r-n- -{-
-- - - - - - - - -"-r-e-c-e-i-p-t-_-i-d-"-:- -"-s-a-m-p-l-e-_-0-0-1-"-,-
-- - - - - - - - -"-t-i-m-e-s-t-a-m-p-"-:- -"-2-0-2-5---0-9---1-2-T-1-0-:-0-0-:-0-0-Z-"-,-
-- - - - - - - - -"-d-a-t-a-s-e-t-"-:- -{-
-- - - - - - - - - - - - -"-d-a-t-a-s-e-t-_-i-d-"-:- -"-d-e-m-o-_-d-a-t-a-s-e-t-"-,-
-- - - - - - - - - - - - -"-l-e-a-v-e-s-"-:- -[-
-- - - - - - - - - - - - - - - - -"-a-6-6-5-a-4-5-9-2-0-4-2-2-f-9-d-4-1-7-e-4-8-6-7-e-f-d-c-4-f-b-8-a-0-4-a-1-f-3-f-f-f-1-f-a-0-7-e-9-9-8-e-8-6-f-7-f-7-a-2-7-a-e-3-"-,- - -#- -h-a-s-h- -o-f- -"-h-e-l-l-o-"-
-- - - - - - - - - - - - - - - - -"-2-c-2-6-b-4-6-b-6-8-f-f-c-6-8-f-f-9-9-b-4-5-3-c-1-d-3-0-4-1-3-4-1-3-4-2-2-d-7-0-6-4-8-3-b-f-a-0-f-9-8-a-5-e-8-8-6-2-6-6-e-7-a-e-"-,- - -#- -h-a-s-h- -o-f- -"-f-o-o-"-
-- - - - - - - - - - - - -]-,-
-- - - - - - - - - - - - -"-m-e-r-k-l-e-_-r-o-o-t-"-:- -"-c-6-c-6-b-a-3-b-8-2-b-a-9-c-6-3-b-3-f-0-1-e-4-b-f-e-e-f-8-a-2-e-2-a-5-b-7-a-9-f-3-f-3-f-2-c-6-c-6-b-2-a-8-2-b-a-9-c-6-3-b-3-f-0-"-
-- - - - - - - - -}-,-
-- - - - - - - - -"-m-o-d-e-l-"-:- -{-
-- - - - - - - - - - - - -"-m-o-d-e-l-_-n-a-m-e-"-:- -"-d-e-m-o-_-m-o-d-e-l-"-,-
-- - - - - - - - - - - - -"-p-a-r-a-m-e-t-e-r-s-"-:- -{-"-e-p-o-c-h-s-"-:- -3-,- -"-l-r-"-:- -0-.-0-1-}-,-
-- - - - - - - - - - - - -"-p-a-r-a-m-e-t-e-r-_-f-i-n-g-e-r-p-r-i-n-t-"-:- -"-c-a-l-c-u-l-a-t-e-d-_-p-a-r-a-m-_-h-a-s-h-"-,-
-- - - - - - - - - - - - -"-a-r-c-h-i-t-e-c-t-u-r-e-"-:- -{-"-t-y-p-e-"-:- -"-l-o-g-r-e-g-"-}-,-
-- - - - - - - - - - - - -"-a-r-c-h-i-t-e-c-t-u-r-e-_-f-i-n-g-e-r-p-r-i-n-t-"-:- -"-c-a-l-c-u-l-a-t-e-d-_-a-r-c-h-_-h-a-s-h-"-
-- - - - - - - - -}-,-
-- - - - - - - - -"-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-"-:- -[-
-- - - - - - - - - - - - -{-
-- - - - - - - - - - - - - - - - -"-e-v-e-n-t-_-i-d-"-:- -"-t-r-a-i-n-_-0-0-1-"-,-
-- - - - - - - - - - - - - - - - -"-e-v-e-n-t-_-t-y-p-e-"-:- -"-t-r-a-i-n-i-n-g-_-s-t-a-r-t-e-d-"-,-
-- - - - - - - - - - - - - - - - -"-t-i-m-e-s-t-a-m-p-"-:- -"-2-0-2-5---0-9---1-2-T-1-0-:-0-0-:-0-0-Z-"-,-
-- - - - - - - - - - - - - - - - -"-p-r-e-v-i-o-u-s-_-h-a-s-h-"-:- -"-0-"- -*- -6-4-,-
-- - - - - - - - - - - - - - - - -"-h-a-s-h-"-:- -"-c-a-l-c-u-l-a-t-e-d-_-h-a-s-h-_-1-"-
-- - - - - - - - - - - - -}-,-
-- - - - - - - - - - - - -{-
-- - - - - - - - - - - - - - - - -"-e-v-e-n-t-_-i-d-"-:- -"-t-r-a-i-n-_-0-0-2-"-,-
-- - - - - - - - - - - - - - - - -"-e-v-e-n-t-_-t-y-p-e-"-:- -"-t-r-a-i-n-i-n-g-_-c-o-m-p-l-e-t-e-d-"-,-
-- - - - - - - - - - - - - - - - -"-t-i-m-e-s-t-a-m-p-"-:- -"-2-0-2-5---0-9---1-2-T-1-0-:-3-0-:-0-0-Z-"-,-
-- - - - - - - - - - - - - - - - -"-p-r-e-v-i-o-u-s-_-h-a-s-h-"-:- -"-c-a-l-c-u-l-a-t-e-d-_-h-a-s-h-_-1-"-,-
-- - - - - - - - - - - - - - - - -"-h-a-s-h-"-:- -"-c-a-l-c-u-l-a-t-e-d-_-h-a-s-h-_-2-"-
-- - - - - - - - - - - - -}-
-- - - - - - - - -]-
-- - - - -}-
--
--
--d-e-f- -m-a-i-n-(-)-:-
-- - - - -"-"-"-M-a-i-n- -v-e-r-i-f-i-e-r- -f-u-n-c-t-i-o-n-.-"-"-"-
-- - - - -p-a-r-s-e-r- -=- -a-r-g-p-a-r-s-e-.-A-r-g-u-m-e-n-t-P-a-r-s-e-r-(-d-e-s-c-r-i-p-t-i-o-n-=-"-C-I-A-F- -R-e-c-e-i-p-t- -V-e-r-i-f-i-e-r-"-)-
-- - - - -p-a-r-s-e-r-.-a-d-d-_-a-r-g-u-m-e-n-t-(-"-r-e-c-e-i-p-t-_-f-i-l-e-"-,- -n-a-r-g-s-=-"-?-"-,- -h-e-l-p-=-"-R-e-c-e-i-p-t- -J-S-O-N- -f-i-l-e- -t-o- -v-e-r-i-f-y-"-)-
-- - - - -p-a-r-s-e-r-.-a-d-d-_-a-r-g-u-m-e-n-t-(-"-----c-r-e-a-t-e---s-a-m-p-l-e-"-,- -a-c-t-i-o-n-=-"-s-t-o-r-e-_-t-r-u-e-"-,- -h-e-l-p-=-"-C-r-e-a-t-e- -s-a-m-p-l-e- -r-e-c-e-i-p-t-"-)-
-- - - - -p-a-r-s-e-r-.-a-d-d-_-a-r-g-u-m-e-n-t-(-"-----v-e-r-i-f-y---m-e-r-k-l-e-"-,- -h-e-l-p-=-"-V-e-r-i-f-y- -M-e-r-k-l-e- -r-o-o-t- -f-r-o-m- -d-a-t-a- -f-i-l-e-"-)-
-- - - - -p-a-r-s-e-r-.-a-d-d-_-a-r-g-u-m-e-n-t-(-"-----v-e-r-i-f-y---a-u-d-i-t---c-o-n-n-e-c-t-i-o-n-s-"-,- -h-e-l-p-=-"-V-e-r-i-f-y- -a-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s- -f-r-o-m- -f-i-l-e-"-)-
-- - - - -
-- - - - -a-r-g-s- -=- -p-a-r-s-e-r-.-p-a-r-s-e-_-a-r-g-s-(-)-
-- - - - -
-- - - - -i-f- -a-r-g-s-.-c-r-e-a-t-e-_-s-a-m-p-l-e-:-
-- - - - - - - - -s-a-m-p-l-e- -=- -c-r-e-a-t-e-_-s-a-m-p-l-e-_-r-e-c-e-i-p-t-(-)-
-- - - - - - - - -p-r-i-n-t-(-"-📝- -S-a-m-p-l-e- -r-e-c-e-i-p-t- -c-r-e-a-t-e-d-:-"-)-
-- - - - - - - - -p-r-i-n-t-(-j-s-o-n-.-d-u-m-p-s-(-s-a-m-p-l-e-,- -i-n-d-e-n-t-=-2-)-)-
-- - - - - - - - -r-e-t-u-r-n-
-- - - - -
-- - - - -i-f- -a-r-g-s-.-v-e-r-i-f-y-_-m-e-r-k-l-e-:-
-- - - - - - - - -t-r-y-:-
-- - - - - - - - - - - - -w-i-t-h- -o-p-e-n-(-a-r-g-s-.-v-e-r-i-f-y-_-m-e-r-k-l-e-,- -'-r-'-)- -a-s- -f-:-
-- - - - - - - - - - - - - - - - -d-a-t-a- -=- -j-s-o-n-.-l-o-a-d-(-f-)-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -l-e-a-v-e-s- -=- -d-a-t-a-.-g-e-t-(-'-l-e-a-v-e-s-'-,- -[-]-)-
-- - - - - - - - - - - - -e-x-p-e-c-t-e-d-_-r-o-o-t- -=- -d-a-t-a-.-g-e-t-(-'-e-x-p-e-c-t-e-d-_-r-o-o-t-'-)-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -r-e-s-u-l-t- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-v-e-r-i-f-y-_-m-e-r-k-l-e-_-r-o-o-t-(-l-e-a-v-e-s-,- -e-x-p-e-c-t-e-d-_-r-o-o-t-)-
-- - - - - - - - - - - - -p-r-i-n-t-(-f-"-🌳- -M-e-r-k-l-e- -v-e-r-i-f-i-c-a-t-i-o-n-:- -{-'-✅- -V-a-l-i-d-'- -i-f- -r-e-s-u-l-t- -e-l-s-e- -'-❌- -I-n-v-a-l-i-d-'-}-"-)-
-- - - - - - - - - - - - -
-- - - - - - - - -e-x-c-e-p-t- -E-x-c-e-p-t-i-o-n- -a-s- -e-:-
-- - - - - - - - - - - - -p-r-i-n-t-(-f-"-❌- -E-r-r-o-r- -v-e-r-i-f-y-i-n-g- -M-e-r-k-l-e- -r-o-o-t-:- -{-e-}-"-)-
-- - - - - - - - -r-e-t-u-r-n-
-- - - - -
-- - - - -i-f- -a-r-g-s-.-v-e-r-i-f-y-_-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-:-
-- - - - - - - - -t-r-y-:-
-- - - - - - - - - - - - -w-i-t-h- -o-p-e-n-(-a-r-g-s-.-v-e-r-i-f-y-_-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-,- -'-r-'-)- -a-s- -f-:-
-- - - - - - - - - - - - - - - - -d-a-t-a- -=- -j-s-o-n-.-l-o-a-d-(-f-)-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -a-u-d-i-t-_-r-e-c-o-r-d-s- -=- -d-a-t-a-.-g-e-t-(-'-a-u-d-i-t-_-r-e-c-o-r-d-s-'-,- -[-]-)-
-- - - - - - - - - - - - -r-e-s-u-l-t- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-v-e-r-i-f-y-_-a-u-d-i-t-_-c-o-n-n-e-c-t-i-o-n-s-(-a-u-d-i-t-_-r-e-c-o-r-d-s-)-
-- - - - - - - - - - - - -p-r-i-n-t-(-f-"-📋- -A-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s- -v-e-r-i-f-i-c-a-t-i-o-n-:- -{-'-✅- -V-a-l-i-d-'- -i-f- -r-e-s-u-l-t- -e-l-s-e- -'-❌- -I-n-v-a-l-i-d-'-}-"-)-
-- - - - - - - - - - - - -
-- - - - - - - - -e-x-c-e-p-t- -E-x-c-e-p-t-i-o-n- -a-s- -e-:-
-- - - - - - - - - - - - -p-r-i-n-t-(-f-"-❌- -E-r-r-o-r- -v-e-r-i-f-y-i-n-g- -a-u-d-i-t- -c-o-n-n-e-c-t-i-o-n-s-:- -{-e-}-"-)-
-- - - - - - - - -r-e-t-u-r-n-
-- - - - -
-- - - - -i-f- -a-r-g-s-.-r-e-c-e-i-p-t-_-f-i-l-e-:-
-- - - - - - - - -t-r-y-:-
-- - - - - - - - - - - - -w-i-t-h- -o-p-e-n-(-a-r-g-s-.-r-e-c-e-i-p-t-_-f-i-l-e-,- -'-r-'-)- -a-s- -f-:-
-- - - - - - - - - - - - - - - - -r-e-c-e-i-p-t-_-d-a-t-a- -=- -j-s-o-n-.-l-o-a-d-(-f-)-
-- - - - - - - - - - - - -
-- - - - - - - - - - - - -r-e-s-u-l-t- -=- -C-I-A-F-V-e-r-i-f-i-e-r-.-v-e-r-i-f-y-_-r-e-c-e-i-p-t-(-r-e-c-e-i-p-t-_-d-a-t-a-)-
-- - - - - - - - - - - - -s-y-s-.-e-x-i-t-(-0- -i-f- -r-e-s-u-l-t- -e-l-s-e- -1-)-
-- - - - - - - - - - - - -
-- - - - - - - - -e-x-c-e-p-t- -F-i-l-e-N-o-t-F-o-u-n-d-E-r-r-o-r-:-
-- - - - - - - - - - - - -p-r-i-n-t-(-f-"-❌- -F-i-l-e- -n-o-t- -f-o-u-n-d-:- -{-a-r-g-s-.-r-e-c-e-i-p-t-_-f-i-l-e-}-"-)-
-- - - - - - - - - - - - -s-y-s-.-e-x-i-t-(-1-)-
-- - - - - - - - -e-x-c-e-p-t- -j-s-o-n-.-J-S-O-N-D-e-c-o-d-e-E-r-r-o-r-:-
-- - - - - - - - - - - - -p-r-i-n-t-(-f-"-❌- -I-n-v-a-l-i-d- -J-S-O-N- -i-n- -f-i-l-e-:- -{-a-r-g-s-.-r-e-c-e-i-p-t-_-f-i-l-e-}-"-)-
-- - - - - - - - - - - - -s-y-s-.-e-x-i-t-(-1-)-
-- - - - - - - - -e-x-c-e-p-t- -E-x-c-e-p-t-i-o-n- -a-s- -e-:-
-- - - - - - - - - - - - -p-r-i-n-t-(-f-"-❌- -E-r-r-o-r- -v-e-r-i-f-y-i-n-g- -r-e-c-e-i-p-t-:- -{-e-}-"-)-
-- - - - - - - - - - - - -s-y-s-.-e-x-i-t-(-1-)-
-- - - - -e-l-s-e-:-
-- - - - - - - - -p-a-r-s-e-r-.-p-r-i-n-t-_-h-e-l-p-(-)-
--
--
--i-f- -_-_-n-a-m-e-_-_- -=-=- -"-_-_-m-a-i-n-_-_-"-:-
-- - - - -m-a-i-n-(-)-
+#!/usr/bin/env python3
+"""
+CIAF Receipt Verifier
+
+A standalone tool for verifying CIAF receipts and audit trails.
+This verifier can independently validate:
+- Dataset split leaves -> Merkle root
+- Model parameter/architecture fingerprints
+- Audit connections linkage (hash-connecting event IDs)
+
+This tool demonstrates that CIAF produces verifiable artifacts that can be
+validated independently of the main framework.
+
+Usage:
+    python tools/verify_receipt.py <receipt_file.json>
+    python tools/verify_receipt.py --verify-merkle <data_file.json>
+    python tools/verify_receipt.py --verify-audit-connections <audit_file.json>
+
+Created: 2025-09-12
+Author: Denzil James Greenwood
+"""
+
+import json
+import sys
+import argparse
+import hashlib
+from pathlib import Path
+from typing import Dict, List, Any, Optional
+
+
+class CIAFVerifier:
+    """Independent CIAF receipt and audit trail verifier."""
+    
+    @staticmethod
+    def sha256_hash(data: str) -> str:
+        """Calculate SHA256 hash of string data."""
+        return hashlib.sha256(data.encode('utf-8')).hexdigest()
+    
+    @staticmethod
+    def verify_merkle_root(leaves: List[str], expected_root: str) -> bool:
+        """
+        Verify Merkle root calculation from leaves.
+        
+        Args:
+            leaves: List of leaf hashes
+            expected_root: Expected Merkle root hash
+            
+        Returns:
+            True if calculated root matches expected root
+        """
+        if not leaves:
+            return False
+        
+        if len(leaves) == 1:
+            return leaves[0] == expected_root
+        
+        # Build Merkle tree bottom-up
+        current_level = leaves[:]
+        
+        while len(current_level) > 1:
+            next_level = []
+            
+            # Process pairs
+            for i in range(0, len(current_level), 2):
+                left = current_level[i]
+                right = current_level[i + 1] if i + 1 < len(current_level) else left
+                
+                # Hash concatenation of left and right
+                combined = CIAFVerifier.sha256_hash(left + right)
+                next_level.append(combined)
+            
+            current_level = next_level
+        
+        calculated_root = current_level[0]
+        return calculated_root == expected_root
+    
+    @staticmethod
+    def _calculate_merkle_root_from_leaves(leaves: List[str]) -> str:
+        """
+        Calculate Merkle root from leaves (internal helper).
+        
+        Args:
+            leaves: List of leaf hashes
+            
+        Returns:
+            Calculated Merkle root hash
+        """
+        if not leaves:
+            return ""
+        
+        if len(leaves) == 1:
+            return leaves[0]
+        
+        # Build Merkle tree bottom-up
+        current_level = leaves[:]
+        
+        while len(current_level) > 1:
+            next_level = []
+            
+            # Process pairs of nodes
+            for i in range(0, len(current_level), 2):
+                left = current_level[i]
+                right = current_level[i + 1] if i + 1 < len(current_level) else left
+                
+                # Combine and hash
+                combined = CIAFVerifier.sha256_hash(left + right)
+                next_level.append(combined)
+            
+            current_level = next_level
+        
+        return current_level[0]
+    
+    @staticmethod
+    def verify_parameter_fingerprint(parameters: Dict[str, Any], expected_fingerprint: str) -> bool:
+        """
+        Verify model parameter fingerprint.
+        
+        Args:
+            parameters: Model parameters dictionary
+            expected_fingerprint: Expected parameter fingerprint
+            
+        Returns:
+            True if calculated fingerprint matches expected
+        """
+        # Sort parameters for deterministic hashing
+        sorted_params = json.dumps(parameters, sort_keys=True, separators=(',', ':'))
+        calculated_fingerprint = CIAFVerifier.sha256_hash(sorted_params)
+        return calculated_fingerprint == expected_fingerprint
+    
+    @staticmethod
+    def verify_audit_connections(audit_records: List[Dict[str, Any]]) -> bool:
+        """
+        Verify audit connections integrity.
+
+        Args:
+            audit_records: List of audit records with hash connecting
+
+        Returns:
+            True if audit connections is valid
+        """
+        if not audit_records:
+            return False
+        
+        if len(audit_records) == 1:
+            # Single record - verify its hash
+            record = audit_records[0]
+            return CIAFVerifier._verify_record_hash(record)
+        
+        # Verify connections linkage
+        for i in range(1, len(audit_records)):
+            current = audit_records[i]
+            previous = audit_records[i - 1]
+            
+            # Verify current record's previous_hash matches previous record's hash
+            if current.get('previous_hash') != previous.get('hash'):
+                print(f"[FAIL] Connections break at record {i}: previous_hash mismatch")
+                return False
+            
+            # Verify current record's hash
+            if not CIAFVerifier._verify_record_hash(current):
+                print(f"[FAIL] Invalid hash at record {i}")
+                return False
+        
+        return True
+    
+    @staticmethod
+    def _verify_record_hash(record: Dict[str, Any]) -> bool:
+        """Verify individual audit record hash."""
+        expected_hash = record.get('hash')
+        if not expected_hash:
+            return False
+        
+        # Reconstruct record data for hashing
+        event_id = record.get('event_id', '')
+        event_type = record.get('event_type', '')
+        timestamp = record.get('timestamp', '')
+        previous_hash = record.get('previous_hash', '0' * 64)
+        
+        data = f"{event_id}|{event_type}|{timestamp}|{previous_hash}"
+        calculated_hash = CIAFVerifier.sha256_hash(data)
+        
+        return calculated_hash == expected_hash
+    
+    @staticmethod
+    def verify_receipt(receipt_data: Dict[str, Any]) -> bool:
+        """
+        Verify complete CIAF receipt.
+        
+        Args:
+            receipt_data: Complete receipt data
+            
+        Returns:
+            True if receipt is valid
+        """
+        print("Verifying CIAF Receipt...")
+        print("=" * 40)
+        
+        valid = True
+        
+        # Verify dataset Merkle root
+        if 'dataset' in receipt_data:
+            dataset_info = receipt_data['dataset']
+            leaves = dataset_info.get('leaves', [])
+            expected_root = dataset_info.get('merkle_root')
+            
+            if leaves and expected_root:
+                calculated_root = CIAFVerifier._calculate_merkle_root_from_leaves(leaves)
+                merkle_valid = calculated_root == expected_root
+                
+                print(f"Dataset Merkle root: {'Valid' if merkle_valid else 'Invalid'}")
+                print(f"   [DATASET] Dataset ID: {dataset_info.get('dataset_id', 'N/A')}")
+                print(f"   [LEAF] Leaf count: {len(leaves)}")
+                print(f"   [EXPECTED] Expected root: {expected_root}")
+                print(f"   [CALCULATED] Calculated root: {calculated_root}")
+                if not merkle_valid:
+                    print(f"   [FAIL] Merkle root mismatch!")
+                valid = valid and merkle_valid
+            else:
+                print("[WARNING] Dataset Merkle data not found")
+        
+        # Verify model fingerprints
+        if 'model' in receipt_data:
+            model_info = receipt_data['model']
+            
+            # Parameters fingerprint
+            params = model_info.get('parameters', {})
+            param_fingerprint = model_info.get('parameter_fingerprint')
+            if params and param_fingerprint:
+                sorted_params = json.dumps(params, sort_keys=True, separators=(',', ':'))
+                calculated_param_fingerprint = CIAFVerifier.sha256_hash(sorted_params)
+                param_valid = calculated_param_fingerprint == param_fingerprint
+                
+                print(f"[MODEL] Model parameters: {'[SUCCESS] Valid' if param_valid else '[FAIL] Invalid'}")
+                print(f"   [MODEL] Model name: {model_info.get('model_name', 'N/A')}")
+                print(f"   [PARAMS] Parameters: {params}")
+                print(f"   [EXPECTED] Expected fingerprint: {param_fingerprint}")
+                print(f"   [CALCULATED] Calculated fingerprint: {calculated_param_fingerprint}")
+                if not param_valid:
+                    print(f"   [FAIL] Parameter fingerprint mismatch!")
+                valid = valid and param_valid
+            
+            # Architecture fingerprint
+            arch = model_info.get('architecture', {})
+            arch_fingerprint = model_info.get('architecture_fingerprint')
+            if arch and arch_fingerprint:
+                sorted_arch = json.dumps(arch, sort_keys=True, separators=(',', ':'))
+                calculated_arch_fingerprint = CIAFVerifier.sha256_hash(sorted_arch)
+                arch_valid = calculated_arch_fingerprint == arch_fingerprint
+                
+                print(f"[ARCHITECTURE] Model architecture: {'[SUCCESS] Valid' if arch_valid else '[FAIL] Invalid'}")
+                print(f"   [ARCH] Architecture: {arch}")
+                print(f"   [EXPECTED] Expected fingerprint: {arch_fingerprint}")
+                print(f"   [CALCULATED] Calculated fingerprint: {calculated_arch_fingerprint}")
+                if not arch_valid:
+                    print(f"   [FAIL] Architecture fingerprint mismatch!")
+                valid = valid and arch_valid
+        
+        # Verify audit connections
+        if 'audit_connections' in receipt_data:
+            audit_records = receipt_data['audit_connections']
+            if audit_records:
+                audit_valid = True
+                print(f"[AUDIT] Audit connections: {'[SUCCESS] Valid' if CIAFVerifier.verify_audit_connections(audit_records) else '[FAIL] Invalid'}")
+                print(f"   [COUNT] Event count: {len(audit_records)}")
+                
+                # Show details for each audit event
+                for i, record in enumerate(audit_records):
+                    event_id = record.get('event_id', 'N/A')
+                    event_type = record.get('event_type', 'N/A')
+                    timestamp = record.get('timestamp', 'N/A')
+                    expected_hash = record.get('hash', 'N/A')
+                    previous_hash = record.get('previous_hash', '0' * 64)
+                    
+                    # Calculate expected hash
+                    data = f"{event_id}|{event_type}|{timestamp}|{previous_hash}"
+                    calculated_hash = CIAFVerifier.sha256_hash(data)
+                    record_valid = calculated_hash == expected_hash
+                    
+                    print(f"   [EVENT] Event {i+1}: {event_type} ({'[SUCCESS]' if record_valid else '[FAIL]'})")
+                    print(f"     [ID] Event ID: {event_id}")
+                    print(f"     [TIME] Timestamp: {timestamp}")
+                    print(f"     [LINK] Previous hash: {previous_hash}")
+                    print(f"     [EXPECTED] Expected hash: {expected_hash}")
+                    print(f"     [CALCULATED] Calculated hash: {calculated_hash}")
+                    
+                    if not record_valid:
+                        print(f"     [FAIL] Hash verification failed!")
+                        audit_valid = False
+                
+                valid = valid and audit_valid
+            else:
+                print("[WARNING] Audit connections is empty")
+        
+        print("=" * 40)
+        print(f"[OVERALL] Overall Receipt: {'[SUCCESS] VALID' if valid else '[FAIL] INVALID'}")
+        
+        return valid
+
+
+def create_sample_receipt() -> Dict[str, Any]:
+    """Create a sample receipt for testing."""
+    return {
+        "receipt_id": "sample_001",
+        "timestamp": "2025-09-12T10:00:00Z",
+        "dataset": {
+            "dataset_id": "demo_dataset",
+            "leaves": [
+                "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",  # hash of "hello"
+                "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",  # hash of "foo"
+            ],
+            "merkle_root": "c6c6ba3b82ba9c63b3f01e4bfeef8a2e2a5b7a9f3f3f2c6c6b2a82ba9c63b3f0"
+        },
+        "model": {
+            "model_name": "demo_model",
+            "parameters": {"epochs": 3, "lr": 0.01},
+            "parameter_fingerprint": "calculated_param_hash",
+            "architecture": {"type": "logreg"},
+            "architecture_fingerprint": "calculated_arch_hash"
+        },
+        "audit_connections": [
+            {
+                "event_id": "train_001",
+                "event_type": "training_started",
+                "timestamp": "2025-09-12T10:00:00Z",
+                "previous_hash": "0" * 64,
+                "hash": "calculated_hash_1"
+            },
+            {
+                "event_id": "train_002",
+                "event_type": "training_completed",
+                "timestamp": "2025-09-12T10:30:00Z",
+                "previous_hash": "calculated_hash_1",
+                "hash": "calculated_hash_2"
+            }
+        ]
+    }
+
+
+def main():
+    """Main verifier function."""
+    parser = argparse.ArgumentParser(description="CIAF Receipt Verifier")
+    parser.add_argument("receipt_file", nargs="?", help="Receipt JSON file to verify")
+    parser.add_argument("--create-sample", action="store_true", help="Create sample receipt")
+    parser.add_argument("--verify-merkle", help="Verify Merkle root from data file")
+    parser.add_argument("--verify-audit-connections", help="Verify audit connections from file")
+    
+    args = parser.parse_args()
+    
+    if args.create_sample:
+        sample = create_sample_receipt()
+        print("[SAMPLE] Sample receipt created:")
+        print(json.dumps(sample, indent=2))
+        return
+    
+    if args.verify_merkle:
+        try:
+            with open(args.verify_merkle, 'r') as f:
+                data = json.load(f)
+            
+            leaves = data.get('leaves', [])
+            expected_root = data.get('expected_root')
+            
+            result = CIAFVerifier.verify_merkle_root(leaves, expected_root)
+            print(f"[TREE] Merkle verification: {'[SUCCESS] Valid' if result else '[FAIL] Invalid'}")
+            
+        except Exception as e:
+            print(f"[FAIL] Error verifying Merkle root: {e}")
+        return
+    
+    if args.verify_audit_connections:
+        try:
+            with open(args.verify_audit_connections, 'r') as f:
+                data = json.load(f)
+            
+            audit_records = data.get('audit_records', [])
+            result = CIAFVerifier.verify_audit_connections(audit_records)
+            print(f"[AUDIT] Audit connections verification: {'[SUCCESS] Valid' if result else '[FAIL] Invalid'}")
+            
+        except Exception as e:
+            print(f"[FAIL] Error verifying audit connections: {e}")
+        return
+    
+    if args.receipt_file:
+        try:
+            with open(args.receipt_file, 'r') as f:
+                receipt_data = json.load(f)
+            
+            result = CIAFVerifier.verify_receipt(receipt_data)
+            sys.exit(0 if result else 1)
+            
+        except FileNotFoundError:
+            print(f"[FAIL] File not found: {args.receipt_file}")
+            sys.exit(1)
+        except json.JSONDecodeError:
+            print(f"[FAIL] Invalid JSON in file: {args.receipt_file}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"[FAIL] Error verifying receipt: {e}")
+            sys.exit(1)
+    else:
+        parser.print_help()
+
+
+if __name__ == "__main__":
+    main()
