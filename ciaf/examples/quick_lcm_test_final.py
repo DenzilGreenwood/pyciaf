@@ -93,7 +93,7 @@ def quick_test_final():
                 name="quick_test",
                 version="v1",
                 owner="ciaf_user", 
-                license="MIT",
+                license="Example License",
                 description="Mock dataset for quick test"
             )
             

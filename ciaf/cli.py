@@ -102,11 +102,11 @@ def setup_command(args):
         storage_path = args.path or f"{args.project_name}_metadata"
         config_file = f"{args.project_name}_metadata_config.json"
 
-        print(f"🚀 Setting up CIAF metadata storage for '{args.project_name}'")
+        print(f"[LAUNCH] Setting up CIAF metadata storage for '{args.project_name}'")
         print("=" * 50)
 
         # Create configuration
-        print(f"📋 Creating configuration from '{args.template}' template...")
+        print(f"[CLIPBOARD] Creating configuration from '{args.template}' template...")
         create_config_template(args.template, config_file)
 
         # Update configuration
@@ -116,7 +116,7 @@ def setup_command(args):
         config.save_to_file(config_file)
 
         # Initialize storage
-        print(f"🗄️ Initializing {args.backend} storage at '{storage_path}'...")
+        print(f"[DATABASE] Initializing {args.backend} storage at '{storage_path}'...")
         storage = MetadataStorage(storage_path, args.backend)
 
         # Create directory structure
@@ -391,7 +391,7 @@ def version_command(args):
     print("CIAF (Cognitive Insight Audit Framework)")
     print("Version: 0.1.0")
     print("Author: Denzil James Greenwood")
-    print("License: MIT")
+    print("License: Proprietary")
 
 
 def compliance_report_cli():

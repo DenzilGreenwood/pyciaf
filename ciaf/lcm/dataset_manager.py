@@ -453,7 +453,7 @@ class LCMDatasetManager:
         metadata = DatasetMetadata(
             name=dataset_id,
             owner="ciaf_user",
-            license="MIT",
+            license="Example License",
             schema_digest="",  # Will be computed
             sampling_rules={},
             version="1.0.0",

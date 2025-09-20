@@ -65,7 +65,6 @@ docs = [
 
 [project.urls]
 "Homepage" = "https://github.com/DenzilGreenwood/pyciaf"
-"Documentation" = "https://ciaf.readthedocs.io"
 "Repository" = "https://github.com/DenzilGreenwood/pyciaf"
 "Bug Tracker" = "https://github.com/DenzilGreenwood/pyciaf/issues"
 "Changelog" = "https://github.com/DenzilGreenwood/pyciaf/blob/main/CHANGELOG.md"

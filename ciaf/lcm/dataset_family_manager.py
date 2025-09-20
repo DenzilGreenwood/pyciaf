@@ -405,7 +405,7 @@ class LCMDatasetFamilyManager:
             name=dataset_name,
             version=version,
             owner="ciaf_user",
-            license="MIT",
+            license="Example License",
             description=f"Mock dataset family for {dataset_name}",
             privacy_level="public"
         )

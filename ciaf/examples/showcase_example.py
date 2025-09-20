@@ -71,7 +71,7 @@ def main():
         name="ai_research_data",
         version="v2.1", 
         owner="research_consortium",
-        license="MIT",
+        license="Example Research License",
         description="Research dataset for AI model development with enhanced audit features",
         creation_date="2025-09-10"
     )
