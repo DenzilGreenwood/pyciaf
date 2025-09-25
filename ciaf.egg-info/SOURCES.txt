@@ -8,8 +8,12 @@ ciaf/SECURITY.md
 ciaf/__init__.py
 ciaf/adaptive_lcm.py
 ciaf/cli.py
+ciaf/crypto_health.py
 ciaf/deferred_lcm.py
 ciaf/deferred_lcm_design.py
+ciaf/determinism_metadata.py
+ciaf/enhanced_receipts.py
+ciaf/evidence_strength.py
 ciaf/metadata_config.py
 ciaf/metadata_integration.py
 ciaf/metadata_storage.py

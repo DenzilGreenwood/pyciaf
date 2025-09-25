@@ -77,6 +77,33 @@ except ImportError:
     SystemMonitor = None
     AdaptiveLCMWrapper = None
 
+# Enhanced validation and determinism components
+try:
+    from .evidence_strength import EvidenceStrength, EvidenceTracker, get_evidence_tracker
+    from .determinism_metadata import DeterminismMetadata, capture_determinism_metadata, set_reproducible_seeds
+    from .enhanced_receipts import (
+        TrainingReceipt, InferenceReceipt, ReceiptValidator,
+        create_training_receipt, create_inference_receipt
+    )
+    from .crypto_health import crypto_health_check, generate_secure_salt, generate_unique_nonce
+    ENHANCED_VALIDATION_AVAILABLE = True
+except ImportError:
+    ENHANCED_VALIDATION_AVAILABLE = False
+    EvidenceStrength = None
+    EvidenceTracker = None
+    get_evidence_tracker = None
+    DeterminismMetadata = None
+    capture_determinism_metadata = None
+    set_reproducible_seeds = None
+    TrainingReceipt = None
+    InferenceReceipt = None
+    ReceiptValidator = None
+    create_training_receipt = None
+    create_inference_receipt = None
+    crypto_health_check = None
+    generate_secure_salt = None
+    generate_unique_nonce = None
+
 # Optional modules - import with warnings if dependencies missing
 try:
     from . import compliance
@@ -148,6 +175,21 @@ __all__ = [
     "AdaptiveLCMConfig",
     "SystemMonitor",
     "AdaptiveLCMWrapper",
+    # Enhanced validation and determinism
+    "EvidenceStrength",
+    "EvidenceTracker", 
+    "get_evidence_tracker",
+    "DeterminismMetadata",
+    "capture_determinism_metadata",
+    "set_reproducible_seeds",
+    "TrainingReceipt",
+    "InferenceReceipt",
+    "ReceiptValidator",
+    "create_training_receipt",
+    "create_inference_receipt",
+    "crypto_health_check",
+    "generate_secure_salt", 
+    "generate_unique_nonce",
     # Enhanced audit components
     "AuditTrailGenerator",
     "AuditTrail",
@@ -181,6 +223,7 @@ __all__ = [
     "ENTERPRISE_COMPLIANCE_AVAILABLE",
     "ENHANCED_WRAPPER_AVAILABLE",
     "DEFERRED_LCM_AVAILABLE",
+    "ENHANCED_VALIDATION_AVAILABLE",
     "EXPLAINABILITY_AVAILABLE", 
     "UNCERTAINTY_AVAILABLE",
     "PREPROCESSING_AVAILABLE",
