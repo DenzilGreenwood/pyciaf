@@ -89,6 +89,7 @@ ciaf/lcm/root_manager.py
 ciaf/lcm/training_manager.py
 ciaf/metadata_tags/__init__.py
 ciaf/preprocessing/__init__.py
+ciaf/preprocessing/data_quality.py
 ciaf/provenance/__init__.py
 ciaf/provenance/capsules.py
 ciaf/provenance/snapshots.py

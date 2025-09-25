@@ -482,14 +482,21 @@ def auto_preprocess_data(X, y=None, store_preprocessor=None):
         return None, None
 
 
+# Import data quality validation
+from .data_quality import DataQualityValidator, ValidationResult, quick_validate, validate_ciaf_dataset
+
 # Enhanced imports for model wrapper integration
 __all__ = [
     "TextVectorizer",
-    "NumericalPreprocessor",
+    "NumericalPreprocessor", 
     "MixedDataPreprocessor",
     "CIAFModelAdapter",
+    "DataQualityValidator",
+    "ValidationResult",
     "auto_preprocess_data",
     "create_text_classifier_adapter",
     "create_numerical_regressor_adapter",
     "create_auto_adapter",
+    "quick_validate",
+    "validate_ciaf_dataset",
 ]
