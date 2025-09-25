@@ -38,8 +38,44 @@ from .metadata_storage import (
     save_pipeline_metadata,
 )
 from .provenance import ModelAggregationAnchor, ProvenanceCapsule, TrainingSnapshot
+# Simulation and wrappers
 from .simulation import MLFrameworkSimulator, MockLLM
 from .wrappers import CIAFModelWrapper
+
+# Enhanced wrapper (with availability check)
+try:
+    from .wrappers import EnhancedCIAFModelWrapper, ENHANCED_WRAPPER_AVAILABLE
+except ImportError:
+    ENHANCED_WRAPPER_AVAILABLE = False
+    EnhancedCIAFModelWrapper = None
+
+# Deferred LCM components (high-performance processing)
+try:
+    from .deferred_lcm import (
+        LightweightReceipt,
+        ReceiptQueue, 
+        DeferredLCMProcessor,
+        ReceiptHasher
+    )
+    from .adaptive_lcm import (
+        LCMMode,
+        InferencePriority,
+        AdaptiveLCMConfig,
+        SystemMonitor,
+        AdaptiveLCMWrapper
+    )
+    DEFERRED_LCM_AVAILABLE = True
+except ImportError:
+    DEFERRED_LCM_AVAILABLE = False
+    LightweightReceipt = None
+    ReceiptQueue = None
+    DeferredLCMProcessor = None
+    ReceiptHasher = None
+    LCMMode = None
+    InferencePriority = None
+    AdaptiveLCMConfig = None
+    SystemMonitor = None
+    AdaptiveLCMWrapper = None
 
 # Optional modules - import with warnings if dependencies missing
 try:
@@ -88,7 +124,6 @@ __all__ = [
     "CryptoUtils",
     "BaseAnchorManager",
     "AnchorManager",
-    "KeyManager",  # Legacy alias
     "MerkleTree",
     "DatasetAnchor",
     "LazyManager",
@@ -101,7 +136,18 @@ __all__ = [
     "InferenceReceipt",
     "ZKEConnections",
     "CIAFModelWrapper",
+    "EnhancedCIAFModelWrapper",
     "CIAFFramework",
+    # Deferred LCM components
+    "LightweightReceipt",
+    "ReceiptQueue",
+    "DeferredLCMProcessor", 
+    "ReceiptHasher",
+    "LCMMode",
+    "InferencePriority",
+    "AdaptiveLCMConfig",
+    "SystemMonitor",
+    "AdaptiveLCMWrapper",
     # Enhanced audit components
     "AuditTrailGenerator",
     "AuditTrail",
@@ -133,15 +179,13 @@ __all__ = [
     # Feature availability flags
     "COMPLIANCE_AVAILABLE",
     "ENTERPRISE_COMPLIANCE_AVAILABLE",
+    "ENHANCED_WRAPPER_AVAILABLE",
+    "DEFERRED_LCM_AVAILABLE",
     "EXPLAINABILITY_AVAILABLE", 
     "UNCERTAINTY_AVAILABLE",
     "PREPROCESSING_AVAILABLE",
     "METADATA_TAGS_AVAILABLE",
 ]
-
-# Create legacy alias for backward compatibility
-from .core import AnchorManager
-KeyManager = AnchorManager
 
 # Export enhanced API methods
 CIAFFramework.create_model_anchor = CIAFFramework.create_model_anchor

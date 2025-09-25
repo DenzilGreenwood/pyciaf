@@ -2,9 +2,9 @@
 Core cryptographic and foundational components for CIAF.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-09-25
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.1.0
 """
 
 from .crypto import (
@@ -31,9 +31,6 @@ except ImportError:
     BaseAnchorManager = None
     AnchorManager = None
 from .merkle import MerkleTree
-
-# Create legacy alias for backward compatibility
-KeyManager = AnchorManager
 
 __all__ = [
     # Crypto utilities

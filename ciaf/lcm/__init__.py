@@ -5,9 +5,9 @@ Complete end-to-end lazy capsule materialization for AI models with proper ancho
 dataset families with splits, deployment stages, and audit trails.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-09-25
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.1.0
 """
 
 from .policy import LCMPolicy, CommitmentType, DomainType, MerklePolicy, get_default_policy

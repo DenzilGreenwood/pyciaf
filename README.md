@@ -45,10 +45,46 @@ pip install -U pip build
 pip install -e .
 ```
 
-### Option B: Directly from GitHub
+### Option B: Built Package (Recommended)
+```bash
+# Install from built wheel (fastest)
+pip install ciaf-1.1.0-py3-none-any.whl
+
+# Or install from source distribution
+pip install ciaf-1.1.0.tar.gz
+```
+
+### Option C: Directly from GitHub
 ```bash
 pip install "git+https://github.com/DenzilGreenwood/pyciaf.git#egg=ciaf"
 ```
+
+---
+
+## 📚 Documentation
+
+CIAF v1.1.0 includes comprehensive documentation consolidated in the `docs/` directory:
+
+| Document | Description |
+|----------|-------------|
+| **[docs/index.md](docs/index.md)** | Main documentation hub with navigation |
+| **[docs/quickstart.md](docs/quickstart.md)** | 5-minute getting started guide |
+| **[docs/concepts.md](docs/concepts.md)** | Core architectural concepts and anchor system |
+| **[docs/receipts.md](docs/receipts.md)** | Receipt formats and verification process |
+| **[docs/compliance-mapping.md](docs/compliance-mapping.md)** | Regulatory framework mappings (EU AI Act, NIST, GDPR, etc.) |
+| **[docs/DEFERRED_LCM_README.md](docs/DEFERRED_LCM_README.md)** | High-performance LCM implementation guide |
+| **[docs/DEPLOYABLE_MODEL_DEMO_GUIDE.md](docs/DEPLOYABLE_MODEL_DEMO_GUIDE.md)** | Production deployment patterns |
+| **[docs/MODEL_BUILDING_GUIDE_V1_1_0.md](docs/MODEL_BUILDING_GUIDE_V1_1_0.md)** | Complete model building guide |
+| **[docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md)** | Development standards and guidelines |
+| **[docs/WHITEPAPER.md](docs/WHITEPAPER.md)** | Technical whitepaper and research foundations |
+
+### Quick Navigation
+
+- **New to CIAF?** → Start with [docs/quickstart.md](docs/quickstart.md)
+- **Production deployment?** → See [docs/MODEL_BUILDING_GUIDE_V1_1_0.md](docs/MODEL_BUILDING_GUIDE_V1_1_0.md)
+- **Performance optimization?** → Check [docs/DEFERRED_LCM_README.md](docs/DEFERRED_LCM_README.md)
+- **Compliance requirements?** → Review [docs/compliance-mapping.md](docs/compliance-mapping.md)
+- **Technical architecture?** → Read [docs/concepts.md](docs/concepts.md) and [docs/WHITEPAPER.md](docs/WHITEPAPER.md)
 
 ## Project Structure
 
