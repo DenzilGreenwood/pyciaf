@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cognitiveinsight.ai/schemas/dataset_metadata.v1.json",
+  "title": "CIAF Dataset Metadata Schema",
+  "description": "Schema for dataset record metadata with compliance extensions",
+  "type": "object",
+  "required": [
+    "dataset_id",
+    "dataset_hash",
+    "timestamp", 
+    "policy_id",
+    "schema_version",
+    "actor_id",
+    "system_id",
+    "location"
+  ],
+  "properties": {
+    "dataset_id": {
+      "type": "string",
+      "description": "Unique identifier for the dataset"
+    },
+    "dataset_hash": {
+      "type": "string",
+      "pattern": "^(sha256|sha3-256|blake3):[a-fA-F0-9]{64}$",
+      "description": "Hash of the dataset"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of dataset creation"
+    },
+    "policy_id": {
+      "type": "string",
+      "description": "Policy identifier governing this dataset"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version"
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "Identifier of the actor creating dataset"
+    },
+    "system_id": {
+      "type": "string",
+      "description": "System identifier"
+    },
+    "location": {
+      "type": "string",
+      "description": "Geographic location or jurisdiction"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of dataset"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of the dataset"
+    },
+    "features": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of feature names in dataset"
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of records in dataset"
+    },
+    "data_categories": {
+      "type": "array",
+      "items": {
+        "enum": ["personal", "sensitive", "biometric", "public", "synthetic"]
+      },
+      "description": "Categories of data in dataset (GDPR)"
+    },
+    "retention_period_days": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Data retention period in days"
+    },
+    "privacy_techniques": {
+      "type": "array", 
+      "items": {
+        "enum": ["anonymization", "pseudonymization", "differential_privacy", "encryption"]
+      },
+      "description": "Privacy preservation techniques applied"
+    },
+    "compliance_extensions": {
+      "type": "object",
+      "description": "Regulatory compliance extensions",
+      "properties": {
+        "consent_receipts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["consent_id", "actor_id", "purpose", "status"],
+            "properties": {
+              "consent_id": {"type": "string"},
+              "actor_id": {"type": "string"},
+              "purpose": {
+                "enum": ["training", "inference", "analytics", "research", "marketing", "profiling"]
+              },
+              "status": {
+                "enum": ["given", "withdrawn", "expired", "pending"]
+              },
+              "data_categories": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "legal_basis": {"type": "string"},
+              "consent_hash": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

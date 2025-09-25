@@ -73,6 +73,19 @@ def main():
         help="Verbose output"
     )
     
+    # Metadata command
+    metadata_parser = subparsers.add_parser("metadata", help="Manage model metadata")
+    metadata_subparsers = metadata_parser.add_subparsers(dest="metadata_action", help="Metadata actions")
+    
+    # List models
+    list_parser = metadata_subparsers.add_parser("list", help="List models with metadata")
+    list_parser.add_argument("--format", choices=["table", "json"], default="table", help="Output format")
+    
+    # Show model details
+    show_parser = metadata_subparsers.add_parser("show", help="Show detailed model metadata")
+    show_parser.add_argument("model_name", help="Model name to show")
+    show_parser.add_argument("--version", help="Model version (default: latest)")
+    
     # Version command
     version_parser = subparsers.add_parser("version", help="Show CIAF version")
     
@@ -88,6 +101,8 @@ def main():
         setup_command(args)
     elif args.command == "compliance":
         compliance_command(args)
+    elif args.command == "metadata":
+        metadata_command(args)
     elif args.command == "version":
         version_command(args)
 
@@ -384,6 +399,86 @@ def create_basic_html_report(report, output_path):
 </html>"""
     with open(output_path, 'w') as f:
         f.write(html_content)
+
+
+def metadata_command(args):
+    """Handle metadata command."""
+    try:
+        if args.metadata_action == "list":
+            list_models_command(args)
+        elif args.metadata_action == "show":
+            show_model_command(args)
+        else:
+            print("Please specify a metadata action (list, show)")
+            sys.exit(1)
+    except Exception as e:
+        print(f"❌ Metadata command failed: {e}")
+        sys.exit(1)
+
+
+def list_models_command(args):
+    """List models with metadata."""
+    try:
+        manager = ModelMetadataManager("ciaf_models", "1.0.0")
+        models = manager.get_all_model_metadata()
+        
+        if args.format == "json":
+            print(json.dumps(models, indent=2, default=str))
+        else:
+            # Table format
+            print("\n📊 CIAF Models")
+            print("=" * 60)
+            if not models:
+                print("No models found.")
+            else:
+                print(f"{'Model':<20} {'Version':<10} {'Stage':<15} {'Last Updated':<20}")
+                print("-" * 60)
+                for model_id, metadata in models.items():
+                    last_updated = metadata.get('last_updated', 'Unknown')
+                    if isinstance(last_updated, str) and 'T' in last_updated:
+                        last_updated = last_updated.split('T')[0]  # Show just date
+                    version = metadata.get('version', '1.0.0')
+                    stage = metadata.get('stage', 'unknown')
+                    print(f"{model_id:<20} {version:<10} {stage:<15} {last_updated:<20}")
+                print()
+                
+    except Exception as e:
+        print(f"❌ Failed to list models: {e}")
+        sys.exit(1)
+
+
+def show_model_command(args):
+    """Show detailed model metadata."""
+    try:
+        manager = ModelMetadataManager(args.model_name, args.version or "1.0.0")
+        metadata = manager.get_model_metadata()
+        
+        if not metadata:
+            print(f"❌ Model '{args.model_name}' not found")
+            sys.exit(1)
+            
+        print(f"\n🤖 Model Details: {args.model_name}")
+        print("=" * 50)
+        print(f"Version: {metadata.get('version', 'Unknown')}")
+        print(f"Stage: {metadata.get('stage', 'Unknown')}")
+        print(f"Framework: {metadata.get('framework', 'Unknown')}")
+        print(f"Last Updated: {metadata.get('last_updated', 'Unknown')}")
+        
+        if 'performance_metrics' in metadata:
+            print(f"\n📈 Performance Metrics:")
+            for metric, value in metadata['performance_metrics'].items():
+                print(f"  {metric}: {value}")
+                
+        if 'compliance_status' in metadata:
+            print(f"\n✅ Compliance Status:")
+            for framework, status in metadata['compliance_status'].items():
+                print(f"  {framework}: {status}")
+                
+        print()
+        
+    except Exception as e:
+        print(f"❌ Failed to show model details: {e}")
+        sys.exit(1)
 
 
 def version_command(args):

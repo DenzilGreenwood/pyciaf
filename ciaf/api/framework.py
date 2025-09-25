@@ -1,12 +1,13 @@
 """
-CIAF API Framework
+CIAF API Framework with Compliance Extensions
 
-High-level API for the Cognitive Insight Audit Framework.
+High-level API for the Cognitive Insight Audit Framework with regulatory compliance
+extensions and non-bypassable cryptographic audit receipt invariants.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-09-23
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0
 """
 
 import hashlib
@@ -16,10 +17,16 @@ from typing import Any, Dict, List, Optional
 
 from ..anchoring import LazyManager, DatasetAnchor
 from ..core import CryptoUtils, BaseAnchorManager, AnchorManager, MerkleTree, derive_model_anchor, derive_master_anchor, sha256_hash, secure_random_bytes, SALT_LENGTH, to_hex
+from ..core.canonicalization import (
+    Policy, RecordType, AnchorRecord, Receipt, Signer, WORMMerkleTree, CapsuleBuilder,
+    canonical_json, canonicalize_and_hash, validate_required_fields, 
+    enrich_metadata_with_defaults, make_anchor, HashAlgorithm
+)
 from ..provenance import ModelAggregationAnchor, ProvenanceCapsule, TrainingSnapshot
 from ..simulation import MLFrameworkSimulator
 from ..inference import InferenceReceipt, ZKEConnections
 from ..compliance import AuditTrailGenerator
+from ..extensions import ComplianceExtensions
 
 # LCM System Integration
 from ..lcm import (
@@ -29,27 +36,57 @@ from ..lcm import (
 )
 
 
+class ComplianceError(Exception):
+    """Exception raised for compliance violations."""
+    pass
+
+
 class CIAFFramework:
     """
-    Main framework class providing high-level API for CIAF operations.
-    Implements complete audit flow: Dataset Anchor → Model Anchor → 
-    Inference Receipt → Merkle Tree with LCM integration.
+    Main framework class providing high-level API for CIAF operations with compliance extensions.
+    
+    Implements complete audit flow with non-bypassable invariants:
+    Dataset Anchor → Model Anchor → Inference Receipt → Merkle Tree → Signed Anchor → Proof Capsule
+    
+    Enforces:
+    - Canonicalized metadata → leaf hash → Merkle tree → signed anchor
+    - Required fields validation for each record type  
+    - Dual anchoring discipline (hash table + Merkle ledger) with WORM semantics
+    - LCM: store anchors/logs by default; materialize inclusion proofs on demand
     """
 
-    def __init__(self, framework_name: str = "CIAF"):
+    def __init__(
+        self, 
+        framework_name: str = "CIAF",
+        policy: Optional[Policy] = None,
+        anchor_signer: Optional[Signer] = None
+    ):
         self.framework_name = framework_name
+        
+        # Compliance-enhanced initialization
+        self.policy = policy or Policy(
+            policy_id="ciaf_default_v1",
+            schema_version="1.0.0",
+            domain_labels=["audit", "ai_governance"],
+            hash_algorithm=HashAlgorithm.SHA256
+        )
+        self.anchor_signer = anchor_signer or Signer("ciaf_default_key")
+        
+        # Core WORM Merkle ledger
+        self.ledger = WORMMerkleTree(self.policy.hash_algorithm)
+        
+        # Compliance extensions integration
+        self.compliance = ComplianceExtensions(framework_name)
+        
+        # Legacy components (maintained for compatibility)
         self.crypto_utils = CryptoUtils()
         self.anchor_manager = BaseAnchorManager()
-        # Legacy alias for backwards compatibility
         self.anchor_manager_legacy = AnchorManager()
         self.dataset_anchors: Dict[str, DatasetAnchor] = {}
-        # Store model anchors
         self.model_anchors: Dict[str, Dict[str, Any]] = {}
         self.lazy_managers: Dict[str, LazyManager] = {}
         self.ml_simulators: Dict[str, MLFrameworkSimulator] = {}
-        # Store inference connections per model
         self.inference_connections: Dict[str, ZKEConnections] = {}
-        # Audit trail generators
         self.audit_generators: Dict[str, AuditTrailGenerator] = {}
         
         # LCM System Integration
@@ -60,6 +97,235 @@ class CIAFFramework:
         self.lcm_training_manager = LCMTrainingManager(self.lcm_policy)
         self.lcm_inference_manager = LCMInferenceManager(self.lcm_policy)
         self.lcm_deployment_manager = LCMDeploymentManager(self.lcm_policy)
+
+    # ================================
+    # Compliance-Enhanced Commit Methods
+    # ================================
+
+    def commit_dataset_record(self, record_meta: Dict[str, Any]) -> Receipt:
+        """
+        Commit dataset record with compliance extensions.
+        
+        Non-bypassable flow: canonicalize → validate → enrich → anchor → emit receipt
+        
+        Args:
+            record_meta: Dataset metadata
+            
+        Returns:
+            Receipt with proof of commitment
+            
+        Raises:
+            ComplianceError: If compliance validation fails
+        """
+        print(f"Committing dataset record: {record_meta.get('dataset_id', 'unknown')}")
+        
+        # Step 1: Canonicalize metadata
+        base_meta = canonicalize_and_hash(record_meta, self.policy.hash_algorithm)
+        
+        # Step 2: Enrich with compliance metadata
+        enriched_meta = self.compliance.oversight_manager.create_enhanced_capsule_metadata(
+            record_meta, 
+            include_oversight=False,  # Datasets typically don't need oversight
+            include_consent=True,
+            include_robustness=False,
+            include_monitoring=False
+        )
+        
+        # Step 3: Enrich with required fields
+        final_meta = enrich_metadata_with_defaults(
+            enriched_meta, RecordType.DATASET, self.policy
+        )
+        
+        # Step 4: Validate required fields (non-bypassable)
+        validate_required_fields(final_meta, RecordType.DATASET)
+        
+        # Step 5: GDPR compliance validation
+        self.compliance.gdpr_manager.validate_dataset_commit(final_meta)
+        
+        # Step 6: Anchor and emit receipt
+        return self._anchor_and_emit(final_meta, RecordType.DATASET)
+    
+    def commit_model_checkpoint(self, ckpt_meta: Dict[str, Any]) -> Receipt:
+        """
+        Commit model checkpoint with compliance extensions.
+        
+        Args:
+            ckpt_meta: Model checkpoint metadata
+            
+        Returns:
+            Receipt with robustness/security attestations
+            
+        Raises:
+            ComplianceError: If compliance validation fails
+        """
+        print(f"Committing model checkpoint: {ckpt_meta.get('model_id', 'unknown')}")
+        
+        # Step 1: Canonicalize metadata
+        base_meta = canonicalize_and_hash(ckpt_meta, self.policy.hash_algorithm)
+        
+        # Step 2: Enrich with compliance metadata
+        enriched_meta = self.compliance.oversight_manager.create_enhanced_capsule_metadata(
+            ckpt_meta,
+            include_oversight=self.policy.is_high_risk(),
+            include_consent=False,
+            include_robustness=True,  # Models require robustness attestation
+            include_monitoring=True
+        )
+        
+        # Step 3: Enrich with required fields  
+        final_meta = enrich_metadata_with_defaults(
+            enriched_meta, RecordType.MODEL, self.policy
+        )
+        
+        # Step 4: Validate required fields (non-bypassable)
+        validate_required_fields(final_meta, RecordType.MODEL)
+        
+        # Step 5: EU AI Act Article 15 robustness checks
+        if self.policy.is_high_risk():
+            self.compliance.robustness_manager.validate_model_commit(final_meta)
+        
+        # Step 6: Anchor and emit receipt
+        return self._anchor_and_emit(final_meta, RecordType.MODEL)
+    
+    def commit_inference(self, inf_meta: Dict[str, Any]) -> Receipt:
+        """
+        Commit inference with compliance extensions.
+        
+        Args:
+            inf_meta: Inference metadata
+            
+        Returns:
+            Receipt with oversight gating and consent verification
+            
+        Raises:
+            ComplianceError: If compliance validation fails
+        """
+        print(f"Committing inference: {inf_meta.get('inference_id', 'unknown')}")
+        
+        # Step 1: Canonicalize metadata
+        base_meta = canonicalize_and_hash(inf_meta, self.policy.hash_algorithm)
+        
+        # Step 2: Enrich with compliance metadata
+        enriched_meta = self.compliance.oversight_manager.create_enhanced_capsule_metadata(
+            inf_meta,
+            include_oversight=True,  # Inference requires oversight checks
+            include_consent=True,
+            include_robustness=False,
+            include_monitoring=True
+        )
+        
+        # Step 3: Enrich with required fields
+        final_meta = enrich_metadata_with_defaults(
+            enriched_meta, RecordType.INFERENCE, self.policy
+        )
+        
+        # Step 4: Validate required fields (non-bypassable)
+        validate_required_fields(final_meta, RecordType.INFERENCE)
+        
+        # Step 5: EU AI Act Article 14 oversight validation
+        if not self.compliance.oversight_manager.validate_capsule_oversight(final_meta):
+            raise ComplianceError("Human oversight required but not completed")
+        
+        # Step 6: GDPR consent validation
+        consent_receipts = final_meta.get('compliance_extensions', {}).get('consent_receipts', [])
+        if not consent_receipts:
+            raise ComplianceError("GDPR consent receipt required for inference")
+        
+        # Step 7: Anchor and emit receipt
+        return self._anchor_and_emit(final_meta, RecordType.INFERENCE)
+    
+    def _anchor_and_emit(self, metadata: Dict[str, Any], record_type: RecordType) -> Receipt:
+        """
+        Anchor metadata in WORM ledger and emit receipt.
+        
+        Implements: leaf hash → Merkle tree → signed anchor → receipt
+        
+        Args:
+            metadata: Validated and enriched metadata
+            record_type: Type of record being anchored
+            
+        Returns:
+            Complete audit receipt
+        """
+        # Step 1: Compute leaf hash
+        leaf_hash = canonicalize_and_hash(metadata, self.policy.hash_algorithm)
+        
+        # Step 2: Append to WORM Merkle ledger (dual anchoring)
+        root = self.ledger.append_leaf(leaf_hash, metadata)
+        
+        # Step 3: Create signed anchor
+        anchor = make_anchor(root, self.policy, self.anchor_signer)
+        
+        # Step 4: Append anchor to WORM log
+        self.ledger.append_anchor(anchor)
+        
+        # Step 5: Create and return receipt
+        receipt = Receipt(
+            metadata=metadata,
+            anchor=anchor, 
+            leaf_hash=leaf_hash,
+            record_type=record_type
+        )
+        
+        print(f"Record anchored - Root: {root[:16]}..., Leaf: {leaf_hash[:16]}...")
+        return receipt
+    
+    def materialize_proof_capsule(self, artifact_id: str) -> Dict[str, Any]:
+        """
+        Materialize proof capsule on demand (LCM pattern).
+        
+        Args:
+            artifact_id: ID of artifact to generate proof for
+            
+        Returns:
+            Complete proof capsule with Merkle path and anchor
+        """
+        print(f"Materializing proof capsule for: {artifact_id}")
+        
+        # Find metadata by artifact ID
+        metadata = None
+        leaf_hash = None
+        record_type = None
+        
+        # Search in hash table
+        for hash_key, stored_meta in self.ledger.hash_table.items():
+            if (stored_meta.get('dataset_id') == artifact_id or 
+                stored_meta.get('model_id') == artifact_id or
+                stored_meta.get('inference_id') == artifact_id):
+                metadata = stored_meta
+                leaf_hash = hash_key
+                
+                # Determine record type
+                if 'dataset_id' in stored_meta:
+                    record_type = RecordType.DATASET
+                elif 'model_id' in stored_meta:
+                    record_type = RecordType.MODEL
+                elif 'inference_id' in stored_meta:
+                    record_type = RecordType.INFERENCE
+                break
+        
+        if not metadata:
+            raise ValueError(f"Artifact {artifact_id} not found in ledger")
+        
+        # Get Merkle path (inclusion proof)
+        merkle_path = self.ledger.get_merkle_path(leaf_hash)
+        
+        # Get signed anchor
+        anchor = self.ledger.get_latest_anchor()
+        if not anchor:
+            raise ValueError("No anchor found for proof generation")
+        
+        # Build proof capsule
+        capsule = CapsuleBuilder.build(
+            metadata=metadata,
+            merkle_path=merkle_path,
+            anchor=anchor,
+            record_type=record_type,
+            leaf_hash=leaf_hash
+        )
+        
+        print(f"Proof capsule materialized with {len(merkle_path)} proof elements")
+        return capsule
 
     def create_dataset_anchor_lcm(
         self, dataset_id: str, dataset_metadata: Dict[str, Any], master_password: str
@@ -94,6 +360,9 @@ class CIAFFramework:
             data_items=dataset_metadata.get('data_items', []),
             metadata=dataset_metadata
         )
+        
+        # Attach LCM anchor reference to the dataset anchor
+        dataset_anchor.lcm_anchor_id = lcm_anchor.get('anchor_id') if isinstance(lcm_anchor, dict) else str(lcm_anchor)
         
         # Store anchor with LCM tracking
         self.dataset_anchors[dataset_id] = dataset_anchor
@@ -162,7 +431,7 @@ class CIAFFramework:
         Returns:
             Dictionary containing model anchor with LCM tracking
         """
-        print(f"🎯 Creating LCM-enabled model anchor for: {model_name}")
+        print(f">> Creating LCM-enabled model anchor for: {model_name}")
         
         # Register with LCM model manager
         lcm_anchor = self.lcm_model_manager.create_model_anchor(
@@ -183,12 +452,13 @@ class CIAFFramework:
             "architecture": model_architecture or {},
             "authorized_datasets": authorized_datasets or [],
             "lcm_tracked": True,
+            "lcm_anchor_id": lcm_anchor.get('anchor_id') if isinstance(lcm_anchor, dict) else str(lcm_anchor),
             "created_at": datetime.now().isoformat()
         }
         
         self.model_anchors[model_name] = model_anchor_data
         
-        print(f"✅ Model {model_name} created with LCM integration")
+        print(f"Model {model_name} created with LCM integration")
         return model_anchor_data
 
     def create_model_anchor(
@@ -215,7 +485,7 @@ class CIAFFramework:
         Returns:
             Dictionary containing model anchor information and metadata
         """
-        print(f"🎯 Creating enhanced model anchor for: {model_name}")
+        print(f">> Creating enhanced model anchor for: {model_name}")
         
         # Use provided password or fallback to model name
         password = master_password or model_name
@@ -279,7 +549,7 @@ class CIAFFramework:
                         "sample_count": dataset_anchor.total_samples
                     }
                 else:
-                    print(f"⚠️  Warning: Dataset {dataset_id} not found in anchors")
+                    print(f"Warning: Dataset {dataset_id} not found in anchors")
         
         # Store model anchor
         self.model_anchors[model_name] = model_anchor_record
@@ -293,9 +563,9 @@ class CIAFFramework:
         # Create inference connections for this model
         self.inference_connections[model_name] = ZKEConnections()
         
-        print(f"✅ Model anchor created with fingerprint: {model_anchor_record['parameters_fingerprint'][:16]}...")
-        print(f"🔗 Linked to {len(authorized_datasets or [])} authorized datasets")
-        print(f"📋 Audit trail generator initialized for {model_name}")
+        print(f"Model anchor created with fingerprint: {model_anchor_record['parameters_fingerprint'][:16]}...")
+        print(f"Linked to {len(authorized_datasets or [])} authorized datasets")
+        print(f"Audit trail generator initialized for {model_name}")
         
         return model_anchor_record
 
@@ -406,7 +676,7 @@ class CIAFFramework:
         Returns:
             TrainingSnapshot with complete audit trail
         """
-        print(f"🚀 Starting enhanced model training with audit for: {model_name} v{model_version}")
+        print(f"Starting enhanced model training with audit for: {model_name} v{model_version}")
         
         # Verify model anchor exists
         if model_name not in self.model_anchors:
@@ -427,7 +697,7 @@ class CIAFFramework:
         if unauthorized_datasets:
             raise ValueError(f"Unauthorized datasets detected: {unauthorized_datasets}. Model {model_name} is only authorized for: {authorized_datasets}")
         
-        print(f"✅ Dataset authorization verified for {len(capsule_dataset_ids)} datasets")
+        print(f"Dataset authorization verified for {len(capsule_dataset_ids)} datasets")
         
         # Register ML simulator if needed
         if model_name not in self.ml_simulators:
@@ -450,8 +720,8 @@ class CIAFFramework:
         
         simulator = self.ml_simulators[model_name]
         
-        print(f"🎯 Training {model_name} v{model_version} with {len(capsules)} capsules")
-        print(f"📊 Model fingerprint: {model_anchor_record['parameters_fingerprint'][:16]}...")
+        print(f">> Training {model_name} v{model_version} with {len(capsules)} capsules")
+        print(f"Model fingerprint: {model_anchor_record['parameters_fingerprint'][:16]}...")
         
         # Create legacy MAA for compatibility
         maa = ModelAggregationAnchor(
@@ -474,8 +744,8 @@ class CIAFFramework:
             user_id=user_id
         )
         
-        print(f"✅ Training completed and audit record created: {training_audit_record.event_id}")
-        print(f"📝 Merkle root: {snapshot.merkle_root_hash}")
+        print(f"Training completed and audit record created: {training_audit_record.event_id}")
+        print(f"Merkle root: {snapshot.merkle_root_hash}")
         
         return snapshot
 
@@ -541,7 +811,7 @@ class CIAFFramework:
         Returns:
             InferenceReceipt: Complete receipt with LCM tracking
         """
-        print(f"🔮 Performing LCM-tracked inference for model: {model_name}")
+        print(f"Performing LCM-tracked inference for model: {model_name}")
         
         # Create inference receipt using LCM
         lcm_receipt = self.lcm_inference_manager.create_inference_receipt(
@@ -567,7 +837,7 @@ class CIAFFramework:
             }
         )
         
-        print(f"✅ LCM inference completed for {model_name}")
+        print(f"LCM inference completed for {model_name}")
         return receipt
 
     def perform_inference_with_audit(
@@ -595,7 +865,7 @@ class CIAFFramework:
         Returns:
             InferenceReceipt with complete audit trail
         """
-        print(f"🎯 Performing inference with audit for model: {model_name}")
+        print(f">> Performing inference with audit for model: {model_name}")
         
         # Verify model anchor exists
         if model_name not in self.model_anchors:
@@ -613,7 +883,7 @@ class CIAFFramework:
         
         query_metadata = query_metadata or {}
         
-        print(f"📝 Creating inference receipt for query: {query[:50]}...")
+        print(f"Creating inference receipt for query: {query[:50]}...")
         
         # Create inference receipt using the connections
         receipt = inference_connections.add_receipt(
@@ -631,9 +901,9 @@ class CIAFFramework:
             user_id=user_id
         )
         
-        print(f"✅ Inference completed and audit record created: {inference_audit_record.event_id}")
-        print(f"🔗 Connected to previous receipt: {receipt.prev_receipt_hash is not None}")
-        print(f"📊 Total receipts in connections: {len(inference_connections.receipts)}")
+        print(f"Inference completed and audit record created: {inference_audit_record.event_id}")
+        print(f"Connected to previous receipt: {receipt.prev_receipt_hash is not None}")
+        print(f"Total receipts in connections: {len(inference_connections.receipts)}")
         
         return receipt
 
@@ -652,7 +922,7 @@ class CIAFFramework:
         Returns:
             Complete audit trail with all components
         """
-        print(f"📋 Generating complete audit trail for: {model_name}")
+        print(f"Generating complete audit trail for: {model_name}")
         
         if model_name not in self.model_anchors:
             raise ValueError(f"Model anchor not found for {model_name}")
@@ -734,17 +1004,65 @@ class CIAFFramework:
                 "total_datasets": len(dataset_audit_info),
                 "total_audit_records": len(audit_records),
                 "connections_integrity": inference_summary.get("connections_valid", True),
-                "audit_connections_length": len(audit_records)
+                "audit_connections_length": len(audit_records),
+                "integrity_verified": self._verify_audit_trail_integrity(model_name, inference_summary)
             }
         }
         
-        print(f"✅ Complete audit trail generated:")
-        print(f"   📊 {len(dataset_audit_info)} dataset anchors")
-        print(f"   🎯 1 model anchor")
-        print(f"   📝 {len(audit_records)} audit records")
-        print(f"   🔗 {inference_summary.get('total_receipts', 0)} inference receipts")
+        print(f"Complete audit trail generated:")
+        print(f"{len(dataset_audit_info)} dataset anchors")
+        print(f"   >> 1 model anchor")
+        print(f"{len(audit_records)} audit records")
+        print(f"{inference_summary.get('total_receipts', 0)} inference receipts")
         
         return complete_audit
+
+    def _verify_audit_trail_integrity(self, model_name: str, inference_summary: dict) -> bool:
+        """
+        Verify the integrity of the complete audit trail for a model.
+        
+        Args:
+            model_name: Name of the model to verify
+            inference_summary: Summary of inference connections
+            
+        Returns:
+            True if audit trail integrity is verified, False otherwise
+        """
+        try:
+            # Check if model exists
+            if model_name not in self.model_anchors:
+                return False
+            
+            # Check if model anchor exists and has required data
+            model_anchor_data = self.model_anchors[model_name]
+            if not model_anchor_data or "model_hash" not in model_anchor_data:
+                return False
+            
+            # Model anchor verification - if it exists, it's considered verified
+            model_verified = True
+            
+            # Check inference connections integrity
+            connections_verified = inference_summary.get("connections_valid", True)
+            
+            # Check if inference receipts exist and are valid
+            receipts_verified = True
+            if model_name in self.inference_connections:
+                receipts = self.inference_connections[model_name].receipts
+                if receipts:
+                    # Verify that all receipts have valid hashes
+                    for receipt in receipts:
+                        if not hasattr(receipt, 'receipt_hash') or not receipt.receipt_hash:
+                            receipts_verified = False
+                            break
+                    # Also verify the connections integrity
+                    connections_verified = self.inference_connections[model_name].verify_connections()
+            
+            # Overall integrity is verified if all components are verified
+            return model_verified and connections_verified and receipts_verified
+            
+        except Exception as e:
+            print(f"Audit trail integrity verification failed: {e}")
+            return False
 
     def validate_training_integrity(self, snapshot: TrainingSnapshot) -> bool:
         """
@@ -897,7 +1215,7 @@ class CIAFFramework:
         Returns:
             Dictionary with complete workflow results and LCM tracking
         """
-        print("🚀 Starting complete LCM workflow...")
+        print("Starting complete LCM workflow...")
         
         # Step 1: Create dataset with LCM
         dataset_anchor = self.create_dataset_anchor_lcm(
@@ -954,5 +1272,35 @@ class CIAFFramework:
             }
         }
         
-        print("✅ Complete LCM workflow finished successfully!")
+        print("Complete LCM workflow finished successfully!")
         return workflow_result
+
+    def register_inference_receipt(self, model_name: str, receipt: InferenceReceipt) -> None:
+        """
+        Register an inference receipt with the framework for audit trail tracking.
+        
+        Args:
+            model_name: Name of the model that generated the inference
+            receipt: The inference receipt to register
+        """
+        # Initialize ZKEConnections for this model if it doesn't exist
+        if model_name not in self.inference_connections:
+            from ..inference import ZKEConnections
+            self.inference_connections[model_name] = ZKEConnections()
+        
+        # Add the receipt to the connections
+        self.inference_connections[model_name].receipts.append(receipt)
+        
+    def get_inference_receipts(self, model_name: str) -> List[InferenceReceipt]:
+        """
+        Get all inference receipts for a specific model.
+        
+        Args:
+            model_name: Name of the model
+            
+        Returns:
+            List of inference receipts for the model
+        """
+        if model_name not in self.inference_connections:
+            return []
+        return self.inference_connections[model_name].receipts

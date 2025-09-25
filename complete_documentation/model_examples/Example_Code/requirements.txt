@@ -1,0 +1,41 @@
+# CIAF Example Code Requirements
+# This file lists all dependencies needed for full functionality of the AI model examples
+
+# Core dependencies (required for all examples)
+numpy>=1.21.0
+pandas>=1.3.0
+
+# Machine Learning frameworks
+scikit-learn>=1.0.0        # For Classifier example
+torch>=1.9.0               # For CNN and Diffusion examples
+torchvision>=0.10.0        # For CNN and Diffusion examples
+
+# Image processing
+Pillow>=8.0.0              # For CNN and Diffusion examples
+matplotlib>=3.3.0          # For visualizations
+opencv-python>=4.5.0      # For advanced image operations (optional)
+
+# Data processing and utilities
+scipy>=1.7.0               # For scientific computing
+seaborn>=0.11.0            # For enhanced visualizations (optional)
+
+# Development and testing (optional)
+pytest>=6.0.0             # For running tests
+black>=21.0.0              # For code formatting
+flake8>=3.9.0              # For code linting
+
+# Notes:
+# - All examples are designed to work with mock implementations when dependencies are unavailable
+# - Install only the dependencies you need for specific examples
+# - CIAF package will be available separately
+
+# Installation commands:
+# Basic setup (all examples with mock implementations):
+#   pip install numpy pandas
+#
+# Full functionality:
+#   pip install -r requirements.txt
+#
+# Individual examples:
+#   pip install numpy pandas scikit-learn  # For Classifier example
+#   pip install numpy pandas torch torchvision pillow  # For CNN/Diffusion examples

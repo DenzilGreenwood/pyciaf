@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 """
-CIAF Receipt Verifier
+CIAF Receipt Verification Tool
+
+Independent verification tool for CIAF audit receipts and proof capsules.
+Can be run as a separate process to verify receipts without dependencies
+on the original CIAF instance.
+
+Usage:
+    python tools/verify_receipt.py --capsule-file proof_capsule_20250923_143022.json
+    python tools/verify_receipt.py --receipt-file inference_receipt_20250923_143022.json
+    python tools/verify_receipt.py --batch-verify demo_artifacts/
+
+Created: 2025-09-23
+Author: Denzil James Greenwood
+Version: 2.0.0
 
 A standalone tool for verifying CIAF receipts and audit trails.
 This verifier can independently validate:

@@ -461,7 +461,7 @@ class CorrectiveActionLogger:
 def demo_corrective_action_log():
     """Demonstrate corrective action logging capabilities."""
 
-    print("\n🔧 CORRECTIVE ACTION LOG DEMO")
+    print("\nCORRECTIVE ACTION LOG DEMO")
     print("=" * 50)
 
     logger = CorrectiveActionLogger("JobClassificationModel_v2.1")
@@ -506,7 +506,7 @@ def demo_corrective_action_log():
 
     # Approve bias action
     logger.approve_action(bias_action.action_id, "Chief Compliance Officer")
-    print(f"   ✅ Approved action: {bias_action.action_id}")
+    print(f"Approved action: {bias_action.action_id}")
 
     # Implement bias action
     logger.implement_action(
@@ -516,7 +516,7 @@ def demo_corrective_action_log():
         linked_model_version="v2.2",
         actual_cost=23500.0,
     )
-    print(f"   🔧 Implemented action: {bias_action.action_id}")
+    print(f"Implemented action: {bias_action.action_id}")
 
     # Verify bias action
     verification_results = {
@@ -534,7 +534,7 @@ def demo_corrective_action_log():
         effectiveness_score=0.94,
         verifier="Compliance Auditor",
     )
-    print(f"   ✅ Verified action: {bias_action.action_id} (Effectiveness: 94%)")
+    print(f"Verified action: {bias_action.action_id} (Effectiveness: 94%)")
 
     # Generate summary
     print("\n3. Action Summary and Analytics")
@@ -554,7 +554,7 @@ def demo_corrective_action_log():
     # Export compliance metadata
     print("\n4. Compliance Metadata Export")
     metadata = logger.create_compliance_metadata()
-    print("   ✅ Corrective action metadata prepared for compliance documentation")
+    print("Corrective action metadata prepared for compliance documentation")
 
     # Show recent actions
     print(

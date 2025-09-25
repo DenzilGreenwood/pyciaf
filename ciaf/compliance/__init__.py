@@ -103,6 +103,44 @@ from .bias_validator import (
 
 # New Enhanced Modules for 360° AI Governance Compliance
 
+# Enterprise-Grade Advanced Features
+try:
+    from .human_oversight import (
+        HumanOversightEngine,
+        OversightAlert,
+        OversightReview,
+        AlertType,
+        ReviewStatus
+    )
+    HUMAN_OVERSIGHT_AVAILABLE = True
+except ImportError:
+    HUMAN_OVERSIGHT_AVAILABLE = False
+
+try:
+    from .web_dashboard import (
+        CIAFDashboard,
+        DashboardData,
+        create_dashboard
+    )
+    WEB_DASHBOARD_AVAILABLE = True
+except ImportError:
+    WEB_DASHBOARD_AVAILABLE = False
+
+try:
+    from .robustness_testing import (
+        RobustnessTestSuite,
+        TestResult,
+        RobustnessReport,
+        TestType,
+        TestSeverity,
+        AdversarialTester,
+        DistributionShiftTester,
+        StressTester
+    )
+    ROBUSTNESS_TESTING_AVAILABLE = True
+except ImportError:
+    ROBUSTNESS_TESTING_AVAILABLE = False
+
 
 __all__ = [
     # Audit Trails
@@ -153,4 +191,25 @@ __all__ = [
     "BiasResult",
     "BiasAssessment",
     "generate_bias_report",
+    # Enterprise Advanced Features
+    "HumanOversightEngine",
+    "OversightAlert", 
+    "OversightReview",
+    "AlertType",
+    "ReviewStatus",
+    "CIAFDashboard",
+    "DashboardData",
+    "create_dashboard", 
+    "RobustnessTestSuite",
+    "TestResult",
+    "RobustnessReport",
+    "TestType",
+    "TestSeverity",
+    "AdversarialTester",
+    "DistributionShiftTester",
+    "StressTester",
+    # Feature availability flags
+    "HUMAN_OVERSIGHT_AVAILABLE",
+    "WEB_DASHBOARD_AVAILABLE",
+    "ROBUSTNESS_TESTING_AVAILABLE",
 ]

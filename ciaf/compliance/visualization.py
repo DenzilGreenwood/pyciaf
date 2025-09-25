@@ -536,7 +536,7 @@ class CIAFVisualizationEngine:
 def demo_visualization_capabilities():
     """Demonstrate CIAF visualization capabilities."""
 
-    print("\n🎨 CIAF VISUALIZATION DEMO")
+    print("\n CIAF VISUALIZATION DEMO")
     print("=" * 50)
 
     engine = CIAFVisualizationEngine("JobClassificationModel_v2.1")

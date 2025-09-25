@@ -45,9 +45,18 @@ from .wrappers import CIAFModelWrapper
 try:
     from . import compliance
     from .compliance import AuditTrailGenerator, AuditTrail
+    # New enterprise compliance features
+    try:
+        from .compliance.human_oversight import HumanOversightEngine, OversightAlert, OversightReview
+        from .compliance.web_dashboard import CIAFDashboard, create_dashboard
+        from .compliance.robustness_testing import RobustnessTestSuite, TestResult, RobustnessReport
+        ENTERPRISE_COMPLIANCE_AVAILABLE = True
+    except ImportError:
+        ENTERPRISE_COMPLIANCE_AVAILABLE = False
     COMPLIANCE_AVAILABLE = True
 except ImportError:
     COMPLIANCE_AVAILABLE = False
+    ENTERPRISE_COMPLIANCE_AVAILABLE = False
 
 try:
     from . import explainability
@@ -96,6 +105,15 @@ __all__ = [
     # Enhanced audit components
     "AuditTrailGenerator",
     "AuditTrail",
+    # Enterprise compliance features (if available)
+    "HumanOversightEngine",
+    "OversightAlert", 
+    "OversightReview",
+    "CIAFDashboard",
+    "create_dashboard",
+    "RobustnessTestSuite",
+    "TestResult",
+    "RobustnessReport",
     # Metadata storage and management
     "MetadataStorage",
     "get_metadata_storage",
@@ -114,6 +132,7 @@ __all__ = [
     "quick_log",
     # Feature availability flags
     "COMPLIANCE_AVAILABLE",
+    "ENTERPRISE_COMPLIANCE_AVAILABLE",
     "EXPLAINABILITY_AVAILABLE", 
     "UNCERTAINTY_AVAILABLE",
     "PREPROCESSING_AVAILABLE",

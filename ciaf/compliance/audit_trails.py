@@ -15,7 +15,7 @@ import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from ..core import CryptoUtils
 from ..inference import InferenceReceipt
@@ -372,8 +372,7 @@ class AuditTrailGenerator:
             )
 
         elif format.lower() == "csv":
-            # TODO: Implement CSV export
-            raise NotImplementedError("CSV export not yet implemented")
+            return self._export_to_csv()
 
         else:
             raise ValueError(f"Unsupported export format: {format}")
@@ -413,6 +412,60 @@ class AuditTrailGenerator:
             return "medium"
         else:
             return "low"
+
+    def _export_to_csv(self) -> str:
+        """Export audit trail to CSV format."""
+        import csv
+        import io
+        from datetime import datetime
+        
+        output = io.StringIO()
+        
+        # Define CSV headers
+        fieldnames = [
+            'event_id', 'event_type', 'timestamp', 'model_name', 'model_version',
+            'user_id', 'risk_level', 'compliance_status', 'audit_hash',
+            'previous_hash', 'event_details', 'metadata'
+        ]
+        
+        writer = csv.DictWriter(output, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        # Write audit records
+        for record in self.audit_records:
+            # Flatten the record for CSV export
+            row = {
+                'event_id': record.event_id,
+                'event_type': record.event_type.value if hasattr(record.event_type, 'value') else str(record.event_type),
+                'timestamp': record.timestamp,
+                'model_name': record.model_name,
+                'model_version': record.model_version,
+                'user_id': getattr(record, 'user_id', ''),
+                'risk_level': record.risk_level,
+                'compliance_status': record.compliance_status,
+                'audit_hash': record.audit_hash,
+                'previous_hash': record.previous_hash,
+                'event_details': str(record.event_details) if record.event_details else '',
+                'metadata': str(record.metadata) if hasattr(record, 'metadata') and record.metadata else ''
+            }
+            writer.writerow(row)
+        
+        # Add summary statistics as comments
+        output.write(f"\n# Audit Trail Export Summary\n")
+        output.write(f"# Generated: {datetime.now().isoformat()}\n")
+        output.write(f"# Total Records: {len(self.audit_records)}\n")
+        output.write(f"# Model: {self.model_name} v{self.model_version}\n")
+        
+        # Risk level counts
+        high_risk = len([r for r in self.audit_records if r.risk_level == "high"])
+        medium_risk = len([r for r in self.audit_records if r.risk_level == "medium"])
+        low_risk = len([r for r in self.audit_records if r.risk_level == "low"])
+        
+        output.write(f"# High Risk Events: {high_risk}\n")
+        output.write(f"# Medium Risk Events: {medium_risk}\n")
+        output.write(f"# Low Risk Events: {low_risk}\n")
+        
+        return output.getvalue()
 
     def _assess_compliance_risk(self, results: Dict[str, Any]) -> str:
         """Assess risk level for compliance check events."""

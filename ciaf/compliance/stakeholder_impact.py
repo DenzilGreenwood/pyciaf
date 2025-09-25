@@ -15,7 +15,7 @@ import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 
 class StakeholderType(Enum):
@@ -519,7 +519,7 @@ class StakeholderImpactAssessmentEngine:
 def demo_stakeholder_impact_assessment():
     """Demonstrate stakeholder impact assessment capabilities."""
 
-    print("\n🎭 STAKEHOLDER IMPACT ASSESSMENT DEMO")
+    print("\n STAKEHOLDER IMPACT ASSESSMENT DEMO")
     print("=" * 50)
 
     engine = StakeholderImpactAssessmentEngine("JobClassificationModel_v2.1")
@@ -665,7 +665,7 @@ def demo_stakeholder_impact_assessment():
     # Export compliance metadata
     print("\n5. Compliance Metadata Export")
     metadata = engine.create_compliance_metadata(comprehensive_assessment)
-    print("   ✅ Stakeholder impact metadata prepared for compliance documentation")
+    print("    Stakeholder impact metadata prepared for compliance documentation")
 
     # Show external documentation references
     print(f"\n6. External Documentation References")

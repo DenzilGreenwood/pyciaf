@@ -15,19 +15,44 @@ import os
 from datetime import datetime
 from typing import Any, Dict, List
 
-from ..core import (
+from ..core.crypto import (
     SALT_LENGTH,
-    derive_capsule_anchor,
-    derive_dataset_anchor,
-    derive_master_anchor,
     secure_random_bytes,
     sha256_hash,
-    to_hex,
-    # Backwards compatibility aliases
-    derive_capsule_key,
-    derive_dataset_key,
-    derive_master_key,
 )
+
+# Import anchor functions directly to avoid circular imports
+try:
+    from ..core.base_anchor import (
+        derive_capsule_anchor,
+        derive_dataset_anchor,
+        derive_master_anchor,
+        to_hex,
+        # Backwards compatibility aliases
+        derive_capsule_key,
+        derive_dataset_key,
+        derive_master_key,
+    )
+except ImportError:
+    # Fallback definitions for anchor derivation
+    def derive_master_anchor(password: str, salt: bytes) -> bytes:
+        return sha256_hash((password + salt.hex()).encode())
+    
+    def derive_dataset_anchor(master_anchor: bytes, dataset_id: str) -> bytes:
+        return sha256_hash(master_anchor + dataset_id.encode())
+    
+    def derive_capsule_anchor(dataset_anchor: bytes, item_id: str) -> bytes:
+        return sha256_hash(dataset_anchor + item_id.encode())
+    
+    def to_hex(data: bytes) -> str:
+        if isinstance(data, str):
+            return data
+        return data.hex()
+    
+    # Backwards compatibility
+    derive_master_key = derive_master_anchor
+    derive_dataset_key = derive_dataset_anchor  
+    derive_capsule_key = derive_capsule_anchor
 
 
 class DatasetAnchor:

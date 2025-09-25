@@ -99,6 +99,7 @@ class CIAFModelWrapper:
         enable_uncertainty: bool = True,
         enable_metadata_tags: bool = True,
         auto_configure: bool = True,
+        framework: Optional[CIAFFramework] = None,
     ):
         """
         Initialize the CIAFModelWrapper.
@@ -113,6 +114,7 @@ class CIAFModelWrapper:
             enable_uncertainty: Enable uncertainty quantification
             enable_metadata_tags: Enable CIAF metadata tags generation
             auto_configure: Automatically configure based on model type
+            framework: Optional existing CIAFFramework instance to use (creates new one if None)
         """
         if not model_name or not model_name.strip():
             raise ValueError("model_name cannot be empty")
@@ -128,8 +130,8 @@ class CIAFModelWrapper:
         self.enable_uncertainty = enable_uncertainty and UNCERTAINTY_AVAILABLE
         self.enable_metadata_tags = enable_metadata_tags and METADATA_TAGS_AVAILABLE
 
-        # Initialize CIAF framework
-        self.framework = CIAFFramework(self.model_name)
+        # Initialize CIAF framework (use provided or create new)
+        self.framework = framework if framework is not None else CIAFFramework(self.model_name)
 
         # Enhanced components
         self.model_adapter = None
@@ -464,6 +466,9 @@ class CIAFModelWrapper:
                     print(f"⚠️  Could not store receipt in LCM manager: {store_error}")
 
             self.last_receipt = receipt
+            
+            # Register the receipt with the framework for audit trail tracking
+            self.framework.register_inference_receipt(self.model_name, receipt)
 
             print(f"📋 [{self.model_name}] Receipt: {receipt.receipt_hash[:16]}...")
 

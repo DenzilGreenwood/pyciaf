@@ -1,0 +1,33 @@
+{
+  "report_id": "compliance_report_1758762140",
+  "generated_at": "2025-09-24T20:02:20.277440",
+  "model_assessment": {
+    "model_name": "demo_model",
+    "compliance_score": 87.5,
+    "frameworks": {
+      "EU_AI_ACT": {
+        "score": 85,
+        "status": "compliant"
+      },
+      "GDPR": {
+        "score": 92,
+        "status": "compliant"
+      },
+      "NIST_AI_RMF": {
+        "score": 78,
+        "status": "partial"
+      }
+    },
+    "audit_events": 1540,
+    "violations": 2,
+    "last_assessment": "2025-09-24T20:02:20.277440"
+  },
+  "summary": {
+    "overall_status": "compliant",
+    "critical_issues": 0,
+    "recommendations": [
+      "Consider additional NIST AI RMF controls",
+      "Review data processing consent mechanisms"
+    ]
+  }
+}

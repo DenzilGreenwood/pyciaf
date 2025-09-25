@@ -92,7 +92,7 @@ class PreIngestionValidator:
             Validation report with issues, bias analysis, and recommendations
         """
         print(
-            f"🔍 Starting pre-ingestion validation for dataset with {len(data)} samples..."
+            f"Starting pre-ingestion validation for dataset with {len(data)} samples..."
         )
 
         validation_start = datetime.now()
@@ -129,7 +129,7 @@ class PreIngestionValidator:
 
     def _validate_data_quality(self, data: pd.DataFrame, target_column: str):
         """Validate basic data quality metrics."""
-        print("  📊 Validating data quality...")
+        print("Validating data quality...")
 
         # Check for missing values
         missing_counts = data.isnull().sum()
@@ -199,7 +199,7 @@ class PreIngestionValidator:
         self, data: pd.DataFrame, target_column: str, protected_attributes: List[str]
     ):
         """Detect potential bias in the dataset."""
-        print("  ⚖️ Detecting bias in protected attributes...")
+        print("Detecting bias in protected attributes...")
 
         if target_column not in data.columns:
             self.validation_issues.append(
@@ -323,7 +323,7 @@ class PreIngestionValidator:
         self, data: pd.DataFrame, sensitive_columns: List[str]
     ):
         """Validate privacy and sensitive data handling."""
-        print("  🔒 Validating privacy compliance...")
+        print("Validating privacy compliance...")
 
         for column in sensitive_columns:
             if column not in data.columns:
@@ -347,7 +347,7 @@ class PreIngestionValidator:
 
     def _validate_statistical_properties(self, data: pd.DataFrame, target_column: str):
         """Validate statistical properties of the dataset."""
-        print("  📈 Validating statistical properties...")
+        print("Validating statistical properties...")
 
         numeric_columns = data.select_dtypes(include=[np.number]).columns
 
@@ -390,7 +390,7 @@ class PreIngestionValidator:
         self, data: pd.DataFrame, protected_attributes: List[str]
     ):
         """Validate compliance with regulatory requirements."""
-        print(f"  📋 Validating {self.compliance_framework} compliance...")
+        print(f"Validating {self.compliance_framework} compliance...")
 
         if self.compliance_framework == "GDPR":
             # Check for consent tracking
@@ -454,18 +454,18 @@ class PreIngestionValidator:
         # Overall recommendation
         if quality_score < 50:
             overall_recommendation = (
-                "❌ Dataset requires significant cleanup before use"
+                "Dataset requires significant cleanup before use"
             )
         elif quality_score < 70:
             overall_recommendation = (
-                "⚠️ Dataset needs attention - address critical issues before proceeding"
+                "Dataset needs attention - address critical issues before proceeding"
             )
         elif quality_score < 85:
             overall_recommendation = (
-                "✅ Dataset is acceptable with minor issues to address"
+                "Dataset is acceptable with minor issues to address"
             )
         else:
-            overall_recommendation = "✅ Dataset passes validation - ready for use"
+            overall_recommendation = "Dataset passes validation - ready for use"
 
         return {
             "validation_timestamp": datetime.now().isoformat(),
@@ -528,38 +528,38 @@ class PreIngestionValidator:
     def _print_validation_summary(self, report: Dict[str, Any]):
         """Print a human-readable validation summary."""
         print("\n" + "=" * 60)
-        print("📋 PRE-INGESTION VALIDATION SUMMARY")
+        print("PRE-INGESTION VALIDATION SUMMARY")
         print("=" * 60)
 
         print(
-            f"📊 Dataset: {report['dataset_summary']['total_samples']:,} samples, "
+            f"Dataset: {report['dataset_summary']['total_samples']:,} samples, "
             f"{report['dataset_summary']['total_features']} features"
         )
-        print(f"⭐ Quality Score: {report['data_quality_score']}/100")
-        print(f"⏱️ Validation Duration: {report['validation_duration_seconds']:.2f}s")
-        print(f"🎯 {report['overall_recommendation']}")
+        print(f"Quality Score: {report['data_quality_score']}/100")
+        print(f"Validation Duration: {report['validation_duration_seconds']:.2f}s")
+        print(f"{report['overall_recommendation']}")
 
         # Issues summary
         issues = report["validation_issues"]
         if issues["total_issues"] > 0:
-            print(f"\n🚨 Issues Found: {issues['total_issues']}")
+            print(f"\n Issues Found: {issues['total_issues']}")
             for severity, count in issues["by_severity"].items():
                 if count > 0:
                     emoji = {
-                        "critical": "🔴",
-                        "error": "🟠",
-                        "warning": "🟡",
-                        "info": "🔵",
+                        "critical": "critical",
+                        "error": "error",
+                        "warning": "warning",
+                        "info": "info",
                     }
                     print(f"  {emoji.get(severity, '•')} {severity.title()}: {count}")
         else:
-            print("\n✅ No issues found!")
+            print("\nNo issues found!")
 
         # Bias summary
         bias = report["bias_analysis"]
         if bias["attributes_analyzed"] > 0:
             print(
-                f"\n⚖️ Bias Analysis: {bias['attributes_analyzed']} attributes analyzed"
+                f"\nBias Analysis: {bias['attributes_analyzed']} attributes analyzed"
             )
             if bias["bias_detected"]:
                 biased_attrs = [
@@ -567,12 +567,12 @@ class PreIngestionValidator:
                     for result in bias["results"]
                     if result["bias_detected"]
                 ]
-                print(f"  🚨 Bias detected in: {', '.join(biased_attrs)}")
+                print(f"  Bias detected in: {', '.join(biased_attrs)}")
             else:
-                print("  ✅ No significant bias detected")
+                print("  No significant bias detected")
 
         print(
-            f"\n🚀 Ready for Training: {'✅ Yes' if report['ready_for_training'] else '❌ No'}"
+            f"\nReady for Training: {'Yes' if report['ready_for_training'] else 'No'}"
         )
         print("=" * 60)
 

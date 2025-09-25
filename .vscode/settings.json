@@ -1,0 +1,13 @@
+{
+    "github.copilot.chat.reviewSelection.instructions": [
+                {
+            "text": "Never use Unicode characters, emojis, or special symbols in code. Use only ASCII characters. Replace any emojis with descriptive text comments."
+        },
+        {
+            "text": "All code must use standard ASCII characters only. No Unicode symbols, emojis, or special characters are allowed."
+        },
+        {
+            "text": "Use clear, descriptive variable names and comments instead of Unicode symbols or emojis."
+        }
+    ]
+}

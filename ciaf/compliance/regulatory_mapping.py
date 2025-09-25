@@ -13,7 +13,7 @@ Version: 1.0.0
 import json
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 
 class ComplianceFramework(Enum):

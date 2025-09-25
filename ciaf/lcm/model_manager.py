@@ -358,19 +358,23 @@ class LCMModelManager:
         
         return "\n".join(lines)
     
-    def simulate_model_anchor(
+    def create_model_anchor(
         self,
         model_id: str,
         model_params: Dict[str, Any],
-        model_name: str = None
+        model_name: str = None,
+        training_env: TrainingEnvironment = None,
+        model_arch: ModelArchitecture = None
     ) -> LCMModelAnchor:
         """
-        Simulate model anchor creation for demonstration.
+        Create model anchor with real or inferred data.
         
         Args:
             model_id: Model identifier
             model_params: Model parameters dictionary
             model_name: Optional model name
+            training_env: Training environment (will be inferred if not provided)
+            model_arch: Model architecture (will be inferred if not provided)
             
         Returns:
             LCMModelAnchor instance
@@ -379,46 +383,110 @@ class LCMModelManager:
         
         model_name = model_name or model_id
         
-        # Create mock training environment
-        training_env = TrainingEnvironment(
-            python_version="3.8.10",
-            framework="pytorch",
-            framework_version="1.9.0",
-            cuda_version="11.2",
-            hardware="Tesla V100"
-        )
+        # Create or infer training environment
+        if not training_env:
+            training_env = self._infer_training_environment()
         
-        # Create mock architecture
-        model_arch = ModelArchitecture(
-            type="feedforward",
-            layers=[{"type": "dense", "units": 64}, {"type": "dense", "units": 32}],
-            input_dim=10,
-            output_dim=1,
-            total_params=sum(
-                len(layer.get('weights', [])) + len(layer.get('bias', [])) 
-                for layer in model_params.values() 
-                if isinstance(layer, dict)
-            )
-        )
+        # Create or infer model architecture
+        if not model_arch:
+            model_arch = self._infer_model_architecture(model_params)
         
-        # Create model anchor
-        anchor = self.create_model_anchor(
+        # Create model anchor directly
+        anchor = LCMModelAnchor(
             model_name=model_name,
             version="1.0.0",
             architecture=model_arch,
-            hyperparameters={"learning_rate": 0.001, "batch_size": 32},
+            hyperparameters=model_params,
             environment=training_env,
-            authorized_datasets=[f"{model_id}_dataset@v1"],
-            master_password="demo_password"
+            authorized_datasets=[],
+            master_password=model_id,
+            policy=self.policy
         )
         
-        print(f"✅ Model anchor created: {anchor.anchor_id}")
-        print(f"   🎯 Model: {anchor.model_name} v{anchor.version}")
-        print(f"   🔐 Params root: {anchor.params_root[:16]}...")
-        print(f"   🏗️ Arch root: {anchor.arch_root[:16]}...")
-        print(f"   📊 HP digest: {anchor.hp_digest[:16]}...")
-        print(f"   💻 Env digest: {anchor.env_digest[:16]}...")
-        print(f"   🔗 Trainer commit: {anchor.trainer_commit}")
-        print(f"   📋 Authorized dataset family: {model_id}_dataset@v1 (splits: train, val, test)")
+        # Store the anchor
+        model_key = f"{model_name}_1.0.0"
+        self.model_anchors[model_key] = anchor
         
+        print(f"✅ Model anchor created: {anchor.anchor_id}")
         return anchor
+    
+    def _infer_training_environment(self) -> TrainingEnvironment:
+        """Infer training environment from system."""
+        import sys
+        import platform
+        
+        # Get actual Python version
+        python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+        
+        # Try to detect framework
+        framework = "unknown"
+        framework_version = "unknown"
+        
+        try:
+            import torch
+            framework = "pytorch"
+            framework_version = torch.__version__
+        except ImportError:
+            try:
+                import tensorflow as tf
+                framework = "tensorflow"
+                framework_version = tf.__version__
+            except ImportError:
+                pass
+        
+        # Detect CUDA
+        cuda_version = "cpu"
+        try:
+            import torch
+            if torch.cuda.is_available():
+                cuda_version = torch.version.cuda
+        except:
+            pass
+        
+        return TrainingEnvironment(
+            python_version=python_version,
+            framework=framework,
+            framework_version=framework_version,
+            cuda_version=cuda_version,
+            hardware=platform.processor() or "unknown"
+        )
+    
+    def _infer_model_architecture(self, model_params: Dict[str, Any]) -> ModelArchitecture:
+        """Infer model architecture from parameters."""
+        
+        # Try to infer from parameter structure
+        total_params = 0
+        layers = []
+        
+        if isinstance(model_params, dict):
+            # Count parameters
+            for key, value in model_params.items():
+                if isinstance(value, (list, tuple)):
+                    total_params += len(value)
+                elif hasattr(value, '__len__'):
+                    try:
+                        total_params += len(value)
+                    except TypeError:
+                        total_params += 1
+                else:
+                    total_params += 1
+            
+            # Infer layer structure from parameter names
+            for key in model_params.keys():
+                if 'weight' in key.lower() or 'kernel' in key.lower():
+                    layer_info = {"type": "dense", "parameter_key": key}
+                    if hasattr(model_params[key], 'shape'):
+                        layer_info["shape"] = model_params[key].shape
+                    layers.append(layer_info)
+        
+        # Default architecture if inference fails
+        if not layers:
+            layers = [{"type": "inferred", "parameters": len(model_params)}]
+        
+        return ModelArchitecture(
+            type="inferred",
+            layers=layers,
+            input_dim="unknown",
+            output_dim="unknown", 
+            total_params=total_params
+        )

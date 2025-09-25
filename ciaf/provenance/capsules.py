@@ -17,10 +17,10 @@ from datetime import datetime
 
 from cryptography.exceptions import InvalidTag
 
+from ..core.keys import derive_key
 from ..core import (
     SALT_LENGTH,
     decrypt_aes_gcm,
-    derive_key,
     encrypt_aes_gcm,
     secure_random_bytes,
     sha256_hash,

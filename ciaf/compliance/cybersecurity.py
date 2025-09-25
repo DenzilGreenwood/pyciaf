@@ -16,7 +16,7 @@ import secrets
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 
 class SecurityFramework(Enum):
@@ -566,7 +566,7 @@ class CybersecurityComplianceEngine:
 def demo_cybersecurity_compliance():
     """Demonstrate cybersecurity compliance capabilities."""
 
-    print("\n🔒 CYBERSECURITY COMPLIANCE DEMO")
+    print("\nCYBERSECURITY COMPLIANCE DEMO")
     print("=" * 50)
 
     engine = CybersecurityComplianceEngine("JobClassificationModel_v2.1")

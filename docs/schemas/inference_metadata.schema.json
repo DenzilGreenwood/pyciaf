@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cognitiveinsight.ai/schemas/inference_metadata.v1.json",
+  "title": "CIAF Inference Metadata Schema",
+  "description": "Schema for inference record metadata with compliance extensions",
+  "type": "object",
+  "required": [
+    "model_id",
+    "inference_id", 
+    "input_hash",
+    "output_hash",
+    "timestamp",
+    "policy_id",
+    "actor_id",
+    "system_id",
+    "location"
+  ],
+  "properties": {
+    "model_id": {
+      "type": "string",
+      "description": "Unique identifier for the model"
+    },
+    "inference_id": {
+      "type": "string", 
+      "description": "Unique identifier for this inference"
+    },
+    "input_hash": {
+      "type": "string",
+      "pattern": "^(sha256|sha3-256|blake3):[a-fA-F0-9]{64}$",
+      "description": "Hash of the input data"
+    },
+    "output_hash": {
+      "type": "string",
+      "pattern": "^(sha256|sha3-256|blake3):[a-fA-F0-9]{64}$", 
+      "description": "Hash of the output data"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of inference"
+    },
+    "policy_id": {
+      "type": "string",
+      "description": "Policy identifier governing this inference"
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "Identifier of the actor performing inference"
+    },
+    "system_id": {
+      "type": "string", 
+      "description": "System identifier where inference occurred"
+    },
+    "location": {
+      "type": "string",
+      "description": "Geographic location or jurisdiction"
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version for this record"
+    },
+    "consent_receipt_id": {
+      "type": "string",
+      "description": "GDPR consent receipt identifier"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence score of the inference"
+    },
+    "fairness_context": {
+      "type": "object",
+      "description": "Fairness and bias assessment context",
+      "properties": {
+        "protected_attributes": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "bias_metrics": {
+          "type": "object"
+        }
+      }
+    },
+    "explanation_hash": {
+      "type": "string",
+      "pattern": "^(sha256|sha3-256|blake3):[a-fA-F0-9]{64}$",
+      "description": "Hash of explanation/reasoning for this inference"
+    },
+    "oversight_required": {
+      "type": "boolean", 
+      "description": "Whether human oversight is required (EU AI Act Art. 14)"
+    },
+    "oversight_checkpoint": {
+      "type": "object",
+      "description": "Human oversight checkpoint information",
+      "required": ["status", "oversight_actor_id", "timestamp"],
+      "properties": {
+        "status": {
+          "enum": ["approved", "rejected", "escalated", "reviewed"],
+          "description": "Status of oversight review"
+        },
+        "oversight_actor_id": {
+          "type": "string",
+          "description": "ID of human performing oversight"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time", 
+          "description": "Timestamp of oversight decision"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for oversight decision"
+        },
+        "review_time_seconds": {
+          "type": "number",
+          "description": "Time spent on human review"
+        }
+      }
+    },
+    "compliance_extensions": {
+      "type": "object",
+      "description": "Regulatory compliance extensions",
+      "properties": {
+        "consent_receipts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["consent_id", "actor_id", "purpose", "status"],
+            "properties": {
+              "consent_id": {"type": "string"},
+              "actor_id": {"type": "string"}, 
+              "purpose": {
+                "enum": ["training", "inference", "analytics", "research", "marketing", "profiling"]
+              },
+              "status": {
+                "enum": ["given", "withdrawn", "expired", "pending"]
+              }
+            }
+          }
+        },
+        "monitoring_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_type": {
+                "enum": ["drift_check", "performance_check", "bias_check", "security_scan"]
+              },
+              "metrics": {"type": "object"},
+              "alerts": {
+                "type": "array", 
+                "items": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

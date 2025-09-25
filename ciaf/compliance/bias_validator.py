@@ -11,7 +11,6 @@ Version: 1.0.0
 """
 
 import numpy as np
-import pandas as pd
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
@@ -341,7 +340,7 @@ class BiasValidator:
             )
         
         if overall_fairness >= self.fairness_threshold:
-            recommendations.append("✅ All groups meet fairness threshold")
+            recommendations.append("All groups meet fairness threshold")
         
         return recommendations
     
@@ -374,7 +373,7 @@ DETAILED RESULTS:
 """
     
     for result in assessment.individual_results:
-        status = "✅ FAIR" if result.is_fair else "❌ UNFAIR"
+        status = "FAIR" if result.is_fair else "UNFAIR"
         report += f"""
 {result.protected_attribute} = {result.group_value}:
   Metric: {result.metric_name}

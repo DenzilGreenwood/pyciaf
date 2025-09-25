@@ -15,23 +15,25 @@ from .crypto import (
     hmac_sha256,
     secure_random_bytes,
     sha256_hash,
-)
-from .base_anchor import (
-    BaseAnchorManager,
-    derive_anchor,
-    derive_capsule_anchor,
-    derive_dataset_anchor,
+    derive_anchor_from_master,
     derive_master_anchor,
+    derive_dataset_anchor,
     derive_model_anchor,
-    from_hex,
+    derive_capsule_anchor,
     to_hex,
-    # Backwards compatibility aliases
-    derive_key,
+    from_hex,
+    # Legacy aliases
     derive_master_key,
     derive_dataset_key,
     derive_capsule_key,
-    AnchorManager,
 )
+try:
+    from .keys import AnchorManager
+    BaseAnchorManager = AnchorManager  # Create alias
+except ImportError:
+    # Handle circular import gracefully
+    BaseAnchorManager = None
+    AnchorManager = None
 from .merkle import MerkleTree
 
 # Create legacy alias for backward compatibility
@@ -46,21 +48,22 @@ __all__ = [
     "secure_random_bytes",
     "SALT_LENGTH",
     "CryptoUtils",
-    # Anchor derivation (new terminology)
-    "derive_anchor",
+    # Anchor derivation functions
+    "derive_anchor_from_master",
     "derive_master_anchor",
-    "derive_dataset_anchor",
-    "derive_capsule_anchor",
+    "derive_dataset_anchor", 
     "derive_model_anchor",
-    "BaseAnchorManager",
-    "AnchorManager",
+    "derive_capsule_anchor",
     "to_hex",
     "from_hex",
-    # Backwards compatibility (legacy key terminology)
-    "derive_key",
+    # Legacy aliases
     "derive_master_key",
-    "derive_dataset_key",
+    "derive_dataset_key", 
     "derive_capsule_key",
+    # Anchor management (conditional export)
+    "BaseAnchorManager",
+    "AnchorManager",
+    # Backwards compatibility (legacy key terminology)
     "KeyManager",
     # Merkle tree
     "MerkleTree",

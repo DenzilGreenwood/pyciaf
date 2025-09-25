@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cognitiveinsight.ai/schemas/model_metadata.v1.json",
+  "title": "CIAF Model Metadata Schema", 
+  "description": "Schema for model record metadata with compliance extensions",
+  "type": "object",
+  "required": [
+    "model_id",
+    "model_hash",
+    "parameters_hash",
+    "timestamp",
+    "policy_id",
+    "schema_version", 
+    "actor_id",
+    "system_id",
+    "location"
+  ],
+  "properties": {
+    "model_id": {
+      "type": "string",
+      "description": "Unique identifier for the model"
+    },
+    "model_hash": {
+      "type": "string",
+      "pattern": "^(sha256|sha3-256|blake3):[a-fA-F0-9]{64}$",
+      "description": "Hash of the model"
+    },
+    "parameters_hash": {
+      "type": "string", 
+      "pattern": "^(sha256|sha3-256|blake3):[a-fA-F0-9]{64}$",
+      "description": "Hash of model parameters"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of model creation"
+    },
+    "policy_id": {
+      "type": "string",
+      "description": "Policy identifier governing this model"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version"
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "Identifier of the actor creating model"
+    },
+    "system_id": {
+      "type": "string", 
+      "description": "System identifier"
+    },
+    "location": {
+      "type": "string",
+      "description": "Geographic location or jurisdiction"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name of model"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of the model"
+    },
+    "architecture": {
+      "type": "object",
+      "description": "Model architecture details",
+      "properties": {
+        "type": {
+          "enum": ["neural_network", "decision_tree", "svm", "ensemble", "transformer", "cnn", "rnn"]
+        },
+        "layers": {"type": "integer"},
+        "parameters_count": {"type": "integer"},
+        "input_shape": {"type": "array"},
+        "output_shape": {"type": "array"}
+      }
+    },
+    "training_datasets": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "IDs of datasets used for training"
+    },
+    "performance_metrics": {
+      "type": "object",
+      "description": "Model performance metrics",
+      "properties": {
+        "accuracy": {"type": "number", "minimum": 0, "maximum": 1},
+        "precision": {"type": "number", "minimum": 0, "maximum": 1},
+        "recall": {"type": "number", "minimum": 0, "maximum": 1},
+        "f1_score": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "compliance_extensions": {
+      "type": "object",
+      "description": "Regulatory compliance extensions",
+      "properties": {
+        "robustness_tests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["test_id", "test_type", "result"],
+            "properties": {
+              "test_id": {"type": "string"},
+              "test_type": {
+                "enum": ["adversarial", "noise", "drift", "fairness"]
+              },
+              "result": {
+                "enum": ["passed", "failed", "warning"]
+              },
+              "metrics": {"type": "object"},
+              "test_parameters": {"type": "object"}
+            }
+          }
+        },
+        "security_proofs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["proof_id", "security_property", "verification_result"],
+            "properties": {
+              "proof_id": {"type": "string"},
+              "security_property": {
+                "enum": ["integrity", "confidentiality", "availability"]
+              },
+              "verification_result": {"type": "boolean"},
+              "proof_method": {"type": "string"},
+              "evidence": {"type": "object"}
+            }
+          }
+        },
+        "fairness_assessment": {
+          "type": "object",
+          "properties": {
+            "protected_attributes": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "bias_metrics": {
+              "type": "object",
+              "properties": {
+                "demographic_parity": {"type": "number"},
+                "equalized_odds": {"type": "number"},
+                "calibration": {"type": "number"}
+              }
+            },
+            "mitigation_techniques": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

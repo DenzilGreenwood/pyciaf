@@ -1,0 +1,138 @@
+{
+  "test_session_id": "robustness_test_3677e0da",
+  "model_name": "demo_model",
+  "model_version": "1.0.0",
+  "start_time": "2025-09-24T20:05:31.991529",
+  "end_time": "2025-09-24T20:05:41.991966",
+  "total_tests": 5,
+  "passed_tests": 5,
+  "failed_tests": 0,
+  "overall_score": 1.0388957665815455,
+  "test_results": [
+    {
+      "test_id": "fgsm_ad52a6da",
+      "test_type": "adversarial",
+      "severity": "high",
+      "passed": "True",
+      "score": 1.0,
+      "execution_time": 0.0,
+      "error_message": null,
+      "metadata": {
+        "attack_type": "fgsm",
+        "epsilon": 0.05,
+        "attack_success_rate": 0.0,
+        "samples_tested": 100
+      },
+      "timestamp": "2025-09-24T20:05:31.991529"
+    },
+    {
+      "test_id": "pgd_73e3adb9",
+      "test_type": "adversarial",
+      "severity": "critical",
+      "passed": "True",
+      "score": 1.05,
+      "execution_time": 0.0,
+      "error_message": null,
+      "metadata": {
+        "attack_type": "pgd",
+        "epsilon": 0.01,
+        "alpha": 0.002,
+        "iterations": 10,
+        "attack_success_rate": -0.05
+      },
+      "timestamp": "2025-09-24T20:05:31.991529"
+    },
+    {
+      "test_id": "gauss_noise_e6c24ad4",
+      "test_type": "noise_injection",
+      "severity": "medium",
+      "passed": "True",
+      "score": 1.1451612903225807,
+      "execution_time": 0.0,
+      "error_message": null,
+      "metadata": {
+        "baseline_accuracy": 0.31,
+        "noise_levels": [
+          0.1,
+          0.2
+        ],
+        "noise_results": {
+          "0.1": {
+            "accuracy": 0.33,
+            "degradation": -0.020000000000000018
+          },
+          "0.2": {
+            "accuracy": 0.38,
+            "degradation": -0.07
+          }
+        },
+        "avg_degradation": -0.04500000000000001
+      },
+      "timestamp": "2025-09-24T20:05:31.991529"
+    },
+    {
+      "test_id": "load_stress_d5c3d7c1",
+      "test_type": "stress_test",
+      "severity": "high",
+      "passed": true,
+      "score": 0.999317542585147,
+      "execution_time": 10.000436305999756,
+      "error_message": null,
+      "metadata": {
+        "total_calls": 2947,
+        "success_rate": 1.0,
+        "avg_latency": 0.011374290247549232,
+        "max_latency": 0.2465357780456543,
+        "min_latency": 0.0,
+        "max_concurrent": 10,
+        "duration_seconds": 10
+      },
+      "timestamp": "2025-09-24T20:05:41.991966"
+    },
+    {
+      "test_id": "boundary_test_25cca611",
+      "test_type": "boundary_test",
+      "severity": "medium",
+      "passed": true,
+      "score": 1.0,
+      "execution_time": 0.0,
+      "error_message": null,
+      "metadata": {
+        "tested_features": 2,
+        "stable_boundaries": 2,
+        "boundary_results": [
+          {
+            "feature_idx": 0,
+            "min_boundary": {
+              "extreme": "False",
+              "max_output": 6.009746488015037
+            },
+            "max_boundary": {
+              "extreme": "False",
+              "max_output": 7.403597722855173
+            }
+          },
+          {
+            "feature_idx": 1,
+            "min_boundary": {
+              "extreme": "False",
+              "max_output": 7.496837199780995
+            },
+            "max_boundary": {
+              "extreme": "False",
+              "max_output": 6.4526920268640895
+            }
+          }
+        ]
+      },
+      "timestamp": "2025-09-24T20:05:41.991966"
+    }
+  ],
+  "recommendations": [],
+  "risk_assessment": {
+    "adversarial_risk": "low",
+    "distribution_shift_risk": "low",
+    "performance_risk": "low",
+    "overall_risk": "low"
+  }
+}

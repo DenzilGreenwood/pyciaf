@@ -266,7 +266,7 @@ class LCMCapsuleManager:
         
         # Stage A: Dataset anchoring
         print("\n📊 Stage A: Dataset Anchoring")
-        dataset_anchor = self.dataset_manager.simulate_dataset_anchor(
+        dataset_anchor = self.dataset_manager.create_dataset_anchor(
             dataset_id="ds_001",
             dataset_path=dataset_path,
             split_type="train"
@@ -274,14 +274,14 @@ class LCMCapsuleManager:
         
         # Stage B: Model anchoring
         print("\n🤖 Stage B: Model Anchoring")
-        model_anchor = self.model_manager.simulate_model_anchor(
+        model_anchor = self.model_manager.create_model_anchor(
             model_id="model_001",
             model_params=model_params
         )
         
         # Stage C: Training
         print("\n🎯 Stage C: Training Session")
-        training_session = self.training_manager.simulate_training_session(
+        training_session = self.training_manager.create_and_run_training_session(
             session_id="train_001",
             model_anchor=model_anchor,
             datasets_root_anchor=dataset_anchor.dataset_hash,
@@ -290,28 +290,28 @@ class LCMCapsuleManager:
         
         # Stage D: Pre-deployment
         print("\n📋 Stage D: Pre-deployment")
-        predeployment_anchor = self.deployment_manager.simulate_predeployment_anchor(
+        predeployment_anchor = self.deployment_manager.create_predeployment_anchor(
             predeployment_id="predeploy_001",
             model_anchor=model_anchor
         )
         
         # Stage E: Deployment
         print("\n🚀 Stage E: Deployment")
-        deployment_anchor = self.deployment_manager.simulate_deployment_anchor(
+        deployment_anchor = self.deployment_manager.create_deployment_anchor(
             deployment_id="deploy_001",
             predeployment_anchor=predeployment_anchor
         )
         
         # Stage F: Test evaluation
         print("\n🧪 Stage F: Test Evaluation")
-        test_evaluation_anchor = self.root_manager.simulate_test_evaluation(
+        test_evaluation_anchor = self.root_manager.run_test_evaluation(
             test_id="test_001",
             test_dataset_ref=dataset_anchor.dataset_hash[:16]
         )
         
         # Stage G: Inference
         print("\n🔮 Stage G: Inference Receipt")
-        inference_receipt = self.inference_manager.simulate_inference_receipt(
+        inference_receipt = self.inference_manager.create_inference_receipt(
             inference_id="inf_001",
             model_anchor=model_anchor,
             deployment_anchor=deployment_anchor

@@ -44,6 +44,15 @@ class MetadataConfig:
         "lcm_enable_persistence": True,  # Persist queue on shutdown
         "lcm_storage_dir": "deferred_lcm_storage",  # Directory for LCM storage
         "lcm_audit_batch_format": "json",  # Format for audit batch files
+        "lcm_worker_threads": 2,  # Number of worker threads for background processing
+        "lcm_overflow_strategy": "drop_oldest",  # Strategy when queue overflows: "drop_oldest", "drop_newest", "block"
+        "lcm_enable_parallel_processing": True,  # Enable parallel processing of batches
+        "lcm_retry_attempts": 3,  # Number of retry attempts for failed processing
+        "lcm_retry_delay_seconds": 1.0,  # Delay between retry attempts
+        "lcm_health_check_interval": 30.0,  # Seconds between health checks
+        "lcm_metrics_collection": True,  # Enable LCM metrics collection
+        "lcm_compression_enabled": False,  # Enable compression for LCM storage
+        "deployment_anchor_implementation": "full",  # "full", "stub", or "disabled"
         # Database settings (for SQLite backend)
         "db_connection_timeout": 30,
         "db_journal_mode": "WAL",
@@ -431,6 +440,104 @@ def create_balanced_config() -> Dict[str, Any]:
         processing_interval=2.0,
         enable_fast_inference=True
     )
+
+
+def create_enterprise_config() -> Dict[str, Any]:
+    """Create enterprise-grade configuration with full features."""
+    config = MetadataConfig.DEFAULT_CONFIG.copy()
+    config.update({
+        # Enterprise performance settings
+        "lcm_worker_threads": 8,
+        "lcm_queue_max_size": 50000,
+        "lcm_enable_parallel_processing": True,
+        "lcm_batch_size": 200,
+        "lcm_processing_interval": 0.5,
+        
+        # Enterprise reliability settings
+        "lcm_enable_persistence": True,
+        "lcm_retry_attempts": 5,
+        "lcm_health_check_interval": 10.0,
+        "lcm_metrics_collection": True,
+        "deployment_anchor_implementation": "full",
+        
+        # Enterprise security settings
+        "encrypt_sensitive_data": True,
+        "audit_all_access": True,
+        "compliance_frameworks": [
+            "GDPR", "HIPAA", "SOX", "ISO_27001", "EU_AI_ACT", "NIST_AI_RMF"
+        ],
+        
+        # Enterprise storage settings
+        "storage_backend": "sqlite",
+        "enable_compression": True,
+        "db_connection_pool_size": 10,
+        "metadata_retention_days": 2555,  # 7 years
+        "compliance_retention_days": 3650,  # 10 years
+        
+        # Enterprise monitoring
+        "enable_metrics": True,
+        "alert_on_compliance_failure": True,
+        "lcm_overflow_strategy": "block",  # Don't drop data in enterprise
+    })
+    return config
+
+
+def create_development_config() -> Dict[str, Any]:
+    """Create development-friendly configuration."""
+    config = MetadataConfig.DEFAULT_CONFIG.copy()
+    config.update({
+        # Development settings for fast iteration
+        "lcm_worker_threads": 1,
+        "lcm_queue_max_size": 1000,
+        "lcm_batch_size": 10,
+        "lcm_processing_interval": 5.0,
+        "lcm_enable_parallel_processing": False,
+        
+        # Minimal retention for dev
+        "metadata_retention_days": 30,
+        "compliance_retention_days": 90,
+        
+        # Simple storage for dev
+        "storage_backend": "json",
+        "enable_compression": False,
+        "deployment_anchor_implementation": "stub",
+        
+        # Debug-friendly settings
+        "defer_validation": False,  # Enable validations in dev
+        "lcm_metrics_collection": True,
+        "enable_metrics": True,
+    })
+    return config
+
+
+def create_testing_config() -> Dict[str, Any]:
+    """Create configuration optimized for testing."""
+    config = MetadataConfig.DEFAULT_CONFIG.copy()
+    config.update({
+        # Fast processing for tests
+        "lcm_worker_threads": 1,
+        "lcm_queue_max_size": 100,
+        "lcm_batch_size": 5,
+        "lcm_processing_interval": 0.1,
+        "lcm_enable_parallel_processing": False,
+        
+        # Minimal storage for tests
+        "storage_backend": "json",
+        "storage_path": "test_ciaf_metadata",
+        "lcm_storage_dir": "test_deferred_lcm_storage",
+        "enable_compression": False,
+        
+        # No retention in tests
+        "metadata_retention_days": 1,
+        "compliance_retention_days": 1,
+        "auto_cleanup_enabled": True,
+        
+        # Simplified settings
+        "deployment_anchor_implementation": "stub",
+        "encrypt_sensitive_data": False,
+        "lcm_enable_persistence": False,
+    })
+    return config
 
 
 if __name__ == "__main__":

@@ -87,13 +87,13 @@ class HashTableMetadata:
                 if loaded_metadata.get("dataset_id") == self.dataset_id:
                     self.metadata = loaded_metadata
                     print(
-                        f"📂 Loaded hash table metadata for dataset '{self.dataset_id}'"
+                        f"Loaded hash table metadata for dataset '{self.dataset_id}'"
                     )
                     return True
                 else:
-                    print(f"⚠️  Dataset ID mismatch in metadata file: {file_path}")
+                    print(f"Dataset ID mismatch in metadata file: {file_path}")
             except Exception as e:
-                print(f"⚠️  Error loading metadata from {file_path}: {e}")
+                print(f"Error loading metadata from {file_path}: {e}")
 
         return False
 
@@ -106,11 +106,11 @@ class HashTableMetadata:
             with open(file_path, "w") as f:
                 json.dump(self.metadata, f, indent=2)
 
-            print(f"💾 Saved hash table metadata to: {file_path}")
+            print(f"Saved hash table metadata to: {file_path}")
             return True
 
         except Exception as e:
-            print(f"❌ Error saving metadata: {e}")
+            print(f"Error saving metadata: {e}")
             return False
 
     def store_merkle_tree_data(self, leaves: List[str], merkle_root: str) -> None:
@@ -149,7 +149,7 @@ class HashTableMetadata:
         )
 
         print(
-            f"🌳 Stored Merkle tree data: {len(leaves)} leaves, root: {merkle_root[:16]}..."
+            f"Stored Merkle tree data: {len(leaves)} leaves, root: {merkle_root[:16]}..."
         )
 
     def store_proof_cache(self, proof_cache: Dict[str, List[Tuple[str, str]]]) -> None:
@@ -172,7 +172,7 @@ class HashTableMetadata:
         # Add audit trail entry
         self._add_audit_entry("proof_cache_stored", {"cache_size": len(proof_cache)})
 
-        print(f"🔐 Stored {len(proof_cache)} Merkle proofs in cache")
+        print(f"Stored {len(proof_cache)} Merkle proofs in cache")
 
     def store_verification_cache(
         self, verification_cache: Dict[Tuple[str, str], bool]
@@ -199,7 +199,7 @@ class HashTableMetadata:
             "verification_cache_stored", {"cache_size": len(verification_cache)}
         )
 
-        print(f"✅ Stored {len(verification_cache)} verification results in cache")
+        print(f"Stored {len(verification_cache)} verification results in cache")
 
     def store_capsule_metadata(
         self, item_id: str, capsule_metadata: Dict[str, Any]
@@ -409,9 +409,9 @@ class HashTableMetadata:
             with open(export_path, "w") as f:
                 json.dump(package, f, indent=2)
 
-            print(f"📦 Exported compliance package to: {export_path}")
+            print(f"Exported compliance package to: {export_path}")
             return str(export_path)
 
         except Exception as e:
-            print(f"❌ Error exporting compliance package: {e}")
+            print(f"Error exporting compliance package: {e}")
             raise

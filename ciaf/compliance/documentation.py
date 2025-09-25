@@ -15,7 +15,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from .audit_trails import AuditEventType, AuditTrailGenerator, ComplianceAuditRecord
 from .regulatory_mapping import (
@@ -604,7 +604,7 @@ class ComplianceDocumentationGenerator:
             checklist_content = f"**{framework.value} Compliance Checklist:**\n\n"
 
             for i, req in enumerate(requirements[:15], 1):  # Limit for readability
-                status = "✅" if req.ciaf_capabilities else "⚠️"
+                status = "Good" if req.ciaf_capabilities else "Errror"
                 checklist_content += f"{i}. {status} {req.title}\n"
                 if req.ciaf_capabilities:
                     checklist_content += (
