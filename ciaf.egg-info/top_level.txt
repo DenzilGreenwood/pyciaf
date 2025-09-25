@@ -1,4 +1,2 @@
 ciaf
-ciaf_metadata
 ciaf_metadata_optimized
-ciaf_metadata_ultrafast

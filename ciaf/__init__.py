@@ -5,9 +5,9 @@ A modular framework for creating verifiable AI training and inference pipelines
 with lazy capsule materialization and cryptographic provenance tracking.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-01-19
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.1.0
 """
 
 from .anchoring import DatasetAnchor, LazyManager, LazyProvenanceManager
@@ -82,7 +82,7 @@ try:
 except ImportError:
     METADATA_TAGS_AVAILABLE = False
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __all__ = [
     # Core components
     "CryptoUtils",

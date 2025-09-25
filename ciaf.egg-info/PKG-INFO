@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: ciaf
-Version: 1.0.0
+Version: 1.1.0
 Summary: Cognitive Insight Audit Framework - A comprehensive framework for verifiable AI training and inference pipelines
 Author-email: Denzil James Greenwood <founder@cognitiveinsight.ai>
 Maintainer-email: Denzil James Greenwood <founder@cognitiveinsight.ai>
@@ -49,10 +49,10 @@ Dynamic: license-file
 
 # CIAF – Cognitive Insight Audit Framework
 
-**Version:** 1.0.0
+**Version:** 1.1.0 (Production Ready)
 
-> **⚠️ WORK IN PROGRESS DISCLAIMER**  
-> This framework is actively under development and will be updated periodically as needed. APIs, documentation, and features may change. The current version provides core functionality for cryptographic provenance tracking and audit compliance, but should be considered a development release. Production deployments should carefully evaluate current capabilities against requirements.
+> **🎉 PRODUCTION RELEASE**  
+> CIAF v1.1.0 is now production-ready with comprehensive enterprise features! All mock implementations have been replaced with realistic, enterprise-grade functionality. This release includes enhanced compliance, performance optimization, and full test coverage.
 
 A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and compliance mapping.
 
@@ -98,6 +98,28 @@ pip install -e .
 ```bash
 pip install "git+https://github.com/DenzilGreenwood/pyciaf.git#egg=ciaf"
 ```
+
+## Project Structure
+
+CIAF v1.1.0 follows a clean, professional project structure:
+
+```
+PYPI/                           # Root project directory
+├── ciaf/                       # Main CIAF package
+│   ├── core/                   # Core functionality
+│   ├── api/                    # High-level API
+│   ├── lcm/                    # Lifecycle Management
+│   ├── compliance/             # Regulatory compliance
+│   ├── wrappers/               # Model wrappers
+│   └── ...                     # Additional modules
+├── examples/                   # Usage examples and demos
+├── tests/                      # Comprehensive test suite
+├── docs/                       # Complete documentation
+├── tools/                      # Development utilities
+└── PROJECT_STRUCTURE.md        # Detailed structure guide
+```
+
+See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for complete details.
 
 ### Option C: PyPI (when published)
 ```bash

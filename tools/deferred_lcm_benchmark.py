@@ -31,7 +31,7 @@ except ImportError:
 
 try:
     # Import enhanced wrapper from tools folder
-    from enhanced_model_wrapper import EnhancedCIAFModelWrapper, create_enhanced_ciaf_wrapper
+    from ciaf.wrappers.enhanced_model_wrapper import EnhancedCIAFModelWrapper, create_enhanced_ciaf_wrapper
     # Add the parent directory to the path so we can import from ciaf
     import sys
     sys.path.insert(0, str(Path(__file__).parent.parent))

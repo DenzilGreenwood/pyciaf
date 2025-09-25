@@ -123,7 +123,7 @@ class CIAFFramework:
         base_meta = canonicalize_and_hash(record_meta, self.policy.hash_algorithm)
         
         # Step 2: Enrich with compliance metadata
-        enriched_meta = self.compliance.oversight_manager.create_enhanced_capsule_metadata(
+        enriched_meta = self.compliance.create_enhanced_capsule_metadata(
             record_meta, 
             include_oversight=False,  # Datasets typically don't need oversight
             include_consent=True,
@@ -164,7 +164,7 @@ class CIAFFramework:
         base_meta = canonicalize_and_hash(ckpt_meta, self.policy.hash_algorithm)
         
         # Step 2: Enrich with compliance metadata
-        enriched_meta = self.compliance.oversight_manager.create_enhanced_capsule_metadata(
+        enriched_meta = self.compliance.create_enhanced_capsule_metadata(
             ckpt_meta,
             include_oversight=self.policy.is_high_risk(),
             include_consent=False,
@@ -181,8 +181,8 @@ class CIAFFramework:
         validate_required_fields(final_meta, RecordType.MODEL)
         
         # Step 5: EU AI Act Article 15 robustness checks
-        if self.policy.is_high_risk():
-            self.compliance.robustness_manager.validate_model_commit(final_meta)
+        # Always run robustness validation for models - the manager will decide if it's required
+        self.compliance.robustness_manager.validate_model_commit(final_meta)
         
         # Step 6: Anchor and emit receipt
         return self._anchor_and_emit(final_meta, RecordType.MODEL)
@@ -206,7 +206,7 @@ class CIAFFramework:
         base_meta = canonicalize_and_hash(inf_meta, self.policy.hash_algorithm)
         
         # Step 2: Enrich with compliance metadata
-        enriched_meta = self.compliance.oversight_manager.create_enhanced_capsule_metadata(
+        enriched_meta = self.compliance.create_enhanced_capsule_metadata(
             inf_meta,
             include_oversight=True,  # Inference requires oversight checks
             include_consent=True,
@@ -226,10 +226,14 @@ class CIAFFramework:
         if not self.compliance.oversight_manager.validate_capsule_oversight(final_meta):
             raise ComplianceError("Human oversight required but not completed")
         
-        # Step 6: GDPR consent validation
-        consent_receipts = final_meta.get('compliance_extensions', {}).get('consent_receipts', [])
-        if not consent_receipts:
-            raise ComplianceError("GDPR consent receipt required for inference")
+        # Step 6: GDPR consent validation (only if processing personal data)
+        data_categories = final_meta.get('data_categories', [])
+        contains_personal_data = any(cat in ['personal', 'sensitive', 'biometric'] for cat in data_categories)
+        
+        if contains_personal_data:
+            consent_receipts = final_meta.get('compliance_extensions', {}).get('consent_receipts', [])
+            if not consent_receipts:
+                raise ComplianceError("GDPR consent receipt required for processing personal data")
         
         # Step 7: Anchor and emit receipt
         return self._anchor_and_emit(final_meta, RecordType.INFERENCE)

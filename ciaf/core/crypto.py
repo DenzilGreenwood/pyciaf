@@ -216,12 +216,6 @@ def from_hex(hex_str: str) -> bytes:
     return bytes.fromhex(hex_str)
 
 
-# Legacy aliases for backwards compatibility
-derive_master_key = derive_master_anchor
-derive_dataset_key = derive_dataset_anchor
-derive_capsule_key = derive_capsule_anchor
-
-
 def generate_master_password() -> str:
     """
     Generate a secure master password.

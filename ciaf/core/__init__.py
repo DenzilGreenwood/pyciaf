@@ -22,10 +22,6 @@ from .crypto import (
     derive_capsule_anchor,
     to_hex,
     from_hex,
-    # Legacy aliases
-    derive_master_key,
-    derive_dataset_key,
-    derive_capsule_key,
 )
 try:
     from .keys import AnchorManager
@@ -48,7 +44,7 @@ __all__ = [
     "secure_random_bytes",
     "SALT_LENGTH",
     "CryptoUtils",
-    # Anchor derivation functions
+    # Modern anchor derivation functions
     "derive_anchor_from_master",
     "derive_master_anchor",
     "derive_dataset_anchor", 
@@ -56,15 +52,9 @@ __all__ = [
     "derive_capsule_anchor",
     "to_hex",
     "from_hex",
-    # Legacy aliases
-    "derive_master_key",
-    "derive_dataset_key", 
-    "derive_capsule_key",
-    # Anchor management (conditional export)
+    # Anchor management
     "BaseAnchorManager",
     "AnchorManager",
-    # Backwards compatibility (legacy key terminology)
-    "KeyManager",
     # Merkle tree
     "MerkleTree",
 ]

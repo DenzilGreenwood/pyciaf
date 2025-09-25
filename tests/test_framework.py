@@ -54,7 +54,12 @@ def test_basic_functionality():
     print(f"✓ Performance metrics retrieved: {len(metrics)} categories")
     
     print("✓ All tests passed!")
-    return True
+    
+    # Use assertions instead of returning True
+    assert dataset_anchor is not None, "Dataset anchor should not be None"
+    assert len(capsules) == 2, f"Expected 2 capsules, got {len(capsules)}"
+    assert model_anchor is not None, "Model anchor should not be None"
+    assert len(metrics) > 0, "Performance metrics should not be empty"
 
 if __name__ == "__main__":
     try:

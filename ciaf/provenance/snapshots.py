@@ -33,18 +33,19 @@ class ModelAggregationAnchor:
         """
         import hashlib
 
-        from ..core import SALT_LENGTH, derive_key, secure_random_bytes
+        from ..core import SALT_LENGTH, derive_master_anchor, secure_random_bytes
 
         self.key_id = key_id
         self.salt = secure_random_bytes(SALT_LENGTH)
-        self.derived_mak_key = derive_key(
-            self.salt, secret_material.encode("utf-8"), 32
-        )
-        print(f"MAA '{self.key_id}' initialized.")
+        
+        # Use proper anchor derivation instead of legacy derive_key
+        self.derived_anchor = derive_master_anchor(secret_material, self.salt)
+        
+        print(f"MAA '{self.key_id}' initialized with anchor-based cryptography.")
 
     def generate_data_signature(self, data_hash: str) -> str:
         """
-        Generates a signature for a given data hash.
+        Generates a signature for a given data hash using anchor-based cryptography.
 
         Args:
             data_hash: SHA256 hash of the data to sign.
@@ -55,7 +56,7 @@ class ModelAggregationAnchor:
         import hashlib
 
         h = hashlib.sha256()
-        h.update(self.derived_mak_key)
+        h.update(self.derived_anchor)
         h.update(data_hash.encode("utf-8"))
         return h.hexdigest()
 

@@ -39,9 +39,15 @@ except ImportError:
         return sha256_hash((password + salt.hex()).encode())
     
     def derive_dataset_anchor(master_anchor: bytes, dataset_id: str) -> bytes:
+        # Handle case where master_anchor might be a string (from to_hex conversion)
+        if isinstance(master_anchor, str):
+            master_anchor = bytes.fromhex(master_anchor)
         return sha256_hash(master_anchor + dataset_id.encode())
     
     def derive_capsule_anchor(dataset_anchor: bytes, item_id: str) -> bytes:
+        # Handle case where dataset_anchor might be a string
+        if isinstance(dataset_anchor, str):
+            dataset_anchor = bytes.fromhex(dataset_anchor)
         return sha256_hash(dataset_anchor + item_id.encode())
     
     def to_hex(data: bytes) -> str:

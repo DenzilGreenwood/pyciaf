@@ -1,0 +1,59 @@
+{
+  "test_timestamp": 1758807111.9664934,
+  "test_config": {
+    "item_count": 100,
+    "standard_config": {
+      "storage_path": "C:\\Users\\Denzi\\AppData\\Local\\Temp\\tmp6yy0eiyu\\standard",
+      "use_compression": false,
+      "backup_enabled": false
+    },
+    "optimized_config": {
+      "storage_path": "C:\\Users\\Denzi\\AppData\\Local\\Temp\\tmp6yy0eiyu\\optimized",
+      "enable_lazy_materialization": true,
+      "fast_inference_mode": true,
+      "memory_buffer_size": 1000,
+      "db_connection_pool_size": 5,
+      "enable_async_writes": true,
+      "batch_write_size": 50
+    }
+  },
+  "standard_results": {
+    "save_time": 0.041889699874445796,
+    "load_time": 0.39478590013459325,
+    "list_time": 0.24609230016358197,
+    "total_time": 0.682767900172621,
+    "items_count": 100,
+    "avg_save_time": 0.00041889699874445794,
+    "avg_load_time": 0.007895718002691865,
+    "items_saved": 100,
+    "items_loaded": 50,
+    "items_listed": 100
+  },
+  "optimized_results": {
+    "save_time": 0.24852650007233024,
+    "load_time": 3.8899946957826614e-05,
+    "list_time": 0.001384299946948886,
+    "total_time": 0.24994969996623695,
+    "items_count": 100,
+    "avg_save_time": 0.0024852650007233025,
+    "avg_load_time": 7.779989391565323e-07,
+    "items_saved": 100,
+    "items_loaded": 50,
+    "items_listed": 100
+  },
+  "improvements": {
+    "save_improvement_percent": -493.2878507538323,
+    "load_improvement_percent": 99.99014657135815,
+    "total_improvement_percent": 63.39170310979129
+  },
+  "optimized_stats": {
+    "cache_hit_rate": 1.0,
+    "cache_hits": 50,
+    "cache_misses": 0,
+    "total_saves": 100,
+    "avg_save_time": 0.002482039004098624,
+    "buffer_flushes": 0,
+    "cached_items": 100,
+    "uptime": 0.2509500980377197
+  }
+}

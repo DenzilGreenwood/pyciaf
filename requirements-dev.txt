@@ -1,0 +1,23 @@
+# Development and build dependencies for CIAF
+# Install with: pip install -r requirements-dev.txt
+
+# Build dependencies
+build>=0.8.0
+wheel>=0.37.0
+twine>=4.0.0
+
+# Testing dependencies
+pytest>=6.0.0
+pytest-cov>=2.12.0
+
+# Code quality
+black>=21.0.0
+flake8>=3.9.0
+mypy>=0.910
+
+# Documentation
+sphinx>=4.0.0
+sphinx-rtd-theme>=1.0.0
+
+# Configuration reading
+toml>=0.10.0

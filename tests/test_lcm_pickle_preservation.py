@@ -159,7 +159,8 @@ def test_lcm_pickle_preservation():
         
         print(f"\n🎯 Overall LCM preservation status: {'✅ SUCCESS' if all_preserved else '❌ FAILED'}")
         
-        # Test additional inference on restored model
+        # Use assertions instead of returning boolean
+        assert all_preserved, f"LCM metadata was not fully preserved: {comparison_results}"
         print("\n9️⃣ Testing inference on restored model...")
         try:
             test_prediction, test_receipt = restored_wrapper.predict("Test query on restored model", use_model=False)
@@ -173,12 +174,11 @@ def test_lcm_pickle_preservation():
             
         except Exception as e:
             print(f"❌ Inference failed on restored model: {e}")
-        
-        return all_preserved
+            raise AssertionError(f"Inference failed on restored model: {e}")
         
     except Exception as e:
         print(f"❌ Failed to verify LCM metadata after unpickling: {e}")
-        return False
+        raise AssertionError(f"Failed to verify LCM metadata after unpickling: {e}")
     
     finally:
         # Clean up pickle file
