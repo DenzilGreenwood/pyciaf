@@ -11,4 +11,4 @@ Version: 1.0.0
 
 from .model_wrapper import CIAFModelWrapper
 
-__all__ = ["CIAFModelWrapper"]
+__all__ = ["CIAFModelWrapper", "EnhancedCIAFModelWrapper"]
