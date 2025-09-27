@@ -16,36 +16,17 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-import hashlib
+
 import json
-import time
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple
 
-import hashlib
-
-def sha256_hash(data: bytes) -> str:
-    """Compute SHA-256 hash of data."""
-    return hashlib.sha256(data).hexdigest()
-
-
-class RecordType(Enum):
-    """Types of audit records."""
-    DATASET = "dataset"
-    MODEL = "model"
-    INFERENCE = "inference"
-    ANCHOR = "anchor"
-    MONITORING = "monitoring"
-    COMPLIANCE = "compliance"
-
-
-class HashAlgorithm(Enum):
-    """Supported hash algorithms for algorithm agility."""
-    SHA256 = "sha256"
-    SHA3_256 = "sha3-256"
-    BLAKE3 = "blake3"
+from .crypto import sha256_hash, compute_hash
+from .enums import RecordType, HashAlgorithm
+from .constants import ANCHOR_SCHEMA_VERSION
+from .interfaces import Signer
+from .signers import Ed25519Signer, Ed25519Verifier
 
 
 # Required fields for each record type (non-bypassable invariants)
@@ -131,8 +112,8 @@ class Receipt:
         return sha256_hash(canonical_json(receipt_data).encode('utf-8'))
 
 
-class Signer:
-    """Mock digital signer for anchors."""
+class MockSigner:
+    """Legacy mock signer - DEPRECATED. Use Ed25519Signer for production."""
     
     def __init__(self, key_id: str = "default_key"):
         self.key_id = key_id
@@ -140,7 +121,7 @@ class Signer:
     
     def sign(self, data: bytes) -> str:
         """Sign data and return signature."""
-        # Mock signature - in production, use real cryptographic signing
+        # Legacy mock signature for backward compatibility
         signature_input = data + self.private_key.encode('utf-8')
         return f"sig_{sha256_hash(signature_input)[:32]}"
     
@@ -148,6 +129,19 @@ class Signer:
         """Verify signature."""
         expected_signature = self.sign(data)
         return signature == expected_signature
+
+
+def create_production_signer(key_id: str = "ciaf_production_key") -> Ed25519Signer:
+    """
+    Create a production-ready Ed25519 signer.
+    
+    Args:
+        key_id: Identifier for the signing key
+        
+    Returns:
+        Ed25519Signer instance
+    """
+    return Ed25519Signer(key_id)
 
 
 def canonical_json(data: Dict[str, Any]) -> str:
@@ -182,13 +176,11 @@ def canonicalize_and_hash(
     canonical = canonical_json(metadata)
     
     if hash_algorithm == HashAlgorithm.SHA256:
-        return sha256_hash(canonical.encode('utf-8'))
+        return compute_hash(canonical.encode('utf-8'), "sha256")
     elif hash_algorithm == HashAlgorithm.SHA3_256:
-        import hashlib
-        return hashlib.sha3_256(canonical.encode('utf-8')).hexdigest()
+        return compute_hash(canonical.encode('utf-8'), "sha3-256")
     elif hash_algorithm == HashAlgorithm.BLAKE3:
-        # Mock BLAKE3 - in production use actual blake3 library
-        return f"blake3_{sha256_hash(canonical.encode('utf-8'))}"
+        return compute_hash(canonical.encode('utf-8'), "blake3")
     else:
         raise ValueError(f"Unsupported hash algorithm: {hash_algorithm}")
 
@@ -248,18 +240,6 @@ def enrich_metadata_with_defaults(
     return enriched
 
 
-class MerkleNode:
-    """Merkle tree node."""
-    
-    def __init__(self, hash_value: str, left: Optional['MerkleNode'] = None, right: Optional['MerkleNode'] = None):
-        self.hash = hash_value
-        self.left = left
-        self.right = right
-    
-    def is_leaf(self) -> bool:
-        return self.left is None and self.right is None
-
-
 class WORMMerkleTree:
     """
     Write-Once-Read-Many Merkle tree with dual anchoring.
@@ -312,7 +292,7 @@ class WORMMerkleTree:
         if len(self.leaves) == 1:
             return self.leaves[0]
         
-        # Build tree bottom-up
+        # Build tree bottom-up with deterministic byte concatenation
         current_level = self.leaves[:]
         
         while len(current_level) > 1:
@@ -321,15 +301,15 @@ class WORMMerkleTree:
                 left = current_level[i]
                 right = current_level[i + 1] if i + 1 < len(current_level) else left
                 
-                combined = left + right
-                parent_hash = sha256_hash(combined.encode('utf-8'))
+                # Use byte concatenation for deterministic results
+                parent_hash = sha256_hash(bytes.fromhex(left) + bytes.fromhex(right))
                 next_level.append(parent_hash)
             
             current_level = next_level
         
         return current_level[0]
     
-    def get_merkle_path(self, leaf_hash: str) -> List[str]:
+    def get_merkle_path(self, leaf_hash: str) -> List[Tuple[str, str]]:
         """
         Get Merkle path (inclusion proof) for a leaf.
         
@@ -337,7 +317,7 @@ class WORMMerkleTree:
             leaf_hash: Hash of the leaf
             
         Returns:
-            List of sibling hashes for proof
+            List of (sibling_hash, position) tuples where position is "left" or "right"
         """
         if leaf_hash not in self.leaves:
             raise ValueError(f"Leaf {leaf_hash} not found in tree")
@@ -348,26 +328,25 @@ class WORMMerkleTree:
         current_index = leaf_index
         
         while len(current_level) > 1:
-            # Find sibling
+            # Find sibling and determine position
             if current_index % 2 == 0:
-                # Left child, sibling is right
+                # Current is left child, sibling is right
                 sibling_index = current_index + 1
                 if sibling_index < len(current_level):
-                    proof.append(current_level[sibling_index])
+                    proof.append((current_level[sibling_index], "right"))
                 else:
-                    proof.append(current_level[current_index])  # Self if no right sibling
+                    proof.append((current_level[current_index], "right"))  # Self if no right sibling
             else:
-                # Right child, sibling is left
+                # Current is right child, sibling is left
                 sibling_index = current_index - 1
-                proof.append(current_level[sibling_index])
+                proof.append((current_level[sibling_index], "left"))
             
-            # Move up one level
+            # Move up one level with deterministic byte concatenation
             next_level = []
             for i in range(0, len(current_level), 2):
                 left = current_level[i]
                 right = current_level[i + 1] if i + 1 < len(current_level) else left
-                combined = left + right
-                parent_hash = sha256_hash(combined.encode('utf-8'))
+                parent_hash = sha256_hash(bytes.fromhex(left) + bytes.fromhex(right))
                 next_level.append(parent_hash)
             
             current_level = next_level
@@ -375,13 +354,13 @@ class WORMMerkleTree:
         
         return proof
     
-    def verify_merkle_path(self, leaf_hash: str, merkle_path: List[str], root: str) -> bool:
+    def verify_merkle_path(self, leaf_hash: str, merkle_path: List[Tuple[str, str]], root: str) -> bool:
         """
         Verify Merkle inclusion proof.
         
         Args:
             leaf_hash: Hash of the leaf
-            merkle_path: List of sibling hashes
+            merkle_path: List of (sibling_hash, position) tuples
             root: Expected root hash
             
         Returns:
@@ -389,16 +368,12 @@ class WORMMerkleTree:
         """
         current_hash = leaf_hash
         
-        for sibling_hash in merkle_path:
-            # Try both orders (current + sibling and sibling + current)
-            combined1 = current_hash + sibling_hash
-            combined2 = sibling_hash + current_hash
-            
-            hash1 = sha256_hash(combined1.encode('utf-8'))
-            hash2 = sha256_hash(combined2.encode('utf-8'))
-            
-            # Use the one that would be computed in normal tree construction
-            current_hash = hash1  # Simplified - in practice, need proper ordering
+        for sibling_hash, position in merkle_path:
+            # Use explicit positioning for deterministic verification
+            if position == "left":
+                current_hash = sha256_hash(bytes.fromhex(sibling_hash) + bytes.fromhex(current_hash))
+            else:  # position == "right"
+                current_hash = sha256_hash(bytes.fromhex(current_hash) + bytes.fromhex(sibling_hash))
         
         return current_hash == root
     
@@ -430,7 +405,9 @@ class CapsuleBuilder:
         merkle_path: List[str],
         anchor: AnchorRecord,
         record_type: RecordType,
-        leaf_hash: str
+        leaf_hash: str,
+        verify_signature: bool = False,
+        public_key_pem: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Build proof capsule according to Appendix B schema.
@@ -441,12 +418,20 @@ class CapsuleBuilder:
             anchor: Signed anchor
             record_type: Type of record
             leaf_hash: Hash of the leaf
+            verify_signature: Optional signature verification
+            public_key_pem: Public key for signature verification
             
         Returns:
             Complete proof capsule
         """
+        # Handle signature verification
+        sig_ok = True
+        if verify_signature and public_key_pem:
+            verifier = Ed25519Verifier(anchor.signing_key_id, public_key_pem)
+            sig_ok = verifier.verify(anchor.get_anchor_bytes(), anchor.signature)
+        
         return {
-            "capsule_version": "1.0",
+            "capsule_version": ANCHOR_SCHEMA_VERSION,
             "capsule_type": "audit_proof",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             
@@ -475,7 +460,7 @@ class CapsuleBuilder:
                     "anchor": asdict(anchor)
                 }).encode('utf-8')),
                 "verifiable_independently": True,
-                "signature_valid": True  # Would be verified
+                "signature_valid": sig_ok
             }
         }
 

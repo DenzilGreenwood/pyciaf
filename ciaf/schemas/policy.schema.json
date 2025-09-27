@@ -1,0 +1,16 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/policy.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Policy",
+  "type": "object",
+  "required": ["policy_id", "schema_version", "domain_labels"],
+  "properties": {
+    "policy_id": { "type": "string" },
+    "schema_version": { "type": "string", "const": "1.0" },
+    "domain_labels": { "type": "array", "items": { "type": "string" } },
+    "hash_algorithm": { "enum": ["sha256", "sha3-256", "blake3"] },
+    "external_timestamping": { "type": "boolean" },
+    "high_risk_domains": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

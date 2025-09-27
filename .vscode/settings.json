@@ -1,6 +1,7 @@
 {
     "github.copilot.chat.reviewSelection.instructions": [
-                {
+
+        {
             "text": "Never use Unicode characters, emojis, or special symbols in code. Use only ASCII characters. Replace any emojis with descriptive text comments."
         },
         {
@@ -8,6 +9,9 @@
         },
         {
             "text": "Use clear, descriptive variable names and comments instead of Unicode symbols or emojis."
+        },
+        {
+            "text": "Do not use Mock, simulate, or Stub in the code. Write real, functional code that can be executed and tested."
         }
     ]
 }

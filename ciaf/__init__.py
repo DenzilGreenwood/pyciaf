@@ -10,9 +10,10 @@ Author: Denzil James Greenwood
 Version: 1.1.0
 """
 
-from .anchoring import DatasetAnchor, LazyManager, LazyProvenanceManager
+# Anchoring module removed - using LCM system instead
+from .lcm import LCMDatasetAnchor, LCMDatasetManager
 from .api.framework import CIAFFramework
-from .core import CryptoUtils, BaseAnchorManager, AnchorManager, MerkleTree
+from .core import CryptoUtils, MerkleTree
 from .inference import InferenceReceipt, ZKEConnections
 from .metadata_config import (
     MetadataConfig,
@@ -149,12 +150,10 @@ __version__ = "1.1.0"
 __all__ = [
     # Core components
     "CryptoUtils",
-    "BaseAnchorManager",
-    "AnchorManager",
     "MerkleTree",
-    "DatasetAnchor",
-    "LazyManager",
-    "LazyProvenanceManager",
+    # LCM System (replaces legacy anchoring)
+    "LCMDatasetAnchor",
+    "LCMDatasetManager",
     "ProvenanceCapsule",
     "TrainingSnapshot",
     "ModelAggregationAnchor",

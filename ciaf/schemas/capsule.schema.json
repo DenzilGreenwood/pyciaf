@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/capsule.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Audit Capsule",
+  "type": "object",
+  "required": ["capsule_version","capsule_type","timestamp","record","proofs","anchor","verification"],
+  "properties": {
+    "capsule_version": { "type": "string", "const": "1.0" },
+    "capsule_type": { "type": "string", "const": "audit_proof" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "record": {
+      "type": "object",
+      "required": ["type","metadata","leaf_hash"],
+      "properties": {
+        "type": { "enum": ["dataset","model","inference","anchor","monitoring","compliance"] },
+        "metadata": { "type": "object" },
+        "leaf_hash": { "type": "string" }
+      }
+    },
+    "proofs": {
+      "type": "object",
+      "required": ["merkle_path","merkle_root","inclusion_proof_valid"],
+      "properties": {
+        "merkle_path": { 
+          "type": "array", 
+          "items": { 
+            "type": "array", 
+            "prefixItems": [{ "type":"string" }, { "enum":["left","right"] }], 
+            "minItems":2, 
+            "maxItems":2 
+          } 
+        },
+        "merkle_root": { "type": "string" },
+        "inclusion_proof_valid": { "type": "boolean" }
+      }
+    },
+    "anchor": { "$ref": "anchor.schema.json" },
+    "verification": {
+      "type": "object",
+      "required": ["capsule_hash","verifiable_independently","signature_valid"],
+      "properties": {
+        "capsule_hash": { "type": "string" },
+        "verifiable_independently": { "type": "boolean" },
+        "signature_valid": { "type": "boolean" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

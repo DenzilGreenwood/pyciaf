@@ -1,0 +1,14 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/receipt.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Receipt",
+  "type": "object",
+  "required": ["metadata","anchor","leaf_hash","record_type"],
+  "properties": {
+    "metadata": { "type": "object" },
+    "anchor": { "$ref": "anchor.schema.json" },
+    "leaf_hash": { "type": "string" },
+    "record_type": { "enum": ["dataset","model","inference","anchor","monitoring","compliance"] }
+  },
+  "additionalProperties": false
+}

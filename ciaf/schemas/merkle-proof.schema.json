@@ -1,0 +1,21 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/merkle-proof.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Merkle Proof",
+  "type": "object",
+  "required": ["root","leaf_hash","proof"],
+  "properties": {
+    "root": { "type": "string" },
+    "leaf_hash": { "type": "string" },
+    "proof": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [{ "type":"string" }, { "enum":["left","right"] }],
+        "minItems": 2,
+        "maxItems": 2
+      }
+    }
+  },
+  "additionalProperties": false
+}

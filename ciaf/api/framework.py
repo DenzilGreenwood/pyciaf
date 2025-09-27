@@ -15,8 +15,8 @@ import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from ..anchoring import LazyManager, DatasetAnchor
-from ..core import CryptoUtils, BaseAnchorManager, AnchorManager, MerkleTree, derive_model_anchor, derive_master_anchor, sha256_hash, secure_random_bytes, SALT_LENGTH, to_hex
+# Removed redundant anchoring imports - using LCM system instead
+from ..core import CryptoUtils, MerkleTree, derive_model_anchor, derive_master_anchor, sha256_hash, secure_random_bytes, SALT_LENGTH, to_hex
 from ..core.canonicalization import (
     Policy, RecordType, AnchorRecord, Receipt, Signer, WORMMerkleTree, CapsuleBuilder,
     canonical_json, canonicalize_and_hash, validate_required_fields, 
@@ -26,13 +26,13 @@ from ..provenance import ModelAggregationAnchor, ProvenanceCapsule, TrainingSnap
 from ..simulation import MLFrameworkSimulator
 from ..inference import InferenceReceipt, ZKEConnections
 from ..compliance import AuditTrailGenerator
-from ..extensions import ComplianceExtensions
+
 
 # LCM System Integration
 from ..lcm import (
     LCMRootManager, LCMDatasetManager, LCMModelManager, 
     LCMTrainingManager, LCMInferenceManager, LCMDeploymentManager,
-    LCMPolicy, get_default_policy, DatasetMetadata, DatasetSplit
+    LCMDatasetAnchor, LCMPolicy, get_default_policy, DatasetMetadata, DatasetSplit
 )
 
 
@@ -75,16 +75,13 @@ class CIAFFramework:
         # Core WORM Merkle ledger
         self.ledger = WORMMerkleTree(self.policy.hash_algorithm)
         
-        # Compliance extensions integration
-        self.compliance = ComplianceExtensions(framework_name)
+
         
-        # Legacy components (maintained for compatibility)
+        # Legacy components (removed - using LCM system)
         self.crypto_utils = CryptoUtils()
-        self.anchor_manager = BaseAnchorManager()
-        self.anchor_manager_legacy = AnchorManager()
-        self.dataset_anchors: Dict[str, DatasetAnchor] = {}
+        self.dataset_anchors: Dict[str, Dict[DatasetSplit, LCMDatasetAnchor]] = {}
         self.model_anchors: Dict[str, Dict[str, Any]] = {}
-        self.lazy_managers: Dict[str, LazyManager] = {}
+        # Lazy managers removed - functionality integrated into LCM system
         self.ml_simulators: Dict[str, MLFrameworkSimulator] = {}
         self.inference_connections: Dict[str, ZKEConnections] = {}
         self.audit_generators: Dict[str, AuditTrailGenerator] = {}
@@ -333,7 +330,7 @@ class CIAFFramework:
 
     def create_dataset_anchor_lcm(
         self, dataset_id: str, dataset_metadata: Dict[str, Any], master_password: str
-    ) -> DatasetAnchor:
+    ) -> Dict[DatasetSplit, LCMDatasetAnchor]:
         """
         Create a new dataset anchor using LCM integration.
         
@@ -358,27 +355,15 @@ class CIAFFramework:
             dataset_id, lcm_metadata
         )
         
-        # Create traditional anchor for compatibility
-        dataset_anchor = self.anchor_manager.create_dataset_anchor(
-            dataset_id=dataset_id,
-            data_items=dataset_metadata.get('data_items', []),
-            metadata=dataset_metadata
-        )
-        
-        # Attach LCM anchor reference to the dataset anchor
-        dataset_anchor.lcm_anchor_id = lcm_anchor.get('anchor_id') if isinstance(lcm_anchor, dict) else str(lcm_anchor)
-        
-        # Store anchor with LCM tracking
-        self.dataset_anchors[dataset_id] = dataset_anchor
-        
-        print(f"Dataset anchor {dataset_id} created with LCM integration")
-        print(f"LCM tracking: {len(dataset_metadata.get('data_items', []))} items")
+        # Store LCM anchor directly (no legacy compatibility needed)
+        print(f"LCM dataset anchor {dataset_id} created")
+        print(f"LCM tracking: {lcm_metadata.total_samples} samples")
         
         return dataset_anchor
 
     def create_dataset_anchor(
         self, dataset_id: str, dataset_metadata: Dict[str, Any], master_password: str
-    ) -> DatasetAnchor:
+    ) -> Dict[DatasetSplit, LCMDatasetAnchor]:
         """
         Create a new dataset anchor with its own anchor derivation hierarchy.
 
@@ -397,22 +382,28 @@ class CIAFFramework:
             f"{dataset_id}_{self.framework_name}".encode()
         ).digest()
 
-        # Create dataset anchor
-        anchor = DatasetAnchor(
-            dataset_id=dataset_id,
-            metadata=dataset_metadata,
-            master_password=master_password,
-            salt=dataset_salt,
+        # Create LCM dataset metadata
+        lcm_metadata = DatasetMetadata(
+            name=dataset_metadata.get('name', dataset_id),
+            version=dataset_metadata.get('version', '1.0'),
+            description=dataset_metadata.get('description', ''),
+            features=dataset_metadata.get('features', []),
+            total_samples=dataset_metadata.get('total_samples', 0)
         )
 
-        self.dataset_anchors[dataset_id] = anchor
+        # Create dataset splits using LCM system
+        splits = self.lcm_dataset_manager.create_dataset_splits(
+            dataset_id=dataset_id,
+            metadata=lcm_metadata,
+            master_password=master_password,
+            splits=[DatasetSplit.TRAIN, DatasetSplit.VALIDATION, DatasetSplit.TEST],
+            salt=dataset_salt
+        )
 
-        # Create corresponding lazy manager
-        lazy_manager = LazyManager(anchor)
-        self.lazy_managers[dataset_id] = lazy_manager
+        self.dataset_anchors[dataset_id] = splits
 
-        print(f"Dataset anchor initialized")
-        return anchor
+        print(f"LCM dataset anchor initialized with {len(splits)} splits")  
+        return splits
 
     def create_model_anchor_lcm(
         self, 

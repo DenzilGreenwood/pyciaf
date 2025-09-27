@@ -1,0 +1,18 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/anchor.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF AnchorRecord",
+  "type": "object",
+  "required": ["root","policy_id","schema_version","timestamp","domain_labels","signature","signing_key_id"],
+  "properties": {
+    "root": { "type": "string" },
+    "policy_id": { "type": "string" },
+    "schema_version": { "type": "string", "const": "1.0" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "domain_labels": { "type": "array", "items": { "type": "string" } },
+    "signature": { "type": "string" },
+    "signing_key_id": { "type": "string" },
+    "external_anchor": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -15,12 +15,15 @@ import platform
 import sys
 import subprocess
 from datetime import datetime
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, TYPE_CHECKING
 from dataclasses import dataclass
 
-from ..core import sha256_hash, derive_model_anchor, derive_master_anchor, secure_random_bytes, SALT_LENGTH, to_hex
-from .policy import LCMPolicy, get_default_policy, CommitmentType, DomainType
+from ..core import sha256_hash, SALT_LENGTH, to_hex
+from .policy import LCMPolicy, get_default_policy, CommitmentType, DomainType, create_commitment, canonical_hash
 from .dataset_manager import LCMDatasetAnchor, DatasetSplit
+
+if TYPE_CHECKING:
+    from ..core.interfaces import RNG, AnchorDeriver
 
 
 @dataclass
@@ -77,7 +80,7 @@ class TrainingEnvironment:
 
 
 class LCMModelAnchor:
-    """Enhanced model anchor for LCM with comprehensive metadata."""
+    """Enhanced model anchor for LCM with comprehensive metadata using protocol interfaces."""
     
     def __init__(
         self,
@@ -93,7 +96,7 @@ class LCMModelAnchor:
         salt: bytes = None
     ):
         """
-        Initialize LCM model anchor.
+        Initialize LCM model anchor using protocol interfaces.
         
         Args:
             model_name: Name of the model
@@ -116,15 +119,19 @@ class LCMModelAnchor:
         self.trainer_commit = trainer_commit
         self.policy = policy or get_default_policy()
         
+        # Get protocol implementations from policy
+        self.rng = self.policy.rng
+        self.anchor_deriver = self.policy.anchor_deriver
+        
         # Generate or use provided salt and password
         password = master_password or model_name
         if salt is not None:
             self.master_salt = salt
         else:
-            self.master_salt = secure_random_bytes(SALT_LENGTH)
+            self.master_salt = self.rng.random_bytes(SALT_LENGTH)
         
-        # Derive anchors
-        self.master_anchor = derive_master_anchor(password, self.master_salt)
+        # Derive anchors using protocol
+        self.master_anchor = self.anchor_deriver.derive_master_anchor(password, self.master_salt)
         
         # Compute various digests
         self.params_root = self._compute_params_root()
@@ -132,9 +139,9 @@ class LCMModelAnchor:
         self.hp_digest = self._compute_hp_digest()
         self.env_digest = self._compute_env_digest()
         
-        # Compute model hash and derive model anchor
+        # Compute model hash and derive model anchor using protocol
         self.model_hash = self._compute_model_hash()
-        self.model_anchor = derive_model_anchor(self.master_anchor, self.model_hash)
+        self.model_anchor = self.anchor_deriver.derive_model_anchor(self.master_anchor, self.model_hash)
         
         # Generate anchor ID
         self.anchor_id = f"m_{to_hex(self.model_anchor)[:8]}..."
@@ -150,25 +157,21 @@ class LCMModelAnchor:
             "total_params": self.architecture.total_params,
             "architecture_type": self.architecture.type
         }
-        canonical_json = json.dumps(params_data, sort_keys=True, separators=(',', ':'))
-        return sha256_hash(canonical_json.encode('utf-8'))
+        return canonical_hash(params_data)
     
     def _compute_arch_root(self) -> str:
         """Compute architecture root hash."""
         arch_data = self.architecture.to_dict()
-        canonical_json = json.dumps(arch_data, sort_keys=True, separators=(',', ':'))
-        return sha256_hash(canonical_json.encode('utf-8'))
+        return canonical_hash(arch_data)
     
     def _compute_hp_digest(self) -> str:
         """Compute hyperparameters digest."""
-        canonical_json = json.dumps(self.hyperparameters, sort_keys=True, separators=(',', ':'))
-        return sha256_hash(canonical_json.encode('utf-8'))
+        return canonical_hash(self.hyperparameters)
     
     def _compute_env_digest(self) -> str:
         """Compute environment digest."""
         env_data = self.environment.to_dict()
-        canonical_json = json.dumps(env_data, sort_keys=True, separators=(',', ':'))
-        return sha256_hash(canonical_json.encode('utf-8'))
+        return canonical_hash(env_data)
     
     def _compute_model_hash(self) -> str:
         """Compute comprehensive model hash."""
@@ -182,27 +185,12 @@ class LCMModelAnchor:
             "trainer_commit": self.trainer_commit,
             "authorized_datasets": sorted(self.authorized_datasets)
         }
-        canonical_json = json.dumps(model_data, sort_keys=True, separators=(',', ':'))
-        return sha256_hash(canonical_json.encode('utf-8'))
+        return canonical_hash(model_data)
     
     def create_commitment(self, data: Any, commitment_type: CommitmentType = None) -> str:
-        """Create commitment for data according to policy."""
+        """Create commitment for data according to policy using protocol RNG."""
         commitment_type = commitment_type or self.policy.commitments
-        
-        if commitment_type == CommitmentType.PLAINTEXT:
-            return str(data)
-        elif commitment_type == CommitmentType.SALTED:
-            # Simple salt-based commitment
-            salt = secure_random_bytes(16)
-            data_str = json.dumps(data, sort_keys=True) if not isinstance(data, str) else data
-            return sha256_hash((salt + data_str.encode('utf-8')))[:16] + "..."
-        elif commitment_type == CommitmentType.HMAC_SHA256:
-            # HMAC-based commitment using model anchor
-            import hmac
-            data_str = json.dumps(data, sort_keys=True) if not isinstance(data, str) else data
-            return hmac.new(self.model_anchor, data_str.encode('utf-8'), 'sha256').hexdigest()[:16] + "..."
-        else:
-            raise ValueError(f"Unknown commitment type: {commitment_type}")
+        return create_commitment(data, commitment_type, self.model_anchor, self.rng)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""

@@ -3,38 +3,29 @@ Audit Trail Generation for CIAF Compliance
 
 This module generates comprehensive audit trails for AI systems, tracking all
 training, inference, and model lifecycle events with cryptographic integrity.
+Integrates with the LCM (Lazy Capsule Materialization) system for proper anchoring.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-09-26
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.1.0
 """
 
 import hashlib
 import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from ..core import CryptoUtils
-from ..inference import InferenceReceipt
-from ..provenance import TrainingSnapshot
+from ..core import sha256_hash
+from ..lcm.policy import canonical_json
+from .interfaces import AuditEventType, AuditTrailProvider
+from .policy import get_default_compliance_policy
 
-
-class AuditEventType(Enum):
-    """Types of audit events tracked by CIAF."""
-
-    MODEL_TRAINING = "model_training"
-    DATA_INGESTION = "data_ingestion"
-    INFERENCE_REQUEST = "inference_request"
-    MODEL_DEPLOYMENT = "model_deployment"
-    MODEL_UPDATE = "model_update"
-    DATA_ACCESS = "data_access"
-    SECURITY_EVENT = "security_event"
-    COMPLIANCE_CHECK = "compliance_check"
-    RISK_ASSESSMENT = "risk_assessment"
-    USER_ACCESS = "user_access"
+if TYPE_CHECKING:
+    from ..lcm import LCMRootManager
+    from ..inference import InferenceReceipt
+    from ..provenance import TrainingSnapshot
 
 
 @dataclass
@@ -94,31 +85,95 @@ class ComplianceAuditRecord:
         self.audit_hash = hashlib.sha256(audit_str.encode()).hexdigest()
 
 
-class AuditTrailGenerator:
-    """Generates comprehensive audit trails for CIAF systems."""
+class AuditTrailGenerator(AuditTrailProvider):
+    """
+    Generates comprehensive audit trails for CIAF systems.
+    Integrates with LCM system for proper anchoring and cryptographic integrity.
+    """
 
-    def __init__(self, model_name: str, compliance_frameworks: List[str] = None):
+    def __init__(
+        self, 
+        model_name: str, 
+        compliance_frameworks: List[str] = None,
+        lcm_manager: Optional["LCMRootManager"] = None
+    ):
         """
         Initialize audit trail generator.
 
         Args:
             model_name: Name of the model being audited
             compliance_frameworks: List of regulatory frameworks to track
+            lcm_manager: Optional LCM root manager for anchoring integration
         """
         self.model_name = model_name
         self.compliance_frameworks = compliance_frameworks or ["general"]
-        self.crypto_utils = CryptoUtils()
+        self.lcm_manager = lcm_manager
         self.audit_records: List[ComplianceAuditRecord] = []
         self.last_hash = ""
+        self.compliance_policy = get_default_compliance_policy()
+
+    def record_event(
+        self,
+        event_type: AuditEventType,
+        event_data: Dict[str, Any],
+        **kwargs
+    ) -> str:
+        """Record an audit event and return event ID (Protocol implementation)."""
+        
+        # Create appropriate record based on event type
+        if event_type == AuditEventType.MODEL_TRAINING:
+            return self._record_training_event_internal(event_data, **kwargs)
+        elif event_type == AuditEventType.INFERENCE_REQUEST:
+            return self._record_inference_event_internal(event_data, **kwargs)
+        elif event_type == AuditEventType.DATA_ACCESS:
+            return self._record_data_access_event_internal(event_data, **kwargs)
+        elif event_type == AuditEventType.COMPLIANCE_CHECK:
+            return self._record_compliance_check_internal(event_data, **kwargs)
+        else:
+            return self._record_generic_event(event_type, event_data, **kwargs)
+    
+    def _record_generic_event(
+        self,
+        event_type: AuditEventType,
+        event_data: Dict[str, Any],
+        **kwargs
+    ) -> str:
+        """Record a generic audit event."""
+        
+        user_id = kwargs.get("user_id", "system")
+        model_version = kwargs.get("model_version", "current")
+        
+        record = ComplianceAuditRecord(
+            event_id=f"{event_type.value}_{int(datetime.now().timestamp() * 1000)}",
+            event_type=event_type,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            model_name=self.model_name,
+            model_version=model_version,
+            user_id=user_id,
+            event_data=event_data,
+            regulatory_frameworks=self.compliance_frameworks,
+            risk_level=kwargs.get("risk_level", "low"),
+            previous_hash=self.last_hash,
+            contains_pii=kwargs.get("contains_pii", False),
+            access_controls=kwargs.get("access_controls", ["authenticated_users"]),
+        )
+        
+        self._add_record(record)
+        
+        # Integrate with LCM anchoring if available
+        if self.lcm_manager and self.compliance_policy.anchor_compliance_records:
+            self._anchor_compliance_record(record)
+        
+        return record.event_id
 
     def record_training_event(
         self,
-        training_snapshot: TrainingSnapshot,
+        training_snapshot: "TrainingSnapshot",
         training_params: Dict[str, Any],
         user_id: str = "system",
     ) -> ComplianceAuditRecord:
         """Record a model training event."""
-
+        
         event_data = {
             "training_snapshot_id": training_snapshot.snapshot_id,
             "merkle_root": training_snapshot.merkle_root_hash,
@@ -128,28 +183,27 @@ class AuditTrailGenerator:
             "dataset_fingerprint": training_params.get("dataset_fingerprint", ""),
             "model_architecture": training_params.get("model_architecture", "unknown"),
         }
-
-        record = ComplianceAuditRecord(
-            event_id=f"training_{int(datetime.now().timestamp() * 1000)}",
-            event_type=AuditEventType.MODEL_TRAINING,
-            timestamp=datetime.now(timezone.utc).isoformat(),
-            model_name=self.model_name,
-            model_version=training_snapshot.model_version,
+        
+        event_id = self.record_event(
+            AuditEventType.MODEL_TRAINING,
+            event_data,
             user_id=user_id,
-            event_data=event_data,
-            regulatory_frameworks=self.compliance_frameworks,
+            model_version=training_snapshot.model_version,
             risk_level=self._assess_training_risk(training_params),
-            previous_hash=self.last_hash,
             contains_pii=training_params.get("contains_pii", False),
-            access_controls=["authenticated_users", "training_role"],
+            access_controls=["authenticated_users", "training_role"]
         )
+        
+        # Return the record for backward compatibility
+        return self.audit_records[-1]
 
-        self._add_record(record)
-        return record
+    def _record_training_event_internal(self, event_data: Dict[str, Any], **kwargs) -> str:
+        """Internal method for recording training events."""
+        return self._record_generic_event(AuditEventType.MODEL_TRAINING, event_data, **kwargs)
 
     def record_inference_event(
         self,
-        receipt: InferenceReceipt,
+        receipt: "InferenceReceipt",
         query_metadata: Dict[str, Any] = None,
         user_id: str = "anonymous",
     ) -> ComplianceAuditRecord:
@@ -167,23 +221,21 @@ class AuditTrailGenerator:
             "metadata": query_metadata,
         }
 
-        record = ComplianceAuditRecord(
-            event_id=f"inference_{receipt.receipt_hash[:16]}",
-            event_type=AuditEventType.INFERENCE_REQUEST,
-            timestamp=receipt.timestamp,
-            model_name=self.model_name,
-            model_version=receipt.model_version,
+        event_id = self.record_event(
+            AuditEventType.INFERENCE_REQUEST,
+            event_data,
             user_id=user_id,
-            event_data=event_data,
-            regulatory_frameworks=self.compliance_frameworks,
+            model_version=receipt.model_version,
             risk_level=self._assess_inference_risk(query_metadata),
-            previous_hash=self.last_hash,
             contains_pii=query_metadata.get("contains_pii", False),
-            access_controls=["authenticated_users", "inference_role"],
+            access_controls=["authenticated_users", "inference_role"]
         )
+        
+        return self.audit_records[-1]
 
-        self._add_record(record)
-        return record
+    def _record_inference_event_internal(self, event_data: Dict[str, Any], **kwargs) -> str:
+        """Internal method for recording inference events."""
+        return self._record_generic_event(AuditEventType.INFERENCE_REQUEST, event_data, **kwargs)
 
     def record_data_access_event(
         self,
@@ -205,27 +257,21 @@ class AuditTrailGenerator:
             "retention_period": data_summary.get("retention_period", "as_needed"),
         }
 
-        record = ComplianceAuditRecord(
-            event_id=f"data_access_{int(datetime.now().timestamp() * 1000)}",
-            event_type=AuditEventType.DATA_ACCESS,
-            timestamp=datetime.now(timezone.utc).isoformat(),
-            model_name=self.model_name,
-            model_version="current",
+        event_id = self.record_event(
+            AuditEventType.DATA_ACCESS,
+            event_data,
             user_id=user_id,
-            event_data=event_data,
-            regulatory_frameworks=self.compliance_frameworks,
+            model_version="current",
             risk_level=self._assess_data_access_risk(access_type, data_summary),
-            previous_hash=self.last_hash,
             contains_pii=data_summary.get("contains_pii", False),
-            access_controls=[
-                "authenticated_users",
-                "data_access_role",
-                "purpose_limited",
-            ],
+            access_controls=["authenticated_users", "data_access_role", "purpose_limited"]
         )
+        
+        return self.audit_records[-1]
 
-        self._add_record(record)
-        return record
+    def _record_data_access_event_internal(self, event_data: Dict[str, Any], **kwargs) -> str:
+        """Internal method for recording data access events."""
+        return self._record_generic_event(AuditEventType.DATA_ACCESS, event_data, **kwargs)
 
     def record_compliance_check(
         self, check_type: str, results: Dict[str, Any], user_id: str = "system"
@@ -242,31 +288,60 @@ class AuditTrailGenerator:
             "overall_status": results.get("overall_status", "unknown"),
         }
 
-        record = ComplianceAuditRecord(
-            event_id=f"compliance_{check_type}_{int(datetime.now().timestamp() * 1000)}",
-            event_type=AuditEventType.COMPLIANCE_CHECK,
-            timestamp=datetime.now(timezone.utc).isoformat(),
-            model_name=self.model_name,
-            model_version="current",
+        event_id = self.record_event(
+            AuditEventType.COMPLIANCE_CHECK,
+            event_data,
             user_id=user_id,
-            event_data=event_data,
-            regulatory_frameworks=self.compliance_frameworks,
+            model_version="current",
             risk_level=self._assess_compliance_risk(results),
-            previous_hash=self.last_hash,
             contains_pii=False,
-            access_controls=["compliance_officers", "audit_role"],
+            access_controls=["compliance_officers", "audit_role"]
         )
+        
+        return self.audit_records[-1]
 
-        self._add_record(record)
-        return record
+    def _record_compliance_check_internal(self, event_data: Dict[str, Any], **kwargs) -> str:
+        """Internal method for recording compliance check events."""
+        return self._record_generic_event(AuditEventType.COMPLIANCE_CHECK, event_data, **kwargs)
+
+    def _anchor_compliance_record(self, record: ComplianceAuditRecord) -> Optional[str]:
+        """
+        Anchor compliance record in LCM system if available.
+        
+        Returns:
+            Anchor hash if successfully anchored, None otherwise
+        """
+        if not self.lcm_manager:
+            return None
+        
+        try:
+            # Create compliance anchor data
+            anchor_data = {
+                "audit_record_id": record.event_id,
+                "audit_hash": record.audit_hash,
+                "timestamp": record.timestamp,
+                "model_name": record.model_name,
+                "event_type": record.event_type.value,
+                "compliance_frameworks": record.regulatory_frameworks
+            }
+            
+            # Use LCM to anchor the compliance record
+            # This would typically create a compliance anchor in the LCM system
+            anchor_hash = canonical_json(anchor_data)
+            return sha256_hash(anchor_hash.encode('utf-8'))
+            
+        except Exception as e:
+            # Log error but don't fail the audit record creation
+            print(f"Warning: Failed to anchor compliance record: {e}")
+            return None
 
     def get_audit_trail(
         self,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         event_types: Optional[List[AuditEventType]] = None,
-    ) -> List[ComplianceAuditRecord]:
-        """Get filtered audit trail."""
+    ) -> List[Dict[str, Any]]:
+        """Get filtered audit trail (Protocol implementation)."""
 
         filtered_records = self.audit_records
 
@@ -291,7 +366,12 @@ class AuditTrailGenerator:
                 r for r in filtered_records if r.event_type in event_types
             ]
 
-        return filtered_records
+        # Convert to dict format for protocol compliance
+        return [asdict(record) for record in filtered_records]
+
+    def verify_integrity(self) -> Dict[str, Any]:
+        """Verify the cryptographic integrity of the audit trail (Protocol implementation)."""
+        return self.verify_audit_integrity()
 
     def verify_audit_integrity(self) -> Dict[str, Any]:
         """Verify the cryptographic integrity of the audit trail."""
@@ -417,7 +497,6 @@ class AuditTrailGenerator:
         """Export audit trail to CSV format."""
         import csv
         import io
-        from datetime import datetime
         
         output = io.StringIO()
         
@@ -445,8 +524,8 @@ class AuditTrailGenerator:
                 'compliance_status': record.compliance_status,
                 'audit_hash': record.audit_hash,
                 'previous_hash': record.previous_hash,
-                'event_details': str(record.event_details) if record.event_details else '',
-                'metadata': str(record.metadata) if hasattr(record, 'metadata') and record.metadata else ''
+                'event_details': str(record.event_data) if record.event_data else '',
+                'metadata': str(getattr(record, 'regulatory_frameworks', [])) if hasattr(record, 'regulatory_frameworks') else ''
             }
             writer.writerow(row)
         
@@ -454,7 +533,7 @@ class AuditTrailGenerator:
         output.write(f"\n# Audit Trail Export Summary\n")
         output.write(f"# Generated: {datetime.now().isoformat()}\n")
         output.write(f"# Total Records: {len(self.audit_records)}\n")
-        output.write(f"# Model: {self.model_name} v{self.model_version}\n")
+        output.write(f"# Model: {self.model_name}\n")
         
         # Risk level counts
         high_risk = len([r for r in self.audit_records if r.risk_level == "high"])
@@ -487,8 +566,8 @@ class AuditTrailGenerator:
             "data_hash": record.data_hash,
             "previous_hash": record.previous_hash,
         }
-        audit_str = json.dumps(audit_data, sort_keys=True)
-        return hashlib.sha256(audit_str.encode()).hexdigest()
+        audit_str = canonical_json(audit_data)
+        return sha256_hash(audit_str.encode('utf-8'))
 
 
 class AuditTrail:

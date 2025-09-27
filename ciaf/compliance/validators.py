@@ -2,36 +2,32 @@
 Compliance Validators for CIAF
 
 This module provides automated validation capabilities to check compliance
-with various regulatory frameworks and industry standards.
+with various regulatory frameworks and industry standards. Updated to use
+the new compliance interfaces and policy framework.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-09-26
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.1.0
 """
 
 import json
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from .audit_trails import AuditEventType, AuditTrailGenerator, ComplianceAuditRecord
-from .regulatory_mapping import (
+from .interfaces import (
+    ComplianceValidator as IComplianceValidator,
     ComplianceFramework,
+    ValidationSeverity,
+    AuditEventType
+)
+from .audit_trails import AuditTrailGenerator, ComplianceAuditRecord
+from .regulatory_mapping import (
     ComplianceRequirement,
     RegulatoryMapper,
 )
-
-
-class ValidationSeverity(Enum):
-    """Severity levels for validation results."""
-
-    CRITICAL = "critical"
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-    INFO = "info"
+from .policy import get_default_compliance_policy
 
 
 @dataclass
@@ -63,23 +59,67 @@ class ValidationResult:
         return self.status in ["fail", "warning"]
 
 
-class ComplianceValidator:
-    """Automated compliance validation engine."""
+class ComplianceValidator(IComplianceValidator):
+    """Automated compliance validation engine implementing the ComplianceValidator protocol."""
 
     def __init__(self, model_name: str):
         """Initialize compliance validator."""
         self.model_name = model_name
         self.regulatory_mapper = RegulatoryMapper()
         self.validation_results: List[ValidationResult] = []
+        self.compliance_policy = get_default_compliance_policy()
 
     def validate_framework_compliance(
+        self,
+        framework: ComplianceFramework,
+        audit_data: Dict[str, Any],
+        **kwargs
+    ) -> List[Dict[str, Any]]:
+        """Validate compliance with a specific regulatory framework (Protocol implementation)."""
+        
+        # Extract parameters from kwargs for backward compatibility
+        audit_generator = kwargs.get('audit_generator')
+        model_version = kwargs.get('model_version', 'current')
+        validation_period_days = kwargs.get('validation_period_days', 30)
+        
+        if audit_generator:
+            # Use the legacy method with audit generator
+            results = self._validate_framework_compliance_legacy(
+                framework, audit_generator, model_version, validation_period_days
+            )
+        else:
+            # Use audit_data directly
+            results = self._validate_framework_compliance_from_data(
+                framework, audit_data, model_version
+            )
+        
+        # Convert ValidationResult objects to dictionaries
+        return [self._validation_result_to_dict(result) for result in results]
+
+    def _validation_result_to_dict(self, result: ValidationResult) -> Dict[str, Any]:
+        """Convert ValidationResult to dictionary format."""
+        return {
+            "validation_id": result.validation_id,
+            "requirement_id": result.requirement_id,
+            "framework": result.framework,
+            "title": result.title,
+            "severity": result.severity.value,
+            "status": result.status,
+            "message": result.message,
+            "details": result.details,
+            "evidence": result.evidence,
+            "recommendations": result.recommendations,
+            "timestamp": result.timestamp
+        }
+
+    def _validate_framework_compliance_legacy(
         self,
         framework: ComplianceFramework,
         audit_generator: AuditTrailGenerator,
         model_version: str = "current",
         validation_period_days: int = 30,
     ) -> List[ValidationResult]:
-        """Validate compliance with a specific regulatory framework."""
+        """Legacy validate compliance with a specific regulatory framework."""
 
         requirements = self.regulatory_mapper.get_requirements([framework])
         results = []
@@ -92,6 +132,93 @@ class ComplianceValidator:
 
         self.validation_results.extend(results)
         return results
+
+    def _validate_framework_compliance_from_data(
+        self,
+        framework: ComplianceFramework,
+        audit_data: Dict[str, Any],
+        model_version: str = "current"
+    ) -> List[ValidationResult]:
+        """Validate compliance using audit data directly."""
+        
+        requirements = self.regulatory_mapper.get_requirements([framework])
+        results = []
+
+        for requirement in requirements:
+            result = self._validate_requirement_from_data(
+                requirement, audit_data, model_version
+            )
+            results.append(result)
+
+        self.validation_results.extend(results)
+        return results
+
+    def _validate_requirement_from_data(
+        self,
+        requirement: ComplianceRequirement,
+        audit_data: Dict[str, Any],
+        model_version: str
+    ) -> ValidationResult:
+        """Validate a single requirement using audit data."""
+        
+        # Check if CIAF satisfies the requirement
+        if requirement.is_satisfied_by_ciaf():
+            status = "pass"
+            message = f"Requirement satisfied by CIAF capabilities: {', '.join(requirement.ciaf_capabilities)}"
+            evidence = [f"CIAF capability: {cap}" for cap in requirement.ciaf_capabilities]
+            recommendations = []
+        else:
+            status = "fail" if requirement.mandatory else "warning"
+            message = "Requirement not satisfied by current CIAF capabilities"
+            evidence = ["No CIAF capabilities mapped to this requirement"]
+            recommendations = [requirement.implementation_notes]
+
+        # Additional validation based on audit data
+        audit_events = audit_data.get('events', [])
+        if requirement.category == "audit_controls" and audit_events:
+            # Enhanced validation for audit-related requirements
+            integrity_verified = audit_data.get('integrity_verified', False)
+            if integrity_verified:
+                status = "pass"
+                message += " - Audit integrity verified"
+                evidence.append("Audit trail integrity verified")
+
+        # Determine severity based on requirement properties and compliance policy
+        severity = self._determine_severity(requirement)
+
+        return ValidationResult(
+            validation_id=f"VAL_{requirement.requirement_id}",
+            requirement_id=requirement.requirement_id,
+            framework=requirement.framework.value,
+            title=requirement.title,
+            severity=severity,
+            status=status,
+            message=message,
+            details={
+                "requirement_description": requirement.description,
+                "mandatory": requirement.mandatory,
+                "risk_level": requirement.risk_level,
+                "category": requirement.category,
+            },
+            evidence=evidence,
+            recommendations=recommendations,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
+    def _determine_severity(self, requirement: ComplianceRequirement) -> ValidationSeverity:
+        """Determine severity based on requirement and policy."""
+        
+        # Use policy-based severity determination
+        if (requirement.mandatory and 
+            requirement.risk_level == "high" and 
+            self.compliance_policy.validation_policy.compliance_level.value == "strict"):
+            return ValidationSeverity.CRITICAL
+        elif requirement.mandatory:
+            return ValidationSeverity.HIGH
+        elif requirement.risk_level == "high":
+            return ValidationSeverity.MEDIUM
+        else:
+            return ValidationSeverity.LOW
 
     def validate_multiple_frameworks(
         self,
@@ -565,7 +692,7 @@ class ComplianceValidator:
         )
 
     def get_validation_summary(self) -> Dict[str, Any]:
-        """Get summary of all validation results."""
+        """Get summary of all validation results (Protocol implementation)."""
 
         if not self.validation_results:
             return {"message": "No validations performed"}
@@ -596,6 +723,9 @@ class ComplianceValidator:
             framework_counts[framework][result.status] += 1
             framework_counts[framework]["total"] += 1
 
+        # Assess overall compliance status using policy thresholds
+        overall_compliant = self._assess_overall_compliance(failing, warnings, severity_counts)
+
         return {
             "total_validations": total_validations,
             "passing": passing,
@@ -606,9 +736,64 @@ class ComplianceValidator:
             ),
             "severity_breakdown": severity_counts,
             "framework_breakdown": framework_counts,
-            "overall_status": "compliant" if failing == 0 else "non_compliant",
+            "overall_status": "compliant" if overall_compliant else "non_compliant",
             "needs_attention": failing + warnings,
+            "policy_compliance": self._check_policy_compliance(severity_counts)
         }
+
+    def _assess_overall_compliance(
+        self, 
+        failing: int, 
+        warnings: int, 
+        severity_counts: Dict[str, int]
+    ) -> bool:
+        """Assess overall compliance based on policy thresholds."""
+        
+        policy = self.compliance_policy.validation_policy
+        
+        # Check each severity level against thresholds
+        for severity, threshold in policy.failure_threshold.items():
+            if threshold >= 0:  # -1 means no limit
+                actual_count = severity_counts.get(severity.value, 0)
+                if actual_count > threshold:
+                    return False
+        
+        # For strict compliance, no failures allowed
+        if policy.compliance_level.value == "strict":
+            return failing == 0
+        
+        # For standard compliance, no critical or high severity failures
+        if policy.compliance_level.value == "standard":
+            critical_count = severity_counts.get(ValidationSeverity.CRITICAL.value, 0)
+            high_count = severity_counts.get(ValidationSeverity.HIGH.value, 0)
+            return critical_count == 0 and high_count <= policy.failure_threshold.get(ValidationSeverity.HIGH, 2)
+        
+        # For advisory compliance, just track everything
+        return True
+
+    def _check_policy_compliance(self, severity_counts: Dict[str, int]) -> Dict[str, Any]:
+        """Check compliance against policy thresholds."""
+        
+        policy = self.compliance_policy.validation_policy
+        policy_status = {
+            "compliance_level": policy.compliance_level.value,
+            "threshold_violations": [],
+            "within_policy": True
+        }
+        
+        for severity, threshold in policy.failure_threshold.items():
+            if threshold >= 0:  # -1 means no limit
+                actual_count = severity_counts.get(severity.value, 0)
+                if actual_count > threshold:
+                    policy_status["within_policy"] = False
+                    policy_status["threshold_violations"].append({
+                        "severity": severity.value,
+                        "threshold": threshold,
+                        "actual": actual_count,
+                        "excess": actual_count - threshold
+                    })
+        
+        return policy_status
 
     def get_failing_validations(self) -> List[ValidationResult]:
         """Get all failing validations."""

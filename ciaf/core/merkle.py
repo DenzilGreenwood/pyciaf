@@ -1,9 +1,6 @@
 """
 Merkle tree implementation for tamper-evident data integrity verification.
 
-This module provides Merkle tree functionality used in training snapshots
-to prove what data was used to train a specific model version.
-
 Created: 2025-09-09
 Last Modified: 2025-09-11
 Author: Denzil James Greenwood
@@ -12,194 +9,106 @@ Version: 1.0.0
 
 from .crypto import sha256_hash
 
-
 class MerkleTree:
-    """
-    Implements a Merkle Tree for tamper-evident data integrity verification.
-    Used in Training Snapshots to prove what data trained the model.
-    """
+    """Deterministic Merkle tree with left/right proofs and caches."""
 
     def __init__(self, leaves: list[str]):
-        """
-        Initializes a Merkle Tree with a list of data hashes (leaves).
-
-        Args:
-            leaves: A list of SHA256 hashes of the data items.
-
-        Raises:
-            ValueError: If no leaves are provided.
-        """
         if not leaves:
             raise ValueError("Merkle tree must have at least one leaf.")
         self.leaves = leaves
         self.tree = self._build_tree(leaves)
         self.root = self.tree[-1][0] if self.tree else None
 
-        # Hash table for caching proofs and verification results
         self._proof_cache: dict[str, list[tuple[str, str]]] = {}
-        self._verification_cache: dict[tuple[str, str], bool] = (
-            {}
-        )  # (leaf_hash, root_hash) -> bool
+        self._verification_cache: dict[tuple[str, str], bool] = {}
 
-        # Cache statistics
         self._proof_cache_hits = 0
         self._proof_cache_misses = 0
         self._verification_cache_hits = 0
         self._verification_cache_misses = 0
 
-    def _hash_pair(self, hash1: str, hash2: str) -> str:
-        """Hashes two child hashes together (binary concatenation)."""
-        b1 = bytes.fromhex(hash1)
-        b2 = bytes.fromhex(hash2)
-        return sha256_hash(b1 + b2)
+    def _hash_pair(self, h1: str, h2: str) -> str:
+        return sha256_hash(bytes.fromhex(h1) + bytes.fromhex(h2))
 
     def _build_tree(self, leaves: list[str]) -> list[list[str]]:
-        """Recursively builds the Merkle tree."""
         tree = [leaves]
-        current_level = leaves
-        while len(current_level) > 1:
-            next_level = []
-            for i in range(0, len(current_level), 2):
-                h1 = current_level[i]
-                h2 = (
-                    current_level[i + 1] if i + 1 < len(current_level) else h1
-                )  # Duplicate last if odd number
-                next_level.append(self._hash_pair(h1, h2))
-            tree.append(next_level)
-            current_level = next_level
+        level = leaves
+        while len(level) > 1:
+            nxt = []
+            for i in range(0, len(level), 2):
+                a = level[i]
+                b = level[i + 1] if i + 1 < len(level) else a
+                nxt.append(self._hash_pair(a, b))
+            tree.append(nxt)
+            level = nxt
         return tree
 
     def get_root(self) -> str:
-        """Returns the Merkle root hash."""
         return self.root
 
     def get_proof(self, leaf_hash: str) -> list[tuple[str, str]]:
-        """
-        Generates a Merkle proof for a given leaf hash.
-
-        Args:
-            leaf_hash: The hash of the leaf for which to generate the proof.
-
-        Returns:
-            A list of tuples (hash, position), where position is 'left' or 'right'.
-            Returns an empty list if the leaf is not found or is the root itself.
-        """
-        # Check cache first
         if leaf_hash in self._proof_cache:
             self._proof_cache_hits += 1
             return self._proof_cache[leaf_hash]
-
         self._proof_cache_misses += 1
 
         try:
-            current_index = self.leaves.index(leaf_hash)
+            idx = self.leaves.index(leaf_hash)
         except ValueError:
-            # Cache the "not found" result
             self._proof_cache[leaf_hash] = []
-            return []  # Leaf not found
+            return []
 
-        # If it's a single-leaf tree, the leaf is the root, no proof needed
         if len(self.leaves) == 1:
             self._proof_cache[leaf_hash] = []
             return []
 
-        proof = []
+        proof: list[tuple[str, str]] = []
+        current_index = idx
 
-        # Iterate through levels from leaves up to root's parent
-        for level in self.tree[:-1]:  # Exclude the root level
-            # Determine if current node is a left or right child
-            is_right_child = current_index % 2 != 0
-            sibling_index = current_index - 1 if is_right_child else current_index + 1
-
-            # Get sibling hash
-            if sibling_index < len(level):
-                sibling_hash = level[sibling_index]
-            else:
-                # Handle odd number of nodes - sibling is the node itself (duplicated)
-                sibling_hash = level[current_index]
-
-            # Add sibling to proof with its position relative to current node
-            position = "left" if is_right_child else "right"
-            proof.append((sibling_hash, position))
-
-            # Move up to parent node index for next level
+        for level in self.tree[:-1]:
+            is_right = current_index % 2 != 0
+            sib_idx = current_index - 1 if is_right else current_index + 1
+            sibling_hash = level[sib_idx] if sib_idx < len(level) else level[current_index]
+            pos = "left" if is_right else "right"
+            proof.append((sibling_hash, pos))
             current_index //= 2
 
-        # Cache the computed proof
         self._proof_cache[leaf_hash] = proof
         return proof
 
     @staticmethod
-    def verify_proof(
-        leaf_hash: str, root_hash: str, proof: list[tuple[str, str]]
-    ) -> bool:
-        """
-        Verifies a Merkle proof for a given leaf hash against a root hash.
-
-        Args:
-            leaf_hash: The hash of the leaf to verify.
-            root_hash: The expected Merkle root hash.
-            proof: The Merkle proof generated by get_proof.
-
-        Returns:
-            True if the leaf is part of the tree and the proof is valid, False otherwise.
-        """
-        current_hash = leaf_hash
-        # Special case for a single-leaf tree where the leaf is the root
-        if not proof and current_hash == root_hash:
+    def verify_proof(leaf_hash: str, root_hash: str, proof: list[tuple[str, str]]) -> bool:
+        cur = leaf_hash
+        if not proof and cur == root_hash:
             return True
+        for sib, pos in proof:
+            if pos == "left":
+                cur = sha256_hash(bytes.fromhex(sib) + bytes.fromhex(cur))
+            else:
+                cur = sha256_hash(bytes.fromhex(cur) + bytes.fromhex(sib))
+        return cur == root_hash
 
-        for sibling_hash, position in proof:
-            if position == "left":
-                current_hash = sha256_hash(bytes.fromhex(sibling_hash) + bytes.fromhex(current_hash))
-            else:  # position == 'right'
-                current_hash = sha256_hash(bytes.fromhex(current_hash) + bytes.fromhex(sibling_hash))
-        return current_hash == root_hash
-
-    def verify_proof_cached(self, leaf_hash: str, root_hash: str = None) -> bool:
-        """
-        Verifies a Merkle proof with caching for improved performance.
-
-        Args:
-            leaf_hash: The hash of the leaf to verify.
-            root_hash: The expected Merkle root hash. If None, uses tree's root.
-
-        Returns:
-            True if the leaf is part of the tree and the proof is valid, False otherwise.
-        """
-        if root_hash is None:
-            root_hash = self.root
-
-        # Check verification cache first
-        cache_key = (leaf_hash, root_hash)
-        if cache_key in self._verification_cache:
+    def verify_proof_cached(self, leaf_hash: str, root_hash: str | None = None) -> bool:
+        root = root_hash or self.root
+        key = (leaf_hash, root)
+        if key in self._verification_cache:
             self._verification_cache_hits += 1
-            return self._verification_cache[cache_key]
-
+            return self._verification_cache[key]
         self._verification_cache_misses += 1
-
-        # Get proof (will use cached proof if available)
         proof = self.get_proof(leaf_hash)
-
-        # Verify using the static method
-        result = self.verify_proof(leaf_hash, root_hash, proof)
-
-        # Cache the verification result
-        self._verification_cache[cache_key] = result
-        return result
+        res = self.verify_proof(leaf_hash, root, proof)
+        self._verification_cache[key] = res
+        return res
 
     def clear_cache(self) -> None:
-        """Clear all cached proofs and verification results."""
         self._proof_cache.clear()
         self._verification_cache.clear()
-        # Reset hit/miss counters
         self._proof_cache_hits = 0
         self._proof_cache_misses = 0
         self._verification_cache_hits = 0
         self._verification_cache_misses = 0
 
     def get_cache_stats(self) -> dict[str, int]:
-        """Get statistics about cache usage."""
         return {
             "proof_cache_size": len(self._proof_cache),
             "proof_cache_hits": self._proof_cache_hits,

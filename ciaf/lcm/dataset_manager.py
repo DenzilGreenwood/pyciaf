@@ -12,11 +12,18 @@ Version: 1.0.0
 import json
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, List, Any, Optional, Union, TYPE_CHECKING
 from dataclasses import dataclass
 
-from ..core import sha256_hash, MerkleTree, derive_dataset_anchor, derive_master_anchor, secure_random_bytes, SALT_LENGTH, to_hex
-from .policy import LCMPolicy, get_default_policy, CommitmentType, DomainType
+from ..core import (
+    sha256_hash, 
+    SALT_LENGTH, 
+    to_hex
+)
+from .policy import LCMPolicy, get_default_policy, CommitmentType, DomainType, create_commitment, canonical_hash
+
+if TYPE_CHECKING:
+    from ..core.interfaces import RNG, Merkle, AnchorDeriver
 
 
 def compute_split_assignment_digest(record_ids: List[str], salt: Optional[bytes] = None) -> str:
@@ -55,14 +62,14 @@ class DatasetSplit(Enum):
 
 @dataclass
 class DatasetMetadata:
-    """Enhanced dataset metadata for LCM."""
+    """Enhanced dataset metadata for LCM with comprehensive dataset information."""
     name: str
-    owner: str
-    license: str
-    schema_digest: str
-    sampling_rules: Dict[str, Any]
-    version: str
-    content_root: str  # Merkle root or rolling hash
+    owner: str = "unknown"
+    license: str = "unknown"
+    schema_digest: str = ""
+    sampling_rules: Dict[str, Any] = None
+    version: str = "1.0.0"
+    content_root: str = ""  # Merkle root or rolling hash
     
     # Privacy and compliance
     contains_pii: bool = False
@@ -84,18 +91,299 @@ class DatasetMetadata:
     # Split assignment commitment
     split_assignment_digest: Optional[str] = None  # SHA-256 over sorted record IDs or Merkle root
     
+    # Dataset structure and features
+    num_samples: Optional[int] = None
+    num_features: Optional[int] = None
+    feature_names: Optional[List[str]] = None
+    features: Optional[List[str]] = None  # Legacy compatibility - maps to feature_names
+    total_samples: Optional[int] = None  # Legacy compatibility - maps to num_samples
+    feature_types: Optional[Dict[str, str]] = None  # feature_name -> type (e.g., "numerical", "categorical", "text", "image")
+    target_column: Optional[str] = None
+    target_type: Optional[str] = None  # "classification", "regression", "multilabel", etc.
+    
+    # Feature statistics
+    feature_statistics: Optional[Dict[str, Dict[str, Any]]] = None  # feature_name -> stats dict
+    missing_values: Optional[Dict[str, int]] = None  # feature_name -> count of missing values
+    categorical_mappings: Optional[Dict[str, Dict[str, int]]] = None  # feature_name -> {category: count}
+    
+    # Data quality metrics
+    duplicate_rows: Optional[int] = None
+    data_quality_score: Optional[float] = None  # 0.0 to 1.0
+    outlier_count: Optional[Dict[str, int]] = None  # feature_name -> outlier count
+    
+    # Dataset shape and dimensions
+    data_shape: Optional[tuple] = None  # (rows, columns) for tabular data
+    file_format: Optional[str] = None  # "csv", "parquet", "json", "tfrecord", etc.
+    encoding: Optional[str] = None  # "utf-8", "latin-1", etc.
+    
+    # Domain-specific metadata
+    domain: Optional[str] = None  # "healthcare", "finance", "nlp", "computer_vision", etc.
+    task_type: Optional[str] = None  # "supervised", "unsupervised", "reinforcement", etc.
+    benchmark_dataset: Optional[bool] = False  # Is this a known benchmark dataset?
+    
+    # Data lineage and provenance
+    source_datasets: Optional[List[str]] = None  # If derived from other datasets
+    preprocessing_steps: Optional[List[str]] = None  # Applied transformations
+    data_collection_method: Optional[str] = None  # "web_scraping", "survey", "experiment", etc.
+    
+    # Temporal information
+    temporal_coverage: Optional[Dict[str, str]] = None  # {"start": "2023-01-01", "end": "2023-12-31"}
+    update_frequency: Optional[str] = None  # "daily", "weekly", "static", etc.
+    last_updated: Optional[str] = None
+    
+    # Geographical information
+    geographical_coverage: Optional[str] = None  # "global", "US", "EU", specific regions, etc.
+    
+    # Bias and fairness considerations
+    known_biases: Optional[List[str]] = None  # Documented biases in the dataset
+    protected_attributes: Optional[List[str]] = None  # Features that should be monitored for bias
+    fairness_constraints: Optional[Dict[str, Any]] = None  # Fairness requirements
+    
     def __post_init__(self):
-        """Initialize default values."""
+        """Initialize default values and handle legacy compatibility."""
+        if self.sampling_rules is None:
+            self.sampling_rules = {}
         if self.compliance_frameworks is None:
             self.compliance_frameworks = []
         if self.tags is None:
             self.tags = []
         if self.creation_date is None:
             self.creation_date = datetime.now().isoformat()
+        if self.last_updated is None:
+            self.last_updated = self.creation_date
+        if self.source_datasets is None:
+            self.source_datasets = []
+        if self.preprocessing_steps is None:
+            self.preprocessing_steps = []
+        if self.known_biases is None:
+            self.known_biases = []
+        if self.protected_attributes is None:
+            self.protected_attributes = []
+        
+        # Legacy compatibility mappings
+        if self.features is not None and self.feature_names is None:
+            self.feature_names = self.features
+        elif self.feature_names is not None and self.features is None:
+            self.features = self.feature_names
+            
+        if self.total_samples is not None and self.num_samples is None:
+            self.num_samples = self.total_samples
+        elif self.num_samples is not None and self.total_samples is None:
+            self.total_samples = self.num_samples
+    
+    def add_feature_statistics(self, feature_name: str, stats: Dict[str, Any]) -> None:
+        """Add statistics for a specific feature."""
+        if self.feature_statistics is None:
+            self.feature_statistics = {}
+        self.feature_statistics[feature_name] = stats
+    
+    def set_feature_type(self, feature_name: str, feature_type: str) -> None:
+        """Set the type for a specific feature."""
+        if self.feature_types is None:
+            self.feature_types = {}
+        self.feature_types[feature_name] = feature_type
+    
+    def add_categorical_mapping(self, feature_name: str, mapping: Dict[str, int]) -> None:
+        """Add categorical value mapping for a feature."""
+        if self.categorical_mappings is None:
+            self.categorical_mappings = {}
+        self.categorical_mappings[feature_name] = mapping
+    
+    def get_feature_summary(self) -> Dict[str, Any]:
+        """Get a summary of dataset features."""
+        return {
+            "num_features": self.num_features,
+            "feature_names": self.feature_names,
+            "feature_types": self.feature_types,
+            "target_column": self.target_column,
+            "target_type": self.target_type,
+            "has_missing_values": bool(self.missing_values and any(count > 0 for count in self.missing_values.values())),
+            "categorical_features": list(self.categorical_mappings.keys()) if self.categorical_mappings else [],
+        }
+    
+    def validate_metadata(self) -> List[str]:
+        """Validate metadata consistency and return any issues found."""
+        issues = []
+        
+        # Check feature consistency
+        if self.feature_names and self.num_features:
+            if len(self.feature_names) != self.num_features:
+                issues.append(f"Feature count mismatch: {len(self.feature_names)} names vs {self.num_features} declared")
+        
+        # Check data shape consistency
+        if self.data_shape and self.num_samples:
+            if self.data_shape[0] != self.num_samples:
+                issues.append(f"Sample count mismatch: {self.data_shape[0]} in shape vs {self.num_samples} declared")
+        
+        if self.data_shape and self.num_features:
+            if len(self.data_shape) > 1 and self.data_shape[1] != self.num_features:
+                issues.append(f"Feature count mismatch: {self.data_shape[1]} in shape vs {self.num_features} declared")
+        
+        # Check target column exists in features
+        if self.target_column and self.feature_names:
+            if self.target_column not in self.feature_names:
+                issues.append(f"Target column '{self.target_column}' not found in feature names")
+        
+        # Check feature statistics consistency
+        if self.feature_statistics and self.feature_names:
+            stats_features = set(self.feature_statistics.keys())
+            declared_features = set(self.feature_names)
+            if not stats_features.issubset(declared_features):
+                extra_stats = stats_features - declared_features
+                issues.append(f"Feature statistics for undeclared features: {list(extra_stats)}")
+        
+        return issues
+
+
+def create_dataset_metadata_from_dataframe(
+    df,
+    name: str,
+    owner: str,
+    license: str = "unknown",
+    target_column: str = None,
+    domain: str = None,
+    description: str = "",
+    **kwargs
+) -> DatasetMetadata:
+    """
+    Create DatasetMetadata from a pandas DataFrame or similar data structure.
+    
+    Args:
+        df: DataFrame-like object with data
+        name: Dataset name
+        owner: Dataset owner
+        license: License information
+        target_column: Name of the target/label column
+        domain: Domain of the dataset
+        description: Dataset description
+        **kwargs: Additional metadata fields
+    
+    Returns:
+        DatasetMetadata instance with auto-populated fields
+    """
+    import hashlib
+    
+    # Basic information
+    num_samples, num_features = df.shape if hasattr(df, 'shape') else (len(df), len(df.columns) if hasattr(df, 'columns') else 0)
+    feature_names = list(df.columns) if hasattr(df, 'columns') else None
+    
+    # Generate schema digest
+    schema_info = {
+        'columns': feature_names,
+        'dtypes': {col: str(df[col].dtype) for col in feature_names} if feature_names else {},
+        'shape': (num_samples, num_features)
+    }
+    schema_str = str(sorted(schema_info.items()))
+    schema_digest = hashlib.sha256(schema_str.encode()).hexdigest()
+    
+    # Auto-detect feature types
+    feature_types = {}
+    missing_values = {}
+    feature_statistics = {}
+    categorical_mappings = {}
+    
+    if feature_names and hasattr(df, 'dtypes'):
+        for col in feature_names:
+            dtype = str(df[col].dtype)
+            series = df[col]
+            
+            # Determine feature type
+            if 'int' in dtype or 'float' in dtype:
+                feature_types[col] = 'numerical'
+                # Basic statistics for numerical features
+                if hasattr(series, 'describe'):
+                    stats = series.describe()
+                    feature_statistics[col] = {
+                        'mean': float(stats['mean']) if 'mean' in stats else None,
+                        'std': float(stats['std']) if 'std' in stats else None,
+                        'min': float(stats['min']) if 'min' in stats else None,
+                        'max': float(stats['max']) if 'max' in stats else None,
+                        'median': float(series.median()) if hasattr(series, 'median') else None
+                    }
+            elif 'object' in dtype or 'category' in dtype or 'string' in dtype:
+                feature_types[col] = 'categorical'
+                # Categorical statistics
+                if hasattr(series, 'value_counts'):
+                    value_counts = series.value_counts()
+                    categorical_mappings[col] = dict(value_counts.head(20))  # Top 20 categories
+                    feature_statistics[col] = {
+                        'unique_values': len(value_counts),
+                        'most_common': value_counts.index[0] if len(value_counts) > 0 else None,
+                        'most_common_count': value_counts.iloc[0] if len(value_counts) > 0 else None
+                    }
+            elif 'datetime' in dtype:
+                feature_types[col] = 'datetime'
+                if hasattr(series, 'min') and hasattr(series, 'max'):
+                    feature_statistics[col] = {
+                        'min_date': str(series.min()),
+                        'max_date': str(series.max()),
+                        'date_range_days': (series.max() - series.min()).days if hasattr(series.max() - series.min(), 'days') else None
+                    }
+            else:
+                feature_types[col] = 'other'
+            
+            # Count missing values
+            if hasattr(series, 'isnull'):
+                missing_values[col] = int(series.isnull().sum())
+    
+    # Detect target type if target column specified
+    target_type = None
+    if target_column and target_column in feature_types:
+        if feature_types[target_column] == 'numerical':
+            # Check if it looks like classification (few unique values) or regression
+            if hasattr(df[target_column], 'nunique'):
+                unique_count = df[target_column].nunique()
+                if unique_count <= 20:  # Heuristic for classification
+                    target_type = 'classification'
+                else:
+                    target_type = 'regression'
+        elif feature_types[target_column] == 'categorical':
+            target_type = 'classification'
+    
+    # Calculate data quality score
+    total_cells = num_samples * num_features if num_features > 0 else 0
+    total_missing = sum(missing_values.values()) if missing_values else 0
+    data_quality_score = 1.0 - (total_missing / total_cells) if total_cells > 0 else 1.0
+    
+    # Count duplicate rows
+    duplicate_rows = None
+    if hasattr(df, 'duplicated'):
+        duplicate_rows = int(df.duplicated().sum())
+    
+    return DatasetMetadata(
+        name=name,
+        owner=owner,
+        license=license,
+        schema_digest=schema_digest,
+        sampling_rules=kwargs.get('sampling_rules', {}),
+        version=kwargs.get('version', '1.0.0'),
+        content_root=kwargs.get('content_root', ''),
+        description=description,
+        domain=domain,
+        
+        # Auto-detected fields
+        num_samples=num_samples,
+        num_features=num_features,
+        feature_names=feature_names,
+        feature_types=feature_types,
+        target_column=target_column,
+        target_type=target_type,
+        feature_statistics=feature_statistics,
+        missing_values=missing_values,
+        categorical_mappings=categorical_mappings,
+        data_quality_score=data_quality_score,
+        duplicate_rows=duplicate_rows,
+        data_shape=(num_samples, num_features),
+        
+        # Pass through any additional kwargs
+        **{k: v for k, v in kwargs.items() if k not in [
+            'sampling_rules', 'version', 'content_root'
+        ]}
+    )
 
 
 class LCMDatasetAnchor:
-    """Enhanced dataset anchor for LCM with split support."""
+    """Enhanced dataset anchor for LCM with split support using protocol interfaces."""
     
     def __init__(
         self,
@@ -107,7 +395,7 @@ class LCMDatasetAnchor:
         salt: bytes = None
     ):
         """
-        Initialize LCM dataset anchor.
+        Initialize LCM dataset anchor using protocol interfaces.
         
         Args:
             dataset_id: Unique identifier for the dataset
@@ -122,20 +410,26 @@ class LCMDatasetAnchor:
         self.metadata = metadata
         self.policy = policy or get_default_policy()
         
+        # Get protocol implementations from policy
+        self.rng = self.policy.rng
+        self.anchor_deriver = self.policy.anchor_deriver
+        self.merkle_factory = self.policy.merkle_factory
+        
         # Generate or use provided salt
         if salt is not None:
             self.master_salt = salt
         else:
-            self.master_salt = secure_random_bytes(SALT_LENGTH)
+            self.master_salt = self.rng.random_bytes(SALT_LENGTH)
         
-        # Derive anchors
-        self.master_anchor = derive_master_anchor(master_password, self.master_salt)
+        # Derive anchors using protocol
+        self.master_anchor = self.anchor_deriver.derive_master_anchor(master_password, self.master_salt)
         
         # Compute dataset hash including split information
         self.dataset_hash = self._compute_dataset_hash()
-        self.dataset_anchor = derive_dataset_anchor(self.master_anchor, self.dataset_hash)
+        self.dataset_anchor = self.anchor_deriver.derive_dataset_anchor(self.master_anchor, self.dataset_hash)
         
-        # Sample tracking
+        # Sample tracking with Merkle tree
+        self._merkle_tree = self.merkle_factory([])
         self.sample_hashes: List[str] = []
         self.total_samples = 0
         
@@ -145,7 +439,7 @@ class LCMDatasetAnchor:
             DatasetSplit.VALIDATION: "v_", 
             DatasetSplit.TEST: "x_",
             DatasetSplit.FULL: "f_"
-        }[split]
+        }.get(split, "u_")  # Use 'u_' for unknown splits
         
         self.anchor_id = f"{split_prefix}{to_hex(self.dataset_anchor)[:8]}..."
         
@@ -174,45 +468,31 @@ class LCMDatasetAnchor:
             "split_assignment_digest": self.metadata.split_assignment_digest
         }
         
-        canonical_json = json.dumps(hash_data, sort_keys=True, separators=(',', ':'))
-        return sha256_hash(canonical_json.encode('utf-8'))
+        return canonical_hash(hash_data)
     
     def add_sample_hash(self, sample_hash: str) -> None:
         """Add a sample hash to the dataset."""
         if sample_hash not in self.sample_hashes:
             self.sample_hashes.append(sample_hash)
             self.total_samples = len(self.sample_hashes)
+            # Rebuild Merkle tree with new samples
+            self._merkle_tree = self.merkle_factory(self.sample_hashes)
     
     def get_merkle_root(self) -> Optional[str]:
         """Get Merkle root of all sample hashes."""
         if not self.sample_hashes:
             return None
-        
-        merkle_tree = MerkleTree(self.sample_hashes)
-        return merkle_tree.get_root()
+        return self._merkle_tree.get_root()
     
     def create_commitment(self, data: Any, commitment_type: CommitmentType = None) -> str:
-        """Create commitment for data according to policy."""
+        """Create commitment for data according to policy using protocol RNG."""
         commitment_type = commitment_type or self.policy.commitments
-        
-        if commitment_type == CommitmentType.PLAINTEXT:
-            return str(data)
-        elif commitment_type == CommitmentType.SALTED:
-            # Simple salt-based commitment (for demo purposes)
-            salt = secure_random_bytes(16)
-            data_str = json.dumps(data, sort_keys=True) if not isinstance(data, str) else data
-            return sha256_hash((salt + data_str.encode('utf-8')))[:16] + "..."
-        elif commitment_type == CommitmentType.HMAC_SHA256:
-            # HMAC-based commitment using dataset anchor
-            import hmac
-            data_str = json.dumps(data, sort_keys=True) if not isinstance(data, str) else data
-            return hmac.new(self.dataset_anchor, data_str.encode('utf-8'), 'sha256').hexdigest()[:16] + "..."
-        else:
-            raise ValueError(f"Unknown commitment type: {commitment_type}")
+        return create_commitment(data, commitment_type, self.dataset_anchor, self.rng)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
+            "dataset_id": self.dataset_id,
             "name": f"{self.metadata.name}_{self.split.value}",
             "anchor": self.anchor_id,
             "commitment": self.policy.commitments.value,
@@ -228,6 +508,10 @@ class LCMDatasetAnchor:
                 "compliance_frameworks": self.metadata.compliance_frameworks
             }
         }
+    
+    def to_json(self) -> Dict[str, Any]:
+        """Convert to JSON-compatible dictionary."""
+        return self.to_dict()
 
 
 class LCMDatasetManager:
@@ -339,8 +623,9 @@ class LCMDatasetManager:
         if not split_hashes:
             raise ValueError(f"No splits found for dataset {dataset_id}")
         
-        # Compute Merkle root
-        merkle_tree = MerkleTree(split_hashes)
+        # Compute Merkle root using protocol
+        policy = get_default_policy()
+        merkle_tree = policy.merkle_factory(split_hashes)
         return merkle_tree.get_root()
     
     def compute_enhanced_split_map_digest(self, dataset_id: str) -> str:
@@ -369,8 +654,7 @@ class LCMDatasetManager:
             }
         
         # Compute digest: H(canon(split_map))
-        canonical_map = json.dumps(split_map, sort_keys=True, separators=(',', ':'))
-        return sha256_hash(canonical_map.encode('utf-8'))
+        return canonical_hash(split_map)
     
     def get_dataset_anchor(self, dataset_id: str, split: DatasetSplit) -> Optional[LCMDatasetAnchor]:
         """Get dataset anchor for specific split."""

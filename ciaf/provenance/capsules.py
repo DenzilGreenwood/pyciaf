@@ -17,7 +17,7 @@ from datetime import datetime
 
 from cryptography.exceptions import InvalidTag
 
-from ..core.keys import derive_key
+
 from ..core import (
     SALT_LENGTH,
     decrypt_aes_gcm,
