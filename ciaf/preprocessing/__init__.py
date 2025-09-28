@@ -5,472 +5,353 @@ This module provides vectorization and preprocessing capabilities to ensure
 real ML model training with proper feature extraction for text, numerical,
 and mixed data types.
 
+Enhanced with protocol-based architecture for consistency with other CIAF modules.
+
 Created: 2025-09-09
-Last PYPIModified: 2025-09-11
+Last Modified: 2025-09-27
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0
 """
 
-import json
 import warnings
-from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
-import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+# Import new protocol-based architecture
+from .interfaces import (
+    DataPreprocessor, DataValidator, DataTypeDetector, FeatureExtractor,
+    ModelAdapter, PreprocessingPipeline, QualityMonitor,
+    DataType, PreprocessingMethod, ValidationSeverity
+)
 
+from .policy import (
+    PreprocessingPolicy, QualityPolicy, ProcessingPolicy, 
+    PerformancePolicy, SecurityPolicy, QualityLevel, PreprocessingIntensity,
+    get_default_preprocessing_policy, create_custom_policy
+)
 
-class CIAFPreprocessor(ABC):
-    """Base class for CIAF preprocessing components."""
+from .protocol_implementations import (
+    DefaultTextPreprocessor, DefaultNumericalPreprocessor,
+    DefaultDataTypeDetector, DefaultDataValidator, DefaultModelAdapter,
+    create_default_preprocessing_protocols, create_text_preprocessor,
+    create_numerical_preprocessor, create_auto_model_adapter
+)
 
-    @abstractmethod
-    def fit(self, data: List[Dict[str, Any]]) -> "CIAFPreprocessor":
-        """Fit the preprocessor on training data."""
-        pass
+# Import data quality validation (existing)
+from .data_quality import DataQualityValidator, ValidationResult, quick_validate, validate_ciaf_dataset
 
-    @abstractmethod
-    def transform(self, data: Union[List[Dict[str, Any]], str, List]) -> np.ndarray:
-        """Transform data to numerical format."""
-        pass
-
-    @abstractmethod
-    def fit_transform(self, data: List[Dict[str, Any]]) -> np.ndarray:
-        """Fit and transform training data."""
-        pass
-
-
-class TextVectorizer(CIAFPreprocessor):
-    """Text vectorization using TF-IDF or Count Vectorization."""
-
-    def __init__(
-        self,
-        method: str = "tfidf",
-        max_features: int = 1000,
-        ngram_range: Tuple[int, int] = (1, 2),
-        stop_words: str = "english",
-    ):
-        """
-        Initialize text vectorizer.
-
-        Args:
-            method: "tfidf" or "count"
-            max_features: Maximum number of features
-            ngram_range: N-gram range for feature extraction
-            stop_words: Stop words to remove
-        """
-        self.method = method
-        self.max_features = max_features
-        self.ngram_range = ngram_range
-        self.stop_words = stop_words
-        self.vectorizer = None
-        self.is_fitted = False
-
-    def fit(self, data: List[Dict[str, Any]]) -> "TextVectorizer":
-        """Fit vectorizer on text data."""
-        texts = [item["content"] for item in data if isinstance(item["content"], str)]
-
-        if self.method == "tfidf":
-            self.vectorizer = TfidfVectorizer(
-                max_features=self.max_features,
-                ngram_range=self.ngram_range,
-                stop_words=self.stop_words,
-            )
-        else:
-            self.vectorizer = CountVectorizer(
-                max_features=self.max_features,
-                ngram_range=self.ngram_range,
-                stop_words=self.stop_words,
-            )
-
-        self.vectorizer.fit(texts)
-        self.is_fitted = True
-        return self
-
-    def transform(self, data: Union[List[Dict[str, Any]], str, List]) -> np.ndarray:
-        """Transform text data to numerical vectors."""
-        if not self.is_fitted:
-            raise ValueError("Vectorizer not fitted. Call fit() first.")
-
-        # Handle different input types
-        if isinstance(data, str):
-            texts = [data]
-        elif isinstance(data, list):
-            if len(data) > 0 and isinstance(data[0], dict):
-                texts = [
-                    item["content"] for item in data if isinstance(item["content"], str)
-                ]
-            else:
-                texts = [str(item) for item in data]
-        else:
-            texts = [str(data)]
-
-        return self.vectorizer.transform(texts).toarray()
-
-    def fit_transform(self, data: List[Dict[str, Any]]) -> np.ndarray:
-        """Fit and transform text data."""
-        return self.fit(data).transform(data)
-
-    def get_feature_names(self) -> List[str]:
-        """Get feature names for explainability."""
-        if self.is_fitted:
-            return self.vectorizer.get_feature_names_out().tolist()
-        return []
+# Protocol-based factory functions
+def create_preprocessor(data_type: DataType, policy: Optional[PreprocessingPolicy] = None) -> DataPreprocessor:
+    """
+    Create a preprocessor for specific data type.
+    
+    Args:
+        data_type: Type of data to preprocess
+        policy: Optional preprocessing policy
+        
+    Returns:
+        Appropriate preprocessor implementation
+    """
+    if data_type == DataType.TEXT:
+        return DefaultTextPreprocessor(policy)
+    elif data_type == DataType.NUMERICAL:
+        return DefaultNumericalPreprocessor(policy)
+    else:
+        # Default to numerical preprocessor for mixed/unknown types
+        return DefaultNumericalPreprocessor(policy)
 
 
-class NumericalPreprocessor(CIAFPreprocessor):
-    """Preprocessing for numerical data."""
-
-    def __init__(self, normalize: bool = True):
-        """Initialize numerical preprocessor."""
-        self.normalize = normalize
-        self.scaler = StandardScaler() if normalize else None
-        self.is_fitted = False
-
-    def fit(self, data: List[Dict[str, Any]]) -> "NumericalPreprocessor":
-        """Fit preprocessor on numerical data."""
-        # Extract numerical features from content
-        numerical_data = []
-        for item in data:
-            content = item["content"]
-            if isinstance(content, (list, tuple)):
-                numerical_data.append(content)
-            elif isinstance(content, str):
-                try:
-                    parsed = json.loads(content)
-                    if isinstance(parsed, (list, tuple)):
-                        numerical_data.append(parsed)
-                except:
-                    # Skip non-numerical content
-                    continue
-
-        if numerical_data and self.scaler:
-            self.scaler.fit(numerical_data)
-
-        self.is_fitted = True
-        return self
-
-    def transform(self, data: Union[List[Dict[str, Any]], str, List]) -> np.ndarray:
-        """Transform numerical data."""
-        # Handle different input types
-        if isinstance(data, str):
-            try:
-                numerical_data = [json.loads(data)]
-            except:
-                raise ValueError(f"Cannot parse numerical data from string: {data}")
-        elif isinstance(data, list):
-            if len(data) > 0 and isinstance(data[0], dict):
-                numerical_data = []
-                for item in data:
-                    content = item["content"]
-                    if isinstance(content, (list, tuple)):
-                        numerical_data.append(content)
-                    elif isinstance(content, str):
-                        try:
-                            parsed = json.loads(content)
-                            numerical_data.append(parsed)
-                        except:
-                            continue
-            else:
-                numerical_data = [data] if isinstance(data[0], (int, float)) else data
-        else:
-            numerical_data = [data]
-
-        numerical_array = np.array(numerical_data)
-
-        if self.scaler and self.is_fitted:
-            return self.scaler.transform(numerical_array)
-
-        return numerical_array
-
-    def fit_transform(self, data: List[Dict[str, Any]]) -> np.ndarray:
-        """Fit and transform numerical data."""
-        return self.fit(data).transform(data)
+def create_auto_preprocessor(data: Union[List[Dict[str, Any]], str], 
+                            policy: Optional[PreprocessingPolicy] = None) -> DataPreprocessor:
+    """
+    Automatically detect data type and create appropriate preprocessor.
+    
+    Args:
+        data: Sample data for type detection
+        policy: Optional preprocessing policy
+        
+    Returns:
+        Automatically selected preprocessor
+    """
+    detector = DefaultDataTypeDetector()
+    data_type = detector.detect_data_type(data)
+    return create_preprocessor(data_type, policy)
 
 
-class MixedDataPreprocessor(CIAFPreprocessor):
-    """Preprocessor for mixed text and numerical data."""
+def validate_data(data: Union[List[Dict[str, Any]], Any], 
+                 policy: Optional[PreprocessingPolicy] = None) -> Dict[str, Any]:
+    """
+    Validate data quality using policy-driven validation.
+    
+    Args:
+        data: Data to validate
+        policy: Optional validation policy
+        
+    Returns:
+        Validation results
+    """
+    validator = DefaultDataValidator(policy)
+    return validator.validate(data)
 
-    def __init__(
-        self,
-        text_method: str = "tfidf",
-        normalize_numerical: bool = True,
-        auto_detect: bool = True,
-    ):
-        """Initialize mixed data preprocessor."""
-        self.text_vectorizer = TextVectorizer(method=text_method)
-        self.numerical_preprocessor = NumericalPreprocessor(
-            normalize=normalize_numerical
+
+# ============================================================================
+# BACKWARD COMPATIBILITY LAYER
+# Legacy classes wrapped with deprecation warnings
+# ============================================================================
+
+class CIAFPreprocessor:
+    """Legacy base class - DEPRECATED. Use DataPreprocessor protocol instead."""
+    
+    def __init__(self):
+        warnings.warn(
+            "CIAFPreprocessor is deprecated. Use the new protocol-based preprocessors instead.",
+            DeprecationWarning,
+            stacklevel=2
         )
-        self.auto_detect = auto_detect
+
+
+class TextVectorizer:
+    """Legacy text vectorizer - DEPRECATED. Use DefaultTextPreprocessor instead."""
+    
+    def __init__(self, method: str = "tfidf", max_features: int = 1000, 
+                 ngram_range: tuple = (1, 2), stop_words: str = "english"):
+        warnings.warn(
+            "TextVectorizer is deprecated. Use DefaultTextPreprocessor with PreprocessingPolicy instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        
+        # Create new implementation
+        policy = PreprocessingPolicy()
+        policy.processing_policy.text_vectorization_method = method
+        policy.processing_policy.text_max_features = max_features
+        policy.processing_policy.text_ngram_range = ngram_range
+        policy.processing_policy.text_stop_words = stop_words
+        
+        self._impl = DefaultTextPreprocessor(policy)
+    
+    def fit(self, data):
+        return self._impl.fit(data)
+    
+    def transform(self, data):
+        return self._impl.transform(data)
+    
+    def fit_transform(self, data):
+        return self._impl.fit_transform(data)
+    
+    def get_feature_names(self):
+        return self._impl.get_feature_names()
+    
+    @property
+    def is_fitted(self):
+        return self._impl.is_fitted()
+
+
+class NumericalPreprocessor:
+    """Legacy numerical preprocessor - DEPRECATED. Use DefaultNumericalPreprocessor instead."""
+    
+    def __init__(self, normalize: bool = True):
+        warnings.warn(
+            "NumericalPreprocessor is deprecated. Use DefaultNumericalPreprocessor with PreprocessingPolicy instead.",
+            DeprecationWarning, 
+            stacklevel=2
+        )
+        
+        # Create new implementation
+        policy = PreprocessingPolicy()
+        policy.processing_policy.numerical_scaling = "standard" if normalize else "none"
+        
+        self._impl = DefaultNumericalPreprocessor(policy)
+    
+    def fit(self, data):
+        return self._impl.fit(data)
+    
+    def transform(self, data):
+        return self._impl.transform(data)
+    
+    def fit_transform(self, data):
+        return self._impl.fit_transform(data)
+    
+    @property
+    def is_fitted(self):
+        return self._impl.is_fitted()
+
+
+class MixedDataPreprocessor:
+    """Legacy mixed data preprocessor - DEPRECATED. Use create_auto_preprocessor instead."""
+    
+    def __init__(self, text_method: str = "tfidf", normalize_numerical: bool = True, auto_detect: bool = True):
+        warnings.warn(
+            "MixedDataPreprocessor is deprecated. Use create_auto_preprocessor with PreprocessingPolicy instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        
+        # Create policy-based implementation
+        policy = PreprocessingPolicy()
+        policy.processing_policy.text_vectorization_method = text_method
+        policy.processing_policy.numerical_scaling = "standard" if normalize_numerical else "none"
+        
+        self._policy = policy
+        self._detector = DefaultDataTypeDetector()
+        self._impl = None
         self.data_type = None
         self.is_fitted = False
-
-    def _detect_data_type(self, data: List[Dict[str, Any]]) -> str:
-        """Automatically detect data type."""
-        text_count = 0
-        numerical_count = 0
-
-        for item in data[:10]:  # Sample first 10 items
-            content = item["content"]
-            if isinstance(content, str):
-                try:
-                    json.loads(content)
-                    numerical_count += 1
-                except:
-                    text_count += 1
-            elif isinstance(content, (list, tuple, int, float)):
-                numerical_count += 1
-            else:
-                text_count += 1
-
-        if text_count > numerical_count:
-            return "text"
-        else:
-            return "numerical"
-
-    def fit(self, data: List[Dict[str, Any]]) -> "MixedDataPreprocessor":
-        """Fit preprocessor on mixed data."""
-        if self.auto_detect:
-            self.data_type = self._detect_data_type(data)
-
-        if self.data_type == "text":
-            self.text_vectorizer.fit(data)
-        else:
-            self.numerical_preprocessor.fit(data)
-
-        self.is_fitted = True
+    
+    def fit(self, data):
+        self.data_type = self._detector.detect_data_type(data)
+        self._impl = create_preprocessor(self.data_type, self._policy)
+        result = self._impl.fit(data)
+        self.is_fitted = self._impl.is_fitted()
         return self
-
-    def transform(self, data: Union[List[Dict[str, Any]], str, List]) -> np.ndarray:
-        """Transform mixed data."""
-        if not self.is_fitted:
-            raise ValueError("Preprocessor not fitted. Call fit() first.")
-
-        if self.data_type == "text":
-            return self.text_vectorizer.transform(data)
-        else:
-            return self.numerical_preprocessor.transform(data)
-
-    def fit_transform(self, data: List[Dict[str, Any]]) -> np.ndarray:
-        """Fit and transform mixed data."""
+    
+    def transform(self, data):
+        if self._impl:
+            return self._impl.transform(data)
+        raise ValueError("Preprocessor not fitted. Call fit() first.")
+    
+    def fit_transform(self, data):
         return self.fit(data).transform(data)
-
-    def get_feature_info(self) -> Dict[str, Any]:
-        """Get feature information for explainability."""
-        if self.data_type == "text":
+    
+    def get_feature_info(self):
+        if self._impl:
             return {
-                "type": "text",
-                "features": self.text_vectorizer.get_feature_names(),
-                "method": self.text_vectorizer.method,
+                "type": self.data_type.value if self.data_type else "unknown",
+                "features": self._impl.get_feature_names(),
+                "preprocessor": type(self._impl).__name__
             }
-        else:
-            return {
-                "type": "numerical",
-                "features": (
-                    [
-                        "feature_" + str(i)
-                        for i in range(
-                            self.numerical_preprocessor.scaler.n_features_in_
-                        )
-                    ]
-                    if self.numerical_preprocessor.scaler
-                    else []
-                ),
-                "normalized": self.numerical_preprocessor.normalize,
-            }
+        return {"type": "none", "features": []}
 
 
 class CIAFModelAdapter:
-    """Adapter to integrate preprocessing with ML models for CIAF."""
-
-    def __init__(
-        self,
-        model: Any,
-        preprocessor: Optional[CIAFPreprocessor] = None,
-        auto_preprocess: bool = True,
-    ):
-        """
-        Initialize model adapter.
-
-        Args:
-            model: The ML model to wrap
-            preprocessor: Custom preprocessor, None for auto-detection
-            auto_preprocess: Whether to automatically select preprocessing
-        """
+    """Legacy model adapter - DEPRECATED. Use DefaultModelAdapter instead."""
+    
+    def __init__(self, model, preprocessor=None, auto_preprocess: bool = True):
+        warnings.warn(
+            "CIAFModelAdapter is deprecated. Use DefaultModelAdapter with PreprocessingPolicy instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        
+        self._impl = DefaultModelAdapter(model, auto_preprocess=auto_preprocess)
         self.model = model
         self.preprocessor = preprocessor
         self.auto_preprocess = auto_preprocess
         self.is_fitted = False
         self.labels = []
-
-    def fit(self, training_data: List[Dict[str, Any]]) -> "CIAFModelAdapter":
-        """Fit the model with preprocessing."""
-        # Auto-select preprocessor if not provided
-        if self.preprocessor is None and self.auto_preprocess:
-            self.preprocessor = MixedDataPreprocessor()
-
-        # Fit preprocessor and transform data
-        if self.preprocessor:
-            X = self.preprocessor.fit_transform(training_data)
-        else:
-            # Fallback: assume model can handle raw data
-            X = [item["content"] for item in training_data]
-
-        # Extract labels
-        y = [
-            item["metadata"]["target"]
-            for item in training_data
-            if "target" in item["metadata"]
-        ]
-        self.labels = list(set(y))
-
-        # Fit model
-        if hasattr(self.model, "fit"):
-            try:
-                self.model.fit(X, y)
-                self.is_fitted = True
-                print(
-                    f"   ✅ Model fitted successfully with {len(training_data)} samples"
-                )
-            except Exception as e:
-                warnings.warn(f"Model fitting failed: {e}. Using fallback mode.")
-                self.is_fitted = False
-        else:
-            warnings.warn("Model does not have fit method. Using prediction-only mode.")
-            self.is_fitted = False
-
+    
+    def fit(self, training_data):
+        result = self._impl.fit(training_data)
+        self.is_fitted = result
         return self
-
-    def predict(self, input_data: Union[str, List, Dict]) -> Any:
-        """Make prediction with preprocessing."""
-        if self.preprocessor:
-            # Transform input data
-            X = self.preprocessor.transform(input_data)
-        else:
-            X = input_data
-
-        # Make prediction
-        if hasattr(self.model, "predict") and self.is_fitted:
-            try:
-                prediction = self.model.predict(X)
-                # Handle single prediction
-                if hasattr(prediction, "__len__") and len(prediction) == 1:
-                    return prediction[0]
-                return prediction
-            except Exception as e:
-                warnings.warn(f"Prediction failed: {e}. Using fallback.")
-                return self._fallback_prediction(input_data)
-        else:
-            return self._fallback_prediction(input_data)
-
-    def _fallback_prediction(self, input_data: Any) -> Any:
-        """Fallback prediction when model fails."""
-        if self.labels:
-            # Return first label as fallback
-            return self.labels[0]
-        # Default fallback
-        if isinstance(input_data, str) and "positive" in input_data.lower():
-            return 1
-        return 0
-
-    def get_preprocessing_info(self) -> Dict[str, Any]:
-        """Get preprocessing information for metadata."""
-        if self.preprocessor and hasattr(self.preprocessor, "get_feature_info"):
-            return self.preprocessor.get_feature_info()
-        return {"type": "none", "features": []}
+    
+    def predict(self, input_data):
+        return self._impl.predict(input_data)
+    
+    def get_preprocessing_info(self):
+        return self._impl.get_preprocessing_info()
 
 
-# Example usage functions
-def create_text_classifier_adapter(model, method: str = "tfidf") -> CIAFModelAdapter:
-    """Create adapter for text classification."""
-    preprocessor = TextVectorizer(method=method)
-    return CIAFModelAdapter(model, preprocessor)
+# Legacy convenience functions with deprecation warnings
+def create_text_classifier_adapter(model, method: str = "tfidf"):
+    """DEPRECATED: Use create_auto_model_adapter instead."""
+    warnings.warn(
+        "create_text_classifier_adapter is deprecated. Use create_auto_model_adapter instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    policy = PreprocessingPolicy()
+    policy.processing_policy.text_vectorization_method = method
+    return DefaultModelAdapter(model, policy)
 
 
-def create_numerical_regressor_adapter(
-    model, normalize: bool = True
-) -> CIAFModelAdapter:
-    """Create adapter for numerical regression."""
-    preprocessor = NumericalPreprocessor(normalize=normalize)
-    return CIAFModelAdapter(model, preprocessor)
+def create_numerical_regressor_adapter(model, normalize: bool = True):
+    """DEPRECATED: Use create_auto_model_adapter instead."""
+    warnings.warn(
+        "create_numerical_regressor_adapter is deprecated. Use create_auto_model_adapter instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    policy = PreprocessingPolicy()
+    policy.processing_policy.numerical_scaling = "standard" if normalize else "none"
+    return DefaultModelAdapter(model, policy)
 
 
-def create_auto_adapter(model) -> CIAFModelAdapter:
-    """Create auto-detecting adapter."""
-    return CIAFModelAdapter(model, auto_preprocess=True)
+def create_auto_adapter(model):
+    """DEPRECATED: Use create_auto_model_adapter instead."""
+    warnings.warn(
+        "create_auto_adapter is deprecated. Use create_auto_model_adapter instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    return create_auto_model_adapter(model)
 
 
+# Legacy auto_preprocess_data function (keep for backward compatibility)
 def auto_preprocess_data(X, y=None, store_preprocessor=None):
     """
+    DEPRECATED: Use protocol-based preprocessors instead.
+    
     Automatically detect and preprocess data for ML models.
-
-    Args:
-        X: Input features (list of strings or numerical data)
-        y: Target labels (optional)
-        store_preprocessor: Object to store the fitted preprocessor (optional)
-
-    Returns:
-        Tuple of (processed_X, processed_y)
+    This function is kept for backward compatibility but is deprecated.
+    Use create_auto_preprocessor() and PreprocessingPolicy instead.
     """
+    warnings.warn(
+        "auto_preprocess_data is deprecated. Use create_auto_preprocessor with PreprocessingPolicy instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
+    
     try:
         if not X:
             return None, None
 
         # Handle CIAF training data format (list of dicts)
         if isinstance(X, list) and X and isinstance(X[0], dict):
-            # Extract content from CIAF format
-            X_content = [item.get("content", item) for item in X]
-
-            # Extract targets if available
-            if y is None and all(
-                "metadata" in item and "target" in item["metadata"] for item in X
-            ):
-                y = [item["metadata"]["target"] for item in X]
-
-            X = X_content
-
-        # Detect data type and preprocess
-        if isinstance(X[0], str):
-            # Text data - create simple TF-IDF vectorizer
-            from sklearn.feature_extraction.text import TfidfVectorizer
-
-            vectorizer = TfidfVectorizer(max_features=1000, stop_words="english")
-            X_processed = vectorizer.fit_transform(X)
-            # Convert sparse matrix to dense for better compatibility
-            X_processed = X_processed.toarray()
-
-            # Store the fitted vectorizer for inference
+            # Use new protocol-based approach
+            preprocessor = create_auto_preprocessor(X)
+            X_processed = preprocessor.fit_transform(X)
+            
+            # Extract targets if available and y is None
+            if y is None:
+                y = []
+                for item in X:
+                    if isinstance(item, dict) and "metadata" in item and "target" in item["metadata"]:
+                        y.append(item["metadata"]["target"])
+            
+            # Store preprocessor info for backward compatibility
             if store_preprocessor is not None:
-                store_preprocessor.fitted_vectorizer = vectorizer
-                store_preprocessor.preprocessing_type = "text"
+                store_preprocessor.fitted_preprocessor = preprocessor
+                store_preprocessor.preprocessing_type = "protocol_based"
+            
+            return X_processed, y
 
+        # Handle simple data formats
+        import numpy as np
+        
+        # Detect if text or numerical
+        if isinstance(X[0], str):
+            # Text data
+            preprocessor = create_preprocessor(DataType.TEXT)
+            ciaf_format = [{"content": text} for text in X]
+            X_processed = preprocessor.fit_transform(ciaf_format)
+            
+            if store_preprocessor is not None:
+                store_preprocessor.fitted_preprocessor = preprocessor
+                store_preprocessor.preprocessing_type = "text"
         else:
             # Numerical data
-            import numpy as np
-            from sklearn.preprocessing import StandardScaler
-
-            # Convert to numpy array and preserve original shape
-            X_array = np.array(X)
+            preprocessor = create_preprocessor(DataType.NUMERICAL)
+            ciaf_format = [{"content": list(item) if hasattr(item, '__iter__') else [item]} for item in X]
+            X_processed = preprocessor.fit_transform(ciaf_format)
             
-            # Ensure we have a 2D array for sklearn
-            if X_array.ndim == 1:
-                X_array = X_array.reshape(-1, 1)
-            
-            scaler = StandardScaler()
-            X_processed = scaler.fit_transform(X_array)
-
-            # Store the fitted scaler
             if store_preprocessor is not None:
-                store_preprocessor.fitted_preprocessor = scaler
+                store_preprocessor.fitted_preprocessor = preprocessor  
                 store_preprocessor.preprocessing_type = "numerical"
 
-        # Process targets if provided
+        # Process targets
         y_processed = y
         if y is not None:
             try:
-                import numpy as np
-
                 y_processed = np.array(y)
             except:
                 pass
@@ -482,21 +363,41 @@ def auto_preprocess_data(X, y=None, store_preprocessor=None):
         return None, None
 
 
-# Import data quality validation
-from .data_quality import DataQualityValidator, ValidationResult, quick_validate, validate_ciaf_dataset
+# ============================================================================
+# MODERN API EXPORTS
+# ============================================================================
 
-# Enhanced imports for model wrapper integration
 __all__ = [
-    "TextVectorizer",
-    "NumericalPreprocessor", 
-    "MixedDataPreprocessor",
-    "CIAFModelAdapter",
-    "DataQualityValidator",
-    "ValidationResult",
-    "auto_preprocess_data",
-    "create_text_classifier_adapter",
-    "create_numerical_regressor_adapter",
-    "create_auto_adapter",
-    "quick_validate",
-    "validate_ciaf_dataset",
+    # Protocol interfaces
+    "DataPreprocessor", "DataValidator", "DataTypeDetector", "FeatureExtractor",
+    "ModelAdapter", "PreprocessingPipeline", "QualityMonitor",
+    
+    # Enums
+    "DataType", "PreprocessingMethod", "ValidationSeverity", 
+    "QualityLevel", "PreprocessingIntensity",
+    
+    # Policy classes
+    "PreprocessingPolicy", "QualityPolicy", "ProcessingPolicy",
+    "PerformancePolicy", "SecurityPolicy",
+    
+    # Implementation classes
+    "DefaultTextPreprocessor", "DefaultNumericalPreprocessor",
+    "DefaultDataTypeDetector", "DefaultDataValidator", "DefaultModelAdapter",
+    
+    # Factory functions (modern API)
+    "create_preprocessor", "create_auto_preprocessor", "validate_data",
+    "create_default_preprocessing_protocols", "create_text_preprocessor",
+    "create_numerical_preprocessor", "create_auto_model_adapter",
+    "get_default_preprocessing_policy", "create_custom_policy",
+    
+    # Data quality (existing)
+    "DataQualityValidator", "ValidationResult", "quick_validate", "validate_ciaf_dataset",
+    
+    # Legacy classes (deprecated but kept for compatibility)
+    "TextVectorizer", "NumericalPreprocessor", "MixedDataPreprocessor", 
+    "CIAFModelAdapter", "CIAFPreprocessor",
+    
+    # Legacy functions (deprecated)
+    "auto_preprocess_data", "create_text_classifier_adapter",
+    "create_numerical_regressor_adapter", "create_auto_adapter",
 ]

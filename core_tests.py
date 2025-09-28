@@ -849,6 +849,216 @@ def test_explainability_legacy_compatibility():
         return False
 
 
+def test_preprocessing_policy_framework():
+    """Test preprocessing policy framework."""
+    print("\nTesting preprocessing policy framework...")
+    
+    try:
+        from ciaf.preprocessing import (
+            PreprocessingPolicy,
+            QualityLevel,
+            PreprocessingIntensity,
+            get_default_preprocessing_policy,
+            create_custom_policy
+        )
+        
+        # Test default policy
+        default_policy = get_default_preprocessing_policy()
+        assert isinstance(default_policy, PreprocessingPolicy), "Should return PreprocessingPolicy"
+        print(f" ✓ Default policy: {default_policy.format_policy_line()}")
+        
+        # Test comprehensive policy
+        comprehensive_policy = PreprocessingPolicy.comprehensive()
+        assert comprehensive_policy.quality_policy.min_quality_score >= 85
+        assert comprehensive_policy.processing_policy.enable_feature_selection
+        print(" ✓ Comprehensive policy configuration working")
+        
+        # Test minimal policy
+        minimal_policy = PreprocessingPolicy.minimal()
+        assert minimal_policy.quality_policy.min_quality_score >= 50
+        assert not minimal_policy.processing_policy.enable_feature_selection
+        print(" ✓ Minimal policy configuration working")
+        
+        # Test policy serialization
+        policy_dict = default_policy.to_dict()
+        policy_digest = default_policy.policy_digest()
+        
+        assert isinstance(policy_dict, dict), "Policy should serialize to dict"
+        assert len(policy_digest) == 64, "Policy digest should be 64 chars"
+        print(" ✓ Policy serialization working")
+        
+        return True
+    except Exception as e:
+        print(f" Preprocessing policy test failed: {e}")
+        return False
+
+
+def test_preprocessing_protocol_implementations():
+    """Test preprocessing protocol implementations."""
+    print("\nTesting preprocessing protocol implementations...")
+    
+    try:
+        from ciaf.preprocessing import (
+            create_default_preprocessing_protocols,
+            DefaultTextPreprocessor,
+            DefaultNumericalPreprocessor,
+            DefaultDataTypeDetector,
+            DataType
+        )
+        
+        # Test protocol creation
+        protocols = create_default_preprocessing_protocols()
+        assert len(protocols) >= 4, f"Expected at least 4 protocols, got {len(protocols)}"
+        print(f" ✓ Created {len(protocols)} preprocessing protocols")
+        
+        # Test text preprocessor
+        text_preprocessor = DefaultTextPreprocessor()
+        test_text_data = [
+            {"content": "This is a positive example"},
+            {"content": "This is a negative example"}
+        ]
+        
+        fit_success = text_preprocessor.fit(test_text_data)
+        assert fit_success, "Text preprocessor should fit successfully"
+        
+        transformed = text_preprocessor.transform(test_text_data)
+        assert transformed.shape[0] == 2, "Should transform 2 samples"
+        print(" ✓ Text preprocessor working")
+        
+        # Test numerical preprocessor
+        numerical_preprocessor = DefaultNumericalPreprocessor()
+        test_numerical_data = [
+            {"content": [1.0, 2.0, 3.0]},
+            {"content": [4.0, 5.0, 6.0]}
+        ]
+        
+        fit_success = numerical_preprocessor.fit(test_numerical_data)
+        assert fit_success, "Numerical preprocessor should fit successfully"
+        
+        transformed = numerical_preprocessor.transform(test_numerical_data)
+        assert transformed.shape == (2, 3), "Should transform to (2, 3) shape"
+        print(" ✓ Numerical preprocessor working")
+        
+        # Test data type detector
+        detector = DefaultDataTypeDetector()
+        text_type = detector.detect_data_type(test_text_data)
+        numerical_type = detector.detect_data_type(test_numerical_data)
+        
+        assert text_type == DataType.TEXT, "Should detect text data"
+        assert numerical_type == DataType.NUMERICAL, "Should detect numerical data"
+        print(" ✓ Data type detector working")
+        
+        return True
+    except Exception as e:
+        print(f" Preprocessing protocol implementations test failed: {e}")
+        return False
+
+
+def test_preprocessing_data_validation():
+    """Test preprocessing data validation."""
+    print("\nTesting preprocessing data validation...")
+    
+    try:
+        from ciaf.preprocessing import (
+            DefaultDataValidator,
+            validate_data,
+            quick_validate
+        )
+        
+        # Test data validator
+        validator = DefaultDataValidator()
+        test_data = [
+            {"content": "Good quality data", "metadata": {"target": 1}},
+            {"content": "More quality data", "metadata": {"target": 0}},
+            {"content": "Another example", "metadata": {"target": 1}}
+        ]
+        
+        validation_result = validator.validate(test_data)
+        assert isinstance(validation_result, dict), "Should return validation dict"
+        assert "is_valid" in validation_result, "Should contain is_valid field"
+        assert "metrics" in validation_result, "Should contain metrics"
+        print(" ✓ Data quality validator working")
+        
+        # Test report generation
+        report = validator.generate_report(validation_result)
+        assert isinstance(report, str), "Should return string report"
+        assert "QUALITY" in report.upper(), "Report should mention quality"
+        print(" ✓ Validation report generation working")
+        
+        # Test schema validation
+        expected_schema = {"columns": ["content"]}
+        schema_result = validator.validate_schema(test_data, expected_schema)
+        assert isinstance(schema_result, dict), "Should return schema validation dict"
+        print(" ✓ Schema validation working")
+        
+        # Test quick validation convenience function
+        quick_result = quick_validate(test_data)
+        assert hasattr(quick_result, 'is_valid'), "Quick validate should return ValidationResult"
+        print(" ✓ Quality metrics calculation working")
+        
+        return True
+    except Exception as e:
+        print(f" Preprocessing data validation test failed: {e}")
+        return False
+
+
+def test_preprocessing_model_integration():
+    """Test preprocessing model integration."""
+    print("\nTesting preprocessing model integration...")
+    
+    try:
+        from ciaf.preprocessing import (
+            create_auto_model_adapter,
+            DefaultModelAdapter,
+            create_auto_preprocessor
+        )
+        
+        # Mock model for testing
+        class MockModel:
+            def __init__(self):
+                self.is_fitted = False
+            
+            def fit(self, X, y):
+                self.is_fitted = True
+                
+            def predict(self, X):
+                return [1] * len(X)
+        
+        mock_model = MockModel()
+        
+        # Test auto model adapter
+        adapter = create_auto_model_adapter(mock_model)
+        assert isinstance(adapter, DefaultModelAdapter), "Should create DefaultModelAdapter"
+        print(" ✓ Auto model adapter creation working")
+        
+        # Test adapter training
+        training_data = [
+            {"content": "positive text", "metadata": {"target": 1}},
+            {"content": "negative text", "metadata": {"target": 0}}
+        ]
+        
+        fit_success = adapter.fit(training_data)
+        assert fit_success, "Adapter should fit successfully"
+        
+        # Test prediction
+        prediction = adapter.predict([{"content": "new text example"}])
+        assert prediction is not None, "Should return prediction"
+        print(" ✓ Preprocessing pipeline integration working")
+        
+        # Test legacy compatibility (with deprecation warning)
+        import warnings
+        with warnings.catch_warnings(record=True) as w:
+            from ciaf.preprocessing import TextVectorizer
+            legacy_vectorizer = TextVectorizer()
+            assert len(w) > 0, "Should show deprecation warning"
+        print(" ✓ Legacy compatibility working")
+        
+        return True
+    except Exception as e:
+        print(f" Preprocessing model integration test failed: {e}")
+        return False
+
+
 def main():
     """Run comprehensive CIAF test suite."""
     print("=" * 80)
@@ -882,6 +1092,12 @@ def main():
             ("Explainability Protocol Implementations", test_explainability_protocol_implementations),
             ("Explainability Auto Explainer", test_explainability_auto_explainer),
             ("Explainability Legacy Compatibility", test_explainability_legacy_compatibility),
+        ]),
+        ("PREPROCESSING MODULE TESTS", [
+            ("Preprocessing Policy Framework", test_preprocessing_policy_framework),
+            ("Preprocessing Protocol Implementations", test_preprocessing_protocol_implementations),
+            ("Preprocessing Data Validation", test_preprocessing_data_validation),
+            ("Preprocessing Model Integration", test_preprocessing_model_integration),
         ]),
         ("INTEGRATION TESTS", [
             ("Cross-Module Integration", test_integration_scenarios),
