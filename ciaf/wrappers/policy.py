@@ -38,13 +38,17 @@ class WrapperMode(Enum):
 
 
 class ModelType(Enum):
-    """Supported model types."""
+    """Supported model types - expanded for universal coverage."""
     SCIKIT_LEARN = "scikit_learn"
     PYTORCH = "pytorch"
     TENSORFLOW = "tensorflow"
     HUGGINGFACE = "huggingface"
     XGBOOST = "xgboost"
     LIGHTGBM = "lightgbm"
+    CATBOOST = "catboost"
+    JAX = "jax"
+    ONNX = "onnx"
+    KERAS = "keras"
     CUSTOM = "custom"
     AUTO_DETECT = "auto_detect"
 
@@ -65,6 +69,20 @@ class PerformanceLevel(Enum):
     STANDARD = "standard"
     OPTIMIZED = "optimized"
     MAXIMUM = "maximum"
+
+
+class DataType(Enum):
+    """Supported data types for universal processing."""
+    TABULAR = "tabular"
+    TEXT = "text"
+    IMAGE = "image"
+    TIME_SERIES = "time_series"
+    MIXED = "mixed"
+    NUMERICAL = "numerical"
+    CATEGORICAL = "categorical"
+    STRUCTURED = "structured"
+    UNSTRUCTURED = "unstructured"
+    MULTIMODAL = "multimodal"
 
 
 @dataclass

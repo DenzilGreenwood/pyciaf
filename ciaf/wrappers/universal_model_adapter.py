@@ -14,11 +14,31 @@ Version: 1.0.0
 import warnings
 import inspect
 import numpy as np
-from typing import Any, Dict, List, Optional, Tuple, Union, Callable
+from typing import Any, Dict, List, Optional, Tuple, Union, Callable, TYPE_CHECKING
 from datetime import datetime
 from abc import ABC, abstractmethod
 
 from .interfaces import ModelAdapter, ModelMetadataProvider
+from .policy import ModelType
+
+if TYPE_CHECKING:
+    from .policy import DataType
+
+# Import ModelType from policy for framework compatibility
+try:
+    from .policy import ModelType
+except ImportError:
+    # Fallback enum if policy not available
+    from enum import Enum
+    class ModelType(Enum):
+        SCIKIT_LEARN = "scikit_learn"
+        PYTORCH = "pytorch"
+        TENSORFLOW = "tensorflow"
+        HUGGINGFACE = "huggingface"
+        XGBOOST = "xgboost"
+        LIGHTGBM = "lightgbm"
+        CUSTOM = "custom"
+        AUTO_DETECT = "auto_detect"
 from .policy import ModelType
 
 
@@ -187,6 +207,95 @@ class UniversalDataProcessor:
         self.text_processors = {}
         self.numeric_processors = {}
     
+    def process_data(self, data: Any, data_type: 'DataType') -> Any:
+        """
+        Process data based on the specified data type.
+        
+        Args:
+            data: Input data to process
+            data_type: DataType enum specifying how to process the data
+            
+        Returns:
+            Processed data ready for model consumption
+        """
+        try:
+            from .policy import DataType
+            
+            if data_type == DataType.NUMERICAL:
+                return self._process_numeric_simple(data)
+            elif data_type == DataType.TEXT:
+                return self._process_text_simple(data)
+            elif data_type == DataType.MIXED:
+                return self._process_mixed_simple(data)
+            elif data_type == DataType.CATEGORICAL:
+                return self._process_categorical_simple(data)
+            else:
+                # Default processing
+                return self._process_default(data)
+                
+        except Exception as e:
+            warnings.warn(f"Data processing failed: {e}")
+            return data
+    
+    def _process_numeric_simple(self, data):
+        """Simple numeric data processing."""
+        if isinstance(data, np.ndarray):
+            return data
+        elif isinstance(data, (list, tuple)):
+            return np.array(data)
+        else:
+            return np.array([data])
+    
+    def _process_text_simple(self, data):
+        """Simple text data processing."""
+        if isinstance(data, str):
+            data = [data]
+        
+        # Simple character-level encoding
+        max_length = 100
+        encoded = []
+        for text in data:
+            text_encoded = [ord(c) for c in str(text)[:max_length]]
+            text_encoded += [0] * (max_length - len(text_encoded))  # Padding
+            encoded.append(text_encoded)
+        
+        return np.array(encoded)
+    
+    def _process_mixed_simple(self, data):
+        """Simple mixed data processing."""
+        if isinstance(data, dict):
+            # Try to concatenate numeric parts
+            numeric_parts = []
+            for key, value in data.items():
+                if isinstance(value, (int, float)):
+                    numeric_parts.append(value)
+                elif isinstance(value, np.ndarray):
+                    numeric_parts.extend(value.flatten())
+                elif isinstance(value, (list, tuple)):
+                    numeric_parts.extend([float(x) if isinstance(x, (int, float)) else 0.0 for x in value])
+            
+            return np.array(numeric_parts) if numeric_parts else np.array([0.0])
+        else:
+            return self._process_default(data)
+    
+    def _process_categorical_simple(self, data):
+        """Simple categorical data processing."""
+        if isinstance(data, (list, tuple)):
+            # Simple label encoding
+            unique_vals = list(set(data))
+            return np.array([unique_vals.index(x) for x in data])
+        else:
+            return np.array([0])
+    
+    def _process_default(self, data):
+        """Default data processing."""
+        if isinstance(data, np.ndarray):
+            return data
+        elif isinstance(data, (list, tuple)):
+            return np.array(data)
+        else:
+            return np.array([data])
+
     def process_training_data(self, model: Any, training_data: List[Dict[str, Any]], 
                             model_type: ModelType) -> Tuple[Any, Any]:
         """Process training data for any model type."""
@@ -433,7 +542,9 @@ class UniversalDataProcessor:
 class UniversalModelAdapter(ModelAdapter):
     """Universal model adapter supporting all ML frameworks."""
     
-    def __init__(self):
+    def __init__(self, policy=None):
+        """Initialize with optional policy parameter."""
+        self.policy = policy
         self.detector = UniversalModelDetector()
         self.processor = UniversalDataProcessor()
     
@@ -441,6 +552,70 @@ class UniversalModelAdapter(ModelAdapter):
         """Detect the type/framework of the provided model."""
         framework, model_type = self.detector.detect_model_framework(model)
         return model_type.value
+    
+    def predict(self, model: Any, input_data: Any) -> Any:
+        """Universal predict method for any model type."""
+        try:
+            # Detect framework and use appropriate prediction method
+            framework, _ = self.detector.detect_model_framework(model)
+            
+            if framework == 'sklearn':
+                return model.predict(input_data)
+            elif framework == 'pytorch':
+                return self._pytorch_predict(model, input_data)
+            elif framework == 'tensorflow':
+                return self._tensorflow_predict(model, input_data)
+            elif framework == 'huggingface':
+                return self._huggingface_predict(model, input_data)
+            else:
+                # Fallback to generic prediction
+                if hasattr(model, 'predict'):
+                    return model.predict(input_data)
+                elif hasattr(model, '__call__'):
+                    return model(input_data)
+                else:
+                    raise AttributeError(f"Model {type(model)} has no predict method")
+                    
+        except Exception as e:
+            warnings.warn(f"Universal prediction failed: {e}")
+            return f"Universal fallback prediction for {type(model)}"
+    
+    def get_model_info(self, model: Any) -> Dict[str, Any]:
+        """Get comprehensive model information."""
+        framework, model_type = self.detector.detect_model_framework(model)
+        return {
+            'framework': framework,
+            'model_type': model_type.value,
+            'class_name': model.__class__.__name__,
+            'module': model.__class__.__module__,
+        }
+    
+    def get_model_metadata(self, model: Any) -> Dict[str, Any]:
+        """Get universal model metadata."""
+        try:
+            metadata = {}
+            framework, model_type = self.detector.detect_model_framework(model)
+            
+            metadata['framework'] = framework
+            metadata['model_type'] = model_type.value
+            metadata['class_name'] = model.__class__.__name__
+            metadata['module'] = model.__class__.__module__
+            
+            # Add framework-specific metadata
+            if framework == 'sklearn':
+                self._extract_sklearn_metadata(model, metadata)
+            elif framework == 'pytorch':
+                self._extract_pytorch_metadata(model, metadata)
+            elif framework == 'tensorflow':
+                self._extract_tensorflow_metadata(model, metadata)
+            elif framework == 'huggingface':
+                self._extract_huggingface_metadata(model, metadata)
+            elif framework in ['xgboost', 'lightgbm']:
+                self._extract_boosting_metadata(model, metadata)
+                
+            return metadata
+        except Exception as e:
+            return {'error': str(e), 'framework': 'unknown'}
     
     def validate_model_compatibility(self, model: Any) -> Dict[str, Any]:
         """Validate if model is compatible with CIAF wrapper."""
@@ -628,3 +803,30 @@ class UniversalModelAdapter(ModelAdapter):
         except Exception as e:
             warnings.warn(f"HuggingFace prediction failed: {e}")
             return f"HuggingFace fallback prediction"
+    
+    def adapt_model(self, model: Any, model_name: str, **kwargs) -> Any:
+        """
+        Adapt a model to work with CIAF wrapper system.
+        
+        This method wraps the model with universal adapter capabilities.
+        """
+        # Create a wrapper class that contains the model and adapter functionality
+        class UniversalModelWrapper:
+            def __init__(self, model, adapter, model_name):
+                self.model = model
+                self.adapter = adapter
+                self.model_name = model_name
+                
+            def predict(self, input_data):
+                """Universal predict method."""
+                return self.adapter.predict(self.model, input_data)
+                
+            def get_metadata(self):
+                """Get model metadata."""
+                return self.adapter.get_model_metadata(self.model)
+                
+            def __getattr__(self, name):
+                """Forward attribute access to the original model."""
+                return getattr(self.model, name)
+        
+        return UniversalModelWrapper(model, self, model_name)

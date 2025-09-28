@@ -32,6 +32,7 @@ from .policy import (
     WrapperPolicy,
     WrapperMode,
     ModelType,
+    DataType,  # Added new DataType enum
     ComplianceMode,
     PerformanceLevel,
     ModelCompatibilityPolicy,
@@ -45,6 +46,50 @@ from .policy import (
     set_default_wrapper_policy,
     create_wrapper_policy,
 )
+
+# Universal model support implementations
+try:
+    from .universal_model_adapter import (
+        UniversalModelDetector,
+        UniversalDataProcessor,
+        UniversalModelAdapter,
+    )
+    UNIVERSAL_ADAPTER_AVAILABLE = True
+except ImportError:
+    UNIVERSAL_ADAPTER_AVAILABLE = False
+    UniversalModelDetector = None
+    UniversalDataProcessor = None
+    UniversalModelAdapter = None
+
+# Consolidated protocol implementations (preferred)
+try:
+    from .consolidated_protocol_implementations import (
+        ConsolidatedModelAdapter,
+        EnhancedModelMetadataProvider,
+        RobustModelValidator,
+        ConsolidatedModelTrainingHandler,
+        ConsolidatedModelInferenceHandler,
+        ConsolidatedLCMMetadataHandler,
+        ConsolidatedEnhancementProvider,
+        ConsolidatedComplianceIntegrator,
+        ConsolidatedPerformanceOptimizer,
+        create_consolidated_wrapper_protocols,
+        create_universal_model_wrapper,
+    )
+    CONSOLIDATED_IMPLEMENTATIONS_AVAILABLE = True
+except ImportError:
+    CONSOLIDATED_IMPLEMENTATIONS_AVAILABLE = False
+    ConsolidatedModelAdapter = None
+    EnhancedModelMetadataProvider = None
+    RobustModelValidator = None
+    ConsolidatedModelTrainingHandler = None
+    ConsolidatedModelInferenceHandler = None
+    ConsolidatedLCMMetadataHandler = None
+    ConsolidatedEnhancementProvider = None
+    ConsolidatedComplianceIntegrator = None
+    ConsolidatedPerformanceOptimizer = None
+    create_consolidated_wrapper_protocols = None
+    create_universal_model_wrapper = None
 
 # Protocol implementations (only if available)
 try:
@@ -113,7 +158,7 @@ def create_model_wrapper(model: Any,
         model: The ML model to wrap
         model_name: Unique name for the model
         policy: WrapperPolicy to use (creates default if None)
-        wrapper_type: Type of wrapper ("modern", "enhanced", "legacy", "auto")
+        wrapper_type: Type of wrapper ("consolidated", "modern", "enhanced", "legacy", "auto")
     
     Returns:
         Best available wrapper implementation
@@ -122,14 +167,20 @@ def create_model_wrapper(model: Any,
     
     policy = policy or get_default_wrapper_policy()
     
-    # Try to use modern wrapper first
+    # Try consolidated implementations first (best universal model support)
+    if wrapper_type in ["consolidated", "auto"] and CONSOLIDATED_IMPLEMENTATIONS_AVAILABLE and UNIVERSAL_ADAPTER_AVAILABLE:
+        # Use the universal model adapter for comprehensive model support
+        adapter = UniversalModelAdapter(policy=policy)
+        return adapter.adapt_model(model, model_name)
+    
+    # Try to use modern wrapper
     if wrapper_type in ["modern", "auto"] and MODERN_WRAPPER_AVAILABLE:
         return ModernCIAFModelWrapper(model=model, model_name=model_name, policy=policy)
     
     # Fall back to enhanced wrapper
     elif wrapper_type in ["enhanced", "auto"] and ENHANCED_WRAPPER_AVAILABLE:
         warnings.warn(
-            "Using enhanced wrapper. Consider upgrading to modern protocol-based wrapper.",
+            "Using enhanced wrapper. Consider upgrading to consolidated universal wrapper.",
             DeprecationWarning,
             stacklevel=2
         )
@@ -138,7 +189,7 @@ def create_model_wrapper(model: Any,
     # Fall back to legacy wrapper
     elif wrapper_type in ["legacy", "auto"] and LEGACY_WRAPPER_AVAILABLE:
         warnings.warn(
-            "Using legacy wrapper. Consider upgrading to modern protocol-based wrapper.",
+            "Using legacy wrapper. Consider upgrading to consolidated universal wrapper.",
             DeprecationWarning,
             stacklevel=2
         )
@@ -199,7 +250,8 @@ __all__ = [
     # Policy framework
     "WrapperPolicy",
     "WrapperMode",
-    "ModelType", 
+    "ModelType",
+    "DataType",  # Added new DataType enum
     "ComplianceMode",
     "PerformanceLevel",
     "ModelCompatibilityPolicy",
@@ -219,10 +271,34 @@ __all__ = [
     
     # Availability flags
     "PROTOCOL_IMPLEMENTATIONS_AVAILABLE",
+    "CONSOLIDATED_IMPLEMENTATIONS_AVAILABLE",
+    "UNIVERSAL_ADAPTER_AVAILABLE",
     "MODERN_WRAPPER_AVAILABLE", 
     "ENHANCED_WRAPPER_AVAILABLE",
     "LEGACY_WRAPPER_AVAILABLE",
 ] + (
+    # Universal model support (preferred for new implementations)
+    [
+        "UniversalModelDetector",
+        "UniversalDataProcessor",
+        "UniversalModelAdapter",
+    ] if UNIVERSAL_ADAPTER_AVAILABLE else []
+) + (
+    # Consolidated protocol implementations (enhanced versions)
+    [
+        "ConsolidatedModelAdapter",
+        "EnhancedModelMetadataProvider",
+        "RobustModelValidator", 
+        "ConsolidatedModelTrainingHandler",
+        "ConsolidatedModelInferenceHandler",
+        "ConsolidatedLCMMetadataHandler",
+        "ConsolidatedEnhancementProvider",
+        "ConsolidatedComplianceIntegrator",
+        "ConsolidatedPerformanceOptimizer",
+        "create_consolidated_wrapper_protocols",
+        "create_universal_model_wrapper",
+    ] if CONSOLIDATED_IMPLEMENTATIONS_AVAILABLE else []
+) + (
     # Protocol implementations (only if available)
     [
         "DefaultModelAdapter",

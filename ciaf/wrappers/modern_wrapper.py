@@ -27,6 +27,13 @@ try:
 except ImportError:
     CIAF_CORE_AVAILABLE = False
     warnings.warn("CIAF core components not available")
+    # Create dummy classes for type hints
+    class TrainingSnapshot:
+        pass
+    class InferenceReceipt:
+        pass
+    class CIAFFramework:
+        pass
 
 
 class ModernCIAFModelWrapper(ModelWrapper):
