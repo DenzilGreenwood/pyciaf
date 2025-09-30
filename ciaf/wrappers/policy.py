@@ -482,6 +482,16 @@ class WrapperPolicy:
         
         return policy
     
+    @classmethod
+    def create_compliance_policy(cls) -> "WrapperPolicy":
+        """Create a compliance-focused policy (alias for compliance_strict)."""
+        return cls.compliance_strict()
+    
+    @classmethod
+    def create_production_policy(cls) -> "WrapperPolicy":
+        """Create a production-ready policy (alias for production)."""
+        return cls.production()
+    
     def to_dict(self) -> Dict[str, Any]:
         """Convert policy to dictionary format."""
         def serialize_value(value):

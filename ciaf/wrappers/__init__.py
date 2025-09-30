@@ -120,6 +120,30 @@ except ImportError:
     DefaultPerformanceOptimizer = None
     create_default_wrapper_protocols = None
 
+# GDPR-focused comprehensive wrapper (Ultimate wrapper with all concepts)
+try:
+    from .gdpr_model_wrapper import (
+        GDPRModelWrapper,
+        GDPRManifest,
+        create_ultimate_gdpr_wrapper,
+        create_gdpr_compliant_wrapper,
+        create_high_performance_gdpr_wrapper,
+        validate_gdpr_compliance,
+        export_gdpr_audit_report,
+        migrate_legacy_wrapper_to_gdpr,
+    )
+    GDPR_WRAPPER_AVAILABLE = True
+except ImportError:
+    GDPR_WRAPPER_AVAILABLE = False
+    GDPRModelWrapper = None
+    GDPRManifest = None
+    create_ultimate_gdpr_wrapper = None
+    create_gdpr_compliant_wrapper = None
+    create_high_performance_gdpr_wrapper = None
+    validate_gdpr_compliance = None
+    export_gdpr_audit_report = None
+    migrate_legacy_wrapper_to_gdpr = None
+
 # Legacy wrapper implementations (with deprecation warnings)
 try:
     from .model_wrapper import CIAFModelWrapper
@@ -158,7 +182,7 @@ def create_model_wrapper(model: Any,
         model: The ML model to wrap
         model_name: Unique name for the model
         policy: WrapperPolicy to use (creates default if None)
-        wrapper_type: Type of wrapper ("consolidated", "modern", "enhanced", "legacy", "auto")
+        wrapper_type: Type of wrapper ("gdpr", "consolidated", "modern", "enhanced", "legacy", "auto")
     
     Returns:
         Best available wrapper implementation
@@ -167,9 +191,19 @@ def create_model_wrapper(model: Any,
     
     policy = policy or get_default_wrapper_policy()
     
-    # Try consolidated implementations first (best universal model support)
+    # Try GDPR wrapper first (ultimate wrapper with all concepts)
+    if wrapper_type in ["gdpr", "ultimate", "auto"] and GDPR_WRAPPER_AVAILABLE:
+        print("🎯 [FACTORY] Using ultimate GDPR wrapper (all features)")
+        return create_ultimate_gdpr_wrapper(
+            model=model,
+            model_name=model_name,
+            compliance_level="strict",
+            performance_mode="optimized", 
+            enable_all_features=True
+        )
+    
+    # Try consolidated implementations (comprehensive universal model support)
     if wrapper_type in ["consolidated", "auto"] and CONSOLIDATED_IMPLEMENTATIONS_AVAILABLE and UNIVERSAL_ADAPTER_AVAILABLE:
-        # Use the universal model adapter for comprehensive model support
         adapter = UniversalModelAdapter(policy=policy)
         return adapter.adapt_model(model, model_name)
     
@@ -180,7 +214,7 @@ def create_model_wrapper(model: Any,
     # Fall back to enhanced wrapper
     elif wrapper_type in ["enhanced", "auto"] and ENHANCED_WRAPPER_AVAILABLE:
         warnings.warn(
-            "Using enhanced wrapper. Consider upgrading to consolidated universal wrapper.",
+            "Using enhanced wrapper. Consider upgrading to ultimate GDPR wrapper.",
             DeprecationWarning,
             stacklevel=2
         )
@@ -189,7 +223,7 @@ def create_model_wrapper(model: Any,
     # Fall back to legacy wrapper
     elif wrapper_type in ["legacy", "auto"] and LEGACY_WRAPPER_AVAILABLE:
         warnings.warn(
-            "Using legacy wrapper. Consider upgrading to consolidated universal wrapper.",
+            "Using legacy wrapper. Consider upgrading to ultimate GDPR wrapper.",
             DeprecationWarning,
             stacklevel=2
         )

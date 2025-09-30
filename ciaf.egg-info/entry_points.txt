@@ -1,3 +1,0 @@
-[console_scripts]
-ciaf-compliance-report = ciaf.cli:compliance_report_cli
-ciaf-setup-metadata = ciaf.cli:setup_metadata_cli

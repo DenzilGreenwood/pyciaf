@@ -1,2 +1,0 @@
-ciaf
-ciaf_metadata_optimized
