@@ -102,6 +102,7 @@ class AdaptiveLCMWrapper:
         self.config = config or AdaptiveLCMConfig()
         self.model_ref = model_ref
         self.model_version = model_version
+        self.current_mode = self.config.default_mode  # Add missing current_mode attribute
         
         # System monitoring
         self.system_monitor = SystemMonitor()

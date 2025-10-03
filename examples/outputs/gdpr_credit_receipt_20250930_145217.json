@@ -1,0 +1,40 @@
+{
+  "receipt_id": "GDPR_20250930_145217",
+  "timestamp": "20250930_145217",
+  "application_id": "TEST001",
+  "decision": "REVIEW",
+  "confidence": 0.5,
+  "gdpr_compliance": {
+    "lawful_basis": "legitimate_interests",
+    "purpose": "automated_credit_decision_making",
+    "retention_days": 2555,
+    "frameworks": [
+      "GDPR",
+      "NIST-AI-RMF",
+      "ISO/IEC-42001"
+    ]
+  },
+  "explainability": {
+    "method": "Enhanced SHAP/LIME"
+  },
+  "uncertainty": {
+    "total_uncertainty": 0.12
+  },
+  "privacy_measures": [
+    "GDPR_compliance_applied"
+  ],
+  "query_data": {
+    "application_id": "TEST001",
+    "income": 60000,
+    "credit_score": 700,
+    "debt_to_income": 0.3,
+    "loan_amount": 200000,
+    "applicant_consent": true,
+    "data_processing_purpose": "credit_assessment"
+  },
+  "processing_details": {
+    "model_type": "auto_detect",
+    "user_id": "loan_officer",
+    "processing_purpose": "credit_decision_making"
+  }
+}

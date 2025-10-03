@@ -26,15 +26,7 @@ except ImportError:
     warnings.warn("Could not import base CIAF components")
     CIAF_AVAILABLE = False
     
-    # Create placeholder classes for development
-    class CIAFModelWrapper:
-        def __init__(self, *args, **kwargs):
-            pass
-    
-    class AdaptiveLCMWrapper:
-        def __init__(self, *args, **kwargs):
-            pass
-    
+    # Create enums first
     from enum import Enum
     class LCMMode(Enum):
         IMMEDIATE = "immediate"
@@ -46,6 +38,22 @@ except ImportError:
         HIGH = "high"
         NORMAL = "normal"
         LOW = "low"
+    
+    # Create placeholder classes for development
+    class CIAFModelWrapper:
+        def __init__(self, *args, **kwargs):
+            pass
+    
+    class AdaptiveLCMWrapper:
+        def __init__(self, *args, **kwargs):
+            self.current_mode = LCMMode.ADAPTIVE  # Add missing current_mode attribute
+            self.config = kwargs.get('config', None)
+            
+        def predict(self, *args, **kwargs):
+            return "simulated_prediction", {"receipt_id": "lcm_sim"}
+            
+        def update_mode(self, mode):
+            self.current_mode = mode
     
     class AdaptiveLCMConfig:
         def __init__(self, *args, **kwargs):

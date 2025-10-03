@@ -1,0 +1,379 @@
+{
+  "batch_id": "BATCH_20250930_145217",
+  "timestamp": "20250930_145217",
+  "batch_size": 5,
+  "applications": [
+    {
+      "application_id": "BATCH001",
+      "income": 80000,
+      "credit_score": 750,
+      "debt_to_income": 0.25,
+      "loan_amount": 300000
+    },
+    {
+      "application_id": "BATCH002",
+      "income": 45000,
+      "credit_score": 620,
+      "debt_to_income": 0.45,
+      "loan_amount": 150000
+    },
+    {
+      "application_id": "BATCH003",
+      "income": 70000,
+      "credit_score": 690,
+      "debt_to_income": 0.35,
+      "loan_amount": 220000
+    },
+    {
+      "application_id": "BATCH004",
+      "income": 55000,
+      "credit_score": 680,
+      "debt_to_income": 0.38,
+      "loan_amount": 180000
+    },
+    {
+      "application_id": "BATCH005",
+      "income": 95000,
+      "credit_score": 760,
+      "debt_to_income": 0.22,
+      "loan_amount": 350000
+    }
+  ],
+  "results": [
+    {
+      "batch_index": 0,
+      "query": "Credit application: {\"application_id\": \"BATCH001\", \"income\": 80000, \"credit_score\": 750, \"debt_to_income\": 0.25, \"loan_amount\": 300000}",
+      "prediction": "REVIEW",
+      "receipt": {
+        "receipt_hash": "900e775a6f4f386ee010e9e3f4d65989d2a079c8b0384199346f2c5a156562cf",
+        "query": "<redacted>",
+        "ai_output": "REVIEW",
+        "model_version": "1.0.0",
+        "timestamp": "2025-09-30T19:52:17.630474+00:00",
+        "lcm_mode": "deferred",
+        "inference_time": 0.0,
+        "lcm_time": 0.0009980201721191406,
+        "_redacted_fields": [
+          "query"
+        ],
+        "_gdpr_compliant": true,
+        "enhanced_info": {
+          "explainability": {
+            "method": "Enhanced SHAP/LIME",
+            "explanation": {
+              "method": "Fallback",
+              "explanation": "LIME explanation not available",
+              "feature_attributions": [],
+              "explanation_confidence": 0.0
+            },
+            "model_type": "auto_detect",
+            "confidence": 0.85,
+            "gdpr_compliant": true,
+            "frameworks_supported": [
+              "EU AI Act",
+              "NIST AI RMF",
+              "ISO/IEC 42001"
+            ]
+          },
+          "uncertainty": {
+            "total_uncertainty": 0.15,
+            "method": "Enhanced fallback",
+            "error": "'CIAFUncertaintyQuantifier' object has no attribute 'quantify'"
+          },
+          "metadata_tag": {
+            "tag_id": "GDPR_FALLBACK_0135",
+            "compliance_level": "GDPR_COMPLIANT",
+            "error": "create_classification_tag() missing 5 required positional arguments: 'model_name', 'model_version', 'training_snapshot_id', 'dataset_anchor_id', and 'inference_receipt_hash'"
+          },
+          "performance": {
+            "inference_time": 0.0009980201721191406,
+            "lcm_mode": "adaptive",
+            "model_type": "auto_detect",
+            "enhancement_count": 3,
+            "gdpr_processing_time": 9.980201721191407e-05
+          }
+        }
+      },
+      "gdpr_compliant": true,
+      "frameworks_validated": [
+        "GDPR",
+        "NIST-AI-RMF",
+        "ISO/IEC-42001"
+      ],
+      "redacted_fields": [
+        "query"
+      ]
+    },
+    {
+      "batch_index": 1,
+      "query": "Credit application: {\"application_id\": \"BATCH002\", \"income\": 45000, \"credit_score\": 620, \"debt_to_income\": 0.45, \"loan_amount\": 150000}",
+      "prediction": "REVIEW",
+      "receipt": {
+        "receipt_hash": "1dc547d122e9a24e93ea94767a2a7f132e9b321c88ee5c9fee4d6a45cc0dd5ca",
+        "query": "<redacted>",
+        "ai_output": "REVIEW",
+        "model_version": "1.0.0",
+        "timestamp": "2025-09-30T19:52:17.630474+00:00",
+        "lcm_mode": "deferred",
+        "inference_time": 0.0,
+        "lcm_time": 0.0,
+        "_redacted_fields": [
+          "query"
+        ],
+        "_gdpr_compliant": true,
+        "enhanced_info": {
+          "explainability": {
+            "method": "Enhanced SHAP/LIME",
+            "explanation": {
+              "method": "Fallback",
+              "explanation": "LIME explanation not available",
+              "feature_attributions": [],
+              "explanation_confidence": 0.0
+            },
+            "model_type": "auto_detect",
+            "confidence": 0.85,
+            "gdpr_compliant": true,
+            "frameworks_supported": [
+              "EU AI Act",
+              "NIST AI RMF",
+              "ISO/IEC 42001"
+            ]
+          },
+          "uncertainty": {
+            "total_uncertainty": 0.15,
+            "method": "Enhanced fallback",
+            "error": "'CIAFUncertaintyQuantifier' object has no attribute 'quantify'"
+          },
+          "metadata_tag": {
+            "tag_id": "GDPR_FALLBACK_0135",
+            "compliance_level": "GDPR_COMPLIANT",
+            "error": "create_classification_tag() missing 5 required positional arguments: 'model_name', 'model_version', 'training_snapshot_id', 'dataset_anchor_id', and 'inference_receipt_hash'"
+          },
+          "performance": {
+            "inference_time": 0.0,
+            "lcm_mode": "adaptive",
+            "model_type": "auto_detect",
+            "enhancement_count": 3,
+            "gdpr_processing_time": 0.0
+          }
+        }
+      },
+      "gdpr_compliant": true,
+      "frameworks_validated": [
+        "GDPR",
+        "NIST-AI-RMF",
+        "ISO/IEC-42001"
+      ],
+      "redacted_fields": [
+        "query"
+      ]
+    },
+    {
+      "batch_index": 2,
+      "query": "Credit application: {\"application_id\": \"BATCH003\", \"income\": 70000, \"credit_score\": 690, \"debt_to_income\": 0.35, \"loan_amount\": 220000}",
+      "prediction": "REVIEW",
+      "receipt": {
+        "receipt_hash": "1bb0ebff19ec8877bf4f05cda29d2e35cb45369e9c60323e567acff55818f7a8",
+        "query": "<redacted>",
+        "ai_output": "REVIEW",
+        "model_version": "1.0.0",
+        "timestamp": "2025-09-30T19:52:17.631476+00:00",
+        "lcm_mode": "deferred",
+        "inference_time": 0.0,
+        "lcm_time": 0.0,
+        "_redacted_fields": [
+          "query"
+        ],
+        "_gdpr_compliant": true,
+        "enhanced_info": {
+          "explainability": {
+            "method": "Enhanced SHAP/LIME",
+            "explanation": {
+              "method": "Fallback",
+              "explanation": "LIME explanation not available",
+              "feature_attributions": [],
+              "explanation_confidence": 0.0
+            },
+            "model_type": "auto_detect",
+            "confidence": 0.85,
+            "gdpr_compliant": true,
+            "frameworks_supported": [
+              "EU AI Act",
+              "NIST AI RMF",
+              "ISO/IEC 42001"
+            ]
+          },
+          "uncertainty": {
+            "total_uncertainty": 0.15,
+            "method": "Enhanced fallback",
+            "error": "'CIAFUncertaintyQuantifier' object has no attribute 'quantify'"
+          },
+          "metadata_tag": {
+            "tag_id": "GDPR_FALLBACK_0135",
+            "compliance_level": "GDPR_COMPLIANT",
+            "error": "create_classification_tag() missing 5 required positional arguments: 'model_name', 'model_version', 'training_snapshot_id', 'dataset_anchor_id', and 'inference_receipt_hash'"
+          },
+          "performance": {
+            "inference_time": 0.0,
+            "lcm_mode": "adaptive",
+            "model_type": "auto_detect",
+            "enhancement_count": 3,
+            "gdpr_processing_time": 0.0
+          }
+        }
+      },
+      "gdpr_compliant": true,
+      "frameworks_validated": [
+        "GDPR",
+        "NIST-AI-RMF",
+        "ISO/IEC-42001"
+      ],
+      "redacted_fields": [
+        "query"
+      ]
+    },
+    {
+      "batch_index": 3,
+      "query": "Credit application: {\"application_id\": \"BATCH004\", \"income\": 55000, \"credit_score\": 680, \"debt_to_income\": 0.38, \"loan_amount\": 180000}",
+      "prediction": "REVIEW",
+      "receipt": {
+        "receipt_hash": "ca65543371e6d0a3af5711d9f98466a009e7de3d95271f8ec0b82dc84a5dc70d",
+        "query": "<redacted>",
+        "ai_output": "REVIEW",
+        "model_version": "1.0.0",
+        "timestamp": "2025-09-30T19:52:17.632475+00:00",
+        "lcm_mode": "deferred",
+        "inference_time": 0.0,
+        "lcm_time": 0.0,
+        "_redacted_fields": [
+          "query"
+        ],
+        "_gdpr_compliant": true,
+        "enhanced_info": {
+          "explainability": {
+            "method": "Enhanced SHAP/LIME",
+            "explanation": {
+              "method": "Fallback",
+              "explanation": "LIME explanation not available",
+              "feature_attributions": [],
+              "explanation_confidence": 0.0
+            },
+            "model_type": "auto_detect",
+            "confidence": 0.85,
+            "gdpr_compliant": true,
+            "frameworks_supported": [
+              "EU AI Act",
+              "NIST AI RMF",
+              "ISO/IEC 42001"
+            ]
+          },
+          "uncertainty": {
+            "total_uncertainty": 0.15,
+            "method": "Enhanced fallback",
+            "error": "'CIAFUncertaintyQuantifier' object has no attribute 'quantify'"
+          },
+          "metadata_tag": {
+            "tag_id": "GDPR_FALLBACK_0135",
+            "compliance_level": "GDPR_COMPLIANT",
+            "error": "create_classification_tag() missing 5 required positional arguments: 'model_name', 'model_version', 'training_snapshot_id', 'dataset_anchor_id', and 'inference_receipt_hash'"
+          },
+          "performance": {
+            "inference_time": 0.0009989738464355469,
+            "lcm_mode": "adaptive",
+            "model_type": "auto_detect",
+            "enhancement_count": 3,
+            "gdpr_processing_time": 9.989738464355469e-05
+          }
+        }
+      },
+      "gdpr_compliant": true,
+      "frameworks_validated": [
+        "GDPR",
+        "NIST-AI-RMF",
+        "ISO/IEC-42001"
+      ],
+      "redacted_fields": [
+        "query"
+      ]
+    },
+    {
+      "batch_index": 4,
+      "query": "Credit application: {\"application_id\": \"BATCH005\", \"income\": 95000, \"credit_score\": 760, \"debt_to_income\": 0.22, \"loan_amount\": 350000}",
+      "prediction": "REVIEW",
+      "receipt": {
+        "receipt_hash": "09e5515a18464e6aece700e45a4e182d4f42a4d61723fccf881080412e4af842",
+        "query": "<redacted>",
+        "ai_output": "REVIEW",
+        "model_version": "1.0.0",
+        "timestamp": "2025-09-30T19:52:17.633474+00:00",
+        "lcm_mode": "deferred",
+        "inference_time": 0.0,
+        "lcm_time": 0.0,
+        "_redacted_fields": [
+          "query"
+        ],
+        "_gdpr_compliant": true,
+        "enhanced_info": {
+          "explainability": {
+            "method": "Enhanced SHAP/LIME",
+            "explanation": {
+              "method": "Fallback",
+              "explanation": "LIME explanation not available",
+              "feature_attributions": [],
+              "explanation_confidence": 0.0
+            },
+            "model_type": "auto_detect",
+            "confidence": 0.85,
+            "gdpr_compliant": true,
+            "frameworks_supported": [
+              "EU AI Act",
+              "NIST AI RMF",
+              "ISO/IEC 42001"
+            ]
+          },
+          "uncertainty": {
+            "total_uncertainty": 0.15,
+            "method": "Enhanced fallback",
+            "error": "'CIAFUncertaintyQuantifier' object has no attribute 'quantify'"
+          },
+          "metadata_tag": {
+            "tag_id": "GDPR_FALLBACK_0135",
+            "compliance_level": "GDPR_COMPLIANT",
+            "error": "create_classification_tag() missing 5 required positional arguments: 'model_name', 'model_version', 'training_snapshot_id', 'dataset_anchor_id', and 'inference_receipt_hash'"
+          },
+          "performance": {
+            "inference_time": 0.00099945068359375,
+            "lcm_mode": "adaptive",
+            "model_type": "auto_detect",
+            "enhancement_count": 3,
+            "gdpr_processing_time": 9.994506835937501e-05
+          }
+        }
+      },
+      "gdpr_compliant": true,
+      "frameworks_validated": [
+        "GDPR",
+        "NIST-AI-RMF",
+        "ISO/IEC-42001"
+      ],
+      "redacted_fields": [
+        "query"
+      ]
+    }
+  ],
+  "gdpr_compliance": {
+    "lawful_basis": "legitimate_interests",
+    "purpose": "automated_credit_decision_making",
+    "retention_days": 2555,
+    "frameworks": [
+      "GDPR",
+      "NIST-AI-RMF",
+      "ISO/IEC-42001"
+    ]
+  },
+  "processing_details": {
+    "model_type": "auto_detect",
+    "user_id": "batch_processor",
+    "processing_purpose": "bulk_credit_assessment"
+  }
+}

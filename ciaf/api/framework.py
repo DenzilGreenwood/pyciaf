@@ -377,7 +377,7 @@ class CIAFFramework:
         print(f"LCM dataset anchor {dataset_id} created")
         print(f"LCM tracking: {lcm_metadata.total_samples} samples")
         
-        return dataset_anchor
+        return lcm_anchor
 
     def create_dataset_anchor(
         self, dataset_id: str, dataset_metadata: Dict[str, Any], master_password: str
@@ -414,8 +414,7 @@ class CIAFFramework:
             dataset_id=dataset_id,
             metadata=lcm_metadata,
             master_password=master_password,
-            splits=[DatasetSplit.TRAIN, DatasetSplit.VALIDATION, DatasetSplit.TEST],
-            salt=dataset_salt
+            splits=[DatasetSplit.TRAIN, DatasetSplit.VALIDATION, DatasetSplit.TEST]
         )
 
         self.dataset_anchors[dataset_id] = splits

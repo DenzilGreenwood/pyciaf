@@ -399,6 +399,9 @@ class GDPRModelWrapper(ModernCIAFModelWrapper):
         # Initialize parent with comprehensive policy
         super().__init__(model=model, model_name=model_name, policy=policy, framework=framework)
 
+        # Store regulatory frameworks as direct attribute for easy access
+        self.regulatory_frameworks = regulatory_frameworks
+
         # Enhanced GDPR manifest with multi-framework support
         self._gdpr_manifest = GDPRManifest(
             policy_version="2.0",

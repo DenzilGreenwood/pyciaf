@@ -1,0 +1,173 @@
+{
+  "report_generated": "2025-09-30T19:52:17.634473+00:00",
+  "model_name": "gdpr_credit_scorer",
+  "wrapper_version": "2.0.0",
+  "gdpr_manifest": {
+    "policy_version": "2.0",
+    "lawful_basis": "legitimate_interests",
+    "purpose_of_processing": "automated_credit_decision_making",
+    "dpo_contact": "dpo@creditbank.example",
+    "dsr_endpoint": "https://creditbank.example/data-subject-requests",
+    "data_minimization": true,
+    "anonymization": true,
+    "retention_days": 2555,
+    "created_at": "2025-09-30T19:52:17.524307+00:00",
+    "regulatory_frameworks": [
+      "GDPR",
+      "NIST-AI-RMF",
+      "ISO/IEC-42001"
+    ],
+    "nist_ai_rmf_compliant": true,
+    "iso_iec_42001_compliant": true,
+    "hipaa_compliant": false,
+    "model_type": "auto_detect",
+    "data_types": [
+      "tabular",
+      "text",
+      "mixed",
+      "structured"
+    ],
+    "performance_level": "optimized",
+    "audit_trail_enabled": true
+  },
+  "performance_summary": {
+    "training_operations": 0,
+    "prediction_operations": 0,
+    "audit_operations": 0,
+    "enhancement_applications": 6,
+    "average_response_time": 0.0,
+    "total_processing_time": 0
+  },
+  "compliance_summary": {
+    "GDPR": {
+      "framework": "GDPR",
+      "total_validations": 4,
+      "compliant": true,
+      "last_validation": "2025-09-30T19:52:17.633474+00:00",
+      "detailed_validations": [
+        {
+          "framework": "GDPR",
+          "timestamp": "2025-09-30T19:52:17.525313+00:00",
+          "status": "compliant",
+          "checks": [
+            {
+              "check": "lawful_basis_specified",
+              "status": "pass",
+              "value": "legitimate_interests"
+            },
+            {
+              "check": "dpo_contact_provided",
+              "status": "pass",
+              "value": true
+            },
+            {
+              "check": "data_minimization_enabled",
+              "status": "pass",
+              "value": true
+            },
+            {
+              "check": "anonymization_enabled",
+              "status": "pass",
+              "value": true
+            },
+            {
+              "check": "retention_period_defined",
+              "status": "pass",
+              "value": 2555
+            }
+          ],
+          "warnings": []
+        },
+        {
+          "framework": "GDPR",
+          "phase": "training",
+          "timestamp": "2025-09-30T19:52:17.525313+00:00",
+          "data_samples": 4,
+          "processed_samples": 4,
+          "snapshot_id": "mock_gdpr_credit_scorer_1.0.0_7224345502597051614",
+          "compliance_checks": [
+            {
+              "check": "data_minimization",
+              "status": "pass",
+              "detail": "Only necessary data processed"
+            },
+            {
+              "check": "purpose_limitation",
+              "status": "pass",
+              "detail": "Purpose: automated_credit_decision_making"
+            },
+            {
+              "check": "storage_limitation",
+              "status": "pass",
+              "detail": "Retention: 2555 days"
+            },
+            {
+              "check": "accuracy",
+              "status": "pass",
+              "detail": "Training data validated"
+            }
+          ]
+        },
+        {
+          "framework": "GDPR",
+          "phase": "inference",
+          "timestamp": "2025-09-30T19:52:17.628476+00:00",
+          "receipt_id": "cc327decbcb192476af487ae3f204391b7b3cc1477af69748bbe8d2c2a5094e8",
+          "gdpr_compliant": true,
+          "compliance_checks": [
+            {
+              "check": "data_minimization",
+              "status": "pass",
+              "detail": "Query data minimized"
+            },
+            {
+              "check": "purpose_limitation",
+              "status": "pass",
+              "detail": "Used only for specified purpose"
+            },
+            {
+              "check": "accuracy",
+              "status": "pass",
+              "detail": "Model prediction accurate"
+            },
+            {
+              "check": "pii_protection",
+              "status": "pass",
+              "detail": "PII redacted from receipt"
+            }
+          ]
+        },
+        {
+          "type": "batch_processing",
+          "timestamp": "2025-09-30T19:52:17.633474+00:00",
+          "batch_size": 5,
+          "total_redactions": 5,
+          "frameworks": [
+            "GDPR",
+            "NIST-AI-RMF",
+            "ISO/IEC-42001"
+          ],
+          "compliance_status": "compliant"
+        }
+      ]
+    },
+    "NIST-AI-RMF": {
+      "framework": "NIST-AI-RMF",
+      "total_validations": 4,
+      "compliant": true,
+      "last_validation": "2025-09-30T19:52:17.633474+00:00",
+      "detailed_validations": [
+        {
+          "framework": "NIST-AI-RMF",
+          "timestamp": "2025-09-30T19:52:17.525313+00:00",
+          "status": "compliant",
+          "checks": [
+            {
+              "check": "risk_management_enabled",
+              "status": "pass",
+              "value": true
+            },
+            {
+              "check": "bias_monitoring_available",
+              "status": "pass",
+              "value": 
