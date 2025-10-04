@@ -1,0 +1,23 @@
+{
+  "test_vector_suite_version": "1.0.0",
+  "generated_at": "2025-01-01T12:00:00.512502Z",
+  "provenance": {
+    "tool": "enhanced_core_demo.py",
+    "version": "1.0.0"
+  },
+  "test_vectors": [
+    {
+      "category": "hash",
+      "input": "hello",
+      "expected_sha256": "2cf24dba4f21d4288cfc1cc14159b8e68c85f3c8b77b423906aab2c5b84bc9b6"
+    },
+    {
+      "category": "canonicalization",
+      "input": {
+        "b": 2,
+        "a": 1
+      },
+      "expected_canonical": "{\"a\":1,\"b\":2}"
+    }
+  ]
+}

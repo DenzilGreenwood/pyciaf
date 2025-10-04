@@ -1,0 +1,37 @@
+{
+  "manifest_version": "1.0",
+  "generated_at": "2025-10-04T10:31:04.652945+00:00",
+  "files": [
+    {
+      "path": "public_key.pem",
+      "sha256": "1b5678c1e2bbd249083db3fcd5f901ab6f8577aa6bde383ac40ad74f54b02769"
+    },
+    {
+      "path": "anchor.json",
+      "sha256": "78e3a21fa153450e5aaf85fb2649c5bc0dc0aaaf5fe110c699132c2756dea9e0"
+    },
+    {
+      "path": "proof.json",
+      "sha256": "507d236a2b577a92f8f42d77cc2d0cc6a654a426e8a4858620a5fa51858d551d"
+    },
+    {
+      "path": "capsule.json",
+      "sha256": "d0a241b4871cd42114792aef1b8c7e8adb98062117b0e982000e30f46f30d052"
+    },
+    {
+      "path": "assurance_report.json",
+      "sha256": "66193f8aaf95e318e7278df9adc80347a52b8189fac5a9b07f7baddd64c32279"
+    },
+    {
+      "path": "demo_test_vectors.json",
+      "sha256": "2a8926bb572516ac9f084febc47e1651386eaee5bd07792bccea93fc8faa3f3b"
+    }
+  ],
+  "evidence_pack_sha256_merkle_root": "48e0b531d3662e8f3a3940360a84a730b83b9980cecc733a0c6df08c03261ba9",
+  "manifest_hashing": {
+    "hash_algorithm": "sha256",
+    "leaf_ordering": "path_lexicographic",
+    "merkle_concat": "left||right (raw bytes)",
+    "computation": "sha256(file1_hash + file2_hash + ... + fileN_hash)"
+  }
+}

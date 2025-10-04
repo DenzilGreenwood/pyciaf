@@ -158,5 +158,4 @@ class CryptoUtils:
     def decrypt_aes_gcm(key: bytes, ciphertext: bytes, nonce: bytes, tag: bytes, aad: Optional[bytes] = None) -> bytes:
         return decrypt_aes_gcm(key, ciphertext, nonce, tag, aad)
     @staticmethod
-
     def secure_random_bytes(length: int) -> bytes: return secure_random_bytes(length)

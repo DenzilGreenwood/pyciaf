@@ -35,14 +35,36 @@ except ImportError:
     UNIVERSAL_ADAPTER_AVAILABLE = False
     warnings.warn("Universal model adapter not available, using basic adapter")
 
-# Core CIAF imports
-try:
-    from ..api import CIAFFramework
-    from ..inference import InferenceReceipt
-    CIAF_CORE_AVAILABLE = True
-except ImportError:
-    CIAF_CORE_AVAILABLE = False
-    warnings.warn("CIAF core components not available")
+# Core CIAF imports - deferred to avoid circular imports
+CIAF_CORE_AVAILABLE = True
+_ciaf_framework = None
+_inference_receipt = None
+
+def _get_ciaf_framework():
+    """Lazy import of CIAFFramework to avoid circular imports."""
+    global _ciaf_framework
+    if _ciaf_framework is None:
+        try:
+            from ..api import CIAFFramework
+            _ciaf_framework = CIAFFramework
+        except ImportError:
+            global CIAF_CORE_AVAILABLE
+            CIAF_CORE_AVAILABLE = False
+            return None
+    return _ciaf_framework
+
+def _get_inference_receipt():
+    """Lazy import of InferenceReceipt to avoid circular imports."""
+    global _inference_receipt
+    if _inference_receipt is None:
+        try:
+            from ..inference import InferenceReceipt
+            _inference_receipt = InferenceReceipt
+        except ImportError:
+            global CIAF_CORE_AVAILABLE
+            CIAF_CORE_AVAILABLE = False
+            return None
+    return _inference_receipt
 
 # Optional enhancement imports
 try:

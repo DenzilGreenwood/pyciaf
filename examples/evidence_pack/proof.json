@@ -1,0 +1,19 @@
+{
+  "leaf_hash": "6906b4ee805dab57c9b8f291407c829ef15b9131659678b2a749fa29c9de2fe0",
+  "merkle_root": "58b586484b3dbae46c14b200fee6eab197a13462ec0a88e1fc470ed8ef128658",
+  "merkle_path": [
+    [
+      "6906b4ee805dab57c9b8f291407c829ef15b9131659678b2a749fa29c9de2fe0",
+      "right"
+    ],
+    [
+      "2f6b0c10311a12360b06f38eafba76d2c50ac4d35dba43e77a838e052520c39f",
+      "left"
+    ]
+  ],
+  "inclusion_proof_valid": true,
+  "provenance": {
+    "tool": "enhanced_core_demo.py",
+    "version": "1.0.0"
+  }
+}

@@ -12,28 +12,62 @@ Version: 1.0.0
 
 import warnings
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 # Protocol imports
 from .interfaces import ModelWrapper
 from .policy import WrapperPolicy, get_default_wrapper_policy
 
-# Core CIAF imports
-try:
+# Type checking imports
+if TYPE_CHECKING:
     from ..api import CIAFFramework
     from ..inference import InferenceReceipt
     from ..provenance import TrainingSnapshot
-    CIAF_CORE_AVAILABLE = True
-except ImportError:
-    CIAF_CORE_AVAILABLE = False
-    warnings.warn("CIAF core components not available")
-    # Create dummy classes for type hints
-    class TrainingSnapshot:
-        pass
-    class InferenceReceipt:
-        pass
-    class CIAFFramework:
-        pass
+
+# Core CIAF imports - deferred to avoid circular imports
+CIAF_CORE_AVAILABLE = True
+_ciaf_framework = None
+_inference_receipt = None
+_training_snapshot = None
+
+def _get_ciaf_framework():
+    """Lazy import of CIAFFramework to avoid circular imports."""
+    global _ciaf_framework
+    if _ciaf_framework is None:
+        try:
+            from ..api import CIAFFramework
+            _ciaf_framework = CIAFFramework
+        except ImportError:
+            global CIAF_CORE_AVAILABLE
+            CIAF_CORE_AVAILABLE = False
+            return type('CIAFFramework', (), {})  # Dummy class
+    return _ciaf_framework
+
+def _get_inference_receipt():
+    """Lazy import of InferenceReceipt to avoid circular imports."""
+    global _inference_receipt
+    if _inference_receipt is None:
+        try:
+            from ..inference import InferenceReceipt
+            _inference_receipt = InferenceReceipt
+        except ImportError:
+            global CIAF_CORE_AVAILABLE
+            CIAF_CORE_AVAILABLE = False
+            return type('InferenceReceipt', (), {})  # Dummy class
+    return _inference_receipt
+
+def _get_training_snapshot():
+    """Lazy import of TrainingSnapshot to avoid circular imports."""
+    global _training_snapshot
+    if _training_snapshot is None:
+        try:
+            from ..provenance import TrainingSnapshot
+            _training_snapshot = TrainingSnapshot
+        except ImportError:
+            global CIAF_CORE_AVAILABLE
+            CIAF_CORE_AVAILABLE = False
+            return type('TrainingSnapshot', (), {})  # Dummy class
+    return _training_snapshot
 
 
 class ModernCIAFModelWrapper(ModelWrapper):
@@ -74,9 +108,12 @@ class ModernCIAFModelWrapper(ModelWrapper):
         self.model_name = model_name.strip()
         self.policy = policy or get_default_wrapper_policy()
         
-        # Initialize CIAF framework
-        if CIAF_CORE_AVAILABLE:
-            self.framework = framework or CIAFFramework(self.model_name)
+        # Initialize CIAF framework using lazy import
+        CIAFFramework = _get_ciaf_framework()
+        if CIAFFramework and framework:
+            self.framework = framework
+        elif CIAFFramework:
+            self.framework = CIAFFramework(self.model_name)
         else:
             self.framework = None
             warnings.warn("CIAF framework not available - using simulation mode")
@@ -101,9 +138,9 @@ class ModernCIAFModelWrapper(ModelWrapper):
             self._protocols_available = True
         
         # Initialize state
-        self.training_snapshot: Optional[TrainingSnapshot] = None
+        self.training_snapshot: Optional[Any] = None
         self.model_version: Optional[str] = None
-        self.last_receipt: Optional[InferenceReceipt] = None
+        self.last_receipt: Optional[Any] = None
         self.enhancement_configurations: Dict[str, Any] = {}
         self.audit_entries: List[Dict[str, Any]] = []
         
@@ -203,7 +240,7 @@ class ModernCIAFModelWrapper(ModelWrapper):
               master_password: str,
               training_params: Optional[Dict[str, Any]] = None,
               model_version: str = "1.0.0",
-              fit_model: bool = True) -> TrainingSnapshot:
+              fit_model: bool = True) -> Any:
         """
         Train the wrapped ML model and create a CIAF Training Snapshot.
         
@@ -378,7 +415,7 @@ class ModernCIAFModelWrapper(ModelWrapper):
     def predict(self,
                 query: Union[str, List, Any],
                 model_version: Optional[str] = None,
-                use_model: bool = True) -> Tuple[Any, InferenceReceipt]:
+                use_model: bool = True) -> Tuple[Any, Any]:
         """
         Run inference on the wrapped model and generate a CIAF Inference Receipt.
         
@@ -496,7 +533,8 @@ class ModernCIAFModelWrapper(ModelWrapper):
             
             # Create inference receipt
             receipt = None
-            if self.policy.inference_policy.create_inference_receipts and CIAF_CORE_AVAILABLE:
+            InferenceReceipt = _get_inference_receipt()
+            if self.policy.inference_policy.create_inference_receipts and InferenceReceipt:
                 try:
                     query_str = str(query) if not isinstance(query, str) else query
                     output_str = str(prediction)
@@ -574,7 +612,7 @@ class ModernCIAFModelWrapper(ModelWrapper):
             else:
                 raise RuntimeError(f"Inference failed for {self.model_name}: {str(e)}") from e
     
-    def verify(self, receipt: InferenceReceipt) -> Dict[str, Any]:
+    def verify(self, receipt: Any) -> Dict[str, Any]:
         """
         Verify the integrity and provenance of an inference receipt.
         

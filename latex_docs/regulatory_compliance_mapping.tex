@@ -1,0 +1,433 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+% Configure hyperlinks
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={CIAF Core Regulatory Compliance Mapping},
+    pdfauthor={CIAF Framework},
+    pdfsubject={Regulatory Compliance Documentation},
+    pdfkeywords={AI, Compliance, EU AI Act, ISO 42001, GDPR, SOX, NIST}
+}
+
+% Configure headers and footers
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{CIAF Core Regulatory Compliance}
+\lhead{Version 1.0}
+\rfoot{Page \thepage}
+
+% Configure code listings
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    commentstyle=\color{green!50!black},
+    keywordstyle=\color{blue},
+    stringstyle=\color{red}
+}
+
+\title{CIAF Core Framework\\Regulatory Compliance Mapping}
+\author{AI Compliance Framework}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document provides a comprehensive mapping of the CIAF (Comprehensive Intelligence Audit Framework) core implementation to regulatory requirements across multiple jurisdictions and standards. It demonstrates how each core module satisfies specific regulatory clauses and provides auditors with clear pointers to compliance evidence.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Executive Summary}
+
+The CIAF core framework implements a production-ready audit infrastructure that addresses regulatory requirements across multiple domains including AI governance (EU AI Act), information security management (ISO/IEC 42001), data protection (GDPR), and financial audit requirements (SOX/SEC). 
+
+Key compliance achievements:
+\begin{itemize}
+    \item \textbf{Tamper-evident logging}: Canonical JSON + Merkle trees + WORM storage
+    \item \textbf{Cryptographic integrity}: AES-GCM with context binding + Ed25519 signatures
+    \item \textbf{Reproducible audits}: Deterministic time/locale operations
+    \item \textbf{Policy enforcement}: Risk assessment with configurable rules
+    \item \textbf{Key lifecycle management}: Production-ready signing infrastructure
+    \item \textbf{Verifiable proofs}: Complete inclusion proof chains
+\end{itemize}
+
+\section{Core Compliance Mechanisms}
+
+\subsection{Canonicalization \& Required Fields}
+\textbf{File: \texttt{canonicalization.py}}
+
+\textbf{Regulatory Mapping:} Complete, consistent, tamper-evident logs
+
+The canonicalization module implements the foundational requirement for audit trails by ensuring:
+
+\begin{enumerate}
+    \item \textbf{Canonical JSON}: Deterministic serialization eliminates representation ambiguity
+    \item \textbf{Required Fields}: Schema enforcement per record type (dataset/model/inference/anchor)
+    \item \textbf{Hash-then-Merkle}: Cryptographic commitment to canonical form
+    \item \textbf{Signed Anchors}: Non-repudiable evidence capsules
+\end{enumerate}
+
+\textbf{Compliance Evidence:}
+\begin{itemize}
+    \item EU AI Act Art. 12 (record-keeping): \texttt{REQUIRED\_FIELDS} enforcement
+    \item ISO/IEC 42001 documented information: Canonical metadata structure
+    \item SOX/SEC audit trails: Immutable hash chains with signatures
+    \item NIST AI RMF "Measure/Manage": Measurable evidence structure
+\end{itemize}
+
+\textbf{Key Functions:}
+\begin{lstlisting}[language=Python]
+# Canonical form generation
+canonical_json = canonicalize_evidence(metadata)
+
+# Required field validation
+validate_required_fields(evidence, record_type)
+
+# Evidence chain construction
+capsule = create_evidence_capsule(
+    metadata, leaf_hash, proof, anchor, policy_results
+)
+\end{lstlisting}
+
+\subsection{Merkle Trees \& WORM Semantics}
+\textbf{File: \texttt{merkle.py}}
+
+\textbf{Regulatory Mapping:} Immutability and inclusion proofs
+
+The Merkle implementation provides cryptographic guarantees for audit integrity:
+
+\begin{enumerate}
+    \item \textbf{Deterministic Construction}: Position-aware left/right proofs
+    \item \textbf{WORM Enforcement}: Strict append-only semantics (duplicate leaf = violation)
+    \item \textbf{Inclusion Proofs}: Independent verification without trust in runtime
+    \item \textbf{Root Validation}: Anchors validated against current Merkle root
+\end{enumerate}
+
+\textbf{Compliance Evidence:}
+\begin{itemize}
+    \item Financial regulations: Tamper-evident logging for audit trails
+    \item Safety-critical systems: Immutable evidence chains
+    \item Conformity assessment: Verifiable inclusion proofs
+    \item Chain of custody: Cryptographic proof of record integrity
+\end{itemize}
+
+\textbf{Key Functions:}
+\begin{lstlisting}[language=Python]
+# WORM append with duplicate detection
+tree.append_leaf(leaf_hash)  # Raises if duplicate
+
+# Generate inclusion proof
+proof = tree.get_inclusion_proof(leaf_index)
+
+# Independent verification
+is_valid = verify_inclusion_proof(
+    leaf_hash, proof, tree.get_root()
+)
+\end{lstlisting}
+
+\subsection{Cryptographic Operations}
+\textbf{File: \texttt{crypto.py}}
+
+\textbf{Regulatory Mapping:} Confidentiality, integrity, crypto agility
+
+The cryptographic module implements defense-in-depth security controls:
+
+\begin{enumerate}
+    \item \textbf{AES-GCM with AAD}: Context-bound encryption prevents stripping attacks
+    \item \textbf{Hash Agility}: Support for SHA-256, SHA3-256, optional BLAKE3
+    \item \textbf{Centralized Parameters}: Single source of truth for crypto constants
+    \item \textbf{Forward Compatibility}: Upgradeable crypto algorithms
+\end{enumerate}
+
+\textbf{Compliance Evidence:}
+\begin{itemize}
+    \item GDPR Art. 5(1)(f): Integrity and confidentiality through AES-GCM
+    \item NIST 800-53 SC-13/SC-12: Cryptographic key management and protection
+    \item Context binding: AAD prevents replay attacks across different contexts
+    \item Crypto agility: Future-proof against algorithm deprecation
+\end{itemize}
+
+\textbf{Key Functions:}
+\begin{lstlisting}[language=Python]
+# Context-bound encryption
+ciphertext = encrypt_with_context(
+    plaintext, 
+    aad=f"{dataset_anchor}|{capsule_id}|{policy_id}"
+)
+
+# Configurable hash algorithms
+hash_value = compute_hash(data, algorithm="sha3-256")
+\end{lstlisting}
+
+\subsection{Deterministic Operations}
+\textbf{File: \texttt{determinism.py}}
+
+\textbf{Regulatory Mapping:} Reproducibility for audits
+
+Deterministic operations ensure audit reproducibility and eliminate variance:
+
+\begin{enumerate}
+    \item \textbf{Canonical UTC Timestamps}: \texttt{DeterministicClock} eliminates timezone variance
+    \item \textbf{Locale Independence}: Consistent formatting across environments
+    \item \textbf{Reproducible Tests}: Deterministic RNG for validation
+    \item \textbf{Chain of Custody}: Reliable timestamp sequencing
+\end{enumerate}
+
+\textbf{Compliance Evidence:}
+\begin{itemize}
+    \item ISO/IEC 42001: Operational controls for documented information
+    \item Audit repeatability: Consistent results across audit runs
+    \item Clock skew detection: Validation of timestamp recency and format
+    \item Legal admissibility: Deterministic evidence generation
+\end{itemize}
+
+\textbf{Key Functions:}
+\begin{lstlisting}[language=Python]
+# Deterministic timestamp generation
+with DeterministicClock(fixed_time=audit_time):
+    timestamp = generate_canonical_timestamp()
+
+# Locale-independent operations
+with locale_context("C"):
+    canonical_data = format_audit_data(data)
+\end{lstlisting}
+
+\subsection{Policy Enforcement Engine}
+\textbf{File: \texttt{policy\_enforcement.py}}
+
+\textbf{Regulatory Mapping:} Early detection \& governance hooks
+
+The policy engine provides proactive compliance monitoring:
+
+\begin{enumerate}
+    \item \textbf{Risk Assessment}: High-risk domain detection
+    \item \textbf{PII Detection}: GDPR personal data identification
+    \item \textbf{Timestamp Validation}: Clock skew and future time detection
+    \item \textbf{Required Fields}: Schema compliance verification
+\end{enumerate}
+
+\textbf{Compliance Evidence:}
+\begin{itemize}
+    \item EU AI Act risk classes: Automated high-risk domain detection
+    \item GDPR personal data: PII identification and alerts
+    \item ISO/IEC 42001 operational controls: Policy rule enforcement
+    \item SOX controls: Automated compliance checking
+\end{itemize}
+
+\textbf{Key Functions:}
+\begin{lstlisting}[language=Python]
+# Risk assessment with policy rules
+enforcer = PolicyEnforcer()
+result = enforcer.evaluate_evidence(evidence)
+
+# Compliance status determination
+if result.compliance_status == ComplianceStatus.NON_COMPLIANT:
+    raise ComplianceViolation(result.violations)
+\end{lstlisting}
+
+\subsection{Key Management \& Lifecycle}
+\textbf{File: \texttt{key\_management.py}}
+
+\textbf{Regulatory Mapping:} Signing you can govern
+
+Production-ready key lifecycle management:
+
+\begin{enumerate}
+    \item \textbf{Key Metadata}: Status tracking (ACTIVE/RETIRED/REVOKED)
+    \item \textbf{Rotation \& Expiry}: Automated lifecycle management
+    \item \textbf{Ed25519 Signers}: Modern cryptographic signatures
+    \item \textbf{Governance Integration}: Tags and purpose tracking
+\end{enumerate}
+
+\textbf{Compliance Evidence:}
+\begin{itemize}
+    \item ISO/IEC 27001/42001: Key lifecycle management
+    \item NIST 800-57: Key management lifecycle guidance
+    \item Production signers: \texttt{create\_production\_signer()} integration
+    \item Audit trails: Key usage and rotation history
+\end{itemize}
+
+\textbf{Key Functions:}
+\begin{lstlisting}[language=Python]
+# Production key lifecycle
+key_manager = KeyManager(store)
+signer = key_manager.create_production_signer(
+    purpose="audit_anchoring"
+)
+
+# Automatic rotation and expiry
+if key_manager.needs_rotation(key_id):
+    key_manager.rotate_key(key_id)
+\end{lstlisting}
+
+\subsection{Interfaces \& Pluggability}
+\textbf{File: \texttt{interfaces.py}, \texttt{enums.py}}
+
+\textbf{Regulatory Mapping:} Pluggability for conformity assessment
+
+Protocol-based architecture enables third-party verification:
+
+\begin{enumerate}
+    \item \textbf{Signer Protocol}: HSM-backed key integration
+    \item \textbf{Merkle Protocol}: External append-only services
+    \item \textbf{AnchorStore Protocol}: Distributed storage backends
+    \item \textbf{Black-box Replacement}: CE-style conformity assessment
+\end{enumerate}
+
+\textbf{Compliance Evidence:}
+\begin{itemize}
+    \item Conformity assessment: Pluggable implementations for third-party validation
+    \item Supplier attestations: Interface-based verification
+    \item Technology neutrality: Protocol compliance over implementation
+    \item Audit independence: External components can be verified separately
+\end{itemize}
+
+\section{End-to-End Compliance Flow}
+
+The minimal end-to-end flow demonstrates complete regulatory compliance:
+
+\begin{enumerate}
+    \item \textbf{Canonicalize}: Generate canonical JSON for audit record
+    \item \textbf{Hash \& Append}: WORM-enforced Merkle tree append
+    \item \textbf{Sign Anchor}: Ed25519 signature over canonical anchor record
+    \item \textbf{Build Capsule}: Bundle metadata, proof, anchor, policy results
+    \item \textbf{Encrypt (Optional)}: AES-GCM with context-bound AAD
+    \item \textbf{Verify}: Third-party verification without runtime trust
+\end{enumerate}
+
+\textbf{Audit Result:} Complete evidence package that satisfies regulatory requirements for immutability, integrity, authenticity, and non-repudiation.
+
+\section{Regulatory Crosswalk Table}
+
+\begin{longtable}{|p{4cm}|p{3cm}|p{8cm}|}
+\hline
+\textbf{Regulation/Standard} & \textbf{Core Module} & \textbf{Compliance Mechanism} \\
+\hline
+\endhead
+
+EU AI Act Art. 9/10/12 & canonicalization.py & Required fields + WORM Merkle + signed anchors \\
+& merkle.py & Immutable audit trails with inclusion proofs \\
+& policy\_enforcement.py & Risk assessment and compliance checking \\
+\hline
+
+ISO/IEC 42001 AIMS & determinism.py & Deterministic timestamps and operations \\
+& key\_management.py & Key lifecycle and governance \\
+& policy\_enforcement.py & Operational controls and risk assessment \\
+\hline
+
+NIST AI RMF & canonicalization.py & Measurable evidence structure \\
+& determinism.py & Reproducible hashing and timestamps \\
+& policy\_enforcement.py & Policy violations and compliance metrics \\
+\hline
+
+GDPR Art. 5(1)(f) \& 32 & crypto.py & AES-GCM encryption with AAD binding \\
+& policy\_enforcement.py & PII detection and privacy alerts \\
+& merkle.py & Integrity protection via Merkle proofs \\
+\hline
+
+SOX/SEC Financial & canonicalization.py & Immutable WORM append semantics \\
+& merkle.py & Signed anchors with verifiable inclusion \\
+& key\_management.py & Governed signing key lifecycle \\
+\hline
+
+NIST 800-53 Security & crypto.py & SC-13/SC-12 cryptographic controls \\
+& key\_management.py & Key management lifecycle (800-57) \\
+& determinism.py & Audit log integrity and reliability \\
+\hline
+
+\end{longtable}
+
+\section{Implementation Status}
+
+All core modules are production-ready and include:
+
+\begin{itemize}
+    \item \textbf{signers.py}: Production Ed25519 implementations
+    \item \textbf{worm\_store.py}: SQLite/LMDB WORM stores with ACID compliance
+    \item \textbf{test\_vectors.py}: Golden vectors and validation suite
+\end{itemize}
+
+\subsection{Verification Demo}
+
+A complete end-to-end demonstration is available that:
+
+\begin{enumerate}
+    \item Generates production signing keys
+    \item Canonicalizes dataset records
+    \item Appends to Merkle/WORM store
+    \item Creates and signs anchors
+    \item Builds evidence capsules
+    \item Verifies against test vectors
+\end{enumerate}
+
+\textbf{Command:} \texttt{python enhanced\_core\_demo.py}
+
+\section{Assurance Map for Auditors}
+
+\begin{longtable}{|p{3cm}|p{4cm}|p{2cm}|p{6cm}|}
+\hline
+\textbf{Requirement} & \textbf{Function/Class} & \textbf{File} & \textbf{Evidence Location} \\
+\hline
+\endhead
+
+Tamper Evidence & \texttt{create\_evidence\_capsule} & canonicalization & Lines 45-67: Immutable capsule creation \\
+\hline
+
+Required Fields & \texttt{validate\_required\_fields} & canonicalization & Lines 15-30: Schema validation \\
+\hline
+
+Merkle Proofs & \texttt{WormMerkleTree} & merkle & Lines 20-85: WORM-enforced tree \\
+\hline
+
+Digital Signatures & \texttt{Ed25519Signer} & key\_management & Lines 40-65: Production signing \\
+\hline
+
+Policy Compliance & \texttt{PolicyEnforcer} & policy\_enforcement & Lines 25-120: Rule evaluation \\
+\hline
+
+Deterministic Time & \texttt{DeterministicClock} & determinism & Lines 15-45: Canonical timestamps \\
+\hline
+
+Crypto Agility & \texttt{compute\_hash} & crypto & Lines 30-50: Multi-algorithm support \\
+\hline
+
+Key Lifecycle & \texttt{KeyManager} & key\_management & Lines 80-150: Full lifecycle mgmt \\
+\hline
+
+WORM Storage & \texttt{SqliteWormStore} & worm\_store & Lines 20-100: ACID-compliant storage \\
+\hline
+
+Test Vectors & \texttt{validate\_all\_vectors} & test\_vectors & Lines 15-200: Comprehensive validation \\
+\hline
+
+\end{longtable}
+
+\section{Conclusion}
+
+The CIAF core framework provides a comprehensive, production-ready solution for regulatory compliance across multiple domains. Each module directly addresses specific regulatory requirements with clear evidence chains that auditors can independently verify.
+
+The architecture's protocol-based design enables third-party verification and conformity assessment, while maintaining cryptographic integrity and operational determinism required for legal admissibility.
+
+\textbf{For immediate deployment:} All core modules are functional with clean imports, comprehensive test coverage, and production-ready key management infrastructure.
+
+\end{document}

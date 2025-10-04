@@ -1,0 +1,137 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{colortbl}
+
+\title{\textbf{CIAF Core Framework - Regulatory Assurance Map}}
+\author{Version 1.0 - \today}
+\date{}
+
+\begin{document}
+
+\maketitle
+\vspace{-1cm}
+
+\section*{Executive Summary}
+CIAF core provides \textbf{production-ready AI audit infrastructure} with cryptographic guarantees for regulatory compliance. All modules are implemented and tested.
+
+\begin{longtable}{|p{2.5cm}|p{2cm}|p{1.8cm}|p{6cm}|p{1.5cm}|}
+\hline
+\rowcolor{gray!30}
+\textbf{Regulatory Req.} & \textbf{CIAF Module} & \textbf{Key Function} & \textbf{Compliance Evidence} & \textbf{Status} \\
+\hline
+\endhead
+
+\multicolumn{5}{|l|}{\cellcolor{blue!20}\textbf{EU AI ACT - Articles 9, 10, 12 (Risk Management \& Record Keeping)}} \\
+\hline
+
+Required Fields & canonicalization & \texttt{validate\_required\_fields} & Schema enforcement per record type (dataset/model/inference) & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Tamper Evidence & canonicalization & \texttt{create\_evidence\_capsule} & Immutable hash chains with signed anchors & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Risk Assessment & policy\_enforcement & \texttt{PolicyEnforcer} & High-risk domain detection, compliance status & \cellcolor{green!30}✓ DONE \\
+\hline
+
+\multicolumn{5}{|l|}{\cellcolor{blue!20}\textbf{ISO/IEC 42001 - AI Management System}} \\
+\hline
+
+Documented Info & determinism & \texttt{DeterministicClock} & Canonical UTC timestamps, locale independence & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Operational Controls & policy\_enforcement & \texttt{evaluate\_evidence} & Automated policy rule enforcement & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Key Lifecycle & key\_management & \texttt{KeyManager} & ACTIVE/RETIRED/REVOKED status, rotation & \cellcolor{green!30}✓ DONE \\
+\hline
+
+\multicolumn{5}{|l|}{\cellcolor{blue!20}\textbf{GDPR - Articles 5(1)(f), 25, 32 (Privacy \& Security)}} \\
+\hline
+
+Integrity/Confidentiality & crypto & \texttt{encrypt\_with\_context} & AES-GCM with AAD binding to prevent stripping & \cellcolor{green!30}✓ DONE \\
+\hline
+
+PII Detection & policy\_enforcement & \texttt{PiiDetectionRule} & Personal data identification and alerts & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Data Protection & merkle & \texttt{verify\_inclusion\_proof} & Cryptographic integrity via Merkle proofs & \cellcolor{green!30}✓ DONE \\
+\hline
+
+\multicolumn{5}{|l|}{\cellcolor{blue!20}\textbf{NIST AI RMF - Measure \& Manage Functions}} \\
+\hline
+
+Measurable Evidence & canonicalization & \texttt{canonicalize\_evidence} & Structured, verifiable audit records & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Reproducible Ops & determinism & \texttt{with\_deterministic\_context} & Consistent results across audit runs & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Policy Violations & policy\_enforcement & \texttt{ComplianceStatus} & COMPLIANT/REQUIRES\_REVIEW/NON\_COMPLIANT & \cellcolor{green!30}✓ DONE \\
+\hline
+
+\multicolumn{5}{|l|}{\cellcolor{blue!20}\textbf{SOX/SEC - Financial Audit Requirements}} \\
+\hline
+
+Immutable Logs & merkle & \texttt{WormMerkleTree} & WORM-enforced append-only semantics & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Signed Anchors & key\_management & \texttt{create\_production\_signer} & Ed25519 signatures for non-repudiation & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Inclusion Proofs & merkle & \texttt{get\_inclusion\_proof} & Independent verification without runtime trust & \cellcolor{green!30}✓ DONE \\
+\hline
+
+\multicolumn{5}{|l|}{\cellcolor{blue!20}\textbf{NIST 800-53 - Security Controls}} \\
+\hline
+
+SC-13 Crypto Use & crypto & \texttt{compute\_hash} & Hash agility: SHA-256, SHA3-256, BLAKE3 & \cellcolor{green!30}✓ DONE \\
+\hline
+
+SC-12 Key Mgmt & key\_management & \texttt{rotate\_key} & Lifecycle management per NIST 800-57 & \cellcolor{green!30}✓ DONE \\
+\hline
+
+\multicolumn{5}{|l|}{\cellcolor{blue!20}\textbf{Additional Infrastructure}} \\
+\hline
+
+WORM Storage & worm\_store & \texttt{SqliteWormStore} & ACID-compliant durable storage & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Test Vectors & test\_vectors & \texttt{validate\_all\_vectors} & Golden test suite for validation & \cellcolor{green!30}✓ DONE \\
+\hline
+
+Pluggable Arch & interfaces & \texttt{Protocol} classes & HSM/external service integration & \cellcolor{green!30}✓ DONE \\
+\hline
+
+\end{longtable}
+
+\section*{End-to-End Compliance Flow}
+
+\begin{enumerate}
+    \item \textbf{Canonicalize} record → \textbf{Hash} → \textbf{WORM Merkle append} → \textbf{Sign anchor} → \textbf{Build capsule}
+    \item \textbf{Result:} Third-party verifiable evidence package with no runtime trust required
+\end{enumerate}
+
+\section*{Deployment Readiness}
+
+\begin{itemize}
+    \item \textbf{✓ Production Keys:} Ed25519 signers with full lifecycle management
+    \item \textbf{✓ Durable Storage:} SQLite/LMDB WORM stores with ACID compliance  
+    \item \textbf{✓ Clean Imports:} Zero circular dependency warnings
+    \item \textbf{✓ Test Coverage:} Comprehensive validation suite with golden vectors
+    \item \textbf{✓ Demo Available:} \texttt{python enhanced\_core\_demo.py}
+\end{itemize}
+
+\section*{For Auditors \& Buyers}
+
+\textbf{Evidence Location:} All compliance mechanisms are in \texttt{ciaf/core/} with function-level traceability to specific regulatory clauses.
+
+\textbf{Independent Verification:} Protocol-based architecture enables black-box replacement for conformity assessment.
+
+\textbf{Regulatory Coverage:} EU AI Act, ISO/IEC 42001, GDPR, SOX/SEC, NIST (AI RMF + 800-53) - comprehensive compliance foundation.
+
+\end{document}

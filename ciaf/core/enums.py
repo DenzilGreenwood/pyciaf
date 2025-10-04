@@ -32,4 +32,4 @@ class HashAlgorithm(str, Enum):
 class SignatureAlgorithm(str, Enum):
     """Supported signature algorithms."""
     ED25519 = "ed25519"  # Production default
-    MOCK = "mock"        # Legacy/testing only
+    MOCK = "mock"        # Legacy/testing only ## DEPRECATED ## DO NOT USE

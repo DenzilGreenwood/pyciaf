@@ -2,22 +2,29 @@
 Merkle tree implementation for tamper-evident data integrity verification.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2025-09-26
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.1.0
 """
 
+from typing import List, Tuple
 from .crypto import sha256_hash
+from .interfaces import Merkle
 
 class MerkleTree:
-    """Deterministic Merkle tree with left/right proofs and caches."""
+    """Deterministic Merkle tree with left/right proofs and caches implementing the Merkle protocol."""
 
-    def __init__(self, leaves: list[str]):
+    def __init__(self, leaves: list[str] = None):
+        leaves = leaves or []
         if not leaves:
-            raise ValueError("Merkle tree must have at least one leaf.")
-        self.leaves = leaves
-        self.tree = self._build_tree(leaves)
-        self.root = self.tree[-1][0] if self.tree else None
+            # Allow empty trees for add_leaf functionality
+            self.leaves = []
+            self.tree = []
+            self.root = sha256_hash(b"empty_tree")
+        else:
+            self.leaves = leaves
+            self.tree = self._build_tree(leaves)
+            self.root = self.tree[-1][0] if self.tree else None
 
         self._proof_cache: dict[str, list[tuple[str, str]]] = {}
         self._verification_cache: dict[tuple[str, str], bool] = {}
@@ -42,6 +49,27 @@ class MerkleTree:
             tree.append(nxt)
             level = nxt
         return tree
+
+    def add_leaf(self, leaf_hash: str) -> str:
+        """Add a new leaf and return the new root hash."""
+        if leaf_hash in self.leaves:
+            raise ValueError(f"Leaf {leaf_hash} already exists (WORM violation)")
+        
+        self.leaves.append(leaf_hash)
+        
+        # Clear caches since tree structure changed
+        self._proof_cache.clear()
+        self._verification_cache.clear()
+        
+        # Rebuild tree
+        if len(self.leaves) == 1:
+            self.tree = [self.leaves]
+            self.root = self.leaves[0]
+        else:
+            self.tree = self._build_tree(self.leaves)
+            self.root = self.tree[-1][0] if self.tree else None
+        
+        return self.root
 
     def get_root(self) -> str:
         return self.root
@@ -75,9 +103,17 @@ class MerkleTree:
 
         self._proof_cache[leaf_hash] = proof
         return proof
+    
+    def get_merkle_path(self, leaf_hash: str) -> List[Tuple[str, str]]:
+        """Alias for get_proof to maintain backward compatibility."""
+        return self.get_proof(leaf_hash)
+    
+    def verify_proof(self, leaf_hash: str, proof: List[Tuple[str, str]], root: str) -> bool:
+        """Instance method wrapper for static verify_proof."""
+        return self.verify_proof_static(leaf_hash, root, proof)
 
     @staticmethod
-    def verify_proof(leaf_hash: str, root_hash: str, proof: list[tuple[str, str]]) -> bool:
+    def verify_proof_static(leaf_hash: str, root_hash: str, proof: list[tuple[str, str]]) -> bool:
         cur = leaf_hash
         if not proof and cur == root_hash:
             return True

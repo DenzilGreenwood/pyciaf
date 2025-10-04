@@ -1,0 +1,57 @@
+{
+  "capsule_version": "1.0",
+  "capsule_type": "audit_proof",
+  "timestamp": "2025-10-04T10:38:03.073115Z",
+  "record": {
+    "type": "model",
+    "metadata": {
+      "record_type": "model",
+      "model_id": "fraud_detection_v2",
+      "timestamp": "2025-01-01T12:00:00.672367Z",
+      "actor_id": "ml_engineer",
+      "system_id": "ml_ops_platform",
+      "location": "us_east",
+      "policy_id": "production_policy",
+      "schema_version": "1.0",
+      "model_hash": "30b901d469877bae57c95fd1a00f3e304e8873314eea6bba4acd756f2d5ecc39",
+      "parameters_hash": "8d1f79c4f3562fff39fd0e2df9f493f1b5f74e47aaf66e524c974cd3bd1fa094"
+    },
+    "leaf_hash": "6906b4ee805dab57c9b8f291407c829ef15b9131659678b2a749fa29c9de2fe0"
+  },
+  "proofs": {
+    "merkle_path": [
+      [
+        "6906b4ee805dab57c9b8f291407c829ef15b9131659678b2a749fa29c9de2fe0",
+        "right"
+      ],
+      [
+        "2f6b0c10311a12360b06f38eafba76d2c50ac4d35dba43e77a838e052520c39f",
+        "left"
+      ]
+    ],
+    "merkle_root": "58b586484b3dbae46c14b200fee6eab197a13462ec0a88e1fc470ed8ef128658",
+    "inclusion_proof_valid": true
+  },
+  "anchor": {
+    "root": "58b586484b3dbae46c14b200fee6eab197a13462ec0a88e1fc470ed8ef128658",
+    "policy_id": "production_policy",
+    "schema_version": "1.0",
+    "timestamp": "2025-10-04T10:38:03.072114+00:00",
+    "domain_labels": [
+      "audit",
+      "production"
+    ],
+    "signature": "kUKNRLuKTr/BQ37VBALDe03eyEh8SakOoGR0TNiug0XiBrmh1ThjTH2iASU7oyD3pn194+8D8Qm89l0OphfxDg==",
+    "signing_key_id": "production_anchor_key",
+    "external_anchor": null
+  },
+  "verification": {
+    "capsule_hash": "c69437bf9b883258a1a058da4bbcc44f3dce7d2ac63898046f453c2c10dda7cc",
+    "verifiable_independently": true,
+    "signature_valid": true,
+    "signature_verified": true,
+    "merkle_proof_valid": true,
+    "policy_compliant": true,
+    "risk_assessment": null
+  }
+}

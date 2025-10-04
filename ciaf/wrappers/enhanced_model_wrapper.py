@@ -17,47 +17,73 @@ from pathlib import Path
 # Add the parent directory to the path so we can import from ciaf
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-try:
-    from ciaf.wrappers.model_wrapper import CIAFModelWrapper
-    from ciaf.adaptive_lcm import AdaptiveLCMWrapper, AdaptiveLCMConfig, LCMMode, InferencePriority
-    from ciaf.deferred_lcm import DeferredLCMProcessor
-    CIAF_AVAILABLE = True
-except ImportError:
-    warnings.warn("Could not import base CIAF components")
-    CIAF_AVAILABLE = False
+# CIAF imports - deferred to avoid circular imports
+CIAF_AVAILABLE = True
+_ciaf_model_wrapper = None
+_adaptive_lcm_wrapper = None
+_deferred_lcm_processor = None
+_lcm_mode = None
+_inference_priority = None
+_adaptive_lcm_config = None
+
+def _get_ciaf_components():
+    """Lazy import of CIAF components to avoid circular imports."""
+    global _ciaf_model_wrapper, _adaptive_lcm_wrapper, _deferred_lcm_processor
+    global _lcm_mode, _inference_priority, _adaptive_lcm_config
     
-    # Create enums first
-    from enum import Enum
-    class LCMMode(Enum):
-        IMMEDIATE = "immediate"
-        DEFERRED = "deferred"
-        ADAPTIVE = "adaptive"
-    
-    class InferencePriority(Enum):
-        CRITICAL = "critical"
-        HIGH = "high"
-        NORMAL = "normal"
-        LOW = "low"
-    
-    # Create placeholder classes for development
-    class CIAFModelWrapper:
-        def __init__(self, *args, **kwargs):
-            pass
-    
-    class AdaptiveLCMWrapper:
-        def __init__(self, *args, **kwargs):
-            self.current_mode = LCMMode.ADAPTIVE  # Add missing current_mode attribute
-            self.config = kwargs.get('config', None)
+    if _ciaf_model_wrapper is None:
+        try:
+            from ciaf.wrappers.model_wrapper import CIAFModelWrapper
+            from ciaf.adaptive_lcm import AdaptiveLCMWrapper, AdaptiveLCMConfig, LCMMode, InferencePriority
+            from ciaf.deferred_lcm import DeferredLCMProcessor
+            _ciaf_model_wrapper = CIAFModelWrapper
+            _adaptive_lcm_wrapper = AdaptiveLCMWrapper
+            _deferred_lcm_processor = DeferredLCMProcessor
+            _lcm_mode = LCMMode
+            _inference_priority = InferencePriority
+            _adaptive_lcm_config = AdaptiveLCMConfig
+            return True
+        except ImportError:
+            global CIAF_AVAILABLE
+            CIAF_AVAILABLE = False
+            # Create fallback enums and classes
+            from enum import Enum
             
-        def predict(self, *args, **kwargs):
-            return "simulated_prediction", {"receipt_id": "lcm_sim"}
+            class LCMMode(Enum):
+                IMMEDIATE = "immediate"
+                DEFERRED = "deferred"
+                ADAPTIVE = "adaptive"
             
-        def update_mode(self, mode):
-            self.current_mode = mode
-    
-    class AdaptiveLCMConfig:
-        def __init__(self, *args, **kwargs):
-            pass
+            class InferencePriority(Enum):
+                LOW = "low"
+                NORMAL = "normal"
+                HIGH = "high"
+                
+            class MockAdaptiveLCMConfig:
+                def __init__(self, **kwargs):
+                    self.default_mode = kwargs.get('default_mode', LCMMode.ADAPTIVE)
+            
+            class MockCIAFModelWrapper:
+                def __init__(self, *args, **kwargs):
+                    pass
+            
+            _lcm_mode = LCMMode
+            _inference_priority = InferencePriority
+            _adaptive_lcm_config = MockAdaptiveLCMConfig
+            _ciaf_model_wrapper = MockCIAFModelWrapper
+            return False
+    return CIAF_AVAILABLE
+
+# Initialize fallback components
+_get_ciaf_components()
+
+# Create aliases for the components to avoid direct global access
+def get_components():
+    _get_ciaf_components()
+    return (_ciaf_model_wrapper, _adaptive_lcm_wrapper, _deferred_lcm_processor,
+            _lcm_mode, _inference_priority, _adaptive_lcm_config)
+
+CIAFModelWrapper, AdaptiveLCMWrapper, DeferredLCMProcessor, LCMMode, InferencePriority, AdaptiveLCMConfig = get_components()
 
 try:
     from ciaf.metadata_tags import create_classification_tag
@@ -88,8 +114,8 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
                  auto_configure: bool = True,
                  # New deferred LCM parameters
                  enable_deferred_lcm: bool = True,
-                 lcm_config: Optional[AdaptiveLCMConfig] = None,
-                 default_lcm_mode: LCMMode = LCMMode.ADAPTIVE):
+                 lcm_config: Optional[Any] = None,
+                 default_lcm_mode: Any = None):
         """
         Initialize Enhanced CIAF wrapper with deferred LCM support.
         
@@ -212,7 +238,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
         
     def predict(self,
                 X: Union[List, np.ndarray, Any],
-                priority: InferencePriority = InferencePriority.NORMAL,
+                priority: Any = None,
                 enable_fast_mode: bool = None,
                 return_enhanced_info: bool = True,
                 **kwargs) -> Union[Any, Dict[str, Any]]:
@@ -374,7 +400,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
         
     def predict_batch(self,
                      X_batch: List[Any],
-                     priority: InferencePriority = InferencePriority.NORMAL,
+                     priority: Any = None,
                      enable_fast_mode: bool = True,
                      show_progress: bool = True) -> List[Dict[str, Any]]:
         """
@@ -435,7 +461,7 @@ class EnhancedCIAFModelWrapper(CIAFModelWrapper):
             
         return stats
         
-    def set_lcm_mode(self, mode: LCMMode):
+    def set_lcm_mode(self, mode: Any):
         """Set LCM processing mode"""
         if self.adaptive_lcm:
             self.adaptive_lcm.set_mode(mode)

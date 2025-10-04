@@ -1,0 +1,15 @@
+\contentsline {section}{\numberline {1}Executive Summary}{2}{section.1}%
+\contentsline {section}{\numberline {2}Core Compliance Mechanisms}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Canonicalization \& Required Fields}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Merkle Trees \& WORM Semantics}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Cryptographic Operations}{3}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Deterministic Operations}{4}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Policy Enforcement Engine}{4}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Key Management \& Lifecycle}{5}{subsection.2.6}%
+\contentsline {subsection}{\numberline {2.7}Interfaces \& Pluggability}{6}{subsection.2.7}%
+\contentsline {section}{\numberline {3}End-to-End Compliance Flow}{6}{section.3}%
+\contentsline {section}{\numberline {4}Regulatory Crosswalk Table}{6}{section.4}%
+\contentsline {section}{\numberline {5}Implementation Status}{7}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Verification Demo}{7}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Assurance Map for Auditors}{7}{section.6}%
+\contentsline {section}{\numberline {7}Conclusion}{8}{section.7}%

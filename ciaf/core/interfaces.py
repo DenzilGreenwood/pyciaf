@@ -41,6 +41,10 @@ class RNG(Protocol):
 class Merkle(Protocol):
     """Protocol for Merkle tree implementations."""
     
+    def add_leaf(self, leaf_hash: str) -> str:
+        """Add leaf and return new root."""
+        ...
+    
     def get_root(self) -> str:
         """Get the current Merkle root hash."""
         ...
@@ -49,9 +53,12 @@ class Merkle(Protocol):
         """Get inclusion proof for a leaf as list of (hash, position) tuples."""
         ...
     
-    @staticmethod
-    def verify_proof(leaf_hash: str, root_hash: str, proof: List[Tuple[str, str]]) -> bool:
-        """Verify a Merkle inclusion proof."""
+    def get_merkle_path(self, leaf_hash: str) -> List[Tuple[str, str]]:
+        """Alias for get_proof to maintain backward compatibility."""
+        ...
+    
+    def verify_proof(self, leaf_hash: str, proof: List[Tuple[str, str]], root: str) -> bool:
+        """Verify Merkle inclusion proof."""
         ...
 
 

@@ -1,0 +1,66 @@
+{
+  "anchor": {
+    "domain_labels": [
+      "audit",
+      "production"
+    ],
+    "external_anchor": null,
+    "policy_id": "production_policy",
+    "root": "7760d01de7e3a701d75cfef7c98b04184a55e6a78509e16708e6e2b21029eb14",
+    "schema_version": "1.0",
+    "signature": "iQ86DA+pm237AeLK5Uszu3Pb9EvkyfbPTUZ5OQHHlXqTeA/q6ic+RrZ8KXN1Xiu9DiPWMRF8EOdpbPEll9ahBg==",
+    "signing_key_id": "production_anchor_key",
+    "timestamp": "2025-10-04T10:31:04.570824+00:00"
+  },
+  "capsule_type": "audit_proof",
+  "capsule_version": "1.0",
+  "proofs": {
+    "inclusion_proof_valid": true,
+    "merkle_path": [
+      [
+        "99673416e52483249b03bd57dd2b96ad96ebed3222f601de667b321a09275fd0",
+        "right"
+      ],
+      [
+        "2f6b0c10311a12360b06f38eafba76d2c50ac4d35dba43e77a838e052520c39f",
+        "left"
+      ]
+    ],
+    "merkle_root": "7760d01de7e3a701d75cfef7c98b04184a55e6a78509e16708e6e2b21029eb14"
+  },
+  "provenance": {
+    "tool": "enhanced_core_demo.py",
+    "version": "1.0.0"
+  },
+  "record": {
+    "leaf_hash": "99673416e52483249b03bd57dd2b96ad96ebed3222f601de667b321a09275fd0",
+    "metadata": {
+      "actor_id": "ml_engineer",
+      "location": "us_east",
+      "model_hash": "30b901d469877bae57c95fd1a00f3e304e8873314eea6bba4acd756f2d5ecc39",
+      "model_id": "fraud_detection_v2",
+      "parameters_hash": "8d1f79c4f3562fff39fd0e2df9f493f1b5f74e47aaf66e524c974cd3bd1fa094",
+      "policy_id": "production_policy",
+      "record_type": "model",
+      "schema_version": "1.0",
+      "system_id": "ml_ops_platform",
+      "timestamp": "2025-01-01T12:00:00.807707Z"
+    },
+    "type": "model"
+  },
+  "timestamp": "2025-10-04T10:31:04.571838Z",
+  "verification": {
+    "capsule_hash": "6b87dbed1e626c1fc90d60c6d8d281cb0681561d89708d25a793bfc8d296f0ac",
+    "merkle_proof_valid": true,
+    "policy_compliant": true,
+    "risk_assessment": {
+      "compliance_result": "compliant",
+      "recommendations": [],
+      "risk_level": "low",
+      "violation_count": 0
+    },
+    "signature_valid": true,
+    "signature_verified": true,
+    "verifiable_independently": true
+  }
+}

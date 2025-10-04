@@ -1,0 +1,96 @@
+{
+  "report_version": "1.0",
+  "generated_at": "2025-01-01T12:00:00.237367Z",
+  "policy_assessment": {
+    "risk_level": "medium",
+    "compliance_result": "requires_review",
+    "violations_count": 3,
+    "violations": [
+      {
+        "rule_id": "HIGH_RISK_DOMAIN",
+        "description": "Operation involves high-risk domains: ['healthcare']",
+        "severity": "high"
+      },
+      {
+        "rule_id": "PII_DETECTION",
+        "description": "Potential PII detected: email in email",
+        "severity": "medium"
+      },
+      {
+        "rule_id": "REQUIRED_FIELDS",
+        "description": "Missing required fields: ['dataset_hash']",
+        "severity": "high"
+      }
+    ],
+    "recommendations": [
+      "Consider additional monitoring and approval processes for high-risk domains",
+      "Implement enhanced logging and audit trails",
+      "Review and potentially redact or encrypt detected PII",
+      "Ensure GDPR/privacy compliance measures are in place",
+      "Implement input validation to ensure required fields",
+      "Review data collection processes"
+    ]
+  },
+  "cryptographic_merkle_tree_verification": {
+    "merkle_tree_root_hash": "6fbe1a7c43db8877701243a660ee5372e9c7ee2fed26a09a212811eefc5c015a",
+    "merkle_proof_steps_count": 2,
+    "merkle_proof_verification_result": true,
+    "data_leaf_hash": "62df879e36af88987d709f54a76e8cffda30b514d23bde2e4f4620e46805be85",
+    "real_merkle_proof_steps": 2,
+    "total_records_in_merkle_tree": 3
+  },
+  "cryptographic_anchor_verification": {
+    "ed25519_signing_key_id": "assurance_key_2025",
+    "compliance_policy_id": "assurance_policy",
+    "anchoring_timestamp": "2025-10-04T10:31:04.626946+00:00",
+    "ed25519_signature_algorithm": "Ed25519",
+    "ed25519_signature_len_bytes": 64,
+    "ed25519_signature_len_b64_chars": 88,
+    "ed25519_signature_len_hex_chars": 128,
+    "ed25519_anchor_signature_valid": true,
+    "ed25519_public_key_fingerprint": "8743adf3c7fab39be0c376e6f2da0f9fd1ce9d733f164b34ec6a91d13f97ae38",
+    "anchor_canonical_bytes_sha256": "9eae2f552791b86c8c6d22defdb197ae1e2a69af152ebc0a36111f28c940a371"
+  },
+  "cryptographic_key_management": {
+    "ed25519_key_id": "assurance_key_2025",
+    "ed25519_algorithm": "ed25519",
+    "key_creation_timestamp": "2025-10-04T10:31:04.607469Z",
+    "key_expiration_timestamp": "2025-11-03T10:31:04.607469Z",
+    "key_validity_days_remaining": 29,
+    "ed25519_public_key_fingerprint": "8743adf3c7fab39be0c376e6f2da0f9fd1ce9d733f164b34ec6a91d13f97ae38"
+  },
+  "determinism_checks": {
+    "deterministic_across_fresh_contexts": true,
+    "entropy_variation_expected": true,
+    "base_time_deterministic": true,
+    "overall_determinism": true,
+    "locale_independent": true,
+    "reproducible_hashing": true
+  },
+  "gdpr_compliance": {
+    "gdpr_pii_detected": true,
+    "gdpr_context_binding_enforced": true,
+    "context_stripping_prevented": true,
+    "pii_remediation_integrity": true
+  },
+  "security_tests": {
+    "tamper_tests_passed": true,
+    "signature_tamper_detected": true,
+    "merkle_tamper_detected": true,
+    "anchor_tamper_detected": true
+  },
+  "regulatory_compliance": {
+    "eu_ai_act": "COMPLIANT",
+    "iso_42001": "COMPLIANT",
+    "gdpr": "REQUIRES_REVIEW",
+    "sox_sec": "COMPLIANT",
+    "nist_800_53": "COMPLIANT",
+    "nist_ai_rmf": "COMPLIANT"
+  },
+  "overall_assessment": {
+    "status": "REQUIRES_REVIEW",
+    "audit_ready": true,
+    "third_party_verifiable": true,
+    "production_ready": true
+  }
+}

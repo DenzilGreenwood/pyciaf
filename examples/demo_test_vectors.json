@@ -1,0 +1,805 @@
+{
+  "created_at": "2025-10-04T10:31:04.599469Z",
+  "description": "CIAF Core Cryptographic Test Vectors",
+  "vectors": [
+    {
+      "algorithm": "SHA256",
+      "description": "SHA256 hash of test input 1",
+      "expected_outputs": {
+        "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "inputs": {
+        "algorithm": "sha256",
+        "data": ""
+      },
+      "name": "sha256_test_1",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA3-256",
+      "description": "SHA3-256 hash of test input 1",
+      "expected_outputs": {
+        "hash": "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a"
+      },
+      "inputs": {
+        "algorithm": "sha3-256",
+        "data": ""
+      },
+      "name": "sha3_256_test_1",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA256",
+      "description": "SHA256 hash of test input 2",
+      "expected_outputs": {
+        "hash": "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+      },
+      "inputs": {
+        "algorithm": "sha256",
+        "data": "hello"
+      },
+      "name": "sha256_test_2",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA3-256",
+      "description": "SHA3-256 hash of test input 2",
+      "expected_outputs": {
+        "hash": "3338be694f50c5f338814986cdf0686453a888b84f424d792af4b9202398f392"
+      },
+      "inputs": {
+        "algorithm": "sha3-256",
+        "data": "hello"
+      },
+      "name": "sha3_256_test_2",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA256",
+      "description": "SHA256 hash of test input 3",
+      "expected_outputs": {
+        "hash": "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592"
+      },
+      "inputs": {
+        "algorithm": "sha256",
+        "data": "The quick brown fox jumps over the lazy dog"
+      },
+      "name": "sha256_test_3",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA3-256",
+      "description": "SHA3-256 hash of test input 3",
+      "expected_outputs": {
+        "hash": "69070dda01975c8c120c3aada1b282394e7f032fa9cf32f4cb2259a0897dfc04"
+      },
+      "inputs": {
+        "algorithm": "sha3-256",
+        "data": "The quick brown fox jumps over the lazy dog"
+      },
+      "name": "sha3_256_test_3",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA256",
+      "description": "SHA256 hash of test input 4",
+      "expected_outputs": {
+        "hash": "cb8ae809def24febd91f2e04ec52a326e7f4c4b428e49ce0956482373d70edfa"
+      },
+      "inputs": {
+        "algorithm": "sha256",
+        "data": "{\"key\": \"value\", \"number\": 42}"
+      },
+      "name": "sha256_test_4",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA3-256",
+      "description": "SHA3-256 hash of test input 4",
+      "expected_outputs": {
+        "hash": "0cc8b5d359694aa5d3a67be320356e19f322e12768d31bdd1a71f2168cbfaa9f"
+      },
+      "inputs": {
+        "algorithm": "sha3-256",
+        "data": "{\"key\": \"value\", \"number\": 42}"
+      },
+      "name": "sha3_256_test_4",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA256",
+      "description": "SHA256 hash of test input 5",
+      "expected_outputs": {
+        "hash": "5dcd990ba4677570ad49042533d1e03fc0bd240fbe3e16a88e859ab9b9ef7ad7"
+      },
+      "inputs": {
+        "algorithm": "sha256",
+        "data": "\ud83c\udf89 Unicode test with \u00e9mojis and special chars: \u00e0\u00e1\u00e2\u00e3\u00e4\u00e5"
+      },
+      "name": "sha256_test_5",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA3-256",
+      "description": "SHA3-256 hash of test input 5",
+      "expected_outputs": {
+        "hash": "e6d7329e46f3d9712421a07442efcb224092323e5d159eea836e3818b365d93d"
+      },
+      "inputs": {
+        "algorithm": "sha3-256",
+        "data": "\ud83c\udf89 Unicode test with \u00e9mojis and special chars: \u00e0\u00e1\u00e2\u00e3\u00e4\u00e5"
+      },
+      "name": "sha3_256_test_5",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA256",
+      "description": "SHA256 hash of test input 6",
+      "expected_outputs": {
+        "hash": "c2e686823489ced2017f6059b8b239318b6364f6dcd835d0a519105a1eadd6e4"
+      },
+      "inputs": {
+        "algorithm": "sha256",
+        "data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "name": "sha256_test_6",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA3-256",
+      "description": "SHA3-256 hash of test input 6",
+      "expected_outputs": {
+        "hash": "9a0ad8e2b4dd2bba189511f7759bcff54e3455046303d3cf86cb0c1747224936"
+      },
+      "inputs": {
+        "algorithm": "sha3-256",
+        "data": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "name": "sha3_256_test_6",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA256",
+      "description": "SHA256 hash of test input 7",
+      "expected_outputs": {
+        "hash": "76b8d5ee8b4e217ee9f5c4009e1be471d8dfd857d5018ee71849a5c13827d774"
+      },
+      "inputs": {
+        "algorithm": "sha256",
+        "data": "\u0000\u0001\u0002\u0003\u00ff"
+      },
+      "name": "sha256_test_7",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "SHA3-256",
+      "description": "SHA3-256 hash of test input 7",
+      "expected_outputs": {
+        "hash": "a4f161ffa54e31eabd4bb073afd6528e76869bed4988c13ebb85c1ad65f5837f"
+      },
+      "inputs": {
+        "algorithm": "sha3-256",
+        "data": "\u0000\u0001\u0002\u0003\u00ff"
+      },
+      "name": "sha3_256_test_7",
+      "test_category": "hash"
+    },
+    {
+      "algorithm": "Canonical JSON + SHA256",
+      "description": "JSON canonicalization test 1",
+      "expected_outputs": {
+        "canonical_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "canonical_json": "{}"
+      },
+      "inputs": {
+        "object": {}
+      },
+      "name": "canonicalization_test_1",
+      "test_category": "canonicalization"
+    },
+    {
+      "algorithm": "Canonical JSON + SHA256",
+      "description": "JSON canonicalization test 2",
+      "expected_outputs": {
+        "canonical_hash": "e43abcf3375244839c012f9633f95862d232a95b00d5bc7348b3098b9fed7f32",
+        "canonical_json": "{\"key\":\"value\"}"
+      },
+      "inputs": {
+        "object": {
+          "key": "value"
+        }
+      },
+      "name": "canonicalization_test_2",
+      "test_category": "canonicalization"
+    },
+    {
+      "algorithm": "Canonical JSON + SHA256",
+      "description": "JSON canonicalization test 3",
+      "expected_outputs": {
+        "canonical_hash": "43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777",
+        "canonical_json": "{\"a\":1,\"b\":2}"
+      },
+      "inputs": {
+        "object": {
+          "a": 1,
+          "b": 2
+        }
+      },
+      "name": "canonicalization_test_3",
+      "test_category": "canonicalization"
+    },
+    {
+      "algorithm": "Canonical JSON + SHA256",
+      "description": "JSON canonicalization test 4",
+      "expected_outputs": {
+        "canonical_hash": "41441e957d0d0dde6d65eba48af6623109adb912471ded11460aeb90aab62318",
+        "canonical_json": "{\"nested\":{\"a\":1,\"z\":3},\"top\":\"level\"}"
+      },
+      "inputs": {
+        "object": {
+          "nested": {
+            "a": 1,
+            "z": 3
+          },
+          "top": "level"
+        }
+      },
+      "name": "canonicalization_test_4",
+      "test_category": "canonicalization"
+    },
+    {
+      "algorithm": "Canonical JSON + SHA256",
+      "description": "JSON canonicalization test 5",
+      "expected_outputs": {
+        "canonical_hash": "a8b338f6dee692ce211a229f1200d20582a1c805baf9bfc778b04b18794cde07",
+        "canonical_json": "{\"array\":[3,1,2],\"string\":\"test\"}"
+      },
+      "inputs": {
+        "object": {
+          "array": [
+            3,
+            1,
+            2
+          ],
+          "string": "test"
+        }
+      },
+      "name": "canonicalization_test_5",
+      "test_category": "canonicalization"
+    },
+    {
+      "algorithm": "Canonical JSON + SHA256",
+      "description": "JSON canonicalization test 6",
+      "expected_outputs": {
+        "canonical_hash": "56c710204ebd6fc8420d27e2c3bc7bbc1b2be03f8c1e530ae0bf3decf8560f8e",
+        "canonical_json": "{\"special\":\"\\u00e0\\u00e1\\u00e2\\u00e3\\u00e4\\u00e5\",\"unicode\":\"\\ud83c\\udf89\"}"
+      },
+      "inputs": {
+        "object": {
+          "special": "\u00e0\u00e1\u00e2\u00e3\u00e4\u00e5",
+          "unicode": "\ud83c\udf89"
+        }
+      },
+      "name": "canonicalization_test_6",
+      "test_category": "canonicalization"
+    },
+    {
+      "algorithm": "Canonical JSON + SHA256",
+      "description": "JSON canonicalization test 7",
+      "expected_outputs": {
+        "canonical_hash": "31adbfdea0d61d1da5611de0ff6043a37ccafc68110bbc97f73eb85143a2fd4f",
+        "canonical_json": "{\"bool\":true,\"float\":3.14159,\"null\":null,\"number\":42}"
+      },
+      "inputs": {
+        "object": {
+          "bool": true,
+          "float": 3.14159,
+          "null": null,
+          "number": 42
+        }
+      },
+      "name": "canonicalization_test_7",
+      "test_category": "canonicalization"
+    },
+    {
+      "algorithm": "Merkle Tree (SHA256)",
+      "description": "Merkle tree with 1 leaves",
+      "expected_outputs": {
+        "proofs": {
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
+            "proof": [],
+            "valid": true
+          }
+        },
+        "root": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "inputs": {
+        "leaves": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      },
+      "name": "merkle_test_1",
+      "test_category": "merkle"
+    },
+    {
+      "algorithm": "Merkle Tree (SHA256)",
+      "description": "Merkle tree with 2 leaves",
+      "expected_outputs": {
+        "proofs": {
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
+            "proof": [
+              [
+                "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": {
+            "proof": [
+              [
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "left"
+              ]
+            ],
+            "valid": true
+          }
+        },
+        "root": "e2d80f78d79027556d6619a1400605abbdca6bb6eb24e0831e33ecd5466fa5f6"
+      },
+      "inputs": {
+        "leaves": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        ]
+      },
+      "name": "merkle_test_2",
+      "test_category": "merkle"
+    },
+    {
+      "algorithm": "Merkle Tree (SHA256)",
+      "description": "Merkle tree with 3 leaves",
+      "expected_outputs": {
+        "proofs": {
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
+            "proof": [
+              [
+                "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "right"
+              ],
+              [
+                "16da1e97ac6e07f5b2c20e0d0eb3dcda692f32344528f698aab2c07373ab538e",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": {
+            "proof": [
+              [
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "left"
+              ],
+              [
+                "16da1e97ac6e07f5b2c20e0d0eb3dcda692f32344528f698aab2c07373ab538e",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": {
+            "proof": [
+              [
+                "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                "right"
+              ],
+              [
+                "e2d80f78d79027556d6619a1400605abbdca6bb6eb24e0831e33ecd5466fa5f6",
+                "left"
+              ]
+            ],
+            "valid": true
+          }
+        },
+        "root": "b3a419030971470a7bb3b165e163a11973b3e81aa1dfb29c0769725346a76fbf"
+      },
+      "inputs": {
+        "leaves": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+        ]
+      },
+      "name": "merkle_test_3",
+      "test_category": "merkle"
+    },
+    {
+      "algorithm": "Merkle Tree (SHA256)",
+      "description": "Merkle tree with 4 leaves",
+      "expected_outputs": {
+        "proofs": {
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
+            "proof": [
+              [
+                "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "right"
+              ],
+              [
+                "5855266bbab10ac48bbac9b714edf3239b2e7d572a6a9f6d1da0a53cbfa7be0e",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": {
+            "proof": [
+              [
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "left"
+              ],
+              [
+                "5855266bbab10ac48bbac9b714edf3239b2e7d572a6a9f6d1da0a53cbfa7be0e",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": {
+            "proof": [
+              [
+                "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+                "right"
+              ],
+              [
+                "e2d80f78d79027556d6619a1400605abbdca6bb6eb24e0831e33ecd5466fa5f6",
+                "left"
+              ]
+            ],
+            "valid": true
+          },
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": {
+            "proof": [
+              [
+                "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                "left"
+              ],
+              [
+                "e2d80f78d79027556d6619a1400605abbdca6bb6eb24e0831e33ecd5466fa5f6",
+                "left"
+              ]
+            ],
+            "valid": true
+          }
+        },
+        "root": "81952b5c47f0703b5f2543a6dde2be50c5271e327c438e85c70874adf5b10e12"
+      },
+      "inputs": {
+        "leaves": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+        ]
+      },
+      "name": "merkle_test_4",
+      "test_category": "merkle"
+    },
+    {
+      "algorithm": "Merkle Tree (SHA256)",
+      "description": "Merkle tree with 5 leaves",
+      "expected_outputs": {
+        "proofs": {
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": {
+            "proof": [
+              [
+                "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "right"
+              ],
+              [
+                "5855266bbab10ac48bbac9b714edf3239b2e7d572a6a9f6d1da0a53cbfa7be0e",
+                "right"
+              ],
+              [
+                "42750ab382619873d60a71716a355216e589f269fc781d9d690f8e877ff8ed82",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": {
+            "proof": [
+              [
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "left"
+              ],
+              [
+                "5855266bbab10ac48bbac9b714edf3239b2e7d572a6a9f6d1da0a53cbfa7be0e",
+                "right"
+              ],
+              [
+                "42750ab382619873d60a71716a355216e589f269fc781d9d690f8e877ff8ed82",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc": {
+            "proof": [
+              [
+                "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+                "right"
+              ],
+              [
+                "e2d80f78d79027556d6619a1400605abbdca6bb6eb24e0831e33ecd5466fa5f6",
+                "left"
+              ],
+              [
+                "42750ab382619873d60a71716a355216e589f269fc781d9d690f8e877ff8ed82",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": {
+            "proof": [
+              [
+                "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+                "left"
+              ],
+              [
+                "e2d80f78d79027556d6619a1400605abbdca6bb6eb24e0831e33ecd5466fa5f6",
+                "left"
+              ],
+              [
+                "42750ab382619873d60a71716a355216e589f269fc781d9d690f8e877ff8ed82",
+                "right"
+              ]
+            ],
+            "valid": true
+          },
+          "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": {
+            "proof": [
+              [
+                "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                "right"
+              ],
+              [
+                "96ea13b56ec654f73a8a7f6bd9207487e7b0fc12630c8ef01685f65010575fb3",
+                "right"
+              ],
+              [
+                "81952b5c47f0703b5f2543a6dde2be50c5271e327c438e85c70874adf5b10e12",
+                "left"
+              ]
+            ],
+            "valid": true
+          }
+        },
+        "root": "34cc08bbd1372e957c80d9f827e4e0bbfeb5b822fc667b937e0ed7fdf229c74c"
+      },
+      "inputs": {
+        "leaves": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        ]
+      },
+      "name": "merkle_test_5",
+      "test_category": "merkle"
+    },
+    {
+      "algorithm": "Ed25519",
+      "description": "Ed25519 signature test 1",
+      "expected_outputs": {
+        "public_key_fingerprint": "989bf7fa2182bce8e3effaf67f6cb68bcf95b42c2776a71a7ce440e3680a5b62",
+        "signature": "jaSqJLN+8+WqhyMjErWyi7uJpuamnAZUMPcrXWm80pha2jxkLg5xFoWdSJgZjOSAw6/rM5EI9dyf4Ob9onV9CQ==",
+        "verification_result": true
+      },
+      "inputs": {
+        "key_id": "test_key",
+        "message": ""
+      },
+      "name": "ed25519_signature_test_1",
+      "test_category": "signature"
+    },
+    {
+      "algorithm": "Ed25519",
+      "description": "Ed25519 signature test 2",
+      "expected_outputs": {
+        "public_key_fingerprint": "989bf7fa2182bce8e3effaf67f6cb68bcf95b42c2776a71a7ce440e3680a5b62",
+        "signature": "JvLzdiA0dpN1eODVNVEfheoaXZBBKGQrL0AJUb2ExR0UMTlZeU1hkY0H1USLRnHIvSKgFXhVG/pfUlh3Jh8hBg==",
+        "verification_result": true
+      },
+      "inputs": {
+        "key_id": "test_key",
+        "message": "hello world"
+      },
+      "name": "ed25519_signature_test_2",
+      "test_category": "signature"
+    },
+    {
+      "algorithm": "Ed25519",
+      "description": "Ed25519 signature test 3",
+      "expected_outputs": {
+        "public_key_fingerprint": "989bf7fa2182bce8e3effaf67f6cb68bcf95b42c2776a71a7ce440e3680a5b62",
+        "signature": "yGeG8qQ/ztV0IkBPiuwdDydAFd+mjHmZpxxjG8/lW1xMNApQuCgsBAx/ejpXNwip2GaNwZdIwyAjrz7F/CiQBA==",
+        "verification_result": true
+      },
+      "inputs": {
+        "key_id": "test_key",
+        "message": "The quick brown fox jumps over the lazy dog"
+      },
+      "name": "ed25519_signature_test_3",
+      "test_category": "signature"
+    },
+    {
+      "algorithm": "Ed25519",
+      "description": "Ed25519 signature test 4",
+      "expected_outputs": {
+        "public_key_fingerprint": "989bf7fa2182bce8e3effaf67f6cb68bcf95b42c2776a71a7ce440e3680a5b62",
+        "signature": "+0LzsVIuv05fmtw2Hew3SM55SBB8P17xGvfVHHYkauCj+zChQpPyjj2FxGkTbzl5Pf95rVMKGk4cqwKjO6ZdAw==",
+        "verification_result": true
+      },
+      "inputs": {
+        "key_id": "test_key",
+        "message": "{\"timestamp\": \"2025-01-01T12:00:00.000000Z\", \"data\": \"test\"}"
+      },
+      "name": "ed25519_signature_test_4",
+      "test_category": "signature"
+    },
+    {
+      "algorithm": "Ed25519",
+      "description": "Ed25519 signature test 5",
+      "expected_outputs": {
+        "public_key_fingerprint": "989bf7fa2182bce8e3effaf67f6cb68bcf95b42c2776a71a7ce440e3680a5b62",
+        "signature": "MOLet7U1noYJa3BuGSzTXuBK1YImhBtyAI0EIHGbMhsZaurxLpKxgi4pINOQCSasGvn+gPhIqxqJ1gpySfTbAQ==",
+        "verification_result": true
+      },
+      "inputs": {
+        "key_id": "test_key",
+        "message": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "name": "ed25519_signature_test_5",
+      "test_category": "signature"
+    },
+    {
+      "algorithm": "Ed25519 + Anchor Format",
+      "description": "Anchor creation test 1",
+      "expected_outputs": {
+        "anchor_domain_labels": [
+          "test"
+        ],
+        "anchor_policy_id": "test_policy_1",
+        "anchor_root": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "anchor_schema_version": "1.0",
+        "signature_length": 88,
+        "signing_key_id": "test_signer"
+      },
+      "inputs": {
+        "policy": {
+          "domain_labels": [
+            "test"
+          ],
+          "external_timestamping": false,
+          "hash_algorithm": "sha256",
+          "high_risk_domains": [
+            "high_risk",
+            "critical",
+            "healthcare",
+            "finance"
+          ],
+          "policy_id": "test_policy_1",
+          "schema_version": "1.0"
+        },
+        "root": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "signer_id": "test_signer"
+      },
+      "name": "anchor_test_1",
+      "test_category": "anchor"
+    },
+    {
+      "algorithm": "Ed25519 + Anchor Format",
+      "description": "Anchor creation test 2",
+      "expected_outputs": {
+        "anchor_domain_labels": [
+          "finance",
+          "healthcare"
+        ],
+        "anchor_policy_id": "high_risk_policy",
+        "anchor_root": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "anchor_schema_version": "1.0",
+        "signature_length": 88,
+        "signing_key_id": "test_signer"
+      },
+      "inputs": {
+        "policy": {
+          "domain_labels": [
+            "healthcare",
+            "finance"
+          ],
+          "external_timestamping": true,
+          "hash_algorithm": "sha256",
+          "high_risk_domains": [
+            "high_risk",
+            "critical",
+            "healthcare",
+            "finance"
+          ],
+          "policy_id": "high_risk_policy",
+          "schema_version": "1.0"
+        },
+        "root": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "signer_id": "test_signer"
+      },
+      "name": "anchor_test_2",
+      "test_category": "anchor"
+    },
+    {
+      "algorithm": "Deterministic Clock + SHA256",
+      "description": "Deterministic operations test 1",
+      "expected_outputs": {
+        "canonical_timestamp_format": "2025-01-01T12:00:00.000001Z",
+        "hash_consistency": false,
+        "time_hash": "10bfb7d961018e3ba259940689f7e86ad78c7c97b28b2668407b7593b31cbbb0"
+      },
+      "inputs": {
+        "entropy": "entropy_1",
+        "fixed_time": "2025-01-01T12:00:00+00:00",
+        "operation_id": "operation_1"
+      },
+      "name": "determinism_test_1",
+      "test_category": "determinism"
+    },
+    {
+      "algorithm": "Deterministic Clock + SHA256",
+      "description": "Deterministic operations test 2",
+      "expected_outputs": {
+        "canonical_timestamp_format": "2025-01-01T12:00:00.000005Z",
+        "hash_consistency": false,
+        "time_hash": "7548606491311e78f372ec67b1d0faefe98a0c410aaea5eb8f61abbdf40e9da3"
+      },
+      "inputs": {
+        "entropy": "entropy_2",
+        "fixed_time": "2025-01-01T12:00:00+00:00",
+        "operation_id": "operation_2"
+      },
+      "name": "determinism_test_2",
+      "test_category": "determinism"
+    },
+    {
+      "algorithm": "Deterministic Clock + SHA256",
+      "description": "Deterministic operations test 3",
+      "expected_outputs": {
+        "canonical_timestamp_format": "2025-01-01T12:00:00.000009Z",
+        "hash_consistency": false,
+        "time_hash": "03d6d820096862f4ebe138569cde56904d48efea2261fd95314c170180531fdd"
+      },
+      "inputs": {
+        "entropy": "",
+        "fixed_time": "2025-01-01T12:00:00+00:00",
+        "operation_id": ""
+      },
+      "name": "determinism_test_3",
+      "test_category": "determinism"
+    },
+    {
+      "algorithm": "Deterministic Clock + SHA256",
+      "description": "Deterministic operations test 4",
+      "expected_outputs": {
+        "canonical_timestamp_format": "2025-01-01T12:00:00.000013Z",
+        "hash_consistency": false,
+        "time_hash": "d5cde0c801a85fb22aa190f6e883764505edf35ab14c0ab80cb807c04df933d5"
+      },
+      "inputs": {
+        "entropy": "additional_entropy_data",
+        "fixed_time": "2025-01-01T12:00:00+00:00",
+        "operation_id": "long_operation_name_with_details"
+      },
+      "name": "determinism_test_4",
+      "test_category": "determinism"
+    }
+  ],
+  "version": "1.0.0"
+}

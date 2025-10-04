@@ -1,0 +1,17 @@
+{
+  "canonical_bytes_sha256": "504c2a7a2bfdfb18e6fadc0ac85b55bb5a10b030e2f80f86f10b9884baf82d5c",
+  "domain_labels": [
+    "audit",
+    "production"
+  ],
+  "policy_id": "production_policy",
+  "provenance": {
+    "tool": "enhanced_core_demo.py",
+    "version": "1.0.0"
+  },
+  "root": "7760d01de7e3a701d75cfef7c98b04184a55e6a78509e16708e6e2b21029eb14",
+  "schema_version": "1.0",
+  "signature": "iQ86DA+pm237AeLK5Uszu3Pb9EvkyfbPTUZ5OQHHlXqTeA/q6ic+RrZ8KXN1Xiu9DiPWMRF8EOdpbPEll9ahBg==",
+  "signing_key_id": "production_anchor_key",
+  "timestamp": "2025-10-04T10:31:04.570824+00:00"
+}
