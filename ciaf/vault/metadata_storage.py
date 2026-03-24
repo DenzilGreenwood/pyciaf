@@ -5,9 +5,9 @@ This module provides comprehensive metadata storage and retrieval capabilities
 for the CIAF framework, supporting multiple storage backends and formats.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-24
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.1.0
 """
 
 import hashlib
@@ -20,6 +20,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+# Try to import PostgreSQL backend
+try:
+    from .backends.postgresql_backend import PostgreSQLBackend
+    POSTGRESQL_AVAILABLE = True
+except ImportError:
+    POSTGRESQL_AVAILABLE = False
+    PostgreSQLBackend = None
+
 
 class MetadataStorage:
     """
@@ -28,6 +36,7 @@ class MetadataStorage:
     Supports multiple storage backends:
     - JSON files (default)
     - SQLite database
+    - PostgreSQL database (enterprise)
     - Pickle files
     """
 
@@ -36,14 +45,23 @@ class MetadataStorage:
         storage_path: str = "ciaf_metadata",
         backend: str = "json",
         use_compression: bool = False,
+        postgresql_config: Optional[Dict[str, Any]] = None,
     ):
         """
         Initialize metadata storage.
 
         Args:
-            storage_path: Base path for metadata storage
-            backend: Storage backend ('json', 'sqlite', 'pickle')
+            storage_path: Base path for metadata storage (not used for PostgreSQL)
+            backend: Storage backend ('json', 'sqlite', 'pickle', 'postgresql')
             use_compression: Use compressed storage (creates CompressedMetadataStorage instance)
+            postgresql_config: PostgreSQL connection config (for 'postgresql' backend)
+                Example: {
+                    'host': 'localhost',
+                    'port': 5432,
+                    'database': 'ciaf_vault',
+                    'user': 'ciaf_user',
+                    'password': 'your_password'
+                }
         """
         if use_compression:
             # Import here to avoid circular imports
@@ -58,11 +76,23 @@ class MetadataStorage:
             self._use_compressed = False
             self.storage_path = Path(storage_path)
             self.backend = backend.lower()
-            self.storage_path.mkdir(parents=True, exist_ok=True)
 
-            # Initialize backend-specific storage
-            if self.backend == "sqlite":
-                self._init_sqlite()
+            # Initialize PostgreSQL backend if requested
+            if self.backend == "postgresql":
+                if not POSTGRESQL_AVAILABLE:
+                    raise ImportError(
+                        "PostgreSQL backend requires psycopg2. Install with: pip install psycopg2-binary"
+                    )
+                if postgresql_config is None:
+                    postgresql_config = {}
+                self._postgresql = PostgreSQLBackend(**postgresql_config)
+            else:
+                # Create storage directory for file-based backends
+                self.storage_path.mkdir(parents=True, exist_ok=True)
+
+                # Initialize backend-specific storage
+                if self.backend == "sqlite":
+                    self._init_sqlite()
 
     def _init_sqlite(self):
         """Initialize SQLite database for metadata storage."""

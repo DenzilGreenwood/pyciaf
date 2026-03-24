@@ -1,8 +1,8 @@
-PWD d:/Github/PYPI/latex_docs
+PWD d:/Github/UsefulStuf/Resume/base/pyciaf/latex_docs
 INPUT c:/texlive/2024/texmf.cnf
 INPUT c:/texlive/2024/texmf-dist/web2c/texmf.cnf
 INPUT c:/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT d:/Github/PYPI/latex_docs/regulatory_compliance_mapping.tex
+INPUT d:/Github/UsefulStuf/Resume/base/pyciaf/latex_docs/regulatory_compliance_mapping.tex
 OUTPUT regulatory_compliance_mapping.log
 INPUT c:/texlive/2024/texmf-dist/tex/latex/base/article.cls
 INPUT c:/texlive/2024/texmf-dist/tex/latex/base/article.cls

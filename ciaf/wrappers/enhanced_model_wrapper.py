@@ -86,7 +86,7 @@ def get_components():
 CIAFModelWrapper, AdaptiveLCMWrapper, DeferredLCMProcessor, LCMMode, InferencePriority, AdaptiveLCMConfig = get_components()
 
 try:
-    from ciaf.metadata_tags import create_classification_tag
+    from ciaf.vault.metadata_tags import create_classification_tag
 except ImportError:
     def create_classification_tag(**kwargs):
         return type('Tag', (), {'to_dict': lambda: kwargs})()

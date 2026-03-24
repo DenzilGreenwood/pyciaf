@@ -12,7 +12,7 @@ from sklearn.datasets import make_classification
 # Test if we can import CIAF components
 try:
     from ciaf.wrappers.model_wrapper import CIAFModelWrapper
-    from ciaf.metadata_storage_optimized import HighPerformanceMetadataStorage
+    from ciaf.vault.metadata_storage_optimized import HighPerformanceMetadataStorage
     print("✅ CIAF imports successful")
 except ImportError as e:
     print(f"❌ CIAF import failed: {e}")

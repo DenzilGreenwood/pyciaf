@@ -1,0 +1,354 @@
+"""
+CIAF Watermarking - Data Models
+
+Forensic provenance models for AI artifact watermarking and verification.
+
+This module implements a dual-state artifact integrity model:
+- State 1: pre-watermark artifact (original AI output)
+- State 2: distributed/watermarked artifact (with provenance tags)
+
+Both states are cryptographically bound into one signed CIAF receipt,
+enabling detection of watermark removal and content tampering.
+
+Created: 2026-03-24
+Author: Denzil James Greenwood
+Version: 1.0.0
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field, asdict
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Dict, List, Optional
+import hashlib
+import json
+
+
+class ArtifactType(str, Enum):
+    """Type of AI-generated artifact."""
+    TEXT = "text"
+    IMAGE = "image"
+    PDF = "pdf"
+    JSON = "json"
+    BINARY = "binary"
+    VIDEO = "video"
+    AUDIO = "audio"
+
+
+class WatermarkType(str, Enum):
+    """Watermarking technique applied to artifact."""
+    NONE = "none"
+    VISIBLE = "visible"  # Visible tag/footer/header
+    METADATA = "metadata"  # Embedded in file metadata
+    EMBEDDED = "embedded"  # Steganographic embedding
+    HYBRID = "hybrid"  # Multiple techniques combined
+    QR_CODE = "qr_code"  # QR code watermark
+
+
+def utc_now_iso() -> str:
+    """Generate ISO 8601 UTC timestamp."""
+    return datetime.now(timezone.utc).isoformat()
+
+
+def sha256_bytes(data: bytes) -> str:
+    """Compute SHA-256 hash of bytes."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_text(text: str) -> str:
+    """Compute SHA-256 hash of text."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def canonical_json(data: Dict[str, Any]) -> bytes:
+    """
+    Generate canonical JSON bytes for cryptographic hashing.
+
+    Ensures consistent serialization by:
+    - Sorting keys alphabetically
+    - Using minimal separators
+    - Preserving Unicode
+    """
+    return json.dumps(
+        data,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
+
+
+@dataclass
+class ArtifactFingerprint:
+    """
+    Forensic fingerprint for artifact similarity matching.
+
+    Used when exact hash matching fails (content modified after generation).
+    """
+    algorithm: str  # e.g., "simhash", "perceptual_hash", "minihash"
+    value: str  # Fingerprint value
+    role: str  # e.g., "exact_content", "perceptual", "simhash", "embedding_ref"
+    confidence: Optional[float] = None  # Matching confidence threshold (0.0-1.0)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return asdict(self)
+
+
+@dataclass
+class WatermarkDescriptor:
+    """
+    Complete watermark metadata for provenance tracking.
+
+    Describes how the watermark was applied and how to verify it.
+    """
+    watermark_id: str  # Unique watermark identifier
+    watermark_type: WatermarkType  # Technique used
+    tag_text: Optional[str] = None  # Human-readable tag text
+    verification_url: Optional[str] = None  # URL for online verification
+    qr_payload: Optional[str] = None  # QR code data
+    metadata_fields: Dict[str, str] = field(default_factory=dict)  # Custom metadata
+    embed_method: Optional[str] = None  # Technical embedding method
+    removal_resistance: Optional[str] = None  # "low", "medium", "high"
+    location: Optional[str] = None  # Where watermark appears
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        result = asdict(self)
+        result['watermark_type'] = self.watermark_type.value
+        return result
+
+
+@dataclass
+class ArtifactHashSet:
+    """
+    Dual-state hashing for forensic provenance.
+
+    Critical feature: stores hashes BEFORE and AFTER watermark application.
+    This enables detection of watermark removal attacks.
+
+    If suspect artifact matches:
+    - content_hash_after_watermark: Exact distributed copy
+    - content_hash_before_watermark: Watermark removed but content intact
+    - Neither: Content was modified (use similarity fingerprints)
+    """
+    content_hash_before_watermark: str  # SHA-256 of original AI output
+    content_hash_after_watermark: str  # SHA-256 of watermarked version
+    canonical_receipt_hash: Optional[str] = None  # Hash of complete receipt
+
+    # Optional normalized hashing (resilient to formatting changes)
+    normalized_hash_before: Optional[str] = None  # Normalized pre-watermark
+    normalized_hash_after: Optional[str] = None  # Normalized post-watermark
+
+    # Optional perceptual/similarity hashing
+    perceptual_hash_before: Optional[str] = None  # pHash/dHash for images
+    perceptual_hash_after: Optional[str] = None
+    simhash_before: Optional[str] = None  # SimHash for text
+    simhash_after: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return asdict(self)
+
+
+@dataclass
+class ArtifactEvidence:
+    """
+    Complete forensic provenance record for AI-generated artifact.
+
+    This is the core evidence structure stored in CIAF vault.
+    It binds together:
+    - What model generated it
+    - When and by whom
+    - Original and watermarked content hashes
+    - Watermark description
+    - Forensic fingerprints
+    - Link to previous artifacts (chain)
+
+    This record enables:
+    1. Proving genuine origin from your system
+    2. Detecting watermark removal
+    3. Identifying modified versions via similarity
+    4. Complete audit trail
+    """
+    artifact_id: str  # Unique artifact ID
+    artifact_type: ArtifactType  # Type of artifact
+    mime_type: str  # MIME type
+    created_at: str  # ISO 8601 timestamp
+
+    # Model provenance
+    model_id: str  # Model identifier
+    model_version: str  # Model version
+    actor_id: str  # User/system that generated it
+
+    # Cryptographic linkage
+    prompt_hash: str  # SHA-256 of input prompt
+    output_hash_raw: str  # Hash of raw output (pre-watermark)
+    output_hash_distributed: str  # Hash of distributed output (post-watermark)
+
+    # Watermark details
+    watermark: WatermarkDescriptor
+
+    # Dual-state hashing
+    hashes: ArtifactHashSet
+
+    # Forensic fingerprints (for similarity matching)
+    fingerprints: List[ArtifactFingerprint] = field(default_factory=list)
+
+    # Additional metadata
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    # Receipt chaining (link to previous artifact)
+    prior_receipt_hash: Optional[str] = None
+
+    # Signature (added after creation)
+    signature: Optional[str] = None
+    merkle_leaf_hash: Optional[str] = None
+
+    def to_canonical_dict(self) -> Dict[str, Any]:
+        """
+        Convert to canonical dictionary for hashing/signing.
+
+        Ensures consistent serialization for cryptographic operations.
+        """
+        result = asdict(self)
+        result['artifact_type'] = self.artifact_type.value
+        result['watermark'] = self.watermark.to_dict()
+        result['hashes'] = self.hashes.to_dict()
+        result['fingerprints'] = [fp.to_dict() for fp in self.fingerprints]
+        return result
+
+    def to_canonical_bytes(self) -> bytes:
+        """Generate canonical bytes for signing/hashing."""
+        return canonical_json(self.to_canonical_dict())
+
+    def compute_receipt_hash(self) -> str:
+        """Compute canonical receipt hash."""
+        return sha256_bytes(self.to_canonical_bytes())
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary (alias for to_canonical_dict)."""
+        return self.to_canonical_dict()
+
+
+@dataclass
+class VerificationResult:
+    """
+    Result of artifact verification against stored evidence.
+
+    Answers the questions:
+    - Is this the exact distributed version?
+    - Is this the original without watermark?
+    - Was the watermark likely removed?
+    - How closely does it match?
+    """
+    artifact_id: str  # ID of evidence record checked against
+    exact_match_after_watermark: bool  # Matches distributed version exactly
+    exact_match_before_watermark: bool  # Matches pre-watermark version exactly
+    likely_tag_removed: bool  # True if matches pre-watermark but not post
+
+    # Similarity matching results
+    normalized_match_before: bool = False
+    normalized_match_after: bool = False
+    perceptual_similarity_score: Optional[float] = None  # 0.0-1.0
+    simhash_distance: Optional[int] = None  # Hamming distance for text
+
+    # Forensic analysis
+    watermark_present: bool = False
+    watermark_intact: bool = False
+    content_modified: bool = False
+
+    # Explanation
+    notes: List[str] = field(default_factory=list)
+    confidence: float = 0.0  # Overall confidence (0.0-1.0)
+
+    # Evidence reference
+    evidence_record: Optional[ArtifactEvidence] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        result = asdict(self)
+        if self.evidence_record:
+            result['evidence_record'] = self.evidence_record.to_dict()
+        return result
+
+    def is_authentic(self) -> bool:
+        """
+        Determine if artifact is authentic (from our system).
+
+        True if:
+        - Exact match to distributed version, OR
+        - Exact match to pre-watermark version, OR
+        - High similarity with good confidence
+        """
+        return (
+            self.exact_match_after_watermark or
+            self.exact_match_before_watermark or
+            (self.perceptual_similarity_score and self.perceptual_similarity_score > 0.9) or
+            (self.normalized_match_before or self.normalized_match_after)
+        )
+
+
+@dataclass
+class ForensicArtifactProfile:
+    """
+    Extended forensic profile with full hash suite.
+
+    This is an enhanced version of ArtifactHashSet with more forensic features.
+    Used for high-security scenarios where multiple matching methods are needed.
+    """
+    # Core hashes
+    exact_hash_before_watermark: str
+    exact_hash_after_watermark: str
+
+    # Normalized hashes (resilient to formatting)
+    normalized_hash_before_watermark: Optional[str] = None
+    normalized_hash_after_watermark: Optional[str] = None
+
+    # Perceptual hashes (resilient to modifications)
+    perceptual_hash_before_watermark: Optional[str] = None
+    perceptual_hash_after_watermark: Optional[str] = None
+
+    # Watermark detection
+    watermark_presence_expected: bool = True
+    watermark_locator: Optional[Dict[str, Any]] = None  # Describes where to find watermark
+
+    # Embedding reference (for neural network similarity)
+    embedding_reference: Optional[str] = None  # Reference to stored embedding vector
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return asdict(self)
+
+
+# Type aliases for clarity
+ArtifactID = str
+WatermarkID = str
+ReceiptHash = str
+ContentHash = str
+
+__all__ = [
+    # Enums
+    "ArtifactType",
+    "WatermarkType",
+
+    # Core models
+    "ArtifactEvidence",
+    "ArtifactHashSet",
+    "ArtifactFingerprint",
+    "WatermarkDescriptor",
+    "VerificationResult",
+    "ForensicArtifactProfile",
+
+    # Utility functions
+    "utc_now_iso",
+    "sha256_bytes",
+    "sha256_text",
+    "canonical_json",
+
+    # Type aliases
+    "ArtifactID",
+    "WatermarkID",
+    "ReceiptHash",
+    "ContentHash",
+]

@@ -13,7 +13,7 @@ def test_optimized_integration():
         # Test imports
         print("1️⃣ Testing imports...")
         from deployable_model_demo import CIAFBenchmark, benchmark_optimized_model, OPTIMIZED_STORAGE_AVAILABLE
-        from ciaf.metadata_storage_optimized import HighPerformanceMetadataStorage
+        from ciaf.vault.metadata_storage_optimized import HighPerformanceMetadataStorage
         print("   ✅ All imports successful")
         
         # Test benchmark utility

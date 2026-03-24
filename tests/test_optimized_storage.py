@@ -12,14 +12,14 @@ from pathlib import Path
 
 # Import our optimized storage
 try:
-    from ciaf.metadata_storage_optimized import HighPerformanceMetadataStorage
+    from ciaf.vault.metadata_storage_optimized import HighPerformanceMetadataStorage
     OPTIMIZED_AVAILABLE = True
 except ImportError as e:
     print(f"❌ Optimized storage not available: {e}")
     OPTIMIZED_AVAILABLE = False
 
 # Import standard storage for comparison
-from ciaf.metadata_storage import MetadataStorage
+from ciaf.vault.metadata_storage import MetadataStorage
 
 def generate_test_metadata(count: int = 100):
     """Generate test metadata for benchmarking."""

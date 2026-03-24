@@ -1,4 +1,4 @@
-# CIAF - Comprehensive Framework Overview
+# CIAF (Cognitive Insight Audit Framework) - Comprehensive Framework Overview
 
 **Last Updated:** September 20, 2025  
 **Version:** 1.0.0  
@@ -8,7 +8,7 @@
 
 ## Core Overview
 
-CIAF is a comprehensive Python framework for verifiable AI training and inference with cryptographic provenance tracking, lazy capsule materialization (LCM), and regulatory compliance mapping. It's designed to address AI transparency, auditability, and compliance in production environments.
+CIAF (Cognitive Insight Audit Framework) is a comprehensive Python framework for verifiable AI training and inference with cryptographic provenance tracking, lazy capsule materialization (LCM), and regulatory compliance mapping. It's designed to address AI transparency, auditability, and compliance in production environments.
 
 ---
 

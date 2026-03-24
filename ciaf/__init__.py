@@ -15,13 +15,13 @@ from .lcm import LCMDatasetAnchor, LCMDatasetManager
 from .api.framework import CIAFFramework
 from .core import CryptoUtils, MerkleTree
 from .inference import InferenceReceipt, ZKEConnections
-from .metadata_config import (
+from .vault.metadata_config import (
     MetadataConfig,
     create_config_template,
     get_metadata_config,
     load_config_from_file,
 )
-from .metadata_integration import (
+from .vault.metadata_integration import (
     ComplianceTracker,
     MetadataCapture,
     ModelMetadataManager,
@@ -32,7 +32,7 @@ from .metadata_integration import (
 )
 
 # Metadata storage and integration
-from .metadata_storage import (
+from .vault.metadata_storage import (
     MetadataStorage,
     get_metadata_storage,
     get_pipeline_trace,
@@ -145,6 +145,42 @@ try:
     METADATA_TAGS_AVAILABLE = True
 except ImportError:
     METADATA_TAGS_AVAILABLE = False
+
+try:
+    from . import web
+    from .web import (
+        WebAIEvent,
+        EventType,
+        PolicyDecision,
+        DataClassification,
+        ToolCategory,
+        AIToolDetector,
+        detect_ai_tool,
+        ContentClassifier,
+        classify_content,
+        PolicyEngine,
+        evaluate_policy,
+        WebAIReceipt,
+        generate_receipt,
+        WebAIVaultAdapter,
+    )
+    WEB_AVAILABLE = True
+except ImportError:
+    WEB_AVAILABLE = False
+    WebAIEvent = None
+    EventType = None
+    PolicyDecision = None
+    DataClassification = None
+    ToolCategory = None
+    AIToolDetector = None
+    detect_ai_tool = None
+    ContentClassifier = None
+    classify_content = None
+    PolicyEngine = None
+    evaluate_policy = None
+    WebAIReceipt = None
+    generate_receipt = None
+    WebAIVaultAdapter = None
 
 __version__ = "1.1.0"
 __all__ = [

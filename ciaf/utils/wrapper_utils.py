@@ -12,7 +12,7 @@ import numpy as np
 # Import CIAF components (assuming they exist)
 try:
     from ciaf.wrappers import CIAFModelWrapper
-    from ciaf.metadata_storage_optimized import OptimizedMetadataStorage
+    from ciaf.vault.metadata_storage_optimized import HighPerformanceMetadataStorage as OptimizedMetadataStorage
 except ImportError:
     # Mock classes for demonstration if CIAF not available
     class CIAFModelWrapper:

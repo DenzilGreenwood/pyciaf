@@ -36,7 +36,7 @@ try:
     import sys
     sys.path.insert(0, str(Path(__file__).parent.parent))
     from ciaf.adaptive_lcm import LCMMode, InferencePriority
-    from ciaf.metadata_config import create_high_performance_config, create_compliance_first_config, create_balanced_config
+    from ciaf.vault.metadata_config import create_high_performance_config, create_compliance_first_config, create_balanced_config
     CIAF_AVAILABLE = True
 except ImportError:
     CIAF_AVAILABLE = False

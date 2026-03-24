@@ -16,8 +16,8 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Optional
 
-from .metadata_config import create_config_template
-from .metadata_integration import ModelMetadataManager
+from .vault.metadata_config import create_config_template
+from .vault.metadata_integration import ModelMetadataManager
 
 
 def main():
