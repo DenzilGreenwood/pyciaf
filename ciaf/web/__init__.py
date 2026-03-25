@@ -80,9 +80,19 @@ from .vault_adapter import (
 
 # Redaction
 from .redaction import (
+    ContentRedactor,
     redact_content,
     redact_pii,
+    redact_credentials,
     hash_sensitive_fields,
+)
+
+# Collectors
+from .collectors import (
+    EventCollector,
+    CollectionConfig,
+    CollectionResult,
+    collect_ai_event,
 )
 
 __all__ = [
@@ -125,7 +135,15 @@ __all__ = [
     "search_events",
 
     # Redaction
+    "ContentRedactor",
     "redact_content",
     "redact_pii",
+    "redact_credentials",
     "hash_sensitive_fields",
+
+    # Collectors
+    "EventCollector",
+    "CollectionConfig",
+    "CollectionResult",
+    "collect_ai_event",
 ]

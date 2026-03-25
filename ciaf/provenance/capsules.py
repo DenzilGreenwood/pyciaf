@@ -24,6 +24,7 @@ from ..core import (
     encrypt_aes_gcm,
     secure_random_bytes,
     sha256_hash,
+    derive_master_anchor,
 )
 
 
@@ -62,7 +63,7 @@ class ProvenanceCapsule:
         self.metadata = metadata
         self.data_secret_bytes = data_secret.encode("utf-8")
         self.salt = secure_random_bytes(SALT_LENGTH)
-        self.derived_key = derive_key(self.salt, self.data_secret_bytes, 32)
+        self.derived_key = derive_master_anchor(data_secret, self.salt)
         self.encrypted_data, self.nonce, self.tag = encrypt_aes_gcm(
             self.derived_key, self.original_data_bytes
         )
@@ -104,7 +105,7 @@ class ProvenanceCapsule:
         capsule.tag = urlsafe_b64decode(json_data["tag"])
         capsule.salt = urlsafe_b64decode(json_data["salt"])
         capsule.data_secret_bytes = data_secret.encode("utf-8")
-        capsule.derived_key = derive_key(capsule.salt, capsule.data_secret_bytes, 32)
+        capsule.derived_key = derive_master_anchor(data_secret, capsule.salt)
         capsule.hash_proof = capsule.metadata["hash_proof"]
         return capsule
 
