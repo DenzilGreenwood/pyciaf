@@ -5,13 +5,21 @@ Following naming improvement recommendations from CIAF_LCM_IMPROVEMENT_RECOMMEND
 """
 
 from abc import ABC, abstractmethod
-import pandas as pd
+import warnings
 import numpy as np
 from typing import Dict, Any, Optional, Tuple, List
 import logging
 
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
+    warnings.warn("pandas not available. Regression base features will be limited.")
+
 from ciaf.utils.data_utils import CIAFDataUtils
-from ciaf.utils.wrapper_utils import CIAFWrapperUtils  
+from ciaf.utils.wrapper_utils import CIAFWrapperUtils
 from ciaf.utils.error_utils import CIAFErrorUtils
 
 logger = logging.getLogger(__name__)

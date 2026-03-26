@@ -17,7 +17,14 @@ from collections import Counter, defaultdict
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
-import pandas as pd
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
+    warnings.warn("pandas not available. Data quality validation features will be limited.")
 
 
 class ValidationResult:

@@ -1,13 +1,21 @@
 """
-CIAF Wrapper Utilities  
+CIAF Wrapper Utilities
 Simplified CIAF operations and wrapper management
 Following naming improvement recommendations from CIAF_LCM_IMPROVEMENT_RECOMMENDATIONS.md
 """
 
 import logging
+import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union
-import pandas as pd
 import numpy as np
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
+    warnings.warn("pandas not available. Wrapper utilities features will be limited.")
 
 # Import CIAF components (assuming they exist)
 try:

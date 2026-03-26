@@ -36,8 +36,16 @@ from .protocol_implementations import (
     create_numerical_preprocessor, create_auto_model_adapter
 )
 
-# Import data quality validation (existing)
-from .data_quality import DataQualityValidator, ValidationResult, quick_validate, validate_ciaf_dataset
+# Import data quality validation (existing - optional due to pandas dependency)
+try:
+    from .data_quality import DataQualityValidator, ValidationResult, quick_validate, validate_ciaf_dataset
+    DATA_QUALITY_AVAILABLE = True
+except ImportError:
+    DATA_QUALITY_AVAILABLE = False
+    DataQualityValidator = None
+    ValidationResult = None
+    quick_validate = None
+    validate_ciaf_dataset = None
 
 # Protocol-based factory functions
 def create_preprocessor(data_type: DataType, policy: Optional[PreprocessingPolicy] = None) -> DataPreprocessor:

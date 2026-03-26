@@ -4,11 +4,19 @@ Standardized data handling for CIAF integration
 Following naming improvement recommendations from CIAF_LCM_IMPROVEMENT_RECOMMENDATIONS.md
 """
 
-import pandas as pd
+import warnings
 import numpy as np
 from typing import List, Dict, Any, Tuple, Optional
 import logging
 import json
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
+    warnings.warn("pandas not available. CIAFDataUtils features will be limited.")
 
 logger = logging.getLogger(__name__)
 

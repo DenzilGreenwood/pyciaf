@@ -82,11 +82,19 @@ from .documentation import (
     DocumentationType,
     DocumentSection,
 )
-from .pre_ingestion_validator import (
-    BiasDetectionResult,
-    PreIngestionValidator,
-    ValidationIssue,
-)
+try:
+    from .pre_ingestion_validator import (
+        BiasDetectionResult,
+        PreIngestionValidator,
+        ValidationIssue,
+    )
+    PRE_INGESTION_VALIDATOR_AVAILABLE = True
+except ImportError:
+    PRE_INGESTION_VALIDATOR_AVAILABLE = False
+    # Provide stub classes for type checking
+    BiasDetectionResult = None
+    PreIngestionValidator = None
+    ValidationIssue = None
 from .regulatory_mapping import (
     ComplianceRequirement,
     RegulatoryMapper,
