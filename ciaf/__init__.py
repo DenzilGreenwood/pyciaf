@@ -7,7 +7,7 @@ with lazy capsule materialization and cryptographic provenance tracking.
 Created: 2025-09-09
 Last Modified: 2026-03-27
 Author: Denzil James Greenwood
-Version: 1.1.1
+Version: 1.1.2
 """
 
 # Anchoring module removed - using LCM system instead
@@ -215,7 +215,7 @@ except ImportError:
     generate_receipt = None
     WebAIVaultAdapter = None
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 __all__ = [
     # Core components
     "CryptoUtils",
