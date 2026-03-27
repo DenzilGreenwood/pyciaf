@@ -7,7 +7,7 @@
 
 A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and compliance mapping.
 
-![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)
+![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 ![Code Style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-informational.svg)](ciaf/SECURITY.md)
@@ -627,12 +627,20 @@ pip install -e .
 
 ## License
 
-This project is licensed under a Proprietary License by CognitiveInsight.AI — see [LICENSE](LICENSE) for details.
+This project is licensed under the **Business Source License 1.1 (BUSL-1.1)** — see [LICENSE](LICENSE) for full details.
 
-**Key restrictions:**
-- Non-commercial research and evaluation use only
-- No redistribution or commercial use without written consent
-- Contact 📧 founder@cognitiveinsight.ai for commercial licensing
+**Key Terms:**
+- ✅ **Non-commercial use**: Academic research, evaluation, personal use, and open source contributions are permitted
+- ✅ **90-day evaluation**: Internal business evaluation and testing allowed
+- ✅ **Change Date**: January 1, 2029 - automatically converts to Apache License 2.0
+- ⚠️ **Commercial use**: Requires a commercial license from CognitiveInsight.ai
+- ⚠️ **Production deployments**: Not permitted without a commercial license (beyond 90-day evaluation)
+- ⚠️ **SaaS/Hosted services**: Requires commercial license
+
+**Trademarks:** "Cognitive Insight™" and "LCM™" (Lazy Capsule Materialization) are trademarks of Denzil James Greenwood.
+
+For commercial licensing inquiries: 📧 founder@cognitiveinsight.ai
+Website: https://cognitiveinsight.ai
 
 ---
 
