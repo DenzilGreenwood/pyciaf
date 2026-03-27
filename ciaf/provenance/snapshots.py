@@ -10,6 +10,8 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
+from __future__ import annotations
+
 import json
 from datetime import datetime
 from typing import Any, Dict

@@ -9,6 +9,8 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
+from __future__ import annotations
+
 import locale
 import time
 from datetime import datetime, timezone

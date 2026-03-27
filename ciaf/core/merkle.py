@@ -7,6 +7,8 @@ Author: Denzil James Greenwood
 Version: 1.1.0
 """
 
+from __future__ import annotations
+
 from typing import List, Tuple
 from .crypto import sha256_hash
 from .interfaces import Merkle

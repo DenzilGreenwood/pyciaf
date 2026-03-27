@@ -7,6 +7,8 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
+from __future__ import annotations
+
 from ..provenance import ModelAggregationAnchor, ProvenanceCapsule, TrainingSnapshot
 from .mock_llm import MockLLM
 
