@@ -4,6 +4,8 @@ Standardized data handling for CIAF integration
 Following naming improvement recommendations from CIAF_LCM_IMPROVEMENT_RECOMMENDATIONS.md
 """
 
+from __future__ import annotations
+
 import warnings
 import numpy as np
 from typing import List, Dict, Any, Tuple, Optional

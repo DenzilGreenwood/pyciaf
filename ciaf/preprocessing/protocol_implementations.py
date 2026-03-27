@@ -9,13 +9,22 @@ Author: CIAF Framework
 Version: 1.0.0
 """
 
+from __future__ import annotations
+
 import json
 import warnings
 import logging
 from typing import Any, Dict, List, Optional, Union, Tuple
 from datetime import datetime
 import numpy as np
-import pandas as pd
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+    pd = None
+    warnings.warn("pandas not available. Some preprocessing features will be limited.")
 
 # Import sklearn components with graceful fallbacks
 try:

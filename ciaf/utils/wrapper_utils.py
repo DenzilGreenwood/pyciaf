@@ -4,6 +4,8 @@ Simplified CIAF operations and wrapper management
 Following naming improvement recommendations from CIAF_LCM_IMPROVEMENT_RECOMMENDATIONS.md
 """
 
+from __future__ import annotations
+
 import logging
 import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union

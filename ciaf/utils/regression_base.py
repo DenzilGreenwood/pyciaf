@@ -4,6 +4,8 @@ Standardized base class for all CIAF-enabled regression models
 Following naming improvement recommendations from CIAF_LCM_IMPROVEMENT_RECOMMENDATIONS.md
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 import warnings
 import numpy as np
