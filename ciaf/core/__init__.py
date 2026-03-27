@@ -2,9 +2,9 @@
 Core cryptographic and foundational components for CIAF.
 
 Created: 2025-09-09
-Last Modified: 2026-03-25
+Last Modified: 2026-03-27
 Author: Denzil James Greenwood
-Version: 1.1.0
+Version: 1.1.1
 """
 
 from .constants import (

@@ -5,9 +5,9 @@ A modular framework for creating verifiable AI training and inference pipelines
 with lazy capsule materialization and cryptographic provenance tracking.
 
 Created: 2025-09-09
-Last Modified: 2025-01-19
+Last Modified: 2026-03-27
 Author: Denzil James Greenwood
-Version: 1.1.0
+Version: 1.1.1
 """
 
 # Anchoring module removed - using LCM system instead
@@ -182,7 +182,7 @@ except ImportError:
     generate_receipt = None
     WebAIVaultAdapter = None
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __all__ = [
     # Core components
     "CryptoUtils",

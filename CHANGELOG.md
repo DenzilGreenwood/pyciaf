@@ -5,7 +5,57 @@ All notable changes to the Cognitive Insight Audit Framework (CIAF) will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] - 2025-01-19
+## [1.1.1] - 2026-03-27
+
+### Major License and PyPI Publication Update
+
+### Changed
+- **License Update**: Migrated from proprietary license to Business Source License 1.1 (BUSL-1.1)
+  - Permits non-commercial use, research, evaluation, and open source contributions
+  - Automatic conversion to Apache 2.0 on January 1, 2029
+  - Clear commercial licensing terms for production use
+- **Package Name**: Updated from `ciaf` to `pyciaf` for PyPI publication
+- **Documentation Links**: All relative markdown links converted to absolute GitHub URLs for PyPI compatibility
+
+### Added
+- **GitHub Actions CI/CD**: Automated workflow for PyPI publishing with trusted publishing support
+- **Continuous Integration**: Multi-platform testing on Python 3.9-3.12 (Ubuntu, Windows, macOS)
+- **RELEASE.md**: Complete guide for PyPI publication and versioning
+- **Documentation URL**: Added to pyproject.toml project.urls for direct access from PyPI
+
+### Fixed
+- **Critical ProvenanceCapsule Bug**: Fixed undefined `derive_key()` function causing runtime NameError
+  - Replaced with `derive_master_anchor()` from ciaf.core
+  - Fixed function signature and argument order
+  - Added comprehensive test suite verifying the fix
+- **Dependency Management**: Made pandas and scikit-learn optional with graceful fallbacks
+  - Core functionality works without optional dependencies
+  - Clear warnings when optional features are unavailable
+  - Moved scikit-learn to optional-dependencies in pyproject.toml
+- **Python 3.9 Compatibility**: Added `from __future__ import annotations` to fix union type syntax
+  - Fixed `str | None` syntax not supported in Python 3.9
+  - Fixed `list[str]`, `dict[str, str]` generic syntax
+  - Affected modules: core, simulation, provenance, preprocessing, utils
+- **Pydantic v1/v2 Compatibility**: Fixed Field() syntax for both pydantic versions
+  - Removed ellipsis `...` from Field() calls (v2 compatibility)
+  - Updated fallback Field function to accept positional args
+- **Type Hints**: Added future annotations to prevent AttributeError with NoneType
+  - Fixed pandas type hints when pandas is not installed
+  - Made all type hints lazy-evaluated strings
+
+### Technical Improvements
+- **Build Configuration**: Enhanced pyproject.toml with proper classifiers and URLs
+- **Test Suite**: All 9 core tests passing (2 capsule + 7 web integration)
+- **Package Validation**: Twine check passes for both wheel and sdist
+- **Cross-Platform Support**: Verified on Python 3.9, 3.10, 3.11, 3.12
+
+### Documentation
+- Fixed all documentation links to use absolute GitHub URLs
+- Updated README.md license section with BUSL-1.1 terms
+- Enhanced Security Policy references (3 locations)
+- Added clear commercial licensing information
+
+## [1.1.0] - 2025-09-19
 
 ### Major Production-Ready Update
 
