@@ -11,6 +11,7 @@ from pathlib import Path
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+
 def test_provenance_capsule_creation():
     """Test creating and using a ProvenanceCapsule."""
     print("[TEST] ProvenanceCapsule creation and decryption... ", end="", flush=True)
@@ -23,7 +24,7 @@ def test_provenance_capsule_creation():
         metadata = {
             "source": "Hospital A",
             "consent_status": "granted",
-            "data_type": "PHI"
+            "data_type": "PHI",
         }
         secret = "my-secret-key-12345"
 
@@ -57,6 +58,7 @@ def test_provenance_capsule_creation():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -85,6 +87,7 @@ def test_provenance_capsule_with_numbers():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 

@@ -25,28 +25,33 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
     from PIL import Image
+
     PIL_AVAILABLE = True
 except ImportError:
     PIL_AVAILABLE = False
 
 try:
     import imagehash
+
     IMAGEHASH_AVAILABLE = True
 except ImportError:
     IMAGEHASH_AVAILABLE = False
 
 try:
     import qrcode
+
     QRCODE_AVAILABLE = True
 except ImportError:
     QRCODE_AVAILABLE = False
 
 try:
     from pypdf import PdfReader, PdfWriter
+
     PYPDF_AVAILABLE = True
 except ImportError:
     try:
         from PyPDF2 import PdfReader, PdfWriter
+
         PYPDF_AVAILABLE = True
     except ImportError:
         PYPDF_AVAILABLE = False
@@ -134,6 +139,7 @@ def test_image_visual_watermark():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -179,6 +185,7 @@ def test_image_perceptual_hashing():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -199,21 +206,20 @@ def test_qr_code_generation():
 
         # Generate verification URL QR
         qr_bytes = make_verification_url_qr(
-            artifact_id="test-artifact-123",
-            base_url="https://vault.example.com"
+            artifact_id="test-artifact-123", base_url="https://vault.example.com"
         )
 
         # Check it's valid PNG
-        assert qr_bytes.startswith(b'\x89PNG')
+        assert qr_bytes.startswith(b"\x89PNG")
         assert len(qr_bytes) > 100  # Reasonable size
 
         # Generate compact token QR
         compact_qr = make_compact_token_qr(
             artifact_id="test-artifact-123",
             watermark_id="wmk-abc123def456",
-            receipt_hash_prefix="a1b2c3d4"
+            receipt_hash_prefix="a1b2c3d4",
         )
-        assert compact_qr.startswith(b'\x89PNG')
+        assert compact_qr.startswith(b"\x89PNG")
 
         print("[OK] PASSED")
         return True
@@ -221,6 +227,7 @@ def test_qr_code_generation():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -275,6 +282,7 @@ def test_image_with_qr_watermark():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -308,8 +316,16 @@ def test_image_with_perceptual_hashing():
         assert len(evidence.fingerprints) >= 4  # phash, ahash, dhash, whash
 
         # Find pHash entries
-        phash_before = [f for f in evidence.fingerprints if f.algorithm == "phash" and "before" in f.role]
-        phash_after = [f for f in evidence.fingerprints if f.algorithm == "phash" and "after" in f.role]
+        phash_before = [
+            f
+            for f in evidence.fingerprints
+            if f.algorithm == "phash" and "before" in f.role
+        ]
+        phash_after = [
+            f
+            for f in evidence.fingerprints
+            if f.algorithm == "phash" and "after" in f.role
+        ]
 
         assert len(phash_before) == 1
         assert len(phash_after) == 1
@@ -320,6 +336,7 @@ def test_image_with_perceptual_hashing():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -383,6 +400,7 @@ def test_pdf_metadata_watermark():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -437,6 +455,7 @@ def test_pdf_watermark_removal_detection():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -456,9 +475,10 @@ def main():
 
     try:
         import reportlab
-        print(f"  reportlab:    [OK]")
+
+        print("  reportlab:    [OK]")
     except ImportError:
-        print(f"  reportlab:    [MISSING]")
+        print("  reportlab:    [MISSING]")
 
     # Run tests
     results = []
@@ -478,7 +498,9 @@ def main():
     total = len(results)
 
     print("\n" + "=" * 60)
-    print(f"Phase 1 Test Results: {passed} passed, {failed} failed, {skipped} skipped (of {total})")
+    print(
+        f"Phase 1 Test Results: {passed} passed, {failed} failed, {skipped} skipped (of {total})"
+    )
     print("=" * 60)
 
     if failed == 0 and passed > 0:
@@ -488,7 +510,7 @@ def main():
         print("\n[WARN] All tests skipped - install dependencies")
         return 1
     else:
-        print(f"\n[FAIL] Some tests failed")
+        print("\n[FAIL] Some tests failed")
         return 1
 
 

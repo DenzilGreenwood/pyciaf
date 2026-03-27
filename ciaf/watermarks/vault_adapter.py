@@ -67,7 +67,7 @@ class WatermarkVaultAdapter:
         """Store evidence as JSON file."""
         try:
             file_path = self.storage_path / f"{evidence.artifact_id}.json"
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(evidence.to_dict(), f, indent=2, ensure_ascii=False)
             return True
         except Exception as e:
@@ -91,7 +91,7 @@ class WatermarkVaultAdapter:
                     "watermark_id": evidence.watermark.watermark_id,
                     "watermark_type": evidence.watermark.watermark_type.value,
                     "evidence": evidence_dict,
-                }
+                },
             )
             return True
         except Exception as e:
@@ -120,7 +120,7 @@ class WatermarkVaultAdapter:
             if not file_path.exists():
                 return None
 
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             return self._dict_to_evidence(data)
@@ -132,14 +132,12 @@ class WatermarkVaultAdapter:
         """Retrieve evidence from vault storage."""
         try:
             # Search vault for artifact
-            records = self.vault_storage.get_model_metadata(
-                limit=100
-            )
+            records = self.vault_storage.get_model_metadata(limit=100)
 
             for record in records:
-                metadata = record.get('metadata', {})
-                if metadata.get('artifact_id') == artifact_id:
-                    evidence_dict = metadata.get('evidence')
+                metadata = record.get("metadata", {})
+                if metadata.get("artifact_id") == artifact_id:
+                    evidence_dict = metadata.get("evidence")
                     if evidence_dict:
                         return self._dict_to_evidence(evidence_dict)
 
@@ -149,10 +147,7 @@ class WatermarkVaultAdapter:
             return None
 
     def search_by_model(
-        self,
-        model_id: str,
-        model_version: Optional[str] = None,
-        limit: int = 100
+        self, model_id: str, model_version: Optional[str] = None, limit: int = 100
     ) -> List[ArtifactEvidence]:
         """
         Search for artifacts by model.
@@ -171,21 +166,21 @@ class WatermarkVaultAdapter:
             return self._search_by_model_vault(model_id, model_version, limit)
 
     def _search_by_model_file(
-        self,
-        model_id: str,
-        model_version: Optional[str],
-        limit: int
+        self, model_id: str, model_version: Optional[str], limit: int
     ) -> List[ArtifactEvidence]:
         """Search files by model."""
         results = []
 
         for file_path in self.storage_path.glob("*.json"):
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                if data.get('model_id') == model_id:
-                    if model_version is None or data.get('model_version') == model_version:
+                if data.get("model_id") == model_id:
+                    if (
+                        model_version is None
+                        or data.get("model_version") == model_version
+                    ):
                         evidence = self._dict_to_evidence(data)
                         results.append(evidence)
 
@@ -197,26 +192,25 @@ class WatermarkVaultAdapter:
         return results
 
     def _search_by_model_vault(
-        self,
-        model_id: str,
-        model_version: Optional[str],
-        limit: int
+        self, model_id: str, model_version: Optional[str], limit: int
     ) -> List[ArtifactEvidence]:
         """Search vault by model."""
         results = []
 
         try:
             records = self.vault_storage.get_model_metadata(
-                model_name=model_id,
-                limit=limit
+                model_name=model_id, limit=limit
             )
 
             for record in records:
-                metadata = record.get('metadata', {})
-                evidence_dict = metadata.get('evidence')
+                metadata = record.get("metadata", {})
+                evidence_dict = metadata.get("evidence")
 
                 if evidence_dict:
-                    if model_version is None or evidence_dict.get('model_version') == model_version:
+                    if (
+                        model_version is None
+                        or evidence_dict.get("model_version") == model_version
+                    ):
                         evidence = self._dict_to_evidence(evidence_dict)
                         results.append(evidence)
 
@@ -239,10 +233,10 @@ class WatermarkVaultAdapter:
             # Search all files
             for file_path in self.storage_path.glob("*.json"):
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
+                    with open(file_path, "r", encoding="utf-8") as f:
                         data = json.load(f)
 
-                    if data.get('watermark', {}).get('watermark_id') == watermark_id:
+                    if data.get("watermark", {}).get("watermark_id") == watermark_id:
                         return self._dict_to_evidence(data)
                 except Exception:
                     continue
@@ -252,9 +246,9 @@ class WatermarkVaultAdapter:
                 records = self.vault_storage.get_model_metadata(limit=1000)
 
                 for record in records:
-                    metadata = record.get('metadata', {})
-                    if metadata.get('watermark_id') == watermark_id:
-                        evidence_dict = metadata.get('evidence')
+                    metadata = record.get("metadata", {})
+                    if metadata.get("watermark_id") == watermark_id:
+                        evidence_dict = metadata.get("evidence")
                         if evidence_dict:
                             return self._dict_to_evidence(evidence_dict)
             except Exception as e:
@@ -271,62 +265,64 @@ class WatermarkVaultAdapter:
         )
 
         # Reconstruct hash set
-        hashes_data = data['hashes']
+        hashes_data = data["hashes"]
         hashes = ArtifactHashSet(
-            content_hash_before_watermark=hashes_data['content_hash_before_watermark'],
-            content_hash_after_watermark=hashes_data['content_hash_after_watermark'],
-            canonical_receipt_hash=hashes_data.get('canonical_receipt_hash'),
-            normalized_hash_before=hashes_data.get('normalized_hash_before'),
-            normalized_hash_after=hashes_data.get('normalized_hash_after'),
-            perceptual_hash_before=hashes_data.get('perceptual_hash_before'),
-            perceptual_hash_after=hashes_data.get('perceptual_hash_after'),
-            simhash_before=hashes_data.get('simhash_before'),
-            simhash_after=hashes_data.get('simhash_after'),
+            content_hash_before_watermark=hashes_data["content_hash_before_watermark"],
+            content_hash_after_watermark=hashes_data["content_hash_after_watermark"],
+            canonical_receipt_hash=hashes_data.get("canonical_receipt_hash"),
+            normalized_hash_before=hashes_data.get("normalized_hash_before"),
+            normalized_hash_after=hashes_data.get("normalized_hash_after"),
+            perceptual_hash_before=hashes_data.get("perceptual_hash_before"),
+            perceptual_hash_after=hashes_data.get("perceptual_hash_after"),
+            simhash_before=hashes_data.get("simhash_before"),
+            simhash_after=hashes_data.get("simhash_after"),
         )
 
         # Reconstruct watermark descriptor
-        wm_data = data['watermark']
+        wm_data = data["watermark"]
         watermark = WatermarkDescriptor(
-            watermark_id=wm_data['watermark_id'],
-            watermark_type=WatermarkType(wm_data['watermark_type']),
-            tag_text=wm_data.get('tag_text'),
-            verification_url=wm_data.get('verification_url'),
-            qr_payload=wm_data.get('qr_payload'),
-            metadata_fields=wm_data.get('metadata_fields', {}),
-            embed_method=wm_data.get('embed_method'),
-            removal_resistance=wm_data.get('removal_resistance'),
-            location=wm_data.get('location'),
+            watermark_id=wm_data["watermark_id"],
+            watermark_type=WatermarkType(wm_data["watermark_type"]),
+            tag_text=wm_data.get("tag_text"),
+            verification_url=wm_data.get("verification_url"),
+            qr_payload=wm_data.get("qr_payload"),
+            metadata_fields=wm_data.get("metadata_fields", {}),
+            embed_method=wm_data.get("embed_method"),
+            removal_resistance=wm_data.get("removal_resistance"),
+            location=wm_data.get("location"),
         )
 
         # Reconstruct fingerprints
         fingerprints = []
-        for fp_data in data.get('fingerprints', []):
-            fingerprints.append(ArtifactFingerprint(
-                algorithm=fp_data['algorithm'],
-                value=fp_data['value'],
-                role=fp_data['role'],
-                confidence=fp_data.get('confidence'),
-            ))
+        for fp_data in data.get("fingerprints", []):
+            fingerprints.append(
+                ArtifactFingerprint(
+                    algorithm=fp_data["algorithm"],
+                    value=fp_data["value"],
+                    role=fp_data["role"],
+                    confidence=fp_data.get("confidence"),
+                )
+            )
 
         # Create evidence object
         evidence = ArtifactEvidence(
-            artifact_id=data['artifact_id'],
-            artifact_type=ArtifactType(data['artifact_type']),
-            mime_type=data['mime_type'],
-            created_at=data['created_at'],
-            model_id=data['model_id'],
-            model_version=data['model_version'],
-            actor_id=data['actor_id'],
-            prompt_hash=data['prompt_hash'],
-            output_hash_raw=data['output_hash_raw'],
-            output_hash_distributed=data['output_hash_distributed'],
+            artifact_id=data["artifact_id"],
+            artifact_type=ArtifactType(data["artifact_type"]),
+            mime_type=data["mime_type"],
+            created_at=data["created_at"],
+            model_id=data["model_id"],
+            model_version=data["model_version"],
+            actor_id=data["actor_id"],
+            prompt_hash=data["prompt_hash"],
+            output_hash_raw=data["output_hash_raw"],
+            output_hash_distributed=data["output_hash_distributed"],
             watermark=watermark,
             hashes=hashes,
             fingerprints=fingerprints,
-            metadata=data.get('metadata', {}),
-            prior_receipt_hash=data.get('prior_receipt_hash'),
-            signature=data.get('signature'),
-            merkle_leaf_hash=data.get('merkle_leaf_hash'),
+            metadata=data.get("metadata", {}),
+            prior_receipt_hash=data.get("prior_receipt_hash"),
+            signature=data.get("signature"),
+            merkle_leaf_hash=data.get("merkle_leaf_hash"),
         )
 
         return evidence
@@ -350,8 +346,7 @@ class WatermarkVaultAdapter:
             # For vault, estimate from metadata
             try:
                 records = self.vault_storage.get_model_metadata(
-                    model_name=model_id if model_id else None,
-                    limit=10000
+                    model_name=model_id if model_id else None, limit=10000
                 )
                 return len(records)
             except Exception:
@@ -369,16 +364,16 @@ class WatermarkVaultAdapter:
         if self._use_files:
             for file_path in self.storage_path.glob("*.json"):
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
+                    with open(file_path, "r", encoding="utf-8") as f:
                         data = json.load(f)
-                    models.add(data.get('model_id'))
+                    models.add(data.get("model_id"))
                 except Exception:
                     continue
         else:
             try:
                 records = self.vault_storage.get_model_metadata(limit=1000)
                 for record in records:
-                    models.add(record.get('model_name'))
+                    models.add(record.get("model_name"))
             except Exception:
                 pass
 
@@ -386,8 +381,7 @@ class WatermarkVaultAdapter:
 
 
 def create_watermark_vault(
-    vault_storage=None,
-    storage_path: str = "ciaf_vault/watermarks"
+    vault_storage=None, storage_path: str = "ciaf_vault/watermarks"
 ) -> WatermarkVaultAdapter:
     """
     Factory function to create watermark vault adapter.

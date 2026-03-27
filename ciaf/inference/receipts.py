@@ -240,7 +240,9 @@ class ZKEConnections:
 
             # Verify connecting
             if receipt.prev_receipt_hash != prev_hash:
-                print(f"Connections verification failed: Receipt {i} has incorrect prev_hash")
+                print(
+                    f"Connections verification failed: Receipt {i} has incorrect prev_hash"
+                )
                 return False
 
             prev_hash = receipt.receipt_hash

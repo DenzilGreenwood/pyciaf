@@ -88,9 +88,7 @@ def _apply_header_watermark(
 ) -> str:
     """Apply header-style watermark."""
     header = (
-        f"AI Provenance Tag: {watermark_id}\n"
-        f"Verify: {verification_url}\n"
-        "---\n\n"
+        f"AI Provenance Tag: {watermark_id}\n" f"Verify: {verification_url}\n" "---\n\n"
     )
     return header + text
 
@@ -102,7 +100,7 @@ def _apply_inline_watermark(
 ) -> str:
     """Apply inline watermark (end of first paragraph)."""
     # Find first paragraph break
-    match = re.search(r'\n\n', text)
+    match = re.search(r"\n\n", text)
 
     if match:
         pos = match.end()
@@ -124,12 +122,12 @@ def extract_watermark_id(text: str) -> Optional[str]:
         Watermark ID if found, None otherwise
     """
     # Try footer pattern
-    match = re.search(r'AI Provenance Tag:\s*([a-zA-Z0-9_-]+)', text)
+    match = re.search(r"AI Provenance Tag:\s*([a-zA-Z0-9_-]+)", text)
     if match:
         return match.group(1)
 
     # Try inline pattern
-    match = re.search(r'\[AI Generated:\s*([a-zA-Z0-9_-]+)', text)
+    match = re.search(r"\[AI Generated:\s*([a-zA-Z0-9_-]+)", text)
     if match:
         return match.group(1)
 
@@ -146,7 +144,7 @@ def extract_verification_url(text: str) -> Optional[str]:
     Returns:
         Verification URL if found, None otherwise
     """
-    match = re.search(r'Verify:\s*(https?://[^\s\n]+)', text)
+    match = re.search(r"Verify:\s*(https?://[^\s\n]+)", text)
     if match:
         return match.group(1)
     return None
@@ -234,16 +232,20 @@ def build_text_artifact_evidence(
         hash_set.simhash_before = simhash_before
         hash_set.simhash_after = simhash_after
 
-        fingerprints.append(ArtifactFingerprint(
-            algorithm="simhash",
-            value=simhash_before,
-            role="exact_content_before_watermark",
-        ))
-        fingerprints.append(ArtifactFingerprint(
-            algorithm="simhash",
-            value=simhash_after,
-            role="exact_content_after_watermark",
-        ))
+        fingerprints.append(
+            ArtifactFingerprint(
+                algorithm="simhash",
+                value=simhash_before,
+                role="exact_content_before_watermark",
+            )
+        )
+        fingerprints.append(
+            ArtifactFingerprint(
+                algorithm="simhash",
+                value=simhash_after,
+                role="exact_content_after_watermark",
+            )
+        )
 
     # Build watermark descriptor
     watermark = WatermarkDescriptor(
@@ -285,7 +287,7 @@ def build_text_artifact_evidence(
         metadata=metadata,
     )
 
-    #Compute receipt hash
+    # Compute receipt hash
     receipt_hash = sha256_bytes(evidence.to_canonical_bytes())
     evidence.hashes.canonical_receipt_hash = receipt_hash
 
@@ -334,13 +336,15 @@ def remove_watermark(text: str) -> str:
         Text with watermark removed
     """
     # Remove footer watermarks
-    text = re.sub(r'\n+---+\n+AI Provenance Tag:.*$', '', text, flags=re.DOTALL | re.MULTILINE)
+    text = re.sub(
+        r"\n+---+\n+AI Provenance Tag:.*$", "", text, flags=re.DOTALL | re.MULTILINE
+    )
 
     # Remove header watermarks
-    text = re.sub(r'^AI Provenance Tag:.*?\n+---+\n+', '', text, flags=re.MULTILINE)
+    text = re.sub(r"^AI Provenance Tag:.*?\n+---+\n+", "", text, flags=re.MULTILINE)
 
     # Remove inline watermarks
-    text = re.sub(r'\s*\[AI Generated:.*?\]', '', text)
+    text = re.sub(r"\s*\[AI Generated:.*?\]", "", text)
 
     return text.strip()
 
@@ -350,7 +354,6 @@ __all__ = [
     "apply_text_watermark",
     "build_text_artifact_evidence",
     "quick_watermark_text",
-
     # Extract/detect watermarks
     "extract_watermark_id",
     "extract_verification_url",

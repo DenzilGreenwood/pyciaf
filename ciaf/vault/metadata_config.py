@@ -71,10 +71,6 @@ class MetadataConfig:
         "encrypt_sensitive_data": False,
         "encryption_key_path": None,
         "audit_all_access": True,
-        # Performance settings (legacy - kept for compatibility)
-        "cache_size": 10000,  # Duplicated above for compatibility
-        "async_writes": True,  # Duplicated above for compatibility
-        "batch_size": 100,    # Duplicated above for compatibility
         # Compliance settings
         "compliance_frameworks": ["GDPR", "FDA", "EEOC", "FCRA", "HIPAA", "ISO_13485"],
         "required_metadata_fields": ["model_name", "stage", "event_type", "timestamp"],
@@ -127,16 +123,16 @@ class MetadataConfig:
             if value is not None:
                 # Type conversion based on default value type
                 default_type = type(self.config[config_key])
-                if default_type == bool:
+                if default_type is bool:
                     self.config[config_key] = value.lower() in (
                         "true",
                         "1",
                         "yes",
                         "on",
                     )
-                elif default_type == int:
+                elif default_type is int:
                     self.config[config_key] = int(value)
-                elif default_type == float:
+                elif default_type is float:
                     self.config[config_key] = float(value)
                 else:
                     self.config[config_key] = value
@@ -205,22 +201,22 @@ class MetadataConfig:
         valid_lcm_modes = ["immediate", "deferred", "adaptive"]
         if self.config["default_lcm_mode"] not in valid_lcm_modes:
             errors["default_lcm_mode"] = f"Must be one of: {valid_lcm_modes}"
-            
+
         if self.config["lcm_batch_size"] < 1:
             errors["lcm_batch_size"] = "Must be at least 1"
-            
+
         if self.config["lcm_processing_interval"] < 0.1:
             errors["lcm_processing_interval"] = "Must be at least 0.1 seconds"
-            
+
         if self.config["lcm_queue_max_size"] < 100:
             errors["lcm_queue_max_size"] = "Must be at least 100"
-            
+
         if self.config["lcm_immediate_threshold_ms"] < 0:
             errors["lcm_immediate_threshold_ms"] = "Must be non-negative"
-            
+
         if not (0 <= self.config["lcm_cpu_threshold_percent"] <= 100):
             errors["lcm_cpu_threshold_percent"] = "Must be between 0 and 100"
-            
+
         if self.config["lcm_memory_threshold_mb"] < 0:
             errors["lcm_memory_threshold_mb"] = "Must be non-negative"
 
@@ -316,7 +312,7 @@ CONFIG_TEMPLATES = {
         "db_connection_pool_size": 10,
     },
     "ultra_fast": {
-        "storage_backend": "sqlite", 
+        "storage_backend": "sqlite",
         "storage_path": "ciaf_metadata_ultrafast",
         "async_writes": True,
         "batch_size": 1000,
@@ -329,7 +325,7 @@ CONFIG_TEMPLATES = {
         "memory_buffer_size": 200,
         "db_connection_pool_size": 20,
         "audit_all_access": False,  # Reduce audit overhead
-        "enable_metrics": False,    # Disable metrics collection
+        "enable_metrics": False,  # Disable metrics collection
         "include_metadata_hash": False,  # Skip hash calculations
     },
     "inference_optimized": {
@@ -371,17 +367,17 @@ def create_deferred_lcm_config(
     mode: str = "adaptive",
     batch_size: int = 50,
     processing_interval: float = 2.0,
-    enable_fast_inference: bool = True
+    enable_fast_inference: bool = True,
 ) -> Dict[str, Any]:
     """
     Create a configuration optimized for deferred LCM processing.
-    
+
     Args:
         mode: LCM mode ("immediate", "deferred", "adaptive")
         batch_size: Number of receipts to process in each batch
         processing_interval: Seconds between batch processing
         enable_fast_inference: Enable optimizations for fast inference
-        
+
     Returns:
         Configuration dictionary
     """
@@ -396,19 +392,23 @@ def create_deferred_lcm_config(
         "cache_size": 20000 if enable_fast_inference else 10000,
         "memory_buffer_size": 100 if enable_fast_inference else 50,
     }
-    
+
     if mode == "adaptive":
-        config.update({
-            "lcm_immediate_threshold_ms": 50.0,
-            "lcm_cpu_threshold_percent": 80.0,
-            "lcm_memory_threshold_mb": 500.0,
-        })
+        config.update(
+            {
+                "lcm_immediate_threshold_ms": 50.0,
+                "lcm_cpu_threshold_percent": 80.0,
+                "lcm_memory_threshold_mb": 500.0,
+            }
+        )
     elif mode == "deferred":
-        config.update({
-            "lcm_queue_max_size": 20000,
-            "lcm_enable_persistence": True,
-        })
-        
+        config.update(
+            {
+                "lcm_queue_max_size": 20000,
+                "lcm_enable_persistence": True,
+            }
+        )
+
     return config
 
 
@@ -418,7 +418,7 @@ def create_high_performance_config() -> Dict[str, Any]:
         mode="deferred",
         batch_size=100,
         processing_interval=1.0,
-        enable_fast_inference=True
+        enable_fast_inference=True,
     )
 
 
@@ -428,7 +428,7 @@ def create_compliance_first_config() -> Dict[str, Any]:
         mode="immediate",
         batch_size=10,
         processing_interval=5.0,
-        enable_fast_inference=False
+        enable_fast_inference=False,
     )
 
 
@@ -438,105 +438,106 @@ def create_balanced_config() -> Dict[str, Any]:
         mode="adaptive",
         batch_size=50,
         processing_interval=2.0,
-        enable_fast_inference=True
+        enable_fast_inference=True,
     )
 
 
 def create_enterprise_config() -> Dict[str, Any]:
     """Create enterprise-grade configuration with full features."""
     config = MetadataConfig.DEFAULT_CONFIG.copy()
-    config.update({
-        # Enterprise performance settings
-        "lcm_worker_threads": 8,
-        "lcm_queue_max_size": 50000,
-        "lcm_enable_parallel_processing": True,
-        "lcm_batch_size": 200,
-        "lcm_processing_interval": 0.5,
-        
-        # Enterprise reliability settings
-        "lcm_enable_persistence": True,
-        "lcm_retry_attempts": 5,
-        "lcm_health_check_interval": 10.0,
-        "lcm_metrics_collection": True,
-        "deployment_anchor_implementation": "full",
-        
-        # Enterprise security settings
-        "encrypt_sensitive_data": True,
-        "audit_all_access": True,
-        "compliance_frameworks": [
-            "GDPR", "HIPAA", "SOX", "ISO_27001", "EU_AI_ACT", "NIST_AI_RMF"
-        ],
-        
-        # Enterprise storage settings
-        "storage_backend": "sqlite",
-        "enable_compression": True,
-        "db_connection_pool_size": 10,
-        "metadata_retention_days": 2555,  # 7 years
-        "compliance_retention_days": 3650,  # 10 years
-        
-        # Enterprise monitoring
-        "enable_metrics": True,
-        "alert_on_compliance_failure": True,
-        "lcm_overflow_strategy": "block",  # Don't drop data in enterprise
-    })
+    config.update(
+        {
+            # Enterprise performance settings
+            "lcm_worker_threads": 8,
+            "lcm_queue_max_size": 50000,
+            "lcm_enable_parallel_processing": True,
+            "lcm_batch_size": 200,
+            "lcm_processing_interval": 0.5,
+            # Enterprise reliability settings
+            "lcm_enable_persistence": True,
+            "lcm_retry_attempts": 5,
+            "lcm_health_check_interval": 10.0,
+            "lcm_metrics_collection": True,
+            "deployment_anchor_implementation": "full",
+            # Enterprise security settings
+            "encrypt_sensitive_data": True,
+            "audit_all_access": True,
+            "compliance_frameworks": [
+                "GDPR",
+                "HIPAA",
+                "SOX",
+                "ISO_27001",
+                "EU_AI_ACT",
+                "NIST_AI_RMF",
+            ],
+            # Enterprise storage settings
+            "storage_backend": "sqlite",
+            "enable_compression": True,
+            "db_connection_pool_size": 10,
+            "metadata_retention_days": 2555,  # 7 years
+            "compliance_retention_days": 3650,  # 10 years
+            # Enterprise monitoring
+            "enable_metrics": True,
+            "alert_on_compliance_failure": True,
+            "lcm_overflow_strategy": "block",  # Don't drop data in enterprise
+        }
+    )
     return config
 
 
 def create_development_config() -> Dict[str, Any]:
     """Create development-friendly configuration."""
     config = MetadataConfig.DEFAULT_CONFIG.copy()
-    config.update({
-        # Development settings for fast iteration
-        "lcm_worker_threads": 1,
-        "lcm_queue_max_size": 1000,
-        "lcm_batch_size": 10,
-        "lcm_processing_interval": 5.0,
-        "lcm_enable_parallel_processing": False,
-        
-        # Minimal retention for dev
-        "metadata_retention_days": 30,
-        "compliance_retention_days": 90,
-        
-        # Simple storage for dev
-        "storage_backend": "json",
-        "enable_compression": False,
-        "deployment_anchor_implementation": "stub",
-        
-        # Debug-friendly settings
-        "defer_validation": False,  # Enable validations in dev
-        "lcm_metrics_collection": True,
-        "enable_metrics": True,
-    })
+    config.update(
+        {
+            # Development settings for fast iteration
+            "lcm_worker_threads": 1,
+            "lcm_queue_max_size": 1000,
+            "lcm_batch_size": 10,
+            "lcm_processing_interval": 5.0,
+            "lcm_enable_parallel_processing": False,
+            # Minimal retention for dev
+            "metadata_retention_days": 30,
+            "compliance_retention_days": 90,
+            # Simple storage for dev
+            "storage_backend": "json",
+            "enable_compression": False,
+            "deployment_anchor_implementation": "stub",
+            # Debug-friendly settings
+            "defer_validation": False,  # Enable validations in dev
+            "lcm_metrics_collection": True,
+            "enable_metrics": True,
+        }
+    )
     return config
 
 
 def create_testing_config() -> Dict[str, Any]:
     """Create configuration optimized for testing."""
     config = MetadataConfig.DEFAULT_CONFIG.copy()
-    config.update({
-        # Fast processing for tests
-        "lcm_worker_threads": 1,
-        "lcm_queue_max_size": 100,
-        "lcm_batch_size": 5,
-        "lcm_processing_interval": 0.1,
-        "lcm_enable_parallel_processing": False,
-        
-        # Minimal storage for tests
-        "storage_backend": "json",
-        "storage_path": "test_ciaf_metadata",
-        "lcm_storage_dir": "test_deferred_lcm_storage",
-        "enable_compression": False,
-        
-        # No retention in tests
-        "metadata_retention_days": 1,
-        "compliance_retention_days": 1,
-        "auto_cleanup_enabled": True,
-        
-        # Simplified settings
-        "deployment_anchor_implementation": "stub",
-        "encrypt_sensitive_data": False,
-        "lcm_enable_persistence": False,
-    })
+    config.update(
+        {
+            # Fast processing for tests
+            "lcm_worker_threads": 1,
+            "lcm_queue_max_size": 100,
+            "lcm_batch_size": 5,
+            "lcm_processing_interval": 0.1,
+            "lcm_enable_parallel_processing": False,
+            # Minimal storage for tests
+            "storage_backend": "json",
+            "storage_path": "test_ciaf_metadata",
+            "lcm_storage_dir": "test_deferred_lcm_storage",
+            "enable_compression": False,
+            # No retention in tests
+            "metadata_retention_days": 1,
+            "compliance_retention_days": 1,
+            "auto_cleanup_enabled": True,
+            # Simplified settings
+            "deployment_anchor_implementation": "stub",
+            "encrypt_sensitive_data": False,
+            "lcm_enable_persistence": False,
+        }
+    )
     return config
 
 

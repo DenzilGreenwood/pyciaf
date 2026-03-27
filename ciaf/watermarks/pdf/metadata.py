@@ -19,17 +19,21 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from typing import Tuple, Optional, Dict, Any
+from typing import Tuple, Optional, Dict, TYPE_CHECKING
 from io import BytesIO
 import uuid
-import json
+
+if TYPE_CHECKING:
+    from ciaf.watermarks.models import ArtifactEvidence, VerificationResult
 
 try:
     from pypdf import PdfReader, PdfWriter
+
     PYPDF_AVAILABLE = True
 except ImportError:
     try:
         from PyPDF2 import PdfReader, PdfWriter
+
         PYPDF_AVAILABLE = True
     except ImportError:
         PYPDF_AVAILABLE = False
@@ -199,7 +203,7 @@ def build_pdf_artifact_evidence(
     prompt: str,
     verification_base_url: str,
     additional_metadata: Optional[Dict[str, str]] = None,
-) -> Tuple['ArtifactEvidence', bytes]:
+) -> Tuple["ArtifactEvidence", bytes]:
     """
     Build complete artifact evidence for PDF with metadata watermark.
 
@@ -301,8 +305,8 @@ def build_pdf_artifact_evidence(
 
 def verify_pdf_artifact(
     suspect_pdf_bytes: bytes,
-    evidence: 'ArtifactEvidence',
-) -> 'VerificationResult':
+    evidence: "ArtifactEvidence",
+) -> "VerificationResult":
     """
     Verify suspect PDF against stored evidence.
 
@@ -342,7 +346,9 @@ def verify_pdf_artifact(
     if match_before and not match_after:
         likely_removed = True
         notes.append("[WARN] Watermark likely removed!")
-        notes.append("  Content matches pre-watermark version but metadata watermark is missing.")
+        notes.append(
+            "  Content matches pre-watermark version but metadata watermark is missing."
+        )
 
     # Check 4: Watermark presence in metadata
     watermark_present = has_pdf_watermark(suspect_pdf_bytes)
@@ -350,7 +356,10 @@ def verify_pdf_artifact(
 
     if watermark_present:
         extracted = extract_pdf_metadata_watermark(suspect_pdf_bytes)
-        if extracted and extracted.get("watermark_id") == evidence.watermark.watermark_id:
+        if (
+            extracted
+            and extracted.get("watermark_id") == evidence.watermark.watermark_id
+        ):
             watermark_intact = True
             notes.append("[OK] Original watermark present in metadata.")
         else:
@@ -392,14 +401,11 @@ __all__ = [
     # Watermarking
     "apply_pdf_metadata_watermark",
     "build_pdf_artifact_evidence",
-
     # Extraction
     "extract_pdf_metadata_watermark",
     "has_pdf_watermark",
-
     # Verification
     "verify_pdf_artifact",
-
     # Constants
     "PYPDF_AVAILABLE",
 ]

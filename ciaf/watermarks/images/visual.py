@@ -25,13 +25,17 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional, Literal, Tuple
+from dataclasses import dataclass
+from typing import Optional, Literal, Tuple, TYPE_CHECKING
 from io import BytesIO
 import uuid
 
+if TYPE_CHECKING:
+    from ciaf.watermarks.models import ArtifactEvidence
+
 try:
     from PIL import Image, ImageDraw, ImageFont, ImageEnhance
+
     PIL_AVAILABLE = True
 except ImportError:
     PIL_AVAILABLE = False
@@ -42,9 +46,15 @@ except ImportError:
 
 
 Position = Literal[
-    "top_left", "top_right", "top_center",
-    "bottom_left", "bottom_right", "bottom_center",
-    "center", "center_left", "center_right"
+    "top_left",
+    "top_right",
+    "top_center",
+    "bottom_left",
+    "bottom_right",
+    "bottom_center",
+    "center",
+    "center_left",
+    "center_right",
 ]
 
 
@@ -55,6 +65,7 @@ class ImageWatermarkSpec:
 
     Defines how the watermark should be applied.
     """
+
     mode: Literal["visual", "steganographic", "hybrid"] = "visual"
     text: Optional[str] = None
     opacity: float = 0.3  # 0.0-1.0 (0 = invisible, 1 = opaque)
@@ -114,7 +125,9 @@ def apply_visual_watermark(
         font = ImageFont.truetype("arial.ttf", font_size)
     except Exception:
         try:
-            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size)
+            font = ImageFont.truetype(
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", font_size
+            )
         except Exception:
             font = ImageFont.load_default()
 
@@ -124,7 +137,9 @@ def apply_visual_watermark(
     text_h = bbox[3] - bbox[1]
 
     # Calculate position
-    x, y = _calculate_position(position, base.width, base.height, text_w, text_h, margin)
+    x, y = _calculate_position(
+        position, base.width, base.height, text_w, text_h, margin
+    )
 
     # Draw text with opacity
     alpha = max(0, min(255, int(255 * opacity)))
@@ -176,10 +191,12 @@ def apply_qr_watermark(
     qr_rgba = qr_img.convert("RGBA")
 
     # Calculate position
-    x, y = _calculate_position(position, base.width, base.height, qr_size, qr_size, margin)
+    x, y = _calculate_position(
+        position, base.width, base.height, qr_size, qr_size, margin
+    )
 
     # Paste QR code
-    base.paste(qr_rgba, (x ,y), qr_rgba)
+    base.paste(qr_rgba, (x, y), qr_rgba)
 
     # Convert back to RGB
     result = base.convert("RGB")
@@ -249,11 +266,23 @@ def _calculate_position(
         "top_center": ((img_width - element_width) // 2, margin),
         "top_right": (img_width - element_width - margin, margin),
         "center_left": (margin, (img_height - element_height) // 2),
-        "center": ((img_width - element_width) // 2, (img_height - element_height) // 2),
-        "center_right": (img_width - element_width - margin, (img_height - element_height) // 2),
+        "center": (
+            (img_width - element_width) // 2,
+            (img_height - element_height) // 2,
+        ),
+        "center_right": (
+            img_width - element_width - margin,
+            (img_height - element_height) // 2,
+        ),
         "bottom_left": (margin, img_height - element_height - margin),
-        "bottom_center": ((img_width - element_width) // 2, img_height - element_height - margin),
-        "bottom_right": (img_width - element_width - margin, img_height - element_height - margin),
+        "bottom_center": (
+            (img_width - element_width) // 2,
+            img_height - element_height - margin,
+        ),
+        "bottom_right": (
+            img_width - element_width - margin,
+            img_height - element_height - margin,
+        ),
     }
     return positions.get(position, positions["bottom_right"])
 
@@ -267,7 +296,7 @@ def build_image_artifact_evidence(
     verification_base_url: str,
     watermark_spec: Optional[ImageWatermarkSpec] = None,
     include_perceptual_hashes: bool = True,
-) -> Tuple['ArtifactEvidence', bytes]:
+) -> Tuple["ArtifactEvidence", bytes]:
     """
     Build complete artifact evidence for watermarked image.
 
@@ -347,42 +376,50 @@ def build_image_artifact_evidence(
 
             if IMAGEHASH_AVAILABLE:
                 phash_b, ahash_b, dhash_b, whash_b = compute_all_hashes(image_bytes)
-                phash_a, ahash_a, dhash_a, whash_a = compute_all_hashes(watermarked_bytes)
+                phash_a, ahash_a, dhash_a, whash_a = compute_all_hashes(
+                    watermarked_bytes
+                )
 
                 # Store in hash set
                 hash_set.perceptual_hash_before = phash_b
                 hash_set.perceptual_hash_after = phash_a
 
                 # Add fingerprints
-                fingerprints.extend([
-                    ArtifactFingerprint(
-                        algorithm="phash",
-                        value=phash_b,
-                        role="perceptual_before_watermark"
-                    ),
-                    ArtifactFingerprint(
-                        algorithm="phash",
-                        value=phash_a,
-                        role="perceptual_after_watermark"
-                    ),
-                    ArtifactFingerprint(
-                        algorithm="ahash",
-                        value=ahash_b,
-                        role="average_before_watermark"
-                    ),
-                    ArtifactFingerprint(
-                        algorithm="dhash",
-                        value=dhash_b,
-                        role="difference_before_watermark"
-                    ),
-                ])
+                fingerprints.extend(
+                    [
+                        ArtifactFingerprint(
+                            algorithm="phash",
+                            value=phash_b,
+                            role="perceptual_before_watermark",
+                        ),
+                        ArtifactFingerprint(
+                            algorithm="phash",
+                            value=phash_a,
+                            role="perceptual_after_watermark",
+                        ),
+                        ArtifactFingerprint(
+                            algorithm="ahash",
+                            value=ahash_b,
+                            role="average_before_watermark",
+                        ),
+                        ArtifactFingerprint(
+                            algorithm="dhash",
+                            value=dhash_b,
+                            role="difference_before_watermark",
+                        ),
+                    ]
+                )
         except Exception:
             pass  # Perceptual hashing failed, continue without it
 
     # Build watermark descriptor
     watermark = WatermarkDescriptor(
         watermark_id=watermark_id,
-        watermark_type=WatermarkType.VISIBLE if watermark_spec.mode == "visual" else WatermarkType.HYBRID,
+        watermark_type=(
+            WatermarkType.VISIBLE
+            if watermark_spec.mode == "visual"
+            else WatermarkType.HYBRID
+        ),
         tag_text=watermark_text,
         verification_url=verification_url,
         qr_payload=verification_url if qr_bytes else None,
@@ -430,13 +467,11 @@ __all__ = [
     # Data models
     "ImageWatermarkSpec",
     "Position",
-
     # Watermarking functions
     "apply_visual_watermark",
     "apply_qr_watermark",
     "apply_combined_watermark",
     "build_image_artifact_evidence",
-
     # Constants
     "PIL_AVAILABLE",
 ]

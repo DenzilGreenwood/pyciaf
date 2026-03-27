@@ -10,8 +10,6 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-import base64
-import hashlib
 import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
@@ -599,7 +597,7 @@ def demo_visualization_capabilities():
     print(f"   Technical Advantage: {patent_info['technical_advantage']}")
 
     # Show regulatory alignment
-    print(f"\n6. Regulatory Compliance Alignment")
+    print("\n6. Regulatory Compliance Alignment")
     for framework, description in viz_info["regulatory_compliance"].items():
         print(f"   {framework.upper()}: {description}")
 

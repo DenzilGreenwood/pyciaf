@@ -27,10 +27,10 @@ Version: 1.0.0
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Dict, Any, Callable
+from typing import Optional, Dict, Any
 import hashlib
 
-from .events import WebAIEvent, EventType, utc_now_iso
+from .events import WebAIEvent, EventType
 from .detectors import AIToolDetector, DetectionResult
 from .classifiers import ContentClassifier, ClassificationResult
 from .policy import PolicyEngine, PolicyResult, PolicyContext
@@ -46,6 +46,7 @@ class CollectionConfig:
 
     Controls what data is captured and how it's processed.
     """
+
     # Detection
     approved_tools: set[str] = None
     detect_shadow_ai: bool = True
@@ -136,11 +137,18 @@ class EventCollector:
 
         # Classify content
         classification = None
-        if self.config.classify_content and len(prompt) >= self.config.min_content_length:
+        if (
+            self.config.classify_content
+            and len(prompt) >= self.config.min_content_length
+        ):
             classification = self.classifier.classify(prompt)
 
         # Hash prompt
-        prompt_hash = hashlib.sha256(prompt.encode()).hexdigest() if self.config.hash_content else None
+        prompt_hash = (
+            hashlib.sha256(prompt.encode()).hexdigest()
+            if self.config.hash_content
+            else None
+        )
 
         # Create event
         event = WebAIEvent.create(
@@ -155,8 +163,12 @@ class EventCollector:
             tool_approved=detection.tool_approved if detection else None,
             page_url_hash=hashlib.sha256(url.encode()).hexdigest(),
             prompt_hash=prompt_hash,
-            data_classification=classification.classification if classification else None,
-            sensitivity_score=classification.sensitivity_score if classification else None,
+            data_classification=(
+                classification.classification if classification else None
+            ),
+            sensitivity_score=(
+                classification.sensitivity_score if classification else None
+            ),
             metadata=metadata or {},
         )
 
@@ -165,13 +177,21 @@ class EventCollector:
         if self.config.enforce_policy:
             policy_result = self.policy_engine.evaluate(event)
             event.policy_decision = policy_result.decision
-            event.policy_rule_id = policy_result.matched_rule.rule_id if policy_result.matched_rule else None
+            event.policy_rule_id = (
+                policy_result.matched_rule.rule_id
+                if policy_result.matched_rule
+                else None
+            )
             event.policy_reason = policy_result.reason
 
         # Redact if needed
         content_to_store = None
         if self.config.capture_raw_content:
-            if self.config.redact_sensitive and classification and classification.is_restricted():
+            if (
+                self.config.redact_sensitive
+                and classification
+                and classification.is_restricted()
+            ):
                 content_to_store = self.redactor.redact(prompt)
             else:
                 content_to_store = prompt
@@ -249,8 +269,12 @@ class EventCollector:
             tool_approved=detection.tool_approved if detection else None,
             page_url_hash=hashlib.sha256(url.encode()).hexdigest(),
             uploaded_file_hashes=[file_hash] if file_hash else [],
-            data_classification=classification.classification if classification else None,
-            sensitivity_score=classification.sensitivity_score if classification else None,
+            data_classification=(
+                classification.classification if classification else None
+            ),
+            sensitivity_score=(
+                classification.sensitivity_score if classification else None
+            ),
             metadata={
                 "file_name": file_name,
                 "file_size": file_size,
@@ -263,7 +287,11 @@ class EventCollector:
             context = PolicyContext(content_size=file_size)
             policy_result = self.policy_engine.evaluate(event, context)
             event.policy_decision = policy_result.decision
-            event.policy_rule_id = policy_result.matched_rule.rule_id if policy_result.matched_rule else None
+            event.policy_rule_id = (
+                policy_result.matched_rule.rule_id
+                if policy_result.matched_rule
+                else None
+            )
 
         # Generate receipt
         receipt = None
@@ -313,7 +341,11 @@ class EventCollector:
         detection = self.detector.detect(url)
 
         # Hash output
-        output_hash = hashlib.sha256(output.encode()).hexdigest() if self.config.hash_content else None
+        output_hash = (
+            hashlib.sha256(output.encode()).hexdigest()
+            if self.config.hash_content
+            else None
+        )
 
         # Create event
         event = WebAIEvent.create(
@@ -351,6 +383,7 @@ class EventCollector:
 @dataclass
 class CollectionResult:
     """Result of event collection."""
+
     event: WebAIEvent
     detection: Optional[DetectionResult] = None
     classification: Optional[ClassificationResult] = None
@@ -377,6 +410,7 @@ class CollectionResult:
 
 # Convenience function for simple collection
 
+
 def collect_ai_event(
     event_type: EventType,
     org_id: str,
@@ -385,7 +419,7 @@ def collect_ai_event(
     url: str,
     content: Optional[str] = None,
     approved_tools: Optional[set[str]] = None,
-    **kwargs
+    **kwargs,
 ) -> CollectionResult:
     """
     Simple event collection function.
@@ -425,7 +459,7 @@ def collect_ai_event(
             tool_name=detection.tool_name if detection else None,
             tool_domain=detection.tool_domain if detection else None,
             tool_approved=detection.tool_approved if detection else None,
-            **kwargs
+            **kwargs,
         )
 
         if config.store_events:

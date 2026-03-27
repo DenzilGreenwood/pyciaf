@@ -45,6 +45,7 @@ class WebAIReceipt:
     Provides verifiable evidence that an event occurred
     with specific properties at a specific time.
     """
+
     # Receipt identifiers
     receipt_id: str
     event_id: str
@@ -128,8 +129,8 @@ class WebAIReceipt:
         }
 
         # Sort keys and use compact encoding
-        json_str = json.dumps(canonical, sort_keys=True, separators=(',', ':'))
-        return json_str.encode('utf-8')
+        json_str = json.dumps(canonical, sort_keys=True, separators=(",", ":"))
+        return json_str.encode("utf-8")
 
     def verify_hash(self) -> bool:
         """
@@ -198,7 +199,7 @@ class ReceiptGenerator:
         # Compute content hash if provided
         content_hash = None
         if content:
-            content_hash = hashlib.sha256(content.encode('utf-8')).hexdigest()
+            content_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
 
         # Create receipt
         receipt = WebAIReceipt(
@@ -261,8 +262,8 @@ class ReceiptGenerator:
     def _hash_event(self, event: WebAIEvent) -> str:
         """Compute SHA-256 hash of event."""
         event_dict = event.to_dict()
-        json_str = json.dumps(event_dict, sort_keys=True, separators=(',', ':'))
-        return hashlib.sha256(json_str.encode('utf-8')).hexdigest()
+        json_str = json.dumps(event_dict, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
 
     def _sign_receipt(self, receipt: WebAIReceipt) -> str:
         """
@@ -320,6 +321,7 @@ def verify_receipt_chain(receipts: List[WebAIReceipt]) -> bool:
 
 
 # Convenience functions
+
 
 def generate_receipt(
     event: WebAIEvent,

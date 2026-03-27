@@ -19,30 +19,19 @@ import tempfile
 import shutil
 from ciaf.watermarks import (
     # Models
-    ArtifactType,
-    WatermarkType,
-    ArtifactEvidence,
-    VerificationResult,
-
-    # Text watermarking
     build_text_artifact_evidence,
-    apply_text_watermark,
     quick_watermark_text,
     extract_watermark_id,
     has_watermark,
     remove_watermark,
-
     # Verification
     verify_text_artifact,
-    quick_verify,
     analyze_suspect_text,
     format_verification_report,
-
     # Hashing
     simhash_text,
     simhash_distance,
     normalized_text_hash,
-
     # Vault
     create_watermark_vault,
 )
@@ -60,7 +49,7 @@ def test_text_watermarking():
     watermarked, artifact_id = quick_watermark_text(
         text=raw_text,
         model_id="gpt-governed-prod",
-        verification_url="https://vault.example.com"
+        verification_url="https://vault.example.com",
     )
 
     print(f"Artifact ID: {artifact_id}")
@@ -91,7 +80,7 @@ def test_watermark_removal_detection():
         model_version="1.0",
         actor_id="test-user",
         prompt="Generate content",
-        verification_base_url="https://vault.example.com"
+        verification_base_url="https://vault.example.com",
     )
 
     print(f"Evidence created: {evidence.artifact_id}")
@@ -192,7 +181,7 @@ def test_vault_storage():
             model_version="1.0",
             actor_id="test-user",
             prompt="Test prompt",
-            verification_base_url="https://vault.example.com"
+            verification_base_url="https://vault.example.com",
         )
 
         print(f"Artifact ID: {evidence.artifact_id}")
@@ -238,7 +227,7 @@ def test_verification_report():
         model_version="1.0",
         actor_id="tester",
         prompt="Generate sample",
-        verification_base_url="https://vault.example.com"
+        verification_base_url="https://vault.example.com",
     )
 
     result = verify_text_artifact(watermarked, evidence)
@@ -262,10 +251,7 @@ def test_suspect_artifact_analysis():
     print("=" * 60)
 
     # Watermarked text
-    watermarked, artifact_id = quick_watermark_text(
-        "Some AI content",
-        "test-model"
-    )
+    watermarked, artifact_id = quick_watermark_text("Some AI content", "test-model")
 
     # Analyze
     analysis = analyze_suspect_text(watermarked)
@@ -274,8 +260,8 @@ def test_suspect_artifact_analysis():
     print(f"Watermark ID: {analysis['watermark_id']}")
     print(f"Text length: {analysis['text_length']}")
 
-    assert analysis['has_ciaf_watermark'], "Should detect watermark!"
-    assert analysis['watermark_id'] is not None, "Should extract ID!"
+    assert analysis["has_ciaf_watermark"], "Should detect watermark!"
+    assert analysis["watermark_id"] is not None, "Should extract ID!"
     print("[OK] Suspect analysis works")
 
     print("[OK] Suspect artifact analysis test passed\n")
@@ -307,6 +293,7 @@ def run_all_tests():
         except Exception as e:
             print(f"\n[FAIL] {test_func.__name__}: {e}")
             import traceback
+
             traceback.print_exc()
             failed += 1
 

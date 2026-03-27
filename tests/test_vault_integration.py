@@ -18,8 +18,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Set UTF-8 encoding for Windows console
-if sys.platform == 'win32':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 print("=" * 60)
 print("CIAF Vault Integration Test")
@@ -34,8 +34,9 @@ try:
         CompressedMetadataStorage,
         HighPerformanceMetadataStorage,
         get_metadata_storage,
-        create_config_template
+        create_config_template,
     )
+
     print("   [OK] Core vault imports successful")
 except ImportError as e:
     print(f"   [FAIL] Core vault import failed: {e}")
@@ -45,6 +46,7 @@ except ImportError as e:
 print("\n[2] Testing backend availability...")
 try:
     from ciaf.vault.backends import POSTGRESQL_AVAILABLE
+
     if POSTGRESQL_AVAILABLE:
         print("   [OK] PostgreSQL backend available")
         from ciaf.vault.backends import PostgreSQLBackend, create_postgresql_vault
@@ -57,11 +59,8 @@ except ImportError:
 # Test 3: CIAF main module imports
 print("\n[3] Testing CIAF main module imports...")
 try:
-    from ciaf import (
-        MetadataStorage,
-        MetadataConfig,
-        get_metadata_storage
-    )
+    from ciaf import MetadataStorage, MetadataConfig, get_metadata_storage
+
     print("   [OK] CIAF main module imports successful")
 except ImportError as e:
     print(f"   [FAIL] CIAF main module import failed: {e}")
@@ -80,7 +79,7 @@ required_items = [
     "metadata_tags",
     "backends",
     "databases",
-    "README.md"
+    "README.md",
 ]
 
 all_present = True
@@ -107,20 +106,14 @@ try:
     temp_dir = tempfile.mkdtemp(prefix="ciaf_vault_test_")
 
     # Test JSON backend
-    storage = MetadataStorage(
-        storage_path=temp_dir,
-        backend="json"
-    )
+    storage = MetadataStorage(storage_path=temp_dir, backend="json")
 
     # Store test metadata
     test_metadata = {
         "model_name": "test_model",
         "stage": "testing",
         "event_type": "test_event",
-        "metadata": {
-            "test": True,
-            "timestamp": "2026-03-24T00:00:00Z"
-        }
+        "metadata": {"test": True, "timestamp": "2026-03-24T00:00:00Z"},
     }
 
     storage.save_metadata(**test_metadata)
@@ -139,6 +132,7 @@ try:
 except Exception as e:
     print(f"   [FAIL] Storage operations failed: {e}")
     import traceback
+
     traceback.print_exc()
 
 # Test 6: Schema validation
@@ -146,10 +140,11 @@ print("\n[6] Checking vault schema...")
 schema_path = Path("ciaf/schemas/vault.schema.json")
 if schema_path.exists():
     import json
+
     try:
         with open(schema_path) as f:
             schema = json.load(f)
-        print(f"   [OK] Vault schema loaded successfully")
+        print("   [OK] Vault schema loaded successfully")
         print(f"      Version: {schema.get('version', 'N/A')}")
         print(f"      Definitions: {len(schema.get('definitions', {}))}")
     except Exception as e:
@@ -165,7 +160,7 @@ old_files = [
     "ciaf/metadata_integration.py",
     "ciaf/metadata_storage_compressed.py",
     "ciaf/metadata_storage_optimized.py",
-    "ciaf/metadata_tags"
+    "ciaf/metadata_tags",
 ]
 
 all_removed = True

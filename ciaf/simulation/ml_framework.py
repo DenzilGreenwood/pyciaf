@@ -45,7 +45,7 @@ class MLFrameworkSimulator:
         for i, data_item in enumerate(raw_data_list):
             data_id = data_item.get("id", f"data_{i}")
             data_secret = f"secret_for_{data_id}"
-            
+
             capsule = ProvenanceCapsule(
                 original_data=data_item["content"],
                 metadata=data_item["metadata"],
@@ -74,9 +74,11 @@ class MLFrameworkSimulator:
         Returns:
             TrainingSnapshot representing the training session.
         """
-        print(f"🔄 Starting training simulation for model '{self.model_name}' v{model_version}")
+        print(
+            f"🔄 Starting training simulation for model '{self.model_name}' v{model_version}"
+        )
         print(f"   Training on {len(training_data_capsules)} data capsules")
-        
+
         # Extract provenance hashes for snapshot
         provenance_hashes = []
         for capsule in training_data_capsules:
@@ -91,7 +93,9 @@ class MLFrameworkSimulator:
             provenance_capsule_hashes=provenance_hashes,
         )
 
-        print(f"✅ Training simulation completed. Snapshot ID: {snapshot.snapshot_id[:16]}...")
+        print(
+            f"✅ Training simulation completed. Snapshot ID: {snapshot.snapshot_id[:16]}..."
+        )
         return snapshot
 
     def hash_model_parameters(self, parameters: dict) -> str:
@@ -120,7 +124,9 @@ class MLFrameworkSimulator:
         anchor_bytes = derive_model_anchor(master_anchor, model_hash)
         return to_hex(anchor_bytes)
 
-    def get_model_info(self, parameters: dict = None, master_anchor: bytes = None) -> dict:
+    def get_model_info(
+        self, parameters: dict = None, master_anchor: bytes = None
+    ) -> dict:
         """
         Get information about the simulated model, including anchor and parameter hash if provided.
 

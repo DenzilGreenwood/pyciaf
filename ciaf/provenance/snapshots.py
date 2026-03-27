@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
-from typing import Any, Dict
 
 from ..core import MerkleTree, sha256_hash
 
@@ -33,16 +32,15 @@ class ModelAggregationAnchor:
             key_id: Unique identifier for this MAA.
             secret_material: Secret string used for anchor derivation.
         """
-        import hashlib
 
         from ..core import SALT_LENGTH, derive_master_anchor, secure_random_bytes
 
         self.key_id = key_id
         self.salt = secure_random_bytes(SALT_LENGTH)
-        
+
         # Use proper anchor derivation instead of legacy derive_key
         self.derived_anchor = derive_master_anchor(secret_material, self.salt)
-        
+
         print(f"MAA '{self.key_id}' initialized with anchor-based cryptography.")
 
     def generate_data_signature(self, data_hash: str) -> str:

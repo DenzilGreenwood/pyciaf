@@ -99,7 +99,7 @@ REDACTION_RULES = {
         name="bearer_token",
         pattern=r"bearer\s+[a-zA-Z0-9_-]{20,}",
         replacement="[TOKEN-REDACTED]",
-        ),
+    ),
     "private_key": RedactionRule(
         name="private_key",
         pattern=r"-----BEGIN (RSA |EC |DSA )?PRIVATE KEY-----[\s\S]*?-----END (RSA |EC |DSA )?PRIVATE KEY-----",
@@ -296,7 +296,11 @@ def mask_content(text: str, show_first: int = 4, show_last: int = 4) -> str:
     if len(text) <= show_first + show_last:
         return "*" * len(text)
 
-    return text[:show_first] + "*" * (len(text) - show_first - show_last) + text[-show_last:]
+    return (
+        text[:show_first]
+        + "*" * (len(text) - show_first - show_last)
+        + text[-show_last:]
+    )
 
 
 __all__ = [

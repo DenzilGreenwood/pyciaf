@@ -16,7 +16,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from .audit_trails import AuditEventType, AuditTrailGenerator, ComplianceAuditRecord
 from .regulatory_mapping import ComplianceFramework, RegulatoryMapper
@@ -579,7 +579,7 @@ class TransparencyReportGenerator:
         performance_metrics = {}
         bias_metrics = {}
         fairness_indicators = {}
-        
+
         # Extract performance metrics from risk assessment
         if risk_assessment.performance_assessment:
             performance_metrics = {
@@ -587,7 +587,9 @@ class TransparencyReportGenerator:
                 "precision": risk_assessment.performance_assessment.precision_score,
                 "recall": risk_assessment.performance_assessment.recall_score,
                 "f1_score": risk_assessment.performance_assessment.f1_score,
-                "auc_roc": getattr(risk_assessment.performance_assessment, 'auc_roc', 0.0),
+                "auc_roc": getattr(
+                    risk_assessment.performance_assessment, "auc_roc", 0.0
+                ),
             }
         else:
             # Fallback to default values if no performance assessment available
@@ -604,15 +606,21 @@ class TransparencyReportGenerator:
             bias_metrics = {
                 "demographic_parity": risk_assessment.bias_assessment.demographic_parity_score,
                 "equalized_odds": risk_assessment.bias_assessment.equalized_odds_score,
-                "statistical_parity": getattr(risk_assessment.bias_assessment, 'statistical_parity', 0.09),
+                "statistical_parity": getattr(
+                    risk_assessment.bias_assessment, "statistical_parity", 0.09
+                ),
                 "individual_fairness": risk_assessment.bias_assessment.individual_fairness_score,
             }
-            
+
             fairness_indicators = {
                 "overall_fairness_score": risk_assessment.bias_assessment.overall_fairness_score,
                 "disparate_impact_ratio": risk_assessment.bias_assessment.disparate_impact_ratio,
-                "calibration_score": getattr(risk_assessment.bias_assessment, 'calibration_score', 0.91),
-                "treatment_equality": getattr(risk_assessment.bias_assessment, 'treatment_equality', 0.87),
+                "calibration_score": getattr(
+                    risk_assessment.bias_assessment, "calibration_score", 0.91
+                ),
+                "treatment_equality": getattr(
+                    risk_assessment.bias_assessment, "treatment_equality", 0.87
+                ),
             }
         else:
             # Fallback to default values if no bias assessment available
@@ -622,7 +630,7 @@ class TransparencyReportGenerator:
                 "statistical_parity": 0.09,
                 "individual_fairness": 0.92,
             }
-            
+
             fairness_indicators = {
                 "overall_fairness_score": 0.88,
                 "disparate_impact_ratio": 0.89,
@@ -727,41 +735,57 @@ class TransparencyReportGenerator:
         return explanations
 
     def _generate_public_interest_assessments(
-        self, audit_events: List[ComplianceAuditRecord], risk_assessment: ComprehensiveRiskAssessment
+        self,
+        audit_events: List[ComplianceAuditRecord],
+        risk_assessment: ComprehensiveRiskAssessment,
     ) -> List[Dict[str, Any]]:
         """Generate public interest assessments using risk assessment data."""
 
         assessments = []
-        
+
         # Extract risk factors from the comprehensive risk assessment
         for risk_factor in risk_assessment.risk_factors:
             if risk_factor.category in [
                 risk_factor.category.ETHICAL_AND_SOCIETAL,
                 risk_factor.category.BIAS_AND_FAIRNESS,
-                risk_factor.category.PRIVACY_AND_DATA_PROTECTION
+                risk_factor.category.PRIVACY_AND_DATA_PROTECTION,
             ]:
-                assessments.append({
-                    "title": f"{risk_factor.category.value.replace('_', ' ').title()} Assessment",
-                    "description": risk_factor.description,
-                    "impact_level": risk_factor.risk_level.value.title(),
-                    "mitigation_measures": risk_factor.mitigation_strategies,
-                    "affected_groups": getattr(risk_factor, 'affected_groups', ["General public"]),
-                    "risk_score": risk_factor.risk_score,
-                    "likelihood": risk_factor.likelihood.value,
-                })
-        
+                assessments.append(
+                    {
+                        "title": f"{risk_factor.category.value.replace('_', ' ').title()} Assessment",
+                        "description": risk_factor.description,
+                        "impact_level": risk_factor.risk_level.value.title(),
+                        "mitigation_measures": risk_factor.mitigation_strategies,
+                        "affected_groups": getattr(
+                            risk_factor, "affected_groups", ["General public"]
+                        ),
+                        "risk_score": risk_factor.risk_score,
+                        "likelihood": risk_factor.likelihood.value,
+                    }
+                )
+
         # If no specific risk factors found, add default assessments with risk assessment context
         if not assessments:
             bias_impact_level = "Low"
-            if risk_assessment.bias_assessment and risk_assessment.bias_assessment.overall_fairness_score < 0.8:
-                bias_impact_level = "High" if risk_assessment.bias_assessment.overall_fairness_score < 0.6 else "Medium"
-                
+            if (
+                risk_assessment.bias_assessment
+                and risk_assessment.bias_assessment.overall_fairness_score < 0.8
+            ):
+                bias_impact_level = (
+                    "High"
+                    if risk_assessment.bias_assessment.overall_fairness_score < 0.6
+                    else "Medium"
+                )
+
             privacy_impact_level = "Low"
             for risk_factor in risk_assessment.risk_factors:
-                if risk_factor.category == risk_factor.category.PRIVACY_AND_DATA_PROTECTION:
+                if (
+                    risk_factor.category
+                    == risk_factor.category.PRIVACY_AND_DATA_PROTECTION
+                ):
                     privacy_impact_level = risk_factor.risk_level.value.title()
                     break
-                    
+
             assessments = [
                 {
                     "title": "Economic Impact Assessment",
@@ -772,15 +796,23 @@ class TransparencyReportGenerator:
                         "Stakeholder engagement",
                         "Impact assessment reviews",
                     ],
-                    "affected_groups": ["Job seekers", "Employers", "Service providers"],
+                    "affected_groups": [
+                        "Job seekers",
+                        "Employers",
+                        "Service providers",
+                    ],
                 },
                 {
-                    "title": "Social Equity Assessment", 
-                    "description": f"Evaluation of the model's impact on social equity and fair treatment across different demographic groups. Fairness score: {risk_assessment.bias_assessment.overall_fairness_score:.2f}" if risk_assessment.bias_assessment else "Evaluation of the model's impact on social equity.",
+                    "title": "Social Equity Assessment",
+                    "description": (
+                        f"Evaluation of the model's impact on social equity and fair treatment across different demographic groups. Fairness score: {risk_assessment.bias_assessment.overall_fairness_score:.2f}"
+                        if risk_assessment.bias_assessment
+                        else "Evaluation of the model's impact on social equity."
+                    ),
                     "impact_level": bias_impact_level,
                     "mitigation_measures": [
                         "Bias monitoring",
-                        "Fairness improvements", 
+                        "Fairness improvements",
                         "Community feedback integration",
                     ],
                     "affected_groups": [
@@ -801,7 +833,7 @@ class TransparencyReportGenerator:
                     "affected_groups": ["All data subjects", "Privacy advocates"],
                 },
             ]
-            
+
         return assessments
 
     def save_transparency_report(

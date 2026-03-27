@@ -50,8 +50,7 @@ def test_ai_tool_detection():
 
         # Test ChatGPT detection
         result = detect_ai_tool(
-            "https://chat.openai.com/c/abc123",
-            approved_tools={"ChatGPT Enterprise"}
+            "https://chat.openai.com/c/abc123", approved_tools={"ChatGPT Enterprise"}
         )
 
         assert result is not None
@@ -59,7 +58,9 @@ def test_ai_tool_detection():
         assert result.is_shadow_ai()  # Not approved (different name)
 
         # Test Claude detection
-        result2 = detect_ai_tool("https://claude.ai/chat/abc", approved_tools={"Claude"})
+        result2 = detect_ai_tool(
+            "https://claude.ai/chat/abc", approved_tools={"Claude"}
+        )
         assert result2 is not None
         assert result2.tool_name == "Claude"
         assert not result2.is_shadow_ai()  # Approved
@@ -69,6 +70,7 @@ def test_ai_tool_detection():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -86,7 +88,7 @@ def test_content_classification():
 
         assert result.classification in [
             DataClassification.INTERNAL,
-            DataClassification.RESTRICTED
+            DataClassification.RESTRICTED,
         ]
         assert len(result.matched_rules) > 0
         assert result.sensitivity_score > 0.3
@@ -102,6 +104,7 @@ def test_content_classification():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -147,6 +150,7 @@ def test_policy_evaluation():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -179,6 +183,7 @@ def test_receipt_generation():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -211,6 +216,7 @@ def test_content_redaction():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -242,6 +248,7 @@ def test_event_collection():
     except Exception as e:
         print(f"[FAIL] {str(e)}")
         import traceback
+
         traceback.print_exc()
         return False
 

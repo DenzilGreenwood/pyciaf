@@ -133,7 +133,6 @@ __all__ = [
     # Enums
     "ArtifactType",
     "WatermarkType",
-
     # Models
     "ArtifactEvidence",
     "ArtifactHashSet",
@@ -141,13 +140,11 @@ __all__ = [
     "WatermarkDescriptor",
     "VerificationResult",
     "ForensicArtifactProfile",
-
     # Utility functions
     "utc_now_iso",
     "sha256_bytes",
     "sha256_text",
     "canonical_json",
-
     # Hashing
     "normalize_text_for_forensics",
     "normalized_text_hash",
@@ -159,7 +156,6 @@ __all__ = [
     "MinHash",
     "minhash_text",
     "minhash_similarity",
-
     # Text watermarking
     "apply_text_watermark",
     "build_text_artifact_evidence",
@@ -168,18 +164,15 @@ __all__ = [
     "extract_verification_url",
     "has_watermark",
     "remove_watermark",
-
     # Verification
     "verify_text_artifact",
     "verify_against_multiple_evidence",
     "quick_verify",
     "analyze_suspect_text",
     "format_verification_report",
-
     # Vault integration
     "WatermarkVaultAdapter",
     "create_watermark_vault",
-
     # Image watermarking (Phase 1)
     "ImageWatermarkSpec",
     "Position",
@@ -202,7 +195,6 @@ __all__ = [
     "make_verification_url_qr",
     "make_compact_token_qr",
     "QRCODE_AVAILABLE",
-
     # PDF watermarking (Phase 1)
     "apply_pdf_metadata_watermark",
     "build_pdf_artifact_evidence",

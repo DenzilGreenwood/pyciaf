@@ -23,15 +23,13 @@ Version: 1.0.0
 """
 
 import json
-import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Union
-from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 try:
     import psycopg2
     from psycopg2 import pool, extras
     from psycopg2.extensions import ISOLATION_LEVEL_READ_COMMITTED
+
     PSYCOPG2_AVAILABLE = True
 except ImportError:
     PSYCOPG2_AVAILABLE = False
@@ -60,7 +58,7 @@ class PostgreSQLBackend:
         password: str = None,
         min_connections: int = 2,
         max_connections: int = 20,
-        schema: str = "public"
+        schema: str = "public",
     ):
         """
         Initialize PostgreSQL backend.
@@ -97,7 +95,7 @@ class PostgreSQLBackend:
             database=database,
             user=user,
             password=password,
-            options=f"-c search_path={schema}"
+            options=f"-c search_path={schema}",
         )
 
         # Initialize schema
@@ -284,7 +282,7 @@ class PostgreSQLBackend:
         metadata_json: Dict[str, Any],
         model_version: Optional[str] = None,
         metadata_hash: Optional[str] = None,
-        details: Optional[str] = None
+        details: Optional[str] = None,
     ) -> bool:
         """
         Store metadata in PostgreSQL.
@@ -305,7 +303,8 @@ class PostgreSQLBackend:
         conn = self.get_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute(f"""
+            cursor.execute(
+                f"""
                 INSERT INTO {self.schema}.ciaf_metadata
                 (metadata_id, model_name, model_version, stage, event_type, metadata_hash, details, metadata_json)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
@@ -313,16 +312,18 @@ class PostgreSQLBackend:
                 DO UPDATE SET
                     metadata_json = EXCLUDED.metadata_json,
                     updated_at = NOW()
-            """, (
-                metadata_id,
-                model_name,
-                model_version,
-                stage,
-                event_type,
-                metadata_hash,
-                details,
-                json.dumps(metadata_json)
-            ))
+            """,
+                (
+                    metadata_id,
+                    model_name,
+                    model_version,
+                    stage,
+                    event_type,
+                    metadata_hash,
+                    details,
+                    json.dumps(metadata_json),
+                ),
+            )
             conn.commit()
             cursor.close()
             return True
@@ -338,7 +339,7 @@ class PostgreSQLBackend:
         metadata_id: Optional[str] = None,
         model_name: Optional[str] = None,
         stage: Optional[str] = None,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Dict[str, Any]]:
         """
         Retrieve metadata from PostgreSQL.
@@ -390,7 +391,7 @@ class PostgreSQLBackend:
         receipt_data: Dict[str, Any],
         model_version: Optional[str] = None,
         query_hash: Optional[str] = None,
-        output_hash: Optional[str] = None
+        output_hash: Optional[str] = None,
     ) -> bool:
         """
         Store inference receipt in PostgreSQL.
@@ -409,19 +410,22 @@ class PostgreSQLBackend:
         conn = self.get_connection()
         try:
             cursor = conn.cursor()
-            cursor.execute(f"""
+            cursor.execute(
+                f"""
                 INSERT INTO {self.schema}.ciaf_inference_receipts
                 (receipt_id, model_name, model_version, query_hash, output_hash, receipt_data)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 ON CONFLICT (receipt_id) DO NOTHING
-            """, (
-                receipt_id,
-                model_name,
-                model_version,
-                query_hash,
-                output_hash,
-                json.dumps(receipt_data)
-            ))
+            """,
+                (
+                    receipt_id,
+                    model_name,
+                    model_version,
+                    query_hash,
+                    output_hash,
+                    json.dumps(receipt_data),
+                ),
+            )
             conn.commit()
             cursor.close()
             return True
@@ -436,7 +440,7 @@ class PostgreSQLBackend:
         self,
         receipt_id: Optional[str] = None,
         model_name: Optional[str] = None,
-        limit: int = 100
+        limit: int = 100,
     ) -> List[Dict[str, Any]]:
         """
         Retrieve inference receipts from PostgreSQL.
@@ -487,7 +491,7 @@ def create_postgresql_vault(
     database: str = "ciaf_vault",
     user: str = "ciaf_user",
     password: str = None,
-    create_database: bool = False
+    create_database: bool = False,
 ) -> PostgreSQLBackend:
     """
     Create a PostgreSQL vault backend with optional database creation.
@@ -507,20 +511,13 @@ def create_postgresql_vault(
         # Connect to postgres database to create our database
         try:
             conn = psycopg2.connect(
-                host=host,
-                port=port,
-                database="postgres",
-                user=user,
-                password=password
+                host=host, port=port, database="postgres", user=user, password=password
             )
             conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
             cursor = conn.cursor()
 
             # Check if database exists
-            cursor.execute(
-                "SELECT 1 FROM pg_database WHERE datname = %s",
-                (database,)
-            )
+            cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (database,))
             if not cursor.fetchone():
                 cursor.execute(f"CREATE DATABASE {database}")
                 print(f"✅ Created database: {database}")
@@ -531,11 +528,7 @@ def create_postgresql_vault(
             print(f"⚠️  Warning: Could not create database: {e}")
 
     return PostgreSQLBackend(
-        host=host,
-        port=port,
-        database=database,
-        user=user,
-        password=password
+        host=host, port=port, database=database, user=user, password=password
     )
 
 

@@ -12,17 +12,17 @@ Version: 1.1.0
 
 import hashlib
 import json
-import os
 import pickle
 import sqlite3
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 # Try to import PostgreSQL backend
 try:
     from .backends.postgresql_backend import PostgreSQLBackend
+
     POSTGRESQL_AVAILABLE = True
 except ImportError:
     POSTGRESQL_AVAILABLE = False
@@ -101,8 +101,7 @@ class MetadataStorage:
         cursor = conn.cursor()
 
         # Create metadata table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS metadata (
                 id TEXT PRIMARY KEY,
                 model_name TEXT NOT NULL,
@@ -114,12 +113,10 @@ class MetadataStorage:
                 details TEXT,
                 metadata_json TEXT NOT NULL
             )
-        """
-        )
+        """)
 
         # Create audit trail table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS audit_trail (
                 id TEXT PRIMARY KEY,
                 parent_id TEXT,
@@ -129,12 +126,10 @@ class MetadataStorage:
                 details TEXT,
                 FOREIGN KEY (parent_id) REFERENCES metadata (id)
             )
-        """
-        )
+        """)
 
         # Create compliance events table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS compliance_events (
                 id TEXT PRIMARY KEY,
                 metadata_id TEXT,
@@ -145,8 +140,7 @@ class MetadataStorage:
                 details TEXT,
                 FOREIGN KEY (metadata_id) REFERENCES metadata (id)
             )
-        """
-        )
+        """)
 
         conn.commit()
         conn.close()

@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List, Optional
 
 from .metadata_config import get_metadata_config
-from .metadata_storage import MetadataStorage, get_metadata_storage
+from .metadata_storage import get_metadata_storage
 
 
 class MetadataCapture:
@@ -153,14 +153,14 @@ def capture_metadata(
                                 filtered_params[name] = (
                                     f"<{type(value).__name__}[{len(value)}]>"
                                 )
-                            except:
+                            except Exception:
                                 filtered_params[name] = f"<{type(value).__name__}>"
                         else:
                             try:
                                 # Try to serialize to check if it's JSON-serializable
                                 json.dumps(value, default=str)
                                 filtered_params[name] = value
-                            except:
+                            except Exception:
                                 filtered_params[name] = str(value)
 
                     capture.add_metadata("function_parameters", filtered_params)
@@ -180,7 +180,7 @@ def capture_metadata(
                             # Try to serialize result
                             json.dumps(result, default=str)
                             capture.add_metadata("result", result)
-                    except:
+                    except Exception:
                         capture.add_metadata(
                             "result_summary", f"<{type(result).__name__}>"
                         )

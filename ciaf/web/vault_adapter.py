@@ -52,7 +52,9 @@ class WebAIVaultAdapter:
             storage_path: Path for file-based storage
             vault_storage: Existing CIAF vault storage backend
         """
-        self.storage_path = Path(storage_path) if storage_path else Path("./ciaf_web_vault")
+        self.storage_path = (
+            Path(storage_path) if storage_path else Path("./ciaf_web_vault")
+        )
         self.vault_storage = vault_storage
         self.use_vault = vault_storage is not None
 
@@ -166,13 +168,25 @@ class WebAIVaultAdapter:
         """
         if self.use_vault:
             return self._search_events_vault(
-                org_id, user_id, tool_name, event_type,
-                policy_decision, start_time, end_time, limit
+                org_id,
+                user_id,
+                tool_name,
+                event_type,
+                policy_decision,
+                start_time,
+                end_time,
+                limit,
             )
         else:
             return self._search_events_file(
-                org_id, user_id, tool_name, event_type,
-                policy_decision, start_time, end_time, limit
+                org_id,
+                user_id,
+                tool_name,
+                event_type,
+                policy_decision,
+                start_time,
+                end_time,
+                limit,
             )
 
     def get_shadow_ai_events(
@@ -245,7 +259,7 @@ class WebAIVaultAdapter:
         """Store event to file."""
         try:
             event_file = self.storage_path / "events" / f"{event.event_id}.json"
-            with open(event_file, 'w') as f:
+            with open(event_file, "w") as f:
                 json.dump(event.to_dict(), f, indent=2)
             return True
         except Exception:
@@ -255,7 +269,7 @@ class WebAIVaultAdapter:
         """Store receipt to file."""
         try:
             receipt_file = self.storage_path / "receipts" / f"{receipt.receipt_id}.json"
-            with open(receipt_file, 'w') as f:
+            with open(receipt_file, "w") as f:
                 json.dump(receipt.to_dict(), f, indent=2)
             return True
         except Exception:
@@ -268,7 +282,7 @@ class WebAIVaultAdapter:
             if not event_file.exists():
                 return None
 
-            with open(event_file, 'r') as f:
+            with open(event_file, "r") as f:
                 data = json.load(f)
 
             # Reconstruct event (simplified)
@@ -283,7 +297,7 @@ class WebAIVaultAdapter:
             if not receipt_file.exists():
                 return None
 
-            with open(receipt_file, 'r') as f:
+            with open(receipt_file, "r") as f:
                 data = json.load(f)
 
             # Reconstruct receipt
@@ -293,8 +307,14 @@ class WebAIVaultAdapter:
 
     def _search_events_file(
         self,
-        org_id, user_id, tool_name, event_type,
-        policy_decision, start_time, end_time, limit
+        org_id,
+        user_id,
+        tool_name,
+        event_type,
+        policy_decision,
+        start_time,
+        end_time,
+        limit,
     ) -> List[WebAIEvent]:
         """Search events in file storage."""
         events = []
@@ -370,8 +390,14 @@ class WebAIVaultAdapter:
 
     def _search_events_vault(
         self,
-        org_id, user_id, tool_name, event_type,
-        policy_decision, start_time, end_time, limit
+        org_id,
+        user_id,
+        tool_name,
+        event_type,
+        policy_decision,
+        start_time,
+        end_time,
+        limit,
     ) -> List[WebAIEvent]:
         """Search events in vault."""
         # Placeholder - would use vault's JSONB query capabilities
@@ -379,6 +405,7 @@ class WebAIVaultAdapter:
 
 
 # Convenience functions
+
 
 def store_event(
     event: WebAIEvent,

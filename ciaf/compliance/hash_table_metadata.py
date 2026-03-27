@@ -10,10 +10,7 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-import hashlib
 import json
-import os
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -86,9 +83,7 @@ class HashTableMetadata:
                 # Verify dataset ID matches
                 if loaded_metadata.get("dataset_id") == self.dataset_id:
                     self.metadata = loaded_metadata
-                    print(
-                        f"Loaded hash table metadata for dataset '{self.dataset_id}'"
-                    )
+                    print(f"Loaded hash table metadata for dataset '{self.dataset_id}'")
                     return True
                 else:
                     print(f"Dataset ID mismatch in metadata file: {file_path}")

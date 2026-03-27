@@ -236,7 +236,7 @@ class CIAFUncertaintyQuantifier:
                 explanation=f"Bootstrap aggregation with {self.n_samples} samples",
             )
 
-        except Exception as e:
+        except Exception:
             return self._fallback_uncertainty(X)
 
     def _prediction_intervals(self, X: np.ndarray) -> UncertaintyEstimate:
@@ -294,7 +294,7 @@ class CIAFUncertaintyQuantifier:
         try:
             pred = self.model.predict(X)
             prediction = pred[0] if hasattr(pred, "__len__") and len(pred) > 0 else pred
-        except:
+        except Exception:
             prediction = 0.5  # Default prediction
 
         # Default uncertainty values

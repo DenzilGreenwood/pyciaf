@@ -31,19 +31,15 @@ from .metadata import (
     PYPDF_AVAILABLE,
 )
 
-
 __all__ = [
     # Watermarking
     "apply_pdf_metadata_watermark",
     "build_pdf_artifact_evidence",
-
     # Extraction
     "extract_pdf_metadata_watermark",
     "has_pdf_watermark",
-
     # Verification
     "verify_pdf_artifact",
-
     # Constants
     "PYPDF_AVAILABLE",
 ]

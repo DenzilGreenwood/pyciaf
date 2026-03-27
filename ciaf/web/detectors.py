@@ -27,7 +27,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Set
 from urllib.parse import urlparse
-import re
 
 from .events import ToolCategory
 
@@ -39,6 +38,7 @@ class AIToolSignature:
 
     Includes domain patterns, API endpoints, and other identifiers.
     """
+
     tool_name: str
     tool_category: ToolCategory
     domains: List[str]  # Domain patterns (can include wildcards)
@@ -110,7 +110,6 @@ AI_TOOL_SIGNATURES = [
         api_patterns=["/api/", "/socket"],
         vendor="Perplexity AI",
     ),
-
     # Code Assistants
     AIToolSignature(
         tool_name="GitHub Copilot",
@@ -133,7 +132,6 @@ AI_TOOL_SIGNATURES = [
         api_patterns=["/api/", "/exa"],
         vendor="Codeium",
     ),
-
     # Image Generation
     AIToolSignature(
         tool_name="Midjourney",
@@ -154,7 +152,6 @@ AI_TOOL_SIGNATURES = [
         domains=["stablediffusionweb.com", "stabilityai.us"],
         vendor="Stability AI",
     ),
-
     # Document AI
     AIToolSignature(
         tool_name="Notion AI",
@@ -173,7 +170,6 @@ AI_TOOL_SIGNATURES = [
         vendor="Google",
         is_enterprise=True,
     ),
-
     # Enterprise platforms
     AIToolSignature(
         tool_name="Azure OpenAI",
@@ -202,7 +198,9 @@ class AIToolDetector:
             approved_tools: Set of approved tool names (case-insensitive)
         """
         self.signatures = AI_TOOL_SIGNATURES
-        self.approved_tools = {t.lower() for t in approved_tools} if approved_tools else set()
+        self.approved_tools = (
+            {t.lower() for t in approved_tools} if approved_tools else set()
+        )
 
     def detect(self, url: str) -> Optional[DetectionResult]:
         """
@@ -284,6 +282,7 @@ class AIToolDetector:
 @dataclass
 class DetectionResult:
     """Result of AI tool detection."""
+
     tool_name: str
     tool_category: ToolCategory
     tool_domain: str
@@ -301,7 +300,10 @@ class DetectionResult:
 
 # Convenience functions
 
-def detect_ai_tool(url: str, approved_tools: Optional[Set[str]] = None) -> Optional[DetectionResult]:
+
+def detect_ai_tool(
+    url: str, approved_tools: Optional[Set[str]] = None
+) -> Optional[DetectionResult]:
     """
     Detect AI tool from URL.
 

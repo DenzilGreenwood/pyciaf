@@ -10,20 +10,18 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-import json
 import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
-from .audit_trails import AuditEventType, AuditTrailGenerator, ComplianceAuditRecord
+from .audit_trails import AuditTrailGenerator
 from .regulatory_mapping import (
     ComplianceFramework,
-    ComplianceRequirement,
     RegulatoryMapper,
 )
-from .validators import ComplianceValidator, ValidationResult, ValidationSeverity
+from .validators import ComplianceValidator
 
 
 class DocumentationType(Enum):
@@ -282,7 +280,7 @@ class ComplianceDocumentationGenerator:
             DocumentSection(
                 section_id="data_governance",
                 title="Data Governance",
-                content=f"""CIAF implements comprehensive data governance controls:
+                content="""CIAF implements comprehensive data governance controls:
             
             **Data Lifecycle Management:**
             - Complete data lineage tracking from ingestion to disposal
@@ -312,7 +310,7 @@ class ComplianceDocumentationGenerator:
             DocumentSection(
                 section_id="risk_management",
                 title="Risk Management",
-                content=f"""CIAF incorporates continuous risk assessment and management:
+                content="""CIAF incorporates continuous risk assessment and management:
             
             **Risk Assessment Framework:**
             - Automated bias detection and measurement
@@ -342,7 +340,7 @@ class ComplianceDocumentationGenerator:
             DocumentSection(
                 section_id="audit_transparency",
                 title="Audit and Transparency",
-                content=f"""CIAF provides comprehensive audit and transparency capabilities:
+                content="""CIAF provides comprehensive audit and transparency capabilities:
             
             **Audit Trail Generation:**
             - Immutable audit logs with cryptographic integrity
@@ -611,7 +609,7 @@ class ComplianceDocumentationGenerator:
                         f"   - Automated by: {', '.join(req.ciaf_capabilities)}\n"
                     )
                 else:
-                    checklist_content += f"   - Manual implementation required\n"
+                    checklist_content += "   - Manual implementation required\n"
                 checklist_content += (
                     f"   - Priority: {'High' if req.mandatory else 'Medium'}\n\n"
                 )

@@ -33,13 +33,12 @@ from .events import (
     EventType,
     PolicyDecision,
     DataClassification,
-    ToolCategory,
 )
-from .classifiers import ClassificationResult
 
 
 class PolicyCondition(str, Enum):
     """Conditions that can trigger policy rules."""
+
     SHADOW_AI_DETECTED = "shadow_ai_detected"
     HIGH_SENSITIVITY = "high_sensitivity"
     RESTRICTED_DATA = "restricted_data"
@@ -58,6 +57,7 @@ class PolicyRule:
 
     Rules evaluate conditions and produce policy decisions.
     """
+
     rule_id: str
     name: str
     description: str
@@ -71,7 +71,9 @@ class PolicyRule:
     # Custom evaluation function (optional)
     evaluator: Optional[Callable[[WebAIEvent], bool]] = None
 
-    def matches(self, event: WebAIEvent, context: Optional[PolicyContext] = None) -> bool:
+    def matches(
+        self, event: WebAIEvent, context: Optional[PolicyContext] = None
+    ) -> bool:
         """
         Check if event matches this rule's conditions.
 
@@ -102,7 +104,7 @@ class PolicyRule:
             elif condition == PolicyCondition.RESTRICTED_DATA:
                 if event.data_classification in [
                     DataClassification.RESTRICTED,
-                    DataClassification.HIGHLY_RESTRICTED
+                    DataClassification.HIGHLY_RESTRICTED,
                 ]:
                     return True
 
@@ -126,7 +128,11 @@ class PolicyRule:
         if self.reason_template:
             return self.reason_template.format(
                 tool_name=event.tool_name or "unknown",
-                classification=event.data_classification.value if event.data_classification else "unknown"
+                classification=(
+                    event.data_classification.value
+                    if event.data_classification
+                    else "unknown"
+                ),
             )
         return self.description
 
@@ -134,6 +140,7 @@ class PolicyRule:
 @dataclass
 class PolicyContext:
     """Additional context for policy evaluation."""
+
     content_size: Optional[int] = None
     device_trusted: bool = True
     time_of_day: Optional[str] = None
@@ -145,6 +152,7 @@ class PolicyContext:
 @dataclass
 class PolicyResult:
     """Result of policy evaluation."""
+
     decision: PolicyDecision
     matched_rule: Optional[PolicyRule] = None
     reason: str = ""
@@ -202,7 +210,10 @@ DEFAULT_POLICY_RULES = [
         rule_id="redact_pii_shadow_ai",
         name="Redact PII in Shadow AI",
         description="Redact PII when using unapproved tools",
-        conditions=[PolicyCondition.SHADOW_AI_DETECTED, PolicyCondition.HIGH_SENSITIVITY],
+        conditions=[
+            PolicyCondition.SHADOW_AI_DETECTED,
+            PolicyCondition.HIGH_SENSITIVITY,
+        ],
         decision=PolicyDecision.REDACT,
         priority=25,
         reason_template="PII detected with unapproved tool. Content will be redacted.",
@@ -328,6 +339,7 @@ class PolicyEngine:
 
 
 # Convenience functions
+
 
 def evaluate_policy(
     event: WebAIEvent,

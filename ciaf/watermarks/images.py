@@ -49,7 +49,9 @@ def apply_image_watermark(
     Returns:
         Watermarked image bytes
     """
-    raise NotImplementedError("Image watermarking not yet implemented. Install Pillow and implement.")
+    raise NotImplementedError(
+        "Image watermarking not yet implemented. Install Pillow and implement."
+    )
 
 
 def build_image_artifact_evidence(

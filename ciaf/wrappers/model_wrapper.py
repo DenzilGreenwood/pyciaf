@@ -15,15 +15,13 @@ Enhanced with:
 """
 
 import warnings
-import pickle
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import numpy as np
 
 from ..api import CIAFFramework
 from ..inference import InferenceReceipt
-from ..provenance import ModelAggregationAnchor, ProvenanceCapsule, TrainingSnapshot
+from ..provenance import ModelAggregationAnchor, TrainingSnapshot
 
 # Import new modules
 try:
@@ -131,7 +129,9 @@ class CIAFModelWrapper:
         self.enable_metadata_tags = enable_metadata_tags and METADATA_TAGS_AVAILABLE
 
         # Initialize CIAF framework (use provided or create new)
-        self.framework = framework if framework is not None else CIAFFramework(self.model_name)
+        self.framework = (
+            framework if framework is not None else CIAFFramework(self.model_name)
+        )
 
         # Enhanced components
         self.model_adapter = None
@@ -276,7 +276,7 @@ class CIAFModelWrapper:
                         print(f"✅ [{self.model_name}] Model training completed")
                     except Exception as e:
                         print(f"⚠️  [{self.model_name}] Model training failed: {e}")
-                        print(f"    Continuing with CIAF-only functionality...")
+                        print("    Continuing with CIAF-only functionality...")
                 else:
                     print(
                         f"⚠️  [{self.model_name}] Could not extract X,y - skipping model.fit()"
@@ -289,10 +289,10 @@ class CIAFModelWrapper:
 
             # Compliance-specific logging
             if self.compliance_mode == "healthcare":
-                print(f"⚕️  HIPAA compliance: Training data minimized and encrypted")
+                print("⚕️  HIPAA compliance: Training data minimized and encrypted")
             elif self.compliance_mode == "financial":
                 print(
-                    f"🏦 Financial compliance: Audit trail created for regulatory reporting"
+                    "🏦 Financial compliance: Audit trail created for regulatory reporting"
                 )
 
             print(
@@ -350,7 +350,7 @@ class CIAFModelWrapper:
                     print(
                         f"⚠️  [{self.model_name}] Model prediction failed: {model_error}"
                     )
-                    print(f"    Falling back to CIAF simulator...")
+                    print("    Falling back to CIAF simulator...")
                     # Fall back to CIAF simulator
                     query_str = str(query)
                     output_str = f"Simulated response for: {query_str}"
@@ -368,7 +368,6 @@ class CIAFModelWrapper:
             # Add explainability information
             if self.enable_explainability:
                 try:
-                    from ..explainability import create_explainer
 
                     enhanced_info["explainability"] = {
                         "method": "SHAP/LIME",
@@ -376,17 +375,16 @@ class CIAFModelWrapper:
                         "confidence": 0.85,
                         "eu_ai_act_compliant": True,
                     }
-                except:
+                except Exception:
                     enhanced_info["explainability"] = {
                         "method": "CIAF Fallback",
-                        "explanation": f"Model prediction based on trained features",
+                        "explanation": "Model prediction based on trained features",
                         "confidence": 0.75,
                     }
 
             # Add uncertainty quantification
             if self.enable_uncertainty:
                 try:
-                    from ..uncertainty import calculate_uncertainty
 
                     enhanced_info["uncertainty"] = {
                         "total_uncertainty": 0.15,
@@ -395,7 +393,7 @@ class CIAFModelWrapper:
                         "confidence_interval": [0.75, 0.95],
                         "nist_ai_rmf_compliant": True,
                     }
-                except:
+                except Exception:
                     enhanced_info["uncertainty"] = {
                         "total_uncertainty": 0.12,
                         "confidence_level": "HIGH",
@@ -405,7 +403,6 @@ class CIAFModelWrapper:
             # Add CIAF metadata tags
             if self.enable_metadata_tags:
                 try:
-                    from ..metadata_tags import generate_tag
 
                     tag_id = f"CIAF_TAG_{hash(query_str) % 10000:04d}"
                     enhanced_info["metadata_tag"] = {
@@ -414,7 +411,7 @@ class CIAFModelWrapper:
                         "regulatory_frameworks": ["EU AI Act", "NIST AI RMF"],
                         "deepfake_detection_ready": True,
                     }
-                except:
+                except Exception:
                     enhanced_info["metadata_tag"] = {
                         "tag_id": f"CIAF_TAG_{len(query_str):04d}",
                         "compliance_level": "STANDARD",
@@ -445,28 +442,41 @@ class CIAFModelWrapper:
                 receipt.enhanced_info = enhanced_info
 
             # Store receipt in LCM inference manager
-            if hasattr(self.framework, 'lcm_inference_manager') and self.enable_connections:
+            if (
+                hasattr(self.framework, "lcm_inference_manager")
+                and self.enable_connections
+            ):
                 try:
                     # Get existing connections or create new one for this model
                     conn_id = f"{self.model_name}_connections"
-                    connections = self.framework.lcm_inference_manager.get_inference_connections(conn_id)
+                    connections = (
+                        self.framework.lcm_inference_manager.get_inference_connections(
+                            conn_id
+                        )
+                    )
                     if not connections:
-                        connections = self.framework.lcm_inference_manager.create_inference_connections(conn_id)
-                    
+                        connections = self.framework.lcm_inference_manager.create_inference_connections(
+                            conn_id
+                        )
+
                     # Add receipt with proper parameters
                     lcm_receipt = connections.add_receipt(
                         receipt_id=receipt.receipt_hash,
-                        model_anchor_ref=self.training_snapshot.snapshot_id if self.training_snapshot else "unknown",
+                        model_anchor_ref=(
+                            self.training_snapshot.snapshot_id
+                            if self.training_snapshot
+                            else "unknown"
+                        ),
                         deployment_anchor_ref=self.model_name,
                         request_id=f"req_{receipt.receipt_hash[:8]}",
                         query=query_str,
-                        ai_output=output_str
+                        ai_output=output_str,
                     )
                 except Exception as store_error:
                     print(f"⚠️  Could not store receipt in LCM manager: {store_error}")
 
             self.last_receipt = receipt
-            
+
             # Register the receipt with the framework for audit trail tracking
             self.framework.register_inference_receipt(self.model_name, receipt)
 
@@ -545,30 +555,34 @@ class CIAFModelWrapper:
                 "preprocessing": self.enable_preprocessing,
                 "explainability": self.enable_explainability,
                 "uncertainty": self.enable_uncertainty,
-                "metadata_tags": self.enable_metadata_tags
-            }
+                "metadata_tags": self.enable_metadata_tags,
+            },
         }
-        
+
         # Add LCM connections info
-        if hasattr(self.framework, 'lcm_inference_manager'):
-            connections_count = len(self.framework.lcm_inference_manager.inference_connections)
-            batch_windows_count = len(self.framework.lcm_inference_manager.batch_windows)
-            
+        if hasattr(self.framework, "lcm_inference_manager"):
+            connections_count = len(
+                self.framework.lcm_inference_manager.inference_connections
+            )
+            batch_windows_count = len(
+                self.framework.lcm_inference_manager.batch_windows
+            )
+
             info["lcm_metadata"]["connections_info"] = {
                 "active_connections": connections_count,
                 "batch_windows": batch_windows_count,
                 "total_receipts": sum(
-                    len(conn.receipts) 
+                    len(conn.receipts)
                     for conn in self.framework.lcm_inference_manager.inference_connections.values()
                     if conn
-                )
+                ),
             }
-        
+
         # Add serialization info if available
-        if hasattr(self, '_lcm_metadata_trail'):
+        if hasattr(self, "_lcm_metadata_trail"):
             info["lcm_metadata"]["serialized_trail_available"] = True
             info["lcm_metadata"]["last_serialization"] = getattr(
-                self, '_lcm_serialization_timestamp', 'Unknown'
+                self, "_lcm_serialization_timestamp", "Unknown"
             )
 
         return info
@@ -623,11 +637,11 @@ class CIAFModelWrapper:
                     )
                     return X_processed, y_processed
                 else:
-                    print(f"   ⚠️ Auto-preprocessing failed")
+                    print("   ⚠️ Auto-preprocessing failed")
 
             except ImportError:
                 print(
-                    f"   ⚠️ Enhanced preprocessing not available - using legacy method"
+                    "   ⚠️ Enhanced preprocessing not available - using legacy method"
                 )
 
                 # Enhanced compatibility for different model types
@@ -651,10 +665,10 @@ class CIAFModelWrapper:
                             f"   Detected text data with sklearn-like model ({model_name})"
                         )
                         print(
-                            f"   Note: Text data needs vectorization for sklearn models"
+                            "   Note: Text data needs vectorization for sklearn models"
                         )
                         print(
-                            f"   Consider using TfidfVectorizer or similar preprocessing"
+                            "   Consider using TfidfVectorizer or similar preprocessing"
                         )
                         # Return None to skip model training and use CIAF simulation only
                         return None, None
@@ -708,7 +722,9 @@ class CIAFModelWrapper:
                     # Handle different input formats for numerical data
                     if isinstance(query, (list, tuple)):
                         # If input is a list/tuple, treat as single sample with multiple features
-                        query_array = np.array([query])  # Single sample with multiple features
+                        query_array = np.array(
+                            [query]
+                        )  # Single sample with multiple features
                     else:
                         # Single value - single sample, single feature
                         query_array = np.array([[query]])
@@ -721,7 +737,7 @@ class CIAFModelWrapper:
 
                 else:
                     # Fallback to basic prediction without preprocessing
-                    print(f"⚠️  No fitted preprocessor available, using fallback")
+                    print("⚠️  No fitted preprocessor available, using fallback")
                     if isinstance(query, str):
                         # Simple approach for string inputs
                         import numpy as np
@@ -819,90 +835,111 @@ class CIAFModelWrapper:
     def __getstate__(self) -> Dict[str, Any]:
         """
         Custom pickle serialization to preserve LCM metadata.
-        
+
         Returns:
             Dict containing complete state including LCM metadata
         """
         print(f"🔄 [{self.model_name}] Serializing model with LCM metadata...")
-        
+
         # Extract LCM metadata before pickling
         lcm_metadata = self.get_lcm_metadata_trail()
-        
+
         state = self.__dict__.copy()
-        
+
         # Add LCM metadata to state
-        state['_lcm_metadata_trail'] = lcm_metadata
-        state['_lcm_serialization_timestamp'] = datetime.now().isoformat()
-        
+        state["_lcm_metadata_trail"] = lcm_metadata
+        state["_lcm_serialization_timestamp"] = datetime.now().isoformat()
+
         # Store detailed framework LCM state
-        if hasattr(self.framework, 'lcm_inference_manager'):
-            state['_lcm_inference_connections'] = {}
+        if hasattr(self.framework, "lcm_inference_manager"):
+            state["_lcm_inference_connections"] = {}
             receipt_count = 0
-            
-            for conn_id, connections in self.framework.lcm_inference_manager.inference_connections.items():
+
+            for (
+                conn_id,
+                connections,
+            ) in self.framework.lcm_inference_manager.inference_connections.items():
                 if connections:
                     # Serialize the complete connection details
                     conn_data = connections.to_dict()
-                    state['_lcm_inference_connections'][conn_id] = conn_data
-                    
+                    state["_lcm_inference_connections"][conn_id] = conn_data
+
                     # Count receipts for logging
-                    if 'receipts' in conn_data:
-                        receipt_count += len(conn_data.get('receipts', []))
-            
-            print(f"🔍 [{self.model_name}] Preserving {receipt_count} LCM receipts in pickle state")
-        
+                    if "receipts" in conn_data:
+                        receipt_count += len(conn_data.get("receipts", []))
+
+            print(
+                f"🔍 [{self.model_name}] Preserving {receipt_count} LCM receipts in pickle state"
+            )
+
         print(f"✅ [{self.model_name}] LCM metadata preserved in pickle state")
         return state
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
         """
         Custom pickle deserialization to restore LCM metadata.
-        
+
         Args:
             state: Pickled state dictionary
         """
-        print(f"🔄 [{state.get('model_name', 'Unknown')}] Restoring model with LCM metadata...")
-        
+        print(
+            f"🔄 [{state.get('model_name', 'Unknown')}] Restoring model with LCM metadata..."
+        )
+
         # Restore basic state
         self.__dict__.update(state)
-        
+
         # Restore LCM connections if available
         total_restored_receipts = 0
-        if '_lcm_inference_connections' in state and hasattr(self.framework, 'lcm_inference_manager'):
-            for conn_id, conn_data in state['_lcm_inference_connections'].items():
+        if "_lcm_inference_connections" in state and hasattr(
+            self.framework, "lcm_inference_manager"
+        ):
+            for conn_id, conn_data in state["_lcm_inference_connections"].items():
                 # Recreate connections from serialized data
-                if conn_data and 'receipts' in conn_data:
-                    connections = self.framework.lcm_inference_manager.create_inference_connections(conn_id)
-                    
+                if conn_data and "receipts" in conn_data:
+                    connections = self.framework.lcm_inference_manager.create_inference_connections(
+                        conn_id
+                    )
+
                     # Restore each receipt from serialized data
                     restored_count = 0
-                    for receipt_data in conn_data.get('receipts', []):
+                    for receipt_data in conn_data.get("receipts", []):
                         try:
                             # Recreate the LCM receipt with proper parameters
                             lcm_receipt = connections.add_receipt(
-                                receipt_id=receipt_data.get('receipt_id', 'unknown'),
-                                model_anchor_ref=receipt_data.get('model_anchor_ref', 'unknown'),
-                                deployment_anchor_ref=receipt_data.get('deployment_anchor_ref', 'unknown'),
-                                request_id=receipt_data.get('request_id', 'unknown'),
-                                query=receipt_data.get('query', ''),
-                                ai_output=receipt_data.get('ai_output', '')
+                                receipt_id=receipt_data.get("receipt_id", "unknown"),
+                                model_anchor_ref=receipt_data.get(
+                                    "model_anchor_ref", "unknown"
+                                ),
+                                deployment_anchor_ref=receipt_data.get(
+                                    "deployment_anchor_ref", "unknown"
+                                ),
+                                request_id=receipt_data.get("request_id", "unknown"),
+                                query=receipt_data.get("query", ""),
+                                ai_output=receipt_data.get("ai_output", ""),
                             )
                             restored_count += 1
                         except Exception as restore_error:
-                            print(f"⚠️  Could not restore receipt {receipt_data.get('receipt_id', 'unknown')}: {restore_error}")
-                    
-                    print(f"✅ Restored {restored_count} receipts for connection {conn_id}")
+                            print(
+                                f"⚠️  Could not restore receipt {receipt_data.get('receipt_id', 'unknown')}: {restore_error}"
+                            )
+
+                    print(
+                        f"✅ Restored {restored_count} receipts for connection {conn_id}"
+                    )
                     total_restored_receipts += restored_count
-        
+
         print(f"✅ [{self.model_name}] LCM metadata restored from pickle")
         print(f"🔍 Total restored receipts: {total_restored_receipts}")
-        if '_lcm_serialization_timestamp' in state:
-            print(f"    Original serialization: {state['_lcm_serialization_timestamp']}")
+        if "_lcm_serialization_timestamp" in state:
+            print(
+                f"    Original serialization: {state['_lcm_serialization_timestamp']}"
+            )
 
     def get_lcm_metadata_trail(self) -> Dict[str, Any]:
         """
         Extract complete LCM metadata trail for the model.
-        
+
         Returns:
             Dict containing complete LCM tracking data
         """
@@ -914,55 +951,68 @@ class CIAFModelWrapper:
             "training_metadata": {},
             "inference_metadata": {},
             "deployment_metadata": {},
-            "connections_metadata": {}
+            "connections_metadata": {},
         }
-        
+
         # Extract training metadata
         if self.training_snapshot:
             trail["training_metadata"] = {
                 "snapshot_id": self.training_snapshot.snapshot_id,
                 "merkle_root_hash": self.training_snapshot.merkle_root_hash,
                 "capsule_count": len(self.training_snapshot.provenance_capsule_hashes),
-                "training_params": getattr(self.training_snapshot, 'training_params', {}),
-                "model_version": self.training_snapshot.model_version
+                "training_params": getattr(
+                    self.training_snapshot, "training_params", {}
+                ),
+                "model_version": self.training_snapshot.model_version,
             }
-        
+
         # Extract inference metadata
         if self.last_receipt:
             trail["inference_metadata"] = {
                 "last_receipt_hash": self.last_receipt.receipt_hash,
-                "last_query": getattr(self.last_receipt, 'query', 'N/A'),
-                "receipt_timestamp": getattr(self.last_receipt, 'timestamp', 'N/A'),
-                "model_version": getattr(self.last_receipt, 'model_version', 'N/A'),
-                "enhanced_info": getattr(self.last_receipt, 'enhanced_info', {})
+                "last_query": getattr(self.last_receipt, "query", "N/A"),
+                "receipt_timestamp": getattr(self.last_receipt, "timestamp", "N/A"),
+                "model_version": getattr(self.last_receipt, "model_version", "N/A"),
+                "enhanced_info": getattr(self.last_receipt, "enhanced_info", {}),
             }
-        
+
         # Extract LCM framework metadata
-        if hasattr(self.framework, 'lcm_inference_manager'):
+        if hasattr(self.framework, "lcm_inference_manager"):
             trail["connections_metadata"] = {
-                "total_connections": len(self.framework.lcm_inference_manager.inference_connections),
-                "batch_windows": len(self.framework.lcm_inference_manager.batch_windows),
-                "connections_summary": []
+                "total_connections": len(
+                    self.framework.lcm_inference_manager.inference_connections
+                ),
+                "batch_windows": len(
+                    self.framework.lcm_inference_manager.batch_windows
+                ),
+                "connections_summary": [],
             }
-            
-            for conn_id, connections in self.framework.lcm_inference_manager.inference_connections.items():
+
+            for (
+                conn_id,
+                connections,
+            ) in self.framework.lcm_inference_manager.inference_connections.items():
                 if connections:
                     conn_summary = {
                         "connections_id": conn_id,
                         "receipt_count": len(connections.receipts),
                         "final_digest": connections.get_final_connections_digest(),
-                        "integrity_valid": connections.verify_connections_integrity()
+                        "integrity_valid": connections.verify_connections_integrity(),
                     }
-                    trail["connections_metadata"]["connections_summary"].append(conn_summary)
-        
+                    trail["connections_metadata"]["connections_summary"].append(
+                        conn_summary
+                    )
+
         # Extract Model Aggregation Anchor metadata
         if self.current_maa:
             trail["deployment_metadata"]["maa_info"] = {
-                "model_name": getattr(self.current_maa, 'model_name', 'N/A'),
-                "authorized_datasets": getattr(self.current_maa, 'authorized_datasets', []),
-                "anchor_hash": getattr(self.current_maa, 'anchor_hash', 'N/A')
+                "model_name": getattr(self.current_maa, "model_name", "N/A"),
+                "authorized_datasets": getattr(
+                    self.current_maa, "authorized_datasets", []
+                ),
+                "anchor_hash": getattr(self.current_maa, "anchor_hash", "N/A"),
             }
-        
+
         # Add compliance and enhanced features metadata
         trail["enhanced_features"] = {
             "preprocessing_enabled": self.enable_preprocessing,
@@ -970,38 +1020,40 @@ class CIAFModelWrapper:
             "uncertainty_enabled": self.enable_uncertainty,
             "metadata_tags_enabled": self.enable_metadata_tags,
             "compliance_mode": self.compliance_mode,
-            "connections_enabled": self.enable_connections
+            "connections_enabled": self.enable_connections,
         }
-        
+
         return trail
 
-    def export_lcm_metadata(self, output_format: str = "json", include_receipts: bool = True) -> Dict[str, Any]:
+    def export_lcm_metadata(
+        self, output_format: str = "json", include_receipts: bool = True
+    ) -> Dict[str, Any]:
         """
         Export complete LCM metadata trail for audit purposes.
-        
+
         Args:
             output_format: Export format ("json", "dict", "audit_report")
             include_receipts: Whether to include detailed receipt information
-            
+
         Returns:
             Comprehensive LCM metadata export
         """
         print(f"📊 [{self.model_name}] Exporting LCM metadata trail...")
-        
+
         # Get base metadata trail
         export_data = self.get_lcm_metadata_trail()
-        
+
         # Add detailed receipt information if requested
-        if include_receipts and hasattr(self.framework, 'lcm_inference_manager'):
+        if include_receipts and hasattr(self.framework, "lcm_inference_manager"):
             export_data["detailed_receipts"] = []
-            
-            for conn_id, connections in self.framework.lcm_inference_manager.inference_connections.items():
+
+            for (
+                conn_id,
+                connections,
+            ) in self.framework.lcm_inference_manager.inference_connections.items():
                 if connections and connections.receipts:
-                    conn_export = {
-                        "connections_id": conn_id,
-                        "receipts": []
-                    }
-                    
+                    conn_export = {"connections_id": conn_id, "receipts": []}
+
                     for receipt in connections.receipts:
                         receipt_data = {
                             "receipt_id": receipt.receipt_id,
@@ -1011,89 +1063,117 @@ class CIAFModelWrapper:
                             "timestamp": receipt.timestamp,
                             "receipt_digest": receipt.receipt_digest,
                             "connections_digest": receipt.connections_digest,
-                            "anchor_id": receipt.anchor_id
+                            "anchor_id": receipt.anchor_id,
                         }
-                        
+
                         # Add input/output commitments
-                        if hasattr(receipt, 'input_commitment') and receipt.input_commitment:
+                        if (
+                            hasattr(receipt, "input_commitment")
+                            and receipt.input_commitment
+                        ):
                             receipt_data["input_commitment"] = {
-                                "commitment_type": str(receipt.input_commitment.commitment_type),
-                                "commitment_value": receipt.input_commitment.commitment_value
+                                "commitment_type": str(
+                                    receipt.input_commitment.commitment_type
+                                ),
+                                "commitment_value": receipt.input_commitment.commitment_value,
                             }
-                        
-                        if hasattr(receipt, 'output_commitment') and receipt.output_commitment:
+
+                        if (
+                            hasattr(receipt, "output_commitment")
+                            and receipt.output_commitment
+                        ):
                             receipt_data["output_commitment"] = {
-                                "commitment_type": str(receipt.output_commitment.commitment_type),
-                                "commitment_value": receipt.output_commitment.commitment_value
+                                "commitment_type": str(
+                                    receipt.output_commitment.commitment_type
+                                ),
+                                "commitment_value": receipt.output_commitment.commitment_value,
                             }
-                        
+
                         conn_export["receipts"].append(receipt_data)
-                    
+
                     export_data["detailed_receipts"].append(conn_export)
-        
+
         # Add audit trail summary
         if output_format == "audit_report":
             export_data["audit_summary"] = {
                 "model_name": self.model_name,
                 "model_version": self.model_version,
-                "total_training_capsules": len(
-                    self.training_snapshot.provenance_capsule_hashes
-                ) if self.training_snapshot else 0,
-                "total_inference_receipts": sum(
-                    len(conn.receipts) 
-                    for conn in self.framework.lcm_inference_manager.inference_connections.values()
-                    if conn
-                ) if hasattr(self.framework, 'lcm_inference_manager') else 0,
+                "total_training_capsules": (
+                    len(self.training_snapshot.provenance_capsule_hashes)
+                    if self.training_snapshot
+                    else 0
+                ),
+                "total_inference_receipts": (
+                    sum(
+                        len(conn.receipts)
+                        for conn in self.framework.lcm_inference_manager.inference_connections.values()
+                        if conn
+                    )
+                    if hasattr(self.framework, "lcm_inference_manager")
+                    else 0
+                ),
                 "compliance_features": {
                     "explainability": self.enable_explainability,
                     "uncertainty_quantification": self.enable_uncertainty,
                     "metadata_tagging": self.enable_metadata_tags,
-                    "compliance_mode": self.compliance_mode
+                    "compliance_mode": self.compliance_mode,
                 },
-                "lcm_integrity_status": "VERIFIED" if self._verify_lcm_integrity() else "COMPROMISED"
+                "lcm_integrity_status": (
+                    "VERIFIED" if self._verify_lcm_integrity() else "COMPROMISED"
+                ),
             }
-        
+
         # Add pickle preservation info
         export_data["pickle_metadata"] = {
             "pickle_ready": True,
-            "preserved_during_serialization": hasattr(self, '_lcm_metadata_trail'),
-            "serialization_timestamp": getattr(self, '_lcm_serialization_timestamp', None),
-            "restoration_status": "COMPLETE" if hasattr(self, '_lcm_metadata_trail') else "PENDING"
+            "preserved_during_serialization": hasattr(self, "_lcm_metadata_trail"),
+            "serialization_timestamp": getattr(
+                self, "_lcm_serialization_timestamp", None
+            ),
+            "restoration_status": (
+                "COMPLETE" if hasattr(self, "_lcm_metadata_trail") else "PENDING"
+            ),
         }
-        
+
         print(f"✅ [{self.model_name}] LCM metadata export completed")
         print(f"    Format: {output_format}")
         print(f"    Include receipts: {include_receipts}")
-        print(f"    Total connections: {len(export_data.get('connections_metadata', {}).get('connections_summary', []))}")
-        
+        print(
+            f"    Total connections: {len(export_data.get('connections_metadata', {}).get('connections_summary', []))}"
+        )
+
         return export_data
 
     def _verify_lcm_integrity(self) -> bool:
         """
         Verify the integrity of LCM metadata trail.
-        
+
         Returns:
             True if LCM metadata is intact and verified
         """
         try:
             # Verify training snapshot integrity
             if self.training_snapshot:
-                if not hasattr(self.training_snapshot, 'merkle_root_hash'):
+                if not hasattr(self.training_snapshot, "merkle_root_hash"):
                     return False
-            
+
             # Verify connections integrity
-            if hasattr(self.framework, 'lcm_inference_manager'):
-                for connections in self.framework.lcm_inference_manager.inference_connections.values():
+            if hasattr(self.framework, "lcm_inference_manager"):
+                for (
+                    connections
+                ) in (
+                    self.framework.lcm_inference_manager.inference_connections.values()
+                ):
                     if connections and not connections.verify_connections_integrity():
                         return False
-            
+
             # Verify last receipt integrity
-            if self.last_receipt and hasattr(self.last_receipt, 'verify_integrity'):
+            if self.last_receipt and hasattr(self.last_receipt, "verify_integrity"):
                 if not self.last_receipt.verify_integrity():
                     return False
-            
+
             return True
-            
+
         except Exception as e:
             print(f"⚠️ LCM integrity verification failed: {e}")
             return False

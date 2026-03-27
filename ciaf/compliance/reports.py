@@ -14,7 +14,7 @@ import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from .audit_trails import AuditTrailGenerator, ComplianceAuditRecord
 from .regulatory_mapping import ComplianceFramework, RegulatoryMapper
@@ -934,8 +934,9 @@ class ComplianceReportGenerator:
             # Try to use weasyprint for PDF generation
             try:
                 from weasyprint import HTML, CSS
+
                 html_content = self._generate_html_report(report, include_appendices)
-                
+
                 # Basic CSS for PDF styling
                 css_content = CSS(string="""
                     @page { margin: 2cm; }
@@ -950,103 +951,182 @@ class ComplianceReportGenerator:
                     th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
                     th { background-color: #f8f9fa; }
                 """)
-                
+
                 # Generate PDF
                 html_doc = HTML(string=html_content)
                 pdf_bytes = html_doc.write_pdf(stylesheets=[css_content])
-                
+
                 # Save to temporary file and return path
                 import tempfile
                 import os
-                
-                with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_file:
+
+                with tempfile.NamedTemporaryFile(
+                    suffix=".pdf", delete=False
+                ) as tmp_file:
                     tmp_file.write(pdf_bytes)
                     return tmp_file.name
-                    
+
             except ImportError:
                 # Fallback: Try reportlab
                 try:
                     from reportlab.lib.pagesizes import letter, A4
-                    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+                    from reportlab.platypus import (
+                        SimpleDocTemplate,
+                        Paragraph,
+                        Spacer,
+                        Table,
+                        TableStyle,
+                    )
                     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
                     from reportlab.lib.units import inch
                     from reportlab.lib import colors
                     import tempfile
-                    
+
                     # Create temporary file
-                    with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_file:
+                    with tempfile.NamedTemporaryFile(
+                        suffix=".pdf", delete=False
+                    ) as tmp_file:
                         doc = SimpleDocTemplate(tmp_file.name, pagesize=A4)
                         styles = getSampleStyleSheet()
                         story = []
-                        
+
                         # Title
                         title_style = ParagraphStyle(
-                            'CustomTitle',
-                            parent=styles['Heading1'],
+                            "CustomTitle",
+                            parent=styles["Heading1"],
                             fontSize=18,
                             spaceAfter=30,
                         )
-                        story.append(Paragraph(f"Compliance Report: {report.model_name}", title_style))
+                        story.append(
+                            Paragraph(
+                                f"Compliance Report: {report.model_name}", title_style
+                            )
+                        )
                         story.append(Spacer(1, 12))
-                        
+
                         # Summary
-                        story.append(Paragraph("Executive Summary", styles['Heading2']))
-                        story.append(Paragraph(f"Report ID: {report.report_id}", styles['Normal']))
-                        story.append(Paragraph(f"Model: {report.model_name} v{report.model_version}", styles['Normal']))
-                        story.append(Paragraph(f"Generated: {report.generation_timestamp}", styles['Normal']))
-                        story.append(Paragraph(f"Total Events: {report.summary.total_events}", styles['Normal']))
+                        story.append(Paragraph("Executive Summary", styles["Heading2"]))
+                        story.append(
+                            Paragraph(
+                                f"Report ID: {report.report_id}", styles["Normal"]
+                            )
+                        )
+                        story.append(
+                            Paragraph(
+                                f"Model: {report.model_name} v{report.model_version}",
+                                styles["Normal"],
+                            )
+                        )
+                        story.append(
+                            Paragraph(
+                                f"Generated: {report.generation_timestamp}",
+                                styles["Normal"],
+                            )
+                        )
+                        story.append(
+                            Paragraph(
+                                f"Total Events: {report.summary.total_events}",
+                                styles["Normal"],
+                            )
+                        )
                         story.append(Spacer(1, 12))
-                        
+
                         # Risk Assessment
-                        if hasattr(report, 'risk_assessment') and report.risk_assessment:
-                            story.append(Paragraph("Risk Assessment", styles['Heading2']))
+                        if (
+                            hasattr(report, "risk_assessment")
+                            and report.risk_assessment
+                        ):
+                            story.append(
+                                Paragraph("Risk Assessment", styles["Heading2"])
+                            )
                             risk_data = [
-                                ['Risk Level', 'Count', 'Percentage'],
-                                ['High', str(report.summary.high_risk_events), f"{(report.summary.high_risk_events/max(report.summary.total_events,1)*100):.1f}%"],
-                                ['Medium', str(report.summary.medium_risk_events), f"{(report.summary.medium_risk_events/max(report.summary.total_events,1)*100):.1f}%"],
-                                ['Low', str(report.summary.low_risk_events), f"{(report.summary.low_risk_events/max(report.summary.total_events,1)*100):.1f}%"],
+                                ["Risk Level", "Count", "Percentage"],
+                                [
+                                    "High",
+                                    str(report.summary.high_risk_events),
+                                    f"{(report.summary.high_risk_events/max(report.summary.total_events,1)*100):.1f}%",
+                                ],
+                                [
+                                    "Medium",
+                                    str(report.summary.medium_risk_events),
+                                    f"{(report.summary.medium_risk_events/max(report.summary.total_events,1)*100):.1f}%",
+                                ],
+                                [
+                                    "Low",
+                                    str(report.summary.low_risk_events),
+                                    f"{(report.summary.low_risk_events/max(report.summary.total_events,1)*100):.1f}%",
+                                ],
                             ]
-                            
+
                             risk_table = Table(risk_data)
-                            risk_table.setStyle(TableStyle([
-                                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                                ('FONTSIZE', (0, 0), (-1, 0), 14),
-                                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                                ('GRID', (0, 0), (-1, -1), 1, colors.black)
-                            ]))
+                            risk_table.setStyle(
+                                TableStyle(
+                                    [
+                                        ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                                        (
+                                            "TEXTCOLOR",
+                                            (0, 0),
+                                            (-1, 0),
+                                            colors.whitesmoke,
+                                        ),
+                                        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                                        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                                        ("FONTSIZE", (0, 0), (-1, 0), 14),
+                                        ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                                        ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                                        ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                                    ]
+                                )
+                            )
                             story.append(risk_table)
                             story.append(Spacer(1, 12))
-                        
+
                         # Compliance Status
-                        story.append(Paragraph("Compliance Framework Status", styles['Heading2']))
-                        if hasattr(report, 'framework_compliance'):
-                            for framework, status in report.framework_compliance.items():
-                                story.append(Paragraph(f"• {framework}: {status}", styles['Normal']))
+                        story.append(
+                            Paragraph("Compliance Framework Status", styles["Heading2"])
+                        )
+                        if hasattr(report, "framework_compliance"):
+                            for (
+                                framework,
+                                status,
+                            ) in report.framework_compliance.items():
+                                story.append(
+                                    Paragraph(
+                                        f"• {framework}: {status}", styles["Normal"]
+                                    )
+                                )
                         story.append(Spacer(1, 12))
-                        
+
                         # Recommendations
-                        if hasattr(report, 'recommendations') and report.recommendations:
-                            story.append(Paragraph("Recommendations", styles['Heading2']))
-                            for i, rec in enumerate(report.recommendations[:10], 1):  # Limit to 10
-                                story.append(Paragraph(f"{i}. {rec}", styles['Normal']))
-                        
+                        if (
+                            hasattr(report, "recommendations")
+                            and report.recommendations
+                        ):
+                            story.append(
+                                Paragraph("Recommendations", styles["Heading2"])
+                            )
+                            for i, rec in enumerate(
+                                report.recommendations[:10], 1
+                            ):  # Limit to 10
+                                story.append(Paragraph(f"{i}. {rec}", styles["Normal"]))
+
                         # Build PDF
                         doc.build(story)
                         return tmp_file.name
-                        
+
                 except ImportError:
                     # Final fallback: Return HTML with instructions
-                    html_content = self._generate_html_report(report, include_appendices)
+                    html_content = self._generate_html_report(
+                        report, include_appendices
+                    )
                     import tempfile
-                    
-                    with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as tmp_file:
+
+                    with tempfile.NamedTemporaryFile(
+                        mode="w", suffix=".html", delete=False, encoding="utf-8"
+                    ) as tmp_file:
                         tmp_file.write(html_content)
                         html_path = tmp_file.name
-                    
+
                     return f"""PDF generation libraries not available. 
 HTML report saved to: {html_path}
 
@@ -1055,6 +1135,6 @@ To enable PDF generation, install one of:
 - reportlab: pip install reportlab
 
 Then convert HTML to PDF manually or programmatically."""
-                        
+
         except Exception as e:
             return f"PDF generation failed: {str(e)}. Falling back to HTML format."

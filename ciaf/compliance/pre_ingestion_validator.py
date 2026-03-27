@@ -16,17 +16,20 @@ import warnings
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
 try:
     import pandas as pd
+
     PANDAS_AVAILABLE = True
 except ImportError:
     PANDAS_AVAILABLE = False
     pd = None
-    warnings.warn("pandas not available. PreIngestionValidator features will be limited.")
+    warnings.warn(
+        "pandas not available. PreIngestionValidator features will be limited."
+    )
 
 
 class ValidationSeverity(Enum):
@@ -309,7 +312,7 @@ class PreIngestionValidator:
                 recommendation=recommendation,
             )
 
-        except Exception as e:
+        except Exception:
             # Fallback for when scipy is not available or other errors
             outcome_rates = data.groupby(protected_attr)[target_column].mean()
             bias_score = outcome_rates.max() - outcome_rates.min()
@@ -462,9 +465,7 @@ class PreIngestionValidator:
 
         # Overall recommendation
         if quality_score < 50:
-            overall_recommendation = (
-                "Dataset requires significant cleanup before use"
-            )
+            overall_recommendation = "Dataset requires significant cleanup before use"
         elif quality_score < 70:
             overall_recommendation = (
                 "Dataset needs attention - address critical issues before proceeding"
@@ -567,9 +568,7 @@ class PreIngestionValidator:
         # Bias summary
         bias = report["bias_analysis"]
         if bias["attributes_analyzed"] > 0:
-            print(
-                f"\nBias Analysis: {bias['attributes_analyzed']} attributes analyzed"
-            )
+            print(f"\nBias Analysis: {bias['attributes_analyzed']} attributes analyzed")
             if bias["bias_detected"]:
                 biased_attrs = [
                     result["protected_attribute"]

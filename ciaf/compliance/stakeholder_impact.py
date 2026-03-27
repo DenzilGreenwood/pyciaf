@@ -10,8 +10,6 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-import hashlib
-import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
@@ -668,7 +666,7 @@ def demo_stakeholder_impact_assessment():
     print("    Stakeholder impact metadata prepared for compliance documentation")
 
     # Show external documentation references
-    print(f"\n6. External Documentation References")
+    print("\n6. External Documentation References")
     ext_docs = metadata["stakeholder_impact_assessment"]["external_documentation"]
     for doc_type, filename in ext_docs.items():
         if filename:

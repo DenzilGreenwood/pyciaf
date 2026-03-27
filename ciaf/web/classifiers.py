@@ -31,7 +31,7 @@ Version: 1.0.0
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Set
+from typing import Optional, List, Dict
 import re
 
 from .events import DataClassification
@@ -45,6 +45,7 @@ class ClassificationRule:
     Each rule checks for specific patterns and assigns
     a classification and sensitivity score.
     """
+
     rule_id: str
     name: str
     classification: DataClassification
@@ -112,7 +113,6 @@ CLASSIFICATION_RULES = [
         weight=0.6,
         description="Phone number",
     ),
-
     # Financial Data
     ClassificationRule(
         rule_id="financial_bank_account",
@@ -132,29 +132,36 @@ CLASSIFICATION_RULES = [
         weight=0.7,
         description="Salary or compensation data",
     ),
-
     # Health Data
     ClassificationRule(
         rule_id="health_phi",
         name="Protected Health Information",
         classification=DataClassification.HIGHLY_RESTRICTED,
         keywords=[
-            "medical record", "diagnosis", "prescription", "patient",
-            "health condition", "treatment plan", "medical history"
+            "medical record",
+            "diagnosis",
+            "prescription",
+            "patient",
+            "health condition",
+            "treatment plan",
+            "medical history",
         ],
         patterns=[],
         weight=1.0,
         description="Protected health information (PHI)",
     ),
-
     # Business Confidential
     ClassificationRule(
         rule_id="business_confidential",
         name="Confidential Business Data",
         classification=DataClassification.CONFIDENTIAL,
         keywords=[
-            "confidential", "proprietary", "trade secret", "internal only",
-            "do not distribute", "restricted distribution"
+            "confidential",
+            "proprietary",
+            "trade secret",
+            "internal only",
+            "do not distribute",
+            "restricted distribution",
         ],
         patterns=[r"\bconfidential\b", r"\bproprietary\b"],
         weight=0.8,
@@ -165,14 +172,18 @@ CLASSIFICATION_RULES = [
         name="Strategic Business Information",
         classification=DataClassification.CONFIDENTIAL,
         keywords=[
-            "business strategy", "strategic plan", "market strategy",
-            "competitive advantage", "roadmap", "M&A", "acquisition"
+            "business strategy",
+            "strategic plan",
+            "market strategy",
+            "competitive advantage",
+            "roadmap",
+            "M&A",
+            "acquisition",
         ],
         patterns=[],
         weight=0.7,
         description="Strategic business plans",
     ),
-
     # Technical Secrets
     ClassificationRule(
         rule_id="tech_api_key",
@@ -207,7 +218,6 @@ CLASSIFICATION_RULES = [
         weight=1.0,
         description="Cryptographic private keys",
     ),
-
     # Code and IP
     ClassificationRule(
         rule_id="code_proprietary",
@@ -269,7 +279,9 @@ class ContentClassifier:
                 sensitivity_scores.append(rule.weight)
 
                 # Track highest classification
-                if _classification_level(rule.classification) > _classification_level(max_classification):
+                if _classification_level(rule.classification) > _classification_level(
+                    max_classification
+                ):
                     max_classification = rule.classification
 
         # Calculate sensitivity score
@@ -300,6 +312,7 @@ class ContentClassifier:
 @dataclass
 class ClassificationResult:
     """Result of content classification."""
+
     classification: DataClassification
     sensitivity_score: float  # 0.0-1.0
     matched_rules: List[ClassificationRule]
@@ -315,21 +328,22 @@ class ClassificationResult:
         """Check if content is restricted or highly restricted."""
         return self.classification in [
             DataClassification.RESTRICTED,
-            DataClassification.HIGHLY_RESTRICTED
+            DataClassification.HIGHLY_RESTRICTED,
         ]
 
     def should_block(self) -> bool:
         """Determine if content should be blocked (highly sensitive)."""
         return (
-            self.classification == DataClassification.HIGHLY_RESTRICTED or
-            self.sensitivity_score >= 0.9
+            self.classification == DataClassification.HIGHLY_RESTRICTED
+            or self.sensitivity_score >= 0.9
         )
 
     def should_warn(self) -> bool:
         """Determine if content should trigger warning."""
         return (
-            self.classification in [DataClassification.RESTRICTED, DataClassification.CONFIDENTIAL] or
-            self.sensitivity_score >= 0.6
+            self.classification
+            in [DataClassification.RESTRICTED, DataClassification.CONFIDENTIAL]
+            or self.sensitivity_score >= 0.6
         )
 
 
@@ -373,6 +387,7 @@ def _classification_level(classification: DataClassification) -> int:
 
 
 # Convenience functions
+
 
 def classify_content(text: str) -> ClassificationResult:
     """

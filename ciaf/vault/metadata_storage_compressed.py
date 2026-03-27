@@ -14,7 +14,6 @@ import gzip
 import hashlib
 import json
 import lzma
-import os
 import pickle
 import sqlite3
 import struct
@@ -22,7 +21,7 @@ import uuid
 import zlib
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, Literal, Optional
 
 # Optional import for msgpack
 try:
@@ -103,8 +102,7 @@ class CompressedMetadataStorage:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS metadata (
                 id TEXT PRIMARY KEY,
                 model_name TEXT NOT NULL,
@@ -120,24 +118,17 @@ class CompressedMetadataStorage:
                 compressed_size INTEGER,
                 metadata_blob BLOB NOT NULL
             )
-        """
-        )
+        """)
 
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_model_name ON metadata(model_name)
-        """
-        )
-        cursor.execute(
-            """
+        """)
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_stage ON metadata(stage)
-        """
-        )
-        cursor.execute(
-            """
+        """)
+        cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_timestamp ON metadata(timestamp)
-        """
-        )
+        """)
 
         conn.commit()
         conn.close()

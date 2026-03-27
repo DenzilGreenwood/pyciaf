@@ -16,7 +16,7 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from typing import Optional, List
+from typing import List
 import re
 
 from .models import (
@@ -29,7 +29,6 @@ from .hashing import (
     normalized_text_hash,
     simhash_text,
     simhash_distance,
-    strip_common_watermarks,
 )
 from .text import (
     has_watermark,
@@ -89,7 +88,9 @@ def verify_text_artifact(
     if match_before and not match_after:
         likely_removed = True
         notes.append("[WARN] Watermark likely removed!")
-        notes.append("  Content matches pre-watermark version but watermark is missing.")
+        notes.append(
+            "  Content matches pre-watermark version but watermark is missing."
+        )
 
     # Check 4: Watermark presence
     watermark_present = has_watermark(suspect_text)
@@ -133,19 +134,27 @@ def verify_text_artifact(
         if simhash_dist <= simhash_threshold:
             # Calculate similarity score (0.0-1.0)
             perceptual_similarity = 1.0 - (simhash_dist / 64.0)
-            notes.append(f"[OK] SimHash similarity detected (distance={simhash_dist}, score={perceptual_similarity:.3f}).")
+            notes.append(
+                f"[OK] SimHash similarity detected (distance={simhash_dist}, score={perceptual_similarity:.3f})."
+            )
             notes.append("  Content is likely modified version of original.")
         else:
-            notes.append(f"[FAIL] SimHash distance too large: {simhash_dist} (threshold: {simhash_threshold}).")
+            notes.append(
+                f"[FAIL] SimHash distance too large: {simhash_dist} (threshold: {simhash_threshold})."
+            )
 
     # Check 7: Content modification analysis
     content_modified = False
     if not match_before and not match_after:
-        if normalized_match_before or (perceptual_similarity and perceptual_similarity > 0.8):
+        if normalized_match_before or (
+            perceptual_similarity and perceptual_similarity > 0.8
+        ):
             content_modified = True
             notes.append("[WARN] Content appears modified from original.")
         else:
-            notes.append("[FAIL] No match found - content may be unrelated or heavily modified.")
+            notes.append(
+                "[FAIL] No match found - content may be unrelated or heavily modified."
+            )
 
     # Determine overall confidence
     confidence = 0.0
@@ -253,10 +262,10 @@ def analyze_suspect_text(suspect_text: str) -> dict:
     }
 
     # Detect suspicious patterns
-    if re.search(r'---.*removed.*---', suspect_text, re.IGNORECASE):
+    if re.search(r"---.*removed.*---", suspect_text, re.IGNORECASE):
         analysis["tampering_indicators"].append("Text contains 'removed' marker")
 
-    if re.search(r'\[.*stripped.*\]', suspect_text, re.IGNORECASE):
+    if re.search(r"\[.*stripped.*\]", suspect_text, re.IGNORECASE):
         analysis["tampering_indicators"].append("Text contains 'stripped' marker")
 
     # Check for common AI output patterns
@@ -276,7 +285,9 @@ def analyze_suspect_text(suspect_text: str) -> dict:
     return analysis
 
 
-def format_verification_report(result: VerificationResult, detailed: bool = True) -> str:
+def format_verification_report(
+    result: VerificationResult, detailed: bool = True
+) -> str:
     """
     Format verification result as human-readable report.
 
@@ -303,10 +314,18 @@ def format_verification_report(result: VerificationResult, detailed: bool = True
 
     lines.append("")
     lines.append("Checks:")
-    lines.append(f"  Exact match (watermarked):  {'[OK]' if result.exact_match_after_watermark else '[FAIL]'}")
-    lines.append(f"  Exact match (original):     {'[OK]' if result.exact_match_before_watermark else '[FAIL]'}")
-    lines.append(f"  Watermark present:          {'[OK]' if result.watermark_present else '[FAIL]'}")
-    lines.append(f"  Watermark intact:           {'[OK]' if result.watermark_intact else '[FAIL]'}")
+    lines.append(
+        f"  Exact match (watermarked):  {'[OK]' if result.exact_match_after_watermark else '[FAIL]'}"
+    )
+    lines.append(
+        f"  Exact match (original):     {'[OK]' if result.exact_match_before_watermark else '[FAIL]'}"
+    )
+    lines.append(
+        f"  Watermark present:          {'[OK]' if result.watermark_present else '[FAIL]'}"
+    )
+    lines.append(
+        f"  Watermark intact:           {'[OK]' if result.watermark_intact else '[FAIL]'}"
+    )
 
     if result.likely_tag_removed:
         lines.append("")

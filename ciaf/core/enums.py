@@ -14,6 +14,7 @@ from enum import Enum
 
 class RecordType(str, Enum):
     """Types of audit records."""
+
     DATASET = "dataset"
     MODEL = "model"
     INFERENCE = "inference"
@@ -24,6 +25,7 @@ class RecordType(str, Enum):
 
 class HashAlgorithm(str, Enum):
     """Supported hash algorithms for algorithm agility."""
+
     SHA256 = "sha256"
     SHA3_256 = "sha3-256"
     BLAKE3 = "blake3"
@@ -31,5 +33,6 @@ class HashAlgorithm(str, Enum):
 
 class SignatureAlgorithm(str, Enum):
     """Supported signature algorithms."""
+
     ED25519 = "ed25519"  # Production default
-    MOCK = "mock"        # Legacy/testing only ## DEPRECATED ## DO NOT USE
+    MOCK = "mock"  # Legacy/testing only ## DEPRECATED ## DO NOT USE

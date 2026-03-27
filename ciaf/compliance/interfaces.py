@@ -18,6 +18,7 @@ from enum import Enum
 
 class ComplianceFramework(Enum):
     """Supported regulatory and compliance frameworks."""
+
     EU_AI_ACT = "eu_ai_act"
     NIST_AI_RMF = "nist_ai_rmf"
     GDPR = "gdpr"
@@ -34,6 +35,7 @@ class ComplianceFramework(Enum):
 
 class ValidationSeverity(Enum):
     """Severity levels for validation results."""
+
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -43,6 +45,7 @@ class ValidationSeverity(Enum):
 
 class AuditEventType(Enum):
     """Types of audit events tracked by CIAF."""
+
     MODEL_TRAINING = "model_training"
     DATA_INGESTION = "data_ingestion"
     INFERENCE_REQUEST = "inference_request"
@@ -58,16 +61,13 @@ class AuditEventType(Enum):
 @runtime_checkable
 class ComplianceValidator(Protocol):
     """Protocol for compliance validation implementations."""
-    
+
     def validate_framework_compliance(
-        self,
-        framework: ComplianceFramework,
-        audit_data: Dict[str, Any],
-        **kwargs
+        self, framework: ComplianceFramework, audit_data: Dict[str, Any], **kwargs
     ) -> List[Dict[str, Any]]:
         """Validate compliance with a specific regulatory framework."""
         ...
-    
+
     def get_validation_summary(self) -> Dict[str, Any]:
         """Get summary of all validation results."""
         ...
@@ -76,16 +76,13 @@ class ComplianceValidator(Protocol):
 @runtime_checkable
 class AuditTrailProvider(Protocol):
     """Protocol for audit trail generation and management."""
-    
+
     def record_event(
-        self,
-        event_type: AuditEventType,
-        event_data: Dict[str, Any],
-        **kwargs
+        self, event_type: AuditEventType, event_data: Dict[str, Any], **kwargs
     ) -> str:
         """Record an audit event and return event ID."""
         ...
-    
+
     def get_audit_trail(
         self,
         start_date: Optional[datetime] = None,
@@ -94,7 +91,7 @@ class AuditTrailProvider(Protocol):
     ) -> List[Dict[str, Any]]:
         """Get filtered audit trail."""
         ...
-    
+
     def verify_integrity(self) -> Dict[str, Any]:
         """Verify the cryptographic integrity of the audit trail."""
         ...
@@ -103,19 +100,15 @@ class AuditTrailProvider(Protocol):
 @runtime_checkable
 class RiskAssessor(Protocol):
     """Protocol for risk assessment implementations."""
-    
+
     def assess_model_risk(
-        self,
-        model_metadata: Dict[str, Any],
-        deployment_context: Dict[str, Any]
+        self, model_metadata: Dict[str, Any], deployment_context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Assess risks associated with model deployment."""
         ...
-    
+
     def assess_data_risk(
-        self,
-        data_metadata: Dict[str, Any],
-        usage_context: Dict[str, Any]
+        self, data_metadata: Dict[str, Any], usage_context: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Assess risks associated with data usage."""
         ...
@@ -124,21 +117,21 @@ class RiskAssessor(Protocol):
 @runtime_checkable
 class BiasDetector(Protocol):
     """Protocol for bias detection in AI models."""
-    
+
     def detect_bias(
         self,
         predictions: Any,
         protected_attributes: Dict[str, Any],
-        ground_truth: Optional[Any] = None
+        ground_truth: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """Detect bias in model predictions."""
         ...
-    
+
     def calculate_fairness_metrics(
         self,
         predictions: Any,
         protected_attributes: Dict[str, Any],
-        ground_truth: Optional[Any] = None
+        ground_truth: Optional[Any] = None,
     ) -> Dict[str, Any]:
         """Calculate fairness metrics."""
         ...
@@ -147,16 +140,16 @@ class BiasDetector(Protocol):
 @runtime_checkable
 class DocumentationGenerator(Protocol):
     """Protocol for compliance documentation generation."""
-    
+
     def generate_compliance_report(
         self,
         framework: ComplianceFramework,
         model_metadata: Dict[str, Any],
-        validation_results: List[Dict[str, Any]]
+        validation_results: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """Generate compliance documentation."""
         ...
-    
+
     def export_documentation(self, format: str = "pdf") -> bytes:
         """Export documentation in specified format."""
         ...
@@ -165,21 +158,21 @@ class DocumentationGenerator(Protocol):
 @runtime_checkable
 class ComplianceStore(Protocol):
     """Protocol for storing compliance data and reports."""
-    
+
     def store_validation_results(
         self,
         model_id: str,
         results: List[Dict[str, Any]],
-        metadata: Dict[str, Any] = None
+        metadata: Dict[str, Any] = None,
     ) -> None:
         """Store validation results."""
         ...
-    
+
     def get_compliance_history(
         self,
         model_id: str,
         start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None
+        end_date: Optional[datetime] = None,
     ) -> List[Dict[str, Any]]:
         """Get compliance validation history."""
         ...
@@ -188,19 +181,13 @@ class ComplianceStore(Protocol):
 @runtime_checkable
 class AlertSystem(Protocol):
     """Protocol for compliance alert and notification systems."""
-    
+
     def send_compliance_alert(
-        self,
-        severity: ValidationSeverity,
-        message: str,
-        details: Dict[str, Any] = None
+        self, severity: ValidationSeverity, message: str, details: Dict[str, Any] = None
     ) -> None:
         """Send compliance alert."""
         ...
-    
-    def configure_alert_rules(
-        self,
-        rules: List[Dict[str, Any]]
-    ) -> None:
+
+    def configure_alert_rules(self, rules: List[Dict[str, Any]]) -> None:
         """Configure alerting rules."""
         ...

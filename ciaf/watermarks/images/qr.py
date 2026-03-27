@@ -19,12 +19,12 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from typing import Optional
 from io import BytesIO
 
 try:
     import qrcode
     from qrcode.image.pil import PilImage
+
     QRCODE_AVAILABLE = True
 except ImportError:
     QRCODE_AVAILABLE = False
@@ -79,9 +79,7 @@ def make_qr_code_bytes(
 
 
 def make_verification_url_qr(
-    artifact_id: str,
-    base_url: str = "https://vault.cognitiveinsight.ai",
-    **qr_kwargs
+    artifact_id: str, base_url: str = "https://vault.cognitiveinsight.ai", **qr_kwargs
 ) -> bytes:
     """
     Generate QR code for artifact verification URL.
@@ -99,10 +97,7 @@ def make_verification_url_qr(
 
 
 def make_compact_token_qr(
-    artifact_id: str,
-    watermark_id: str,
-    receipt_hash_prefix: str,
-    **qr_kwargs
+    artifact_id: str, watermark_id: str, receipt_hash_prefix: str, **qr_kwargs
 ) -> bytes:
     """
     Generate QR code for compact CIAF token.
@@ -137,6 +132,7 @@ def get_qr_image(qr_bytes: bytes):
     """
     try:
         from PIL import Image
+
         return Image.open(BytesIO(qr_bytes))
     except ImportError:
         raise ImportError("PIL required. Install with: pip install Pillow")

@@ -31,6 +31,7 @@ from dataclasses import dataclass
 try:
     from PIL import Image
     import imagehash
+
     IMAGEHASH_AVAILABLE = True
 except ImportError:
     IMAGEHASH_AVAILABLE = False
@@ -45,6 +46,7 @@ class ImageFingerprintSet:
 
     Includes multiple hashing algorithms for different use cases.
     """
+
     # Exact hashes
     exact_hash_before: str  # SHA-256 of original image bytes
     exact_hash_after: str  # SHA-256 of watermarked image bytes
@@ -156,8 +158,7 @@ def compute_wavelet_hash(image_bytes: bytes, hash_size: int = 8) -> str:
 
 
 def compute_all_hashes(
-    image_bytes: bytes,
-    hash_size: int = 8
+    image_bytes: bytes, hash_size: int = 8
 ) -> Tuple[str, str, str, str]:
     """
     Compute all perceptual hashes for image.
@@ -209,7 +210,7 @@ def hamming_distance(hash1: str, hash2: str) -> int:
     int1 = int(hash1, 16)
     int2 = int(hash2, 16)
     xor = int1 ^ int2
-    return bin(xor).count('1')
+    return bin(xor).count("1")
 
 
 def similarity_score(hash1: str, hash2: str, max_distance: int = 64) -> float:
@@ -228,11 +229,7 @@ def similarity_score(hash1: str, hash2: str, max_distance: int = 64) -> float:
     return 1.0 - (distance / max_distance)
 
 
-def is_similar_image(
-    hash1: str,
-    hash2: str,
-    threshold: int = 10
-) -> bool:
+def is_similar_image(hash1: str, hash2: str, threshold: int = 10) -> bool:
     """
     Check if two images are similar based on hash distance.
 
@@ -250,19 +247,16 @@ def is_similar_image(
 __all__ = [
     # Data models
     "ImageFingerprintSet",
-
     # Hash computation
     "compute_perceptual_hash",
     "compute_average_hash",
     "compute_difference_hash",
     "compute_wavelet_hash",
     "compute_all_hashes",
-
     # Similarity matching
     "hamming_distance",
     "similarity_score",
     "is_similar_image",
-
     # Constants
     "IMAGEHASH_AVAILABLE",
 ]

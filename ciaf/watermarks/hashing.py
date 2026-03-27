@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from typing import Optional, List
+from typing import List
 import base64
 
 
@@ -78,16 +78,18 @@ def strip_common_watermarks(text: str) -> str:
     suspect text against pre-watermark hash.
     """
     # Remove footer-style watermarks (---\nAI Provenance...)
-    text = re.sub(r'\n+---+\n+AI Provenance.*$', '', text, flags=re.DOTALL | re.MULTILINE)
+    text = re.sub(
+        r"\n+---+\n+AI Provenance.*$", "", text, flags=re.DOTALL | re.MULTILINE
+    )
 
     # Remove header-style watermarks
-    text = re.sub(r'^AI Provenance.*\n+---+\n+', '', text, flags=re.MULTILINE)
+    text = re.sub(r"^AI Provenance.*\n+---+\n+", "", text, flags=re.MULTILINE)
 
     # Remove inline tags like [AI Generated: ...]
-    text = re.sub(r'\[AI Generated:.*?\]', '', text)
+    text = re.sub(r"\[AI Generated:.*?\]", "", text)
 
     # Remove verification URLs
-    text = re.sub(r'Verify:\s*https?://[^\s]+', '', text)
+    text = re.sub(r"Verify:\s*https?://[^\s]+", "", text)
 
     return text.strip()
 
@@ -122,14 +124,14 @@ class SimHash:
     def _tokenize(text: str) -> List[str]:
         """Simple tokenization by word boundaries."""
         text = text.lower()
-        tokens = re.findall(r'\w+', text)
+        tokens = re.findall(r"\w+", text)
         return tokens
 
     @staticmethod
     def _hash_token(token: str) -> int:
         """Hash a single token to 64-bit integer."""
-        h = hashlib.md5(token.encode('utf-8')).digest()
-        return int.from_bytes(h[:8], byteorder='big')
+        h = hashlib.md5(token.encode("utf-8")).digest()
+        return int.from_bytes(h[:8], byteorder="big")
 
     @classmethod
     def compute(cls, text: str, hashbits: int = 64) -> str:
@@ -146,7 +148,7 @@ class SimHash:
         tokens = cls._tokenize(text)
 
         if not tokens:
-            return '0' * (hashbits // 4)
+            return "0" * (hashbits // 4)
 
         # Initialize vector
         v = [0] * hashbits
@@ -166,11 +168,11 @@ class SimHash:
         fingerprint = 0
         for i in range(hashbits):
             if v[i] > 0:
-                fingerprint |= (1 << i)
+                fingerprint |= 1 << i
 
         # Convert to hex string
         hex_len = hashbits // 4
-        return format(fingerprint, f'0{hex_len}x')
+        return format(fingerprint, f"0{hex_len}x")
 
     @staticmethod
     def hamming_distance(hash1: str, hash2: str) -> int:
@@ -187,7 +189,7 @@ class SimHash:
         int1 = int(hash1, 16)
         int2 = int(hash2, 16)
         xor = int1 ^ int2
-        return bin(xor).count('1')
+        return bin(xor).count("1")
 
 
 def simhash_text(text: str) -> str:
@@ -214,6 +216,7 @@ def simhash_distance(hash1: str, hash2: str) -> int:
 # - imagehash library for images (pHash, dHash, wHash)
 # - chromaprint for audio
 # - video fingerprinting libraries
+
 
 def perceptual_hash_placeholder(data: bytes, algorithm: str = "phash") -> str:
     """
@@ -261,7 +264,7 @@ class MinHash:
         Returns:
             List of minimum hash values
         """
-        tokens = set(re.findall(r'\w+', text.lower()))
+        tokens = set(re.findall(r"\w+", text.lower()))
 
         if not tokens:
             return [0] * num_perm
@@ -298,8 +301,8 @@ def minhash_text(text: str, num_perm: int = 128) -> str:
     """
     signature = MinHash.compute(text, num_perm)
     # Encode as bytes then base64
-    sig_bytes = b''.join(sig.to_bytes(4, 'big') for sig in signature)
-    return base64.b64encode(sig_bytes).decode('ascii')
+    sig_bytes = b"".join(sig.to_bytes(4, "big") for sig in signature)
+    return base64.b64encode(sig_bytes).decode("ascii")
 
 
 def minhash_similarity(hash1: str, hash2: str) -> float:
@@ -314,8 +317,14 @@ def minhash_similarity(hash1: str, hash2: str) -> float:
     sig2_bytes = base64.b64decode(hash2)
 
     # Convert back to list of ints
-    sig1 = [int.from_bytes(sig1_bytes[i:i+4], 'big') for i in range(0, len(sig1_bytes), 4)]
-    sig2 = [int.from_bytes(sig2_bytes[i:i+4], 'big') for i in range(0, len(sig2_bytes), 4)]
+    sig1 = [
+        int.from_bytes(sig1_bytes[i : i + 4], "big")
+        for i in range(0, len(sig1_bytes), 4)
+    ]
+    sig2 = [
+        int.from_bytes(sig2_bytes[i : i + 4], "big")
+        for i in range(0, len(sig2_bytes), 4)
+    ]
 
     return MinHash.jaccard_similarity(sig1, sig2)
 
@@ -324,23 +333,19 @@ __all__ = [
     # Exact hashing
     "sha256_bytes",
     "sha256_text",
-
     # Normalized hashing
     "normalize_text_for_forensics",
     "normalized_text_hash",
     "strip_common_watermarks",
     "text_with_watermark_stripped_hash",
-
     # Similarity hashing
     "SimHash",
     "simhash_text",
     "simhash_distance",
-
     # MinHash
     "MinHash",
     "minhash_text",
     "minhash_similarity",
-
     # Perceptual (placeholder)
     "perceptual_hash_placeholder",
 ]

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import List, Tuple
 from .crypto import sha256_hash
-from .interfaces import Merkle
+
 
 class MerkleTree:
     """Deterministic Merkle tree with left/right proofs and caches implementing the Merkle protocol."""
@@ -56,13 +56,13 @@ class MerkleTree:
         """Add a new leaf and return the new root hash."""
         if leaf_hash in self.leaves:
             raise ValueError(f"Leaf {leaf_hash} already exists (WORM violation)")
-        
+
         self.leaves.append(leaf_hash)
-        
+
         # Clear caches since tree structure changed
         self._proof_cache.clear()
         self._verification_cache.clear()
-        
+
         # Rebuild tree
         if len(self.leaves) == 1:
             self.tree = [self.leaves]
@@ -70,7 +70,7 @@ class MerkleTree:
         else:
             self.tree = self._build_tree(self.leaves)
             self.root = self.tree[-1][0] if self.tree else None
-        
+
         return self.root
 
     def get_root(self) -> str:
@@ -98,24 +98,30 @@ class MerkleTree:
         for level in self.tree[:-1]:
             is_right = current_index % 2 != 0
             sib_idx = current_index - 1 if is_right else current_index + 1
-            sibling_hash = level[sib_idx] if sib_idx < len(level) else level[current_index]
+            sibling_hash = (
+                level[sib_idx] if sib_idx < len(level) else level[current_index]
+            )
             pos = "left" if is_right else "right"
             proof.append((sibling_hash, pos))
             current_index //= 2
 
         self._proof_cache[leaf_hash] = proof
         return proof
-    
+
     def get_merkle_path(self, leaf_hash: str) -> List[Tuple[str, str]]:
         """Alias for get_proof to maintain backward compatibility."""
         return self.get_proof(leaf_hash)
-    
-    def verify_proof(self, leaf_hash: str, proof: List[Tuple[str, str]], root: str) -> bool:
+
+    def verify_proof(
+        self, leaf_hash: str, proof: List[Tuple[str, str]], root: str
+    ) -> bool:
         """Instance method wrapper for static verify_proof."""
         return self.verify_proof_static(leaf_hash, root, proof)
 
     @staticmethod
-    def verify_proof_static(leaf_hash: str, root_hash: str, proof: list[tuple[str, str]]) -> bool:
+    def verify_proof_static(
+        leaf_hash: str, root_hash: str, proof: list[tuple[str, str]]
+    ) -> bool:
         cur = leaf_hash
         if not proof and cur == root_hash:
             return True

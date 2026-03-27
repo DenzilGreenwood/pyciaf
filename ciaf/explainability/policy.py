@@ -1,7 +1,7 @@
 """
 Policy-driven configuration for explainability system.
 
-This module provides configurable policies for explainable AI, similar to 
+This module provides configurable policies for explainable AI, similar to
 the LCM and compliance policy systems. It enables fine-tuned control over
 explanation methods, quality thresholds, and regulatory compliance.
 
@@ -10,7 +10,6 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -22,8 +21,9 @@ from ..core.crypto import sha256_hash
 
 class ExplanationMethod(Enum):
     """Available explanation methods."""
+
     SHAP_TREE = "shap_tree"
-    SHAP_LINEAR = "shap_linear" 
+    SHAP_LINEAR = "shap_linear"
     SHAP_KERNEL = "shap_kernel"
     LIME_TEXT = "lime_text"
     LIME_TABULAR = "lime_tabular"
@@ -35,14 +35,16 @@ class ExplanationMethod(Enum):
 
 class ExplanationLevel(Enum):
     """Explanation detail levels."""
-    MINIMAL = "minimal"          # Basic feature attributions only
-    STANDARD = "standard"        # Standard explanations with confidence
-    DETAILED = "detailed"        # Detailed with interactions and metadata
+
+    MINIMAL = "minimal"  # Basic feature attributions only
+    STANDARD = "standard"  # Standard explanations with confidence
+    DETAILED = "detailed"  # Detailed with interactions and metadata
     COMPREHENSIVE = "comprehensive"  # Full explanations with all available info
 
 
 class ComplianceFramework(Enum):
     """Supported compliance frameworks for explainability."""
+
     EU_AI_ACT = "eu_ai_act"
     NIST_AI_RMF = "nist_ai_rmf"
     GDPR = "gdpr"
@@ -53,21 +55,21 @@ class ComplianceFramework(Enum):
 @dataclass
 class ExplanationQualityPolicy:
     """Policy for explanation quality requirements."""
-    
+
     # Confidence thresholds
     min_explanation_confidence: float = 0.7
     min_feature_coverage: int = 5
     max_features_in_explanation: int = 20
-    
+
     # Feature attribution requirements
     require_feature_names: bool = True
     require_attribution_values: bool = True
     require_importance_ranking: bool = True
-    
+
     # Quality validation
     validate_explanation_consistency: bool = True
     explanation_stability_threshold: float = 0.8
-    
+
     # Audit requirements
     store_explanations: bool = True
     explanation_retention_days: int = 365
@@ -77,23 +79,26 @@ class ExplanationQualityPolicy:
 @dataclass
 class ComplianceRequirements:
     """Compliance requirements for explainability."""
-    
+
     enabled_frameworks: Set[ComplianceFramework] = field(
-        default_factory=lambda: {ComplianceFramework.EU_AI_ACT, ComplianceFramework.NIST_AI_RMF}
+        default_factory=lambda: {
+            ComplianceFramework.EU_AI_ACT,
+            ComplianceFramework.NIST_AI_RMF,
+        }
     )
-    
+
     # EU AI Act requirements
     eu_ai_act_transparency_level: str = "high"  # low, medium, high
     eu_ai_act_require_human_oversight: bool = True
-    
-    # NIST AI RMF requirements  
+
+    # NIST AI RMF requirements
     nist_explain_function_level: str = "detailed"  # basic, detailed, comprehensive
     nist_require_bias_assessment: bool = True
-    
+
     # GDPR requirements
     gdpr_right_to_explanation: bool = True
     gdpr_automated_decision_threshold: float = 0.5
-    
+
     # General compliance
     require_regulatory_metadata: bool = True
     compliance_documentation_required: bool = True
@@ -102,41 +107,41 @@ class ComplianceRequirements:
 @dataclass
 class MethodPreferences:
     """Preferences for explanation method selection."""
-    
+
     # Preferred methods in order of preference
     preferred_methods: List[ExplanationMethod] = field(
         default_factory=lambda: [
             ExplanationMethod.SHAP_TREE,
-            ExplanationMethod.SHAP_LINEAR, 
+            ExplanationMethod.SHAP_LINEAR,
             ExplanationMethod.LIME_TABULAR,
-            ExplanationMethod.FEATURE_IMPORTANCE
+            ExplanationMethod.FEATURE_IMPORTANCE,
         ]
     )
-    
+
     # Method-specific configurations
     shap_background_sample_size: int = 100
     shap_max_evaluations: int = 500
     lime_num_perturbations: int = 1000
     lime_kernel_width: Optional[float] = None
-    
+
     # Fallback behavior
     enable_fallback_methods: bool = True
     fallback_to_feature_importance: bool = True
-    
 
-@dataclass 
+
+@dataclass
 class IntegrationPolicy:
     """Policy for integration with other CIAF components."""
-    
+
     # LCM integration
     lcm_integration: bool = True
     store_explanations_in_lcm: bool = True
     lcm_explanation_commitment_type: str = "salted"
-    
+
     # Compliance integration
     compliance_integration: bool = True
     auto_generate_compliance_reports: bool = True
-    
+
     # Audit integration
     audit_integration: bool = True
     explanation_audit_sampling_rate: float = 0.1  # 10% of explanations audited
@@ -145,18 +150,18 @@ class IntegrationPolicy:
 @dataclass
 class PerformancePolicy:
     """Policy for explainability performance management."""
-    
+
     # Resource limits
     max_explanation_time_seconds: float = 30.0
     max_memory_usage_mb: int = 1024
     enable_explanation_caching: bool = True
     cache_ttl_hours: int = 24
-    
+
     # Batch processing
     enable_batch_explanations: bool = True
     batch_size: int = 100
     max_concurrent_explanations: int = 5
-    
+
     # Background processing
     enable_async_explanations: bool = False
     async_explanation_timeout_seconds: float = 300.0
@@ -165,20 +170,26 @@ class PerformancePolicy:
 @dataclass
 class ExplainabilityPolicy:
     """Comprehensive explainability policy configuration."""
-    
+
     # Core policy components
     explanation_level: ExplanationLevel = ExplanationLevel.STANDARD
-    quality_policy: ExplanationQualityPolicy = field(default_factory=ExplanationQualityPolicy)
-    compliance_requirements: ComplianceRequirements = field(default_factory=ComplianceRequirements)
+    quality_policy: ExplanationQualityPolicy = field(
+        default_factory=ExplanationQualityPolicy
+    )
+    compliance_requirements: ComplianceRequirements = field(
+        default_factory=ComplianceRequirements
+    )
     method_preferences: MethodPreferences = field(default_factory=MethodPreferences)
     integration_policy: IntegrationPolicy = field(default_factory=IntegrationPolicy)
     performance_policy: PerformancePolicy = field(default_factory=PerformancePolicy)
-    
+
     # Metadata
     policy_version: str = "1.0.0"
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    created_at: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
     description: str = "CIAF Explainability Policy"
-    
+
     @classmethod
     def minimal(cls) -> "ExplainabilityPolicy":
         """Create minimal explainability policy for development."""
@@ -188,33 +199,33 @@ class ExplainabilityPolicy:
                 min_explanation_confidence=0.5,
                 min_feature_coverage=3,
                 store_explanations=False,
-                require_explanation_audit_trail=False
+                require_explanation_audit_trail=False,
             ),
             compliance_requirements=ComplianceRequirements(
                 enabled_frameworks=set(),
                 require_regulatory_metadata=False,
-                compliance_documentation_required=False
+                compliance_documentation_required=False,
             ),
             method_preferences=MethodPreferences(
                 preferred_methods=[ExplanationMethod.FEATURE_IMPORTANCE],
-                enable_fallback_methods=True
+                enable_fallback_methods=True,
             ),
             integration_policy=IntegrationPolicy(
                 lcm_integration=False,
                 compliance_integration=False,
-                audit_integration=False
+                audit_integration=False,
             ),
-            description="Minimal explainability for development"
+            description="Minimal explainability for development",
         )
-    
+
     @classmethod
     def standard(cls) -> "ExplainabilityPolicy":
         """Create standard explainability policy for production."""
         return cls(
             explanation_level=ExplanationLevel.STANDARD,
-            description="Standard explainability for production use"
+            description="Standard explainability for production use",
         )
-    
+
     @classmethod
     def comprehensive(cls) -> "ExplainabilityPolicy":
         """Create comprehensive explainability policy for high-risk AI."""
@@ -226,19 +237,19 @@ class ExplainabilityPolicy:
                 max_features_in_explanation=50,
                 validate_explanation_consistency=True,
                 explanation_stability_threshold=0.9,
-                explanation_retention_days=2555  # 7 years
+                explanation_retention_days=2555,  # 7 years
             ),
             compliance_requirements=ComplianceRequirements(
                 enabled_frameworks={
                     ComplianceFramework.EU_AI_ACT,
                     ComplianceFramework.NIST_AI_RMF,
                     ComplianceFramework.GDPR,
-                    ComplianceFramework.ISO_23053
+                    ComplianceFramework.ISO_23053,
                 },
                 eu_ai_act_transparency_level="high",
                 nist_explain_function_level="comprehensive",
                 gdpr_right_to_explanation=True,
-                compliance_documentation_required=True
+                compliance_documentation_required=True,
             ),
             method_preferences=MethodPreferences(
                 preferred_methods=[
@@ -246,10 +257,10 @@ class ExplainabilityPolicy:
                     ExplanationMethod.SHAP_LINEAR,
                     ExplanationMethod.SHAP_KERNEL,
                     ExplanationMethod.LIME_TABULAR,
-                    ExplanationMethod.INTEGRATED_GRADIENTS
+                    ExplanationMethod.INTEGRATED_GRADIENTS,
                 ],
                 shap_background_sample_size=500,
-                lime_num_perturbations=5000
+                lime_num_perturbations=5000,
             ),
             performance_policy=PerformancePolicy(
                 max_explanation_time_seconds=120.0,
@@ -258,9 +269,9 @@ class ExplainabilityPolicy:
             integration_policy=IntegrationPolicy(
                 explanation_audit_sampling_rate=0.25  # 25% audit rate
             ),
-            description="Comprehensive explainability for high-risk AI systems"
+            description="Comprehensive explainability for high-risk AI systems",
         )
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert policy to dictionary."""
         return {
@@ -279,7 +290,9 @@ class ExplainabilityPolicy:
                 "require_explanation_audit_trail": self.quality_policy.require_explanation_audit_trail,
             },
             "compliance_requirements": {
-                "enabled_frameworks": [f.value for f in self.compliance_requirements.enabled_frameworks],
+                "enabled_frameworks": [
+                    f.value for f in self.compliance_requirements.enabled_frameworks
+                ],
                 "eu_ai_act_transparency_level": self.compliance_requirements.eu_ai_act_transparency_level,
                 "eu_ai_act_require_human_oversight": self.compliance_requirements.eu_ai_act_require_human_oversight,
                 "nist_explain_function_level": self.compliance_requirements.nist_explain_function_level,
@@ -290,7 +303,9 @@ class ExplainabilityPolicy:
                 "compliance_documentation_required": self.compliance_requirements.compliance_documentation_required,
             },
             "method_preferences": {
-                "preferred_methods": [m.value for m in self.method_preferences.preferred_methods],
+                "preferred_methods": [
+                    m.value for m in self.method_preferences.preferred_methods
+                ],
                 "shap_background_sample_size": self.method_preferences.shap_background_sample_size,
                 "shap_max_evaluations": self.method_preferences.shap_max_evaluations,
                 "lime_num_perturbations": self.method_preferences.lime_num_perturbations,
@@ -322,15 +337,15 @@ class ExplainabilityPolicy:
             "created_at": self.created_at,
             "description": self.description,
         }
-    
+
     def canonical_json(self) -> str:
         """Get canonical JSON representation for hashing."""
         return canonical_json(self.to_dict())
-    
+
     def policy_digest(self) -> str:
         """Get SHA-256 hash digest of policy."""
-        return sha256_hash(self.canonical_json().encode('utf-8'))
-    
+        return sha256_hash(self.canonical_json().encode("utf-8"))
+
     def format_policy_line(self) -> str:
         """Get human-readable policy summary line."""
         framework_count = len(self.compliance_requirements.enabled_frameworks)
@@ -364,24 +379,24 @@ def set_default_explainability_policy(policy: ExplainabilityPolicy) -> None:
 def create_explainability_policy(
     level: ExplanationLevel = ExplanationLevel.STANDARD,
     compliance_frameworks: Optional[Set[ComplianceFramework]] = None,
-    lcm_integration: bool = True
+    lcm_integration: bool = True,
 ) -> ExplainabilityPolicy:
     """Create a custom explainability policy.
-    
+
     Args:
         level: Explanation detail level
         compliance_frameworks: Set of compliance frameworks to enable
         lcm_integration: Whether to enable LCM integration
-        
+
     Returns:
         Configured explainability policy
     """
     policy = ExplainabilityPolicy.standard()
     policy.explanation_level = level
-    
+
     if compliance_frameworks is not None:
         policy.compliance_requirements.enabled_frameworks = compliance_frameworks
-    
+
     policy.integration_policy.lcm_integration = lcm_integration
-    
+
     return policy

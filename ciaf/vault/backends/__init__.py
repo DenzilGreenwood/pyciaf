@@ -14,6 +14,7 @@ Version: 1.0.0
 
 try:
     from .postgresql_backend import PostgreSQLBackend, create_postgresql_vault
+
     POSTGRESQL_AVAILABLE = True
 except ImportError:
     POSTGRESQL_AVAILABLE = False

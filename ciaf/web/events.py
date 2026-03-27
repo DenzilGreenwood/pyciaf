@@ -33,6 +33,7 @@ from datetime import datetime, timezone
 
 class EventType(str, Enum):
     """Types of AI interaction events."""
+
     PROMPT_SUBMIT = "prompt_submit"
     OUTPUT_RECEIVE = "output_receive"
     FILE_UPLOAD = "file_upload"
@@ -51,6 +52,7 @@ class EventType(str, Enum):
 
 class PolicyDecision(str, Enum):
     """Policy evaluation results."""
+
     ALLOW = "allow"
     WARN = "warn"
     REDACT = "redact"
@@ -61,6 +63,7 @@ class PolicyDecision(str, Enum):
 
 class DataClassification(str, Enum):
     """Content sensitivity classifications."""
+
     PUBLIC = "public"
     INTERNAL = "internal"
     CONFIDENTIAL = "confidential"
@@ -71,6 +74,7 @@ class DataClassification(str, Enum):
 
 class ToolCategory(str, Enum):
     """Categories of AI tools."""
+
     LLM_CHAT = "llm_chat"  # ChatGPT, Claude, etc.
     CODE_ASSISTANT = "code_assistant"  # GitHub Copilot, Cursor
     IMAGE_GEN = "image_generation"  # Midjourney, DALL-E
@@ -94,6 +98,7 @@ class WebAIEvent:
     Minimum necessary capture - stores hashes by default,
     raw content only when explicitly configured.
     """
+
     # Primary identifiers
     event_id: str
     event_type: EventType
@@ -144,7 +149,7 @@ class WebAIEvent:
         session_id: str,
         tool_name: Optional[str] = None,
         tool_domain: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> WebAIEvent:
         """
         Create a new WebAIEvent with auto-generated ID and timestamp.
@@ -170,7 +175,7 @@ class WebAIEvent:
             session_id=session_id,
             tool_name=tool_name,
             tool_domain=tool_domain,
-            **kwargs
+            **kwargs,
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -252,7 +257,9 @@ class WebAIEvent:
         Returns:
             True if sensitivity score exceeds threshold
         """
-        return self.sensitivity_score is not None and self.sensitivity_score >= threshold
+        return (
+            self.sensitivity_score is not None and self.sensitivity_score >= threshold
+        )
 
     def was_blocked(self) -> bool:
         """Check if action was blocked by policy."""
@@ -261,9 +268,9 @@ class WebAIEvent:
     def needs_review(self) -> bool:
         """Check if event requires manual review."""
         return (
-            self.policy_decision == PolicyDecision.ESCALATE or
-            self.is_shadow_ai() or
-            self.is_high_risk()
+            self.policy_decision == PolicyDecision.ESCALATE
+            or self.is_shadow_ai()
+            or self.is_high_risk()
         )
 
 
@@ -275,6 +282,7 @@ class EventBatch:
     Used for bulk operations like batch classification,
     policy evaluation, or vault storage.
     """
+
     batch_id: str
     events: List[WebAIEvent]
     created_at: str

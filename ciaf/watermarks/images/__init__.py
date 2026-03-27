@@ -49,7 +49,6 @@ from .qr import (
     QRCODE_AVAILABLE,
 )
 
-
 __all__ = [
     # Visual watermarking
     "ImageWatermarkSpec",
@@ -59,7 +58,6 @@ __all__ = [
     "apply_combined_watermark",
     "build_image_artifact_evidence",
     "PIL_AVAILABLE",
-
     # Perceptual fingerprinting
     "compute_all_hashes",
     "compute_perceptual_hash",
@@ -71,7 +69,6 @@ __all__ = [
     "is_similar_image",
     "ImageFingerprintSet",
     "IMAGEHASH_AVAILABLE",
-
     # QR codes
     "make_qr_code_bytes",
     "make_verification_url_qr",

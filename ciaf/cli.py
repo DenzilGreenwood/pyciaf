@@ -14,7 +14,6 @@ import json
 import sys
 from dataclasses import asdict
 from pathlib import Path
-from typing import Optional
 
 from .vault.metadata_config import create_config_template
 from .vault.metadata_integration import ModelMetadataManager
@@ -23,79 +22,82 @@ from .vault.metadata_integration import ModelMetadataManager
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        description="CIAF - Cognitive Insight Audit Framework CLI",
-        prog="ciaf"
+        description="CIAF - Cognitive Insight Audit Framework CLI", prog="ciaf"
     )
-    
+
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
-    
+
     # Setup command
     setup_parser = subparsers.add_parser("setup", help="Set up CIAF metadata storage")
     setup_parser.add_argument("project_name", help="Name of your project")
     setup_parser.add_argument(
-        "--backend", 
-        choices=["json", "sqlite", "pickle"], 
+        "--backend",
+        choices=["json", "sqlite", "pickle"],
         default="json",
-        help="Storage backend (default: json)"
+        help="Storage backend (default: json)",
     )
     setup_parser.add_argument(
-        "--path", 
-        help="Custom storage path (default: {project_name}_metadata)"
+        "--path", help="Custom storage path (default: {project_name}_metadata)"
     )
     setup_parser.add_argument(
         "--template",
         choices=["development", "production", "testing", "high_performance"],
         default="production",
-        help="Configuration template (default: production)"
+        help="Configuration template (default: production)",
     )
-    
+
     # Compliance command
-    compliance_parser = subparsers.add_parser("compliance", help="Generate compliance reports")
+    compliance_parser = subparsers.add_parser(
+        "compliance", help="Generate compliance reports"
+    )
     compliance_parser.add_argument(
         "framework",
         choices=["eu_ai_act", "nist_ai_rmf", "gdpr", "hipaa", "sox", "iso_27001"],
-        help="Compliance framework"
+        help="Compliance framework",
     )
     compliance_parser.add_argument("model_id", help="Model ID to generate report for")
-    compliance_parser.add_argument(
-        "--output", "-o",
-        help="Output file path"
-    )
+    compliance_parser.add_argument("--output", "-o", help="Output file path")
     compliance_parser.add_argument(
         "--format",
         choices=["json", "html"],
         default="json",
-        help="Output format (default: json)"
+        help="Output format (default: json)",
     )
     compliance_parser.add_argument(
-        "--verbose", "-v",
-        action="store_true",
-        help="Verbose output"
+        "--verbose", "-v", action="store_true", help="Verbose output"
     )
-    
+
     # Metadata command
     metadata_parser = subparsers.add_parser("metadata", help="Manage model metadata")
-    metadata_subparsers = metadata_parser.add_subparsers(dest="metadata_action", help="Metadata actions")
-    
+    metadata_subparsers = metadata_parser.add_subparsers(
+        dest="metadata_action", help="Metadata actions"
+    )
+
     # List models
-    list_parser = metadata_subparsers.add_parser("list", help="List models with metadata")
-    list_parser.add_argument("--format", choices=["table", "json"], default="table", help="Output format")
-    
+    list_parser = metadata_subparsers.add_parser(
+        "list", help="List models with metadata"
+    )
+    list_parser.add_argument(
+        "--format", choices=["table", "json"], default="table", help="Output format"
+    )
+
     # Show model details
-    show_parser = metadata_subparsers.add_parser("show", help="Show detailed model metadata")
+    show_parser = metadata_subparsers.add_parser(
+        "show", help="Show detailed model metadata"
+    )
     show_parser.add_argument("model_name", help="Model name to show")
     show_parser.add_argument("--version", help="Model version (default: latest)")
-    
+
     # Version command
     version_parser = subparsers.add_parser("version", help="Show CIAF version")
-    
+
     # Parse arguments
     args = parser.parse_args()
-    
+
     if not args.command:
         parser.print_help()
         return
-    
+
     # Route to appropriate handler
     if args.command == "setup":
         setup_command(args)
@@ -181,7 +183,7 @@ def compliance_command(args):
             "sox": ComplianceFramework.SOX,
             "iso_27001": ComplianceFramework.ISO_27001,
         }
-        
+
         framework_enum = framework_map.get(args.framework)
         if not framework_enum:
             print(f"❌ Unknown framework: {args.framework}")
@@ -190,25 +192,30 @@ def compliance_command(args):
         # Initialize components
         reporter = ComplianceReportGenerator(args.model_id)
         audit_generator = AuditTrailGenerator(args.model_id, [args.framework])
-        
+
         # Generate report
         if args.verbose:
-            print(f"🚀 Generating detailed {args.framework} compliance report for {args.model_id}...")
+            print(
+                f"🚀 Generating detailed {args.framework} compliance report for {args.model_id}..."
+            )
         else:
             print(f"🚀 Generating {args.framework} compliance report...")
-            
+
         report = reporter.generate_executive_summary_report(
             frameworks=[framework_enum],
             audit_generator=audit_generator,
             model_version="1.0.0",
         )
-        
+
         # Save report
-        output_path = args.output or f"compliance_report_{args.framework}_{args.model_id}.{args.format}"
-        
+        output_path = (
+            args.output
+            or f"compliance_report_{args.framework}_{args.model_id}.{args.format}"
+        )
+
         if args.format == "json":
             report_dict = asdict(report)
-            with open(output_path, 'w') as f:
+            with open(output_path, "w") as f:
                 json.dump(report_dict, f, indent=2, default=str)
         elif args.format == "html":
             create_html_report(report, args, output_path)
@@ -219,6 +226,7 @@ def compliance_command(args):
         print(f"❌ Error generating report: {e}")
         if args.verbose:
             import traceback
+
             traceback.print_exc()
         sys.exit(1)
 
@@ -226,7 +234,7 @@ def compliance_command(args):
 def create_basic_compliance_report(args):
     """Create a basic compliance report when full compliance module isn't available."""
     from datetime import datetime
-    
+
     # Create basic report structure
     report = {
         "report_id": f"basic_{args.framework}_{args.model_id}",
@@ -244,35 +252,38 @@ def create_basic_compliance_report(args):
                 "CIAF cryptographic primitives are implemented",
                 "Audit trail capabilities are available",
                 "Model anchoring system is functional",
-                "Some compliance features are in prototype stage"
-            ]
+                "Some compliance features are in prototype stage",
+            ],
         },
         "compliance_areas": {
             "data_governance": "✅ Implemented",
-            "model_tracking": "✅ Implemented", 
+            "model_tracking": "✅ Implemented",
             "audit_trails": "✅ Implemented",
             "risk_assessment": "🧪 Prototype",
             "bias_detection": "🧪 Prototype",
-            "documentation": "📋 Planned"
+            "documentation": "📋 Planned",
         },
         "recommendations": [
             "Complete implementation of all compliance modules",
             "Conduct thorough testing of audit trails",
             "Implement automated bias detection",
-            "Enhance documentation for regulatory review"
+            "Enhance documentation for regulatory review",
         ],
-        "disclaimer": "This is a prototype report. Full compliance assessment requires complete implementation and legal review."
+        "disclaimer": "This is a prototype report. Full compliance assessment requires complete implementation and legal review.",
     }
-    
+
     # Save report
-    output_path = args.output or f"compliance_report_{args.framework}_{args.model_id}.{args.format}"
-    
+    output_path = (
+        args.output
+        or f"compliance_report_{args.framework}_{args.model_id}.{args.format}"
+    )
+
     if args.format == "json":
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(report, f, indent=2)
     elif args.format == "html":
         create_basic_html_report(report, output_path)
-    
+
     print(f"✅ Basic compliance report generated: {output_path}")
 
 
@@ -331,7 +342,7 @@ def create_html_report(report, args, output_path):
     </div>
 </body>
 </html>"""
-    with open(output_path, 'w') as f:
+    with open(output_path, "w") as f:
         f.write(html_content)
 
 
@@ -397,7 +408,7 @@ def create_basic_html_report(report, output_path):
     </div>
 </body>
 </html>"""
-    with open(output_path, 'w') as f:
+    with open(output_path, "w") as f:
         f.write(html_content)
 
 
@@ -421,7 +432,7 @@ def list_models_command(args):
     try:
         manager = ModelMetadataManager("ciaf_models", "1.0.0")
         models = manager.get_all_model_metadata()
-        
+
         if args.format == "json":
             print(json.dumps(models, indent=2, default=str))
         else:
@@ -431,17 +442,21 @@ def list_models_command(args):
             if not models:
                 print("No models found.")
             else:
-                print(f"{'Model':<20} {'Version':<10} {'Stage':<15} {'Last Updated':<20}")
+                print(
+                    f"{'Model':<20} {'Version':<10} {'Stage':<15} {'Last Updated':<20}"
+                )
                 print("-" * 60)
                 for model_id, metadata in models.items():
-                    last_updated = metadata.get('last_updated', 'Unknown')
-                    if isinstance(last_updated, str) and 'T' in last_updated:
-                        last_updated = last_updated.split('T')[0]  # Show just date
-                    version = metadata.get('version', '1.0.0')
-                    stage = metadata.get('stage', 'unknown')
-                    print(f"{model_id:<20} {version:<10} {stage:<15} {last_updated:<20}")
+                    last_updated = metadata.get("last_updated", "Unknown")
+                    if isinstance(last_updated, str) and "T" in last_updated:
+                        last_updated = last_updated.split("T")[0]  # Show just date
+                    version = metadata.get("version", "1.0.0")
+                    stage = metadata.get("stage", "unknown")
+                    print(
+                        f"{model_id:<20} {version:<10} {stage:<15} {last_updated:<20}"
+                    )
                 print()
-                
+
     except Exception as e:
         print(f"❌ Failed to list models: {e}")
         sys.exit(1)
@@ -452,30 +467,30 @@ def show_model_command(args):
     try:
         manager = ModelMetadataManager(args.model_name, args.version or "1.0.0")
         metadata = manager.get_model_metadata()
-        
+
         if not metadata:
             print(f"❌ Model '{args.model_name}' not found")
             sys.exit(1)
-            
+
         print(f"\n🤖 Model Details: {args.model_name}")
         print("=" * 50)
         print(f"Version: {metadata.get('version', 'Unknown')}")
         print(f"Stage: {metadata.get('stage', 'Unknown')}")
         print(f"Framework: {metadata.get('framework', 'Unknown')}")
         print(f"Last Updated: {metadata.get('last_updated', 'Unknown')}")
-        
-        if 'performance_metrics' in metadata:
-            print(f"\n📈 Performance Metrics:")
-            for metric, value in metadata['performance_metrics'].items():
+
+        if "performance_metrics" in metadata:
+            print("\n📈 Performance Metrics:")
+            for metric, value in metadata["performance_metrics"].items():
                 print(f"  {metric}: {value}")
-                
-        if 'compliance_status' in metadata:
-            print(f"\n✅ Compliance Status:")
-            for framework, status in metadata['compliance_status'].items():
+
+        if "compliance_status" in metadata:
+            print("\n✅ Compliance Status:")
+            for framework, status in metadata["compliance_status"].items():
                 print(f"  {framework}: {status}")
-                
+
         print()
-        
+
     except Exception as e:
         print(f"❌ Failed to show model details: {e}")
         sys.exit(1)
@@ -493,11 +508,12 @@ def compliance_report_cli():
     """CLI for generating compliance reports (legacy function)."""
     # This is kept for backward compatibility with the existing pyproject.toml
     import sys
+
     if len(sys.argv) >= 3:
         # Convert to new format
         framework = sys.argv[1]
         model_id = sys.argv[2]
-        
+
         # Create mock args object
         class Args:
             def __init__(self):
@@ -506,20 +522,23 @@ def compliance_report_cli():
                 self.output = None
                 self.format = "json"
                 self.verbose = False
-        
+
         compliance_command(Args())
     else:
         print("Usage: ciaf-compliance-report <framework> <model_id>")
-        print("Available frameworks: eu_ai_act, nist_ai_rmf, gdpr, hipaa, sox, iso_27001")
+        print(
+            "Available frameworks: eu_ai_act, nist_ai_rmf, gdpr, hipaa, sox, iso_27001"
+        )
 
 
 def setup_metadata_cli():
     """CLI for setting up metadata storage (legacy function)."""
     # This is kept for backward compatibility with the existing pyproject.toml
     import sys
+
     if len(sys.argv) >= 2:
         project_name = sys.argv[1]
-        
+
         # Create mock args object
         class Args:
             def __init__(self):
@@ -527,7 +546,7 @@ def setup_metadata_cli():
                 self.backend = "json"
                 self.path = None
                 self.template = "production"
-        
+
         setup_command(Args())
     else:
         print("Usage: ciaf-setup-metadata <project_name>")

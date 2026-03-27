@@ -510,10 +510,10 @@ class RiskAssessmentEngine:
         prediction_events = [
             e for e in audit_events if e.event_type == AuditEventType.MODEL_PREDICTION
         ]
-        
+
         # Analyze patterns in the audit data for bias indicators
         bias_indicators = self._analyze_bias_indicators(prediction_events)
-        
+
         # Calculate bias metrics based on actual data patterns
         bias_metrics = {
             "demographic_parity": bias_indicators.get("demographic_disparity", 0.15),
@@ -547,7 +547,9 @@ class RiskAssessmentEngine:
             severity = RiskLevel.LOW
 
         # Generate data-driven recommendations
-        recommendations = self._generate_bias_recommendations(bias_indicators, bias_detected)
+        recommendations = self._generate_bias_recommendations(
+            bias_indicators, bias_detected
+        )
 
         return BiasAssessment(
             assessment_id=f"BIAS_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
@@ -555,7 +557,7 @@ class RiskAssessmentEngine:
             dataset_info={
                 "samples_analyzed": len(audit_events),
                 "prediction_events": len(prediction_events),
-                "protected_attributes_detected": len(protected_attributes)
+                "protected_attributes_detected": len(protected_attributes),
             },
             bias_metrics=bias_metrics,
             fairness_metrics=fairness_metrics,
@@ -566,26 +568,28 @@ class RiskAssessmentEngine:
             assessment_date=datetime.now(timezone.utc).isoformat(),
         )
 
-    def _analyze_bias_indicators(self, prediction_events: List[ComplianceAuditRecord]) -> Dict[str, float]:
+    def _analyze_bias_indicators(
+        self, prediction_events: List[ComplianceAuditRecord]
+    ) -> Dict[str, float]:
         """Analyze prediction events for bias indicators."""
         if not prediction_events:
             return {}
-            
+
         indicators = {}
-        
+
         # Analyze outcome distribution patterns
         outcomes = []
         demographic_data = []
-        
+
         for event in prediction_events:
             metadata = event.metadata or {}
-            
+
             # Extract outcome/prediction info
             if "prediction" in metadata:
                 outcomes.append(metadata["prediction"])
             elif "outcome" in metadata:
                 outcomes.append(metadata["outcome"])
-                
+
             # Extract demographic information
             demo_info = {}
             for attr in ["age", "gender", "ethnicity", "race"]:
@@ -593,74 +597,103 @@ class RiskAssessmentEngine:
                     demo_info[attr] = metadata[attr]
             if demo_info:
                 demographic_data.append(demo_info)
-        
+
         # Calculate disparity metrics (simplified analysis)
         if outcomes and demographic_data:
             # This is a simplified calculation - in practice would need more sophisticated analysis
-            positive_outcomes = sum(1 for outcome in outcomes if str(outcome).lower() in ["1", "true", "positive", "approved"])
+            positive_outcomes = sum(
+                1
+                for outcome in outcomes
+                if str(outcome).lower() in ["1", "true", "positive", "approved"]
+            )
             total_outcomes = len(outcomes)
-            
+
             if total_outcomes > 0:
                 overall_positive_rate = positive_outcomes / total_outcomes
-                
+
                 # Simulate demographic group analysis
-                indicators["demographic_disparity"] = min(0.25, abs(overall_positive_rate - 0.5) * 0.5)
-                indicators["outcome_disparity"] = min(0.20, abs(overall_positive_rate - 0.6) * 0.4)
-                indicators["statistical_disparity"] = min(0.30, abs(overall_positive_rate - 0.55) * 0.6)
-                indicators["impact_ratio"] = max(0.70, 1 - indicators["demographic_disparity"])
-                indicators["calibration_score"] = max(0.75, 1 - indicators["outcome_disparity"])
-        
+                indicators["demographic_disparity"] = min(
+                    0.25, abs(overall_positive_rate - 0.5) * 0.5
+                )
+                indicators["outcome_disparity"] = min(
+                    0.20, abs(overall_positive_rate - 0.6) * 0.4
+                )
+                indicators["statistical_disparity"] = min(
+                    0.30, abs(overall_positive_rate - 0.55) * 0.6
+                )
+                indicators["impact_ratio"] = max(
+                    0.70, 1 - indicators["demographic_disparity"]
+                )
+                indicators["calibration_score"] = max(
+                    0.75, 1 - indicators["outcome_disparity"]
+                )
+
         return indicators
 
-    def _detect_protected_attributes(self, audit_events: List[ComplianceAuditRecord]) -> List[str]:
+    def _detect_protected_attributes(
+        self, audit_events: List[ComplianceAuditRecord]
+    ) -> List[str]:
         """Detect protected attributes mentioned in audit event metadata."""
         protected_attrs = set()
         common_protected_attributes = [
-            "age", "gender", "race", "ethnicity", "religion", "disability", 
-            "sexual_orientation", "national_origin", "marital_status"
+            "age",
+            "gender",
+            "race",
+            "ethnicity",
+            "religion",
+            "disability",
+            "sexual_orientation",
+            "national_origin",
+            "marital_status",
         ]
-        
+
         for event in audit_events:
             metadata = event.metadata or {}
-            
+
             # Check metadata keys
             for attr in common_protected_attributes:
                 if attr in metadata:
                     protected_attrs.add(attr)
-                    
+
             # Check in metadata values and tags
             metadata_str = str(metadata).lower()
             for attr in common_protected_attributes:
                 if attr in metadata_str:
                     protected_attrs.add(attr)
-        
-        return list(protected_attrs) if protected_attrs else ["age", "gender", "ethnicity"]
 
-    def _generate_bias_recommendations(self, bias_indicators: Dict[str, float], bias_detected: bool) -> List[str]:
+        return (
+            list(protected_attrs) if protected_attrs else ["age", "gender", "ethnicity"]
+        )
+
+    def _generate_bias_recommendations(
+        self, bias_indicators: Dict[str, float], bias_detected: bool
+    ) -> List[str]:
         """Generate specific recommendations based on bias analysis."""
         recommendations = []
-        
+
         if bias_detected:
-            recommendations.extend([
-                "Implement bias mitigation techniques",
-                "Increase dataset diversity",
-                "Regular fairness monitoring",
-                "Bias-aware model training",
-            ])
-            
+            recommendations.extend(
+                [
+                    "Implement bias mitigation techniques",
+                    "Increase dataset diversity",
+                    "Regular fairness monitoring",
+                    "Bias-aware model training",
+                ]
+            )
+
         # Specific recommendations based on indicators
         if bias_indicators.get("demographic_disparity", 0) > 0.15:
             recommendations.append("Address demographic parity violations")
-            
+
         if bias_indicators.get("outcome_disparity", 0) > 0.10:
             recommendations.append("Investigate outcome disparities across groups")
-            
+
         if bias_indicators.get("impact_ratio", 1.0) < 0.80:
             recommendations.append("Improve disparate impact ratios")
-            
+
         if bias_indicators.get("calibration_score", 1.0) < 0.85:
             recommendations.append("Enhance prediction calibration across groups")
-            
+
         return recommendations
 
     def _conduct_performance_assessment(
@@ -744,9 +777,13 @@ class RiskAssessmentEngine:
 
         # Analyze security events from audit trail
         security_events = [e for e in audit_events if e.risk_level == "high"]
-        security_incidents = [e for e in audit_events if e.event_type == AuditEventType.SECURITY_INCIDENT]
-        access_violations = [e for e in audit_events if not e.access_controls or e.user_id == "anonymous"]
-        
+        security_incidents = [
+            e for e in audit_events if e.event_type == AuditEventType.SECURITY_INCIDENT
+        ]
+        access_violations = [
+            e for e in audit_events if not e.access_controls or e.user_id == "anonymous"
+        ]
+
         # Calculate security metrics from actual data
         total_events = len(audit_events)
         security_event_rate = len(security_events) / max(1, total_events)
@@ -756,9 +793,17 @@ class RiskAssessmentEngine:
         # Generate vulnerability scan results based on audit patterns
         vulnerability_scan_results = {
             "vulnerabilities_found": len(security_incidents) + len(access_violations),
-            "critical_vulnerabilities": len([e for e in security_incidents if e.risk_level == "critical"]),
-            "high_severity": len([e for e in security_events if e.risk_level == "high"]),
-            "medium_severity": max(0, len(security_events) - len([e for e in security_events if e.risk_level == "high"])),
+            "critical_vulnerabilities": len(
+                [e for e in security_incidents if e.risk_level == "critical"]
+            ),
+            "high_severity": len(
+                [e for e in security_events if e.risk_level == "high"]
+            ),
+            "medium_severity": max(
+                0,
+                len(security_events)
+                - len([e for e in security_events if e.risk_level == "high"]),
+            ),
             "low_severity": 0,
             "scan_date": datetime.now().isoformat(),
             "security_event_rate": security_event_rate,
@@ -766,9 +811,11 @@ class RiskAssessmentEngine:
         }
 
         # Calculate adversarial robustness based on error patterns and security events
-        model_errors = [e for e in audit_events if e.event_type == AuditEventType.MODEL_ERROR]
+        model_errors = [
+            e for e in audit_events if e.event_type == AuditEventType.MODEL_ERROR
+        ]
         error_rate = len(model_errors) / max(1, total_events)
-        
+
         # Robustness metrics (adjusted based on actual performance)
         base_robustness = max(0.5, 1 - error_rate * 10)  # Scale error rate impact
         adversarial_robustness = {
@@ -780,31 +827,41 @@ class RiskAssessmentEngine:
 
         # Assess various attack risks based on audit data
         data_poisoning_risk = (
-            RiskLevel.HIGH if incident_rate > 0.05 else
-            RiskLevel.MEDIUM if len(security_events) > 5 else RiskLevel.LOW
+            RiskLevel.HIGH
+            if incident_rate > 0.05
+            else RiskLevel.MEDIUM if len(security_events) > 5 else RiskLevel.LOW
         )
-        
+
         model_extraction_risk = (
             RiskLevel.MEDIUM if access_violation_rate > 0.1 else RiskLevel.LOW
         )
-        
+
         privacy_attack_risk = (
-            RiskLevel.HIGH if any(e.contains_pii and e.risk_level == "high" for e in security_events) else
-            RiskLevel.MEDIUM if any(e.contains_pii for e in security_events) else RiskLevel.LOW
+            RiskLevel.HIGH
+            if any(e.contains_pii and e.risk_level == "high" for e in security_events)
+            else (
+                RiskLevel.MEDIUM
+                if any(e.contains_pii for e in security_events)
+                else RiskLevel.LOW
+            )
         )
 
         # Calculate overall security score based on actual metrics
         security_score = (
             adversarial_robustness["overall_robustness"] * 0.3
-            + max(0, 1 - vulnerability_scan_results["critical_vulnerabilities"] / 10) * 0.3
+            + max(0, 1 - vulnerability_scan_results["critical_vulnerabilities"] / 10)
+            * 0.3
             + max(0, 1 - security_event_rate * 20) * 0.2
             + max(0, 1 - incident_rate * 50) * 0.2
         ) * 100
 
         # Generate data-driven recommendations
         recommendations = self._generate_security_recommendations(
-            vulnerability_scan_results, adversarial_robustness, 
-            security_event_rate, incident_rate, access_violation_rate
+            vulnerability_scan_results,
+            adversarial_robustness,
+            security_event_rate,
+            incident_rate,
+            access_violation_rate,
         )
 
         return SecurityAssessment(
@@ -821,46 +878,54 @@ class RiskAssessmentEngine:
         )
 
     def _generate_security_recommendations(
-        self, 
-        vulnerability_scan: Dict[str, Any], 
+        self,
+        vulnerability_scan: Dict[str, Any],
         robustness: Dict[str, float],
         security_event_rate: float,
         incident_rate: float,
-        access_violation_rate: float
+        access_violation_rate: float,
     ) -> List[str]:
         """Generate security recommendations based on actual audit data."""
         recommendations = []
-        
+
         # Critical vulnerability recommendations
         if vulnerability_scan["critical_vulnerabilities"] > 0:
-            recommendations.append("Address critical security vulnerabilities immediately")
-            
-        # High severity recommendations  
+            recommendations.append(
+                "Address critical security vulnerabilities immediately"
+            )
+
+        # High severity recommendations
         if vulnerability_scan["high_severity"] > 2:
-            recommendations.append("Investigate and remediate high-severity security issues")
-            
+            recommendations.append(
+                "Investigate and remediate high-severity security issues"
+            )
+
         # Robustness recommendations
         if robustness["overall_robustness"] < 0.7:
-            recommendations.append("Improve adversarial robustness through defensive techniques")
-            
+            recommendations.append(
+                "Improve adversarial robustness through defensive techniques"
+            )
+
         # Event rate recommendations
         if security_event_rate > 0.1:
             recommendations.append("Investigate high rate of security events")
-            
+
         if incident_rate > 0.02:
             recommendations.append("Enhance incident response and prevention measures")
-            
+
         if access_violation_rate > 0.05:
             recommendations.append("Strengthen access controls and authentication")
-            
+
         # General security recommendations
         if security_event_rate > 0.05 or incident_rate > 0.01:
-            recommendations.extend([
-                "Implement continuous security monitoring",
-                "Regular security assessments and penetration testing",
-                "Enhance logging and audit trail security"
-            ])
-            
+            recommendations.extend(
+                [
+                    "Implement continuous security monitoring",
+                    "Regular security assessments and penetration testing",
+                    "Enhance logging and audit trail security",
+                ]
+            )
+
         return recommendations
 
     def _assess_compliance_risk(
@@ -882,7 +947,7 @@ class RiskAssessmentEngine:
             # Analyze actual compliance violations from audit events
             violation_rate = self._calculate_violation_rate(audit_events, framework)
             high_risk_events = self._count_high_risk_events(audit_events, framework)
-            
+
             # Combine coverage and violation analysis for risk assessment
             risk_score = self._calculate_compliance_risk_score(
                 coverage_rate, violation_rate, high_risk_events, len(audit_events)
@@ -916,16 +981,22 @@ class RiskAssessmentEngine:
 
         for event in audit_events:
             # Check for framework-specific compliance issues
-            is_framework_relevant = self._is_event_relevant_to_framework(event, framework)
-            
+            is_framework_relevant = self._is_event_relevant_to_framework(
+                event, framework
+            )
+
             if is_framework_relevant:
                 framework_specific_events += 1
-                
+
                 # Check for various types of violations
                 if self._is_compliance_violation(event, framework):
                     violations += 1
 
-        return violations / framework_specific_events if framework_specific_events > 0 else 0.0
+        return (
+            violations / framework_specific_events
+            if framework_specific_events > 0
+            else 0.0
+        )
 
     def _count_high_risk_events(
         self, audit_events: List[ComplianceAuditRecord], framework: ComplianceFramework
@@ -934,10 +1005,10 @@ class RiskAssessmentEngine:
         high_risk_count = 0
 
         for event in audit_events:
-            if (
-                event.risk_level in ["high", "critical"] and
-                self._is_event_relevant_to_framework(event, framework)
-            ):
+            if event.risk_level in [
+                "high",
+                "critical",
+            ] and self._is_event_relevant_to_framework(event, framework):
                 high_risk_count += 1
 
         return high_risk_count
@@ -948,50 +1019,78 @@ class RiskAssessmentEngine:
         """Determine if an audit event is relevant to a specific compliance framework."""
         framework_relevance = {
             ComplianceFramework.GDPR: [
-                "contains_pii", "data_processing", "user_consent", "data_access"
+                "contains_pii",
+                "data_processing",
+                "user_consent",
+                "data_access",
             ],
             ComplianceFramework.CCPA: [
-                "contains_pii", "data_sale", "user_rights", "data_deletion"
+                "contains_pii",
+                "data_sale",
+                "user_rights",
+                "data_deletion",
             ],
             ComplianceFramework.HIPAA: [
-                "phi_data", "healthcare_data", "medical_records"
+                "phi_data",
+                "healthcare_data",
+                "medical_records",
             ],
             ComplianceFramework.SOX: [
-                "financial_data", "audit_trail", "internal_controls"
+                "financial_data",
+                "audit_trail",
+                "internal_controls",
             ],
             ComplianceFramework.PCI_DSS: [
-                "payment_data", "cardholder_data", "security_controls"
+                "payment_data",
+                "cardholder_data",
+                "security_controls",
             ],
             ComplianceFramework.ISO_27001: [
-                "information_security", "risk_management", "security_controls"
+                "information_security",
+                "risk_management",
+                "security_controls",
             ],
             ComplianceFramework.NIST_CSF: [
-                "cybersecurity", "risk_assessment", "security_framework"
+                "cybersecurity",
+                "risk_assessment",
+                "security_framework",
             ],
             ComplianceFramework.EU_AI_ACT: [
-                "ai_system", "high_risk_ai", "algorithmic_decision"
+                "ai_system",
+                "high_risk_ai",
+                "algorithmic_decision",
             ],
         }
 
         relevant_keywords = framework_relevance.get(framework, [])
-        
+
         # Check if event metadata or type indicates relevance to framework
         event_metadata = event.metadata or {}
         event_tags = event_metadata.get("tags", [])
-        
+
         # Basic relevance checks
         if any(keyword in str(event_metadata).lower() for keyword in relevant_keywords):
             return True
-            
-        if any(keyword in tag.lower() for tag in event_tags for keyword in relevant_keywords):
+
+        if any(
+            keyword in tag.lower()
+            for tag in event_tags
+            for keyword in relevant_keywords
+        ):
             return True
 
         # Framework-specific checks
         if framework == ComplianceFramework.GDPR and event.contains_pii:
             return True
-        elif framework == ComplianceFramework.EU_AI_ACT and event.event_type == AuditEventType.MODEL_PREDICTION:
+        elif (
+            framework == ComplianceFramework.EU_AI_ACT
+            and event.event_type == AuditEventType.MODEL_PREDICTION
+        ):
             return True
-        elif framework in [ComplianceFramework.ISO_27001, ComplianceFramework.NIST_CSF] and event.risk_level in ["high", "critical"]:
+        elif framework in [
+            ComplianceFramework.ISO_27001,
+            ComplianceFramework.NIST_CSF,
+        ] and event.risk_level in ["high", "critical"]:
             return True
 
         return False
@@ -1000,14 +1099,14 @@ class RiskAssessmentEngine:
         self, event: ComplianceAuditRecord, framework: ComplianceFramework
     ) -> bool:
         """Determine if an audit event represents a compliance violation."""
-        
+
         # General violation indicators
         if event.risk_level == "critical":
             return True
-            
+
         if not event.integrity_hash:  # Audit integrity issue
             return True
-            
+
         if not event.access_controls:  # Access control violation
             return True
 
@@ -1018,16 +1117,16 @@ class RiskAssessmentEngine:
                 return True
             if event.contains_pii and event.user_id == "anonymous":
                 return True
-                
+
         elif framework == ComplianceFramework.EU_AI_ACT:
             # EU AI Act violations: High-risk AI decisions without explanation
             if (
-                event.event_type == AuditEventType.MODEL_PREDICTION and
-                event.metadata.get("risk_category") == "high" and
-                not event.metadata.get("explanation")
+                event.event_type == AuditEventType.MODEL_PREDICTION
+                and event.metadata.get("risk_category") == "high"
+                and not event.metadata.get("explanation")
             ):
                 return True
-                
+
         elif framework in [ComplianceFramework.ISO_27001, ComplianceFramework.NIST_CSF]:
             # Security framework violations
             if event.event_type == AuditEventType.SECURITY_INCIDENT:
@@ -1038,22 +1137,26 @@ class RiskAssessmentEngine:
         return False
 
     def _calculate_compliance_risk_score(
-        self, coverage_rate: float, violation_rate: float, high_risk_events: int, total_events: int
+        self,
+        coverage_rate: float,
+        violation_rate: float,
+        high_risk_events: int,
+        total_events: int,
     ) -> float:
         """Calculate a combined compliance risk score."""
-        
+
         # Coverage component (0-40 points, inverted so low coverage = high risk)
         coverage_score = max(0, 40 * (1 - coverage_rate))
-        
+
         # Violation rate component (0-40 points)
         violation_score = min(40, violation_rate * 100)
-        
+
         # High-risk events component (0-20 points)
         high_risk_rate = high_risk_events / max(1, total_events)
         high_risk_score = min(20, high_risk_rate * 200)
-        
+
         total_score = coverage_score + violation_score + high_risk_score
-        
+
         return min(100, total_score)
 
     def _generate_recommendations(

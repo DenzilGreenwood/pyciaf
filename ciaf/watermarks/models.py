@@ -27,6 +27,7 @@ import json
 
 class ArtifactType(str, Enum):
     """Type of AI-generated artifact."""
+
     TEXT = "text"
     IMAGE = "image"
     PDF = "pdf"
@@ -38,6 +39,7 @@ class ArtifactType(str, Enum):
 
 class WatermarkType(str, Enum):
     """Watermarking technique applied to artifact."""
+
     NONE = "none"
     VISIBLE = "visible"  # Visible tag/footer/header
     METADATA = "metadata"  # Embedded in file metadata
@@ -85,6 +87,7 @@ class ArtifactFingerprint:
 
     Used when exact hash matching fails (content modified after generation).
     """
+
     algorithm: str  # e.g., "simhash", "perceptual_hash", "minihash"
     value: str  # Fingerprint value
     role: str  # e.g., "exact_content", "perceptual", "simhash", "embedding_ref"
@@ -102,6 +105,7 @@ class WatermarkDescriptor:
 
     Describes how the watermark was applied and how to verify it.
     """
+
     watermark_id: str  # Unique watermark identifier
     watermark_type: WatermarkType  # Technique used
     tag_text: Optional[str] = None  # Human-readable tag text
@@ -115,7 +119,7 @@ class WatermarkDescriptor:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         result = asdict(self)
-        result['watermark_type'] = self.watermark_type.value
+        result["watermark_type"] = self.watermark_type.value
         return result
 
 
@@ -132,6 +136,7 @@ class ArtifactHashSet:
     - content_hash_before_watermark: Watermark removed but content intact
     - Neither: Content was modified (use similarity fingerprints)
     """
+
     content_hash_before_watermark: str  # SHA-256 of original AI output
     content_hash_after_watermark: str  # SHA-256 of watermarked version
     canonical_receipt_hash: Optional[str] = None  # Hash of complete receipt
@@ -171,6 +176,7 @@ class ArtifactEvidence:
     3. Identifying modified versions via similarity
     4. Complete audit trail
     """
+
     artifact_id: str  # Unique artifact ID
     artifact_type: ArtifactType  # Type of artifact
     mime_type: str  # MIME type
@@ -212,10 +218,10 @@ class ArtifactEvidence:
         Ensures consistent serialization for cryptographic operations.
         """
         result = asdict(self)
-        result['artifact_type'] = self.artifact_type.value
-        result['watermark'] = self.watermark.to_dict()
-        result['hashes'] = self.hashes.to_dict()
-        result['fingerprints'] = [fp.to_dict() for fp in self.fingerprints]
+        result["artifact_type"] = self.artifact_type.value
+        result["watermark"] = self.watermark.to_dict()
+        result["hashes"] = self.hashes.to_dict()
+        result["fingerprints"] = [fp.to_dict() for fp in self.fingerprints]
         return result
 
     def to_canonical_bytes(self) -> bytes:
@@ -242,6 +248,7 @@ class VerificationResult:
     - Was the watermark likely removed?
     - How closely does it match?
     """
+
     artifact_id: str  # ID of evidence record checked against
     exact_match_after_watermark: bool  # Matches distributed version exactly
     exact_match_before_watermark: bool  # Matches pre-watermark version exactly
@@ -269,7 +276,7 @@ class VerificationResult:
         """Convert to dictionary."""
         result = asdict(self)
         if self.evidence_record:
-            result['evidence_record'] = self.evidence_record.to_dict()
+            result["evidence_record"] = self.evidence_record.to_dict()
         return result
 
     def is_authentic(self) -> bool:
@@ -282,10 +289,13 @@ class VerificationResult:
         - High similarity with good confidence
         """
         return (
-            self.exact_match_after_watermark or
-            self.exact_match_before_watermark or
-            (self.perceptual_similarity_score and self.perceptual_similarity_score > 0.9) or
-            (self.normalized_match_before or self.normalized_match_after)
+            self.exact_match_after_watermark
+            or self.exact_match_before_watermark
+            or (
+                self.perceptual_similarity_score
+                and self.perceptual_similarity_score > 0.9
+            )
+            or (self.normalized_match_before or self.normalized_match_after)
         )
 
 
@@ -297,6 +307,7 @@ class ForensicArtifactProfile:
     This is an enhanced version of ArtifactHashSet with more forensic features.
     Used for high-security scenarios where multiple matching methods are needed.
     """
+
     # Core hashes
     exact_hash_before_watermark: str
     exact_hash_after_watermark: str
@@ -311,7 +322,9 @@ class ForensicArtifactProfile:
 
     # Watermark detection
     watermark_presence_expected: bool = True
-    watermark_locator: Optional[Dict[str, Any]] = None  # Describes where to find watermark
+    watermark_locator: Optional[Dict[str, Any]] = (
+        None  # Describes where to find watermark
+    )
 
     # Embedding reference (for neural network similarity)
     embedding_reference: Optional[str] = None  # Reference to stored embedding vector
@@ -331,7 +344,6 @@ __all__ = [
     # Enums
     "ArtifactType",
     "WatermarkType",
-
     # Core models
     "ArtifactEvidence",
     "ArtifactHashSet",
@@ -339,13 +351,11 @@ __all__ = [
     "WatermarkDescriptor",
     "VerificationResult",
     "ForensicArtifactProfile",
-
     # Utility functions
     "utc_now_iso",
     "sha256_bytes",
     "sha256_text",
     "canonical_json",
-
     # Type aliases
     "ArtifactID",
     "WatermarkID",

@@ -98,49 +98,41 @@ from .collectors import (
 __all__ = [
     # Version
     "__version__",
-
     # Event models
     "WebAIEvent",
     "EventType",
     "PolicyDecision",
     "DataClassification",
     "ToolCategory",
-
     # Detection
     "AIToolDetector",
     "detect_ai_tool",
     "is_approved_tool",
-
     # Classification
     "ContentClassifier",
     "SensitivityScorer",
     "classify_content",
     "score_sensitivity",
-
     # Policy
     "PolicyEngine",
     "PolicyRule",
     "PolicyResult",
     "evaluate_policy",
-
     # Receipts
     "WebAIReceipt",
     "generate_receipt",
     "verify_receipt",
-
     # Vault
     "WebAIVaultAdapter",
     "store_event",
     "retrieve_events",
     "search_events",
-
     # Redaction
     "ContentRedactor",
     "redact_content",
     "redact_pii",
     "redact_credentials",
     "hash_sensitive_fields",
-
     # Collectors
     "EventCollector",
     "CollectionConfig",
