@@ -68,6 +68,7 @@ docs = [
 [project.urls]
 "Homepage" = "https://github.com/DenzilGreenwood/pyciaf"
 "Repository" = "https://github.com/DenzilGreenwood/pyciaf"
+"Documentation" = "https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/index.md"
 "Bug Tracker" = "https://github.com/DenzilGreenwood/pyciaf/issues"
 "Changelog" = "https://github.com/DenzilGreenwood/pyciaf/blob/main/CHANGELOG.md"
 

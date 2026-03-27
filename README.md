@@ -10,7 +10,7 @@ A Python framework for verifiable AI training and inference with cryptographic p
 ![License: BUSL-1.1](https://img.shields.io/badge/License-BUSL--1.1-blue.svg)
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
 ![Code Style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)
-[![Security Policy](https://img.shields.io/badge/Security-Policy-informational.svg)](ciaf/SECURITY.md)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-informational.svg)](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/SECURITY.md)
 
 ---
 
@@ -67,24 +67,24 @@ CIAF v1.1.0 includes comprehensive documentation consolidated in the `docs/` dir
 
 | Document | Description |
 |----------|-------------|
-| **[docs/index.md](docs/index.md)** | Main documentation hub with navigation |
-| **[docs/quickstart.md](docs/quickstart.md)** | 5-minute getting started guide |
-| **[docs/concepts.md](docs/concepts.md)** | Core architectural concepts and anchor system |
-| **[docs/receipts.md](docs/receipts.md)** | Receipt formats and verification process |
-| **[docs/compliance-mapping.md](docs/compliance-mapping.md)** | Regulatory framework mappings (EU AI Act, NIST, GDPR, etc.) |
-| **[docs/DEFERRED_LCM_README.md](docs/DEFERRED_LCM_README.md)** | High-performance LCM implementation guide |
-| **[docs/DEPLOYABLE_MODEL_DEMO_GUIDE.md](docs/DEPLOYABLE_MODEL_DEMO_GUIDE.md)** | Production deployment patterns |
-| **[docs/MODEL_BUILDING_GUIDE_V1_1_0.md](docs/MODEL_BUILDING_GUIDE_V1_1_0.md)** | Complete model building guide |
-| **[docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md)** | Development standards and guidelines |
-| **[docs/WHITEPAPER.md](docs/WHITEPAPER.md)** | Technical whitepaper and research foundations |
+| **[docs/index.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/index.md)** | Main documentation hub with navigation |
+| **[docs/quickstart.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/quickstart.md)** | 5-minute getting started guide |
+| **[docs/concepts.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/concepts.md)** | Core architectural concepts and anchor system |
+| **[docs/receipts.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/receipts.md)** | Receipt formats and verification process |
+| **[docs/compliance-mapping.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/compliance-mapping.md)** | Regulatory framework mappings (EU AI Act, NIST, GDPR, etc.) |
+| **[docs/DEFERRED_LCM_README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/DEFERRED_LCM_README.md)** | High-performance LCM implementation guide |
+| **[docs/DEPLOYABLE_MODEL_DEMO_GUIDE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/DEPLOYABLE_MODEL_DEMO_GUIDE.md)** | Production deployment patterns |
+| **[docs/MODEL_BUILDING_GUIDE_V1_1_0.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/MODEL_BUILDING_GUIDE_V1_1_0.md)** | Complete model building guide |
+| **[docs/CODING_STANDARDS.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/CODING_STANDARDS.md)** | Development standards and guidelines |
+| **[docs/WHITEPAPER.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/WHITEPAPER.md)** | Technical whitepaper and research foundations |
 
 ### Quick Navigation
 
-- **New to CIAF?** → Start with [docs/quickstart.md](docs/quickstart.md)
-- **Production deployment?** → See [docs/MODEL_BUILDING_GUIDE_V1_1_0.md](docs/MODEL_BUILDING_GUIDE_V1_1_0.md)
-- **Performance optimization?** → Check [docs/DEFERRED_LCM_README.md](docs/DEFERRED_LCM_README.md)
-- **Compliance requirements?** → Review [docs/compliance-mapping.md](docs/compliance-mapping.md)
-- **Technical architecture?** → Read [docs/concepts.md](docs/concepts.md) and [docs/WHITEPAPER.md](docs/WHITEPAPER.md)
+- **New to CIAF?** → Start with [docs/quickstart.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/quickstart.md)
+- **Production deployment?** → See [docs/MODEL_BUILDING_GUIDE_V1_1_0.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/MODEL_BUILDING_GUIDE_V1_1_0.md)
+- **Performance optimization?** → Check [docs/DEFERRED_LCM_README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/DEFERRED_LCM_README.md)
+- **Compliance requirements?** → Review [docs/compliance-mapping.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/compliance-mapping.md)
+- **Technical architecture?** → Read [docs/concepts.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/concepts.md) and [docs/WHITEPAPER.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/WHITEPAPER.md)
 
 ## Project Structure
 
@@ -106,7 +106,7 @@ PYPI/                           # Root project directory
 └── PROJECT_STRUCTURE.md        # Detailed structure guide
 ```
 
-See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for complete details.
+See [PROJECT_STRUCTURE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/PROJECT_STRUCTURE.md) for complete details.
 
 ### Option C: PyPI (when published)
 ```bash
@@ -504,7 +504,7 @@ print("Materialized capsules:", metrics["materialized_capsules"])
 
 ## Security
 
-> **See our [Security Policy](ciaf/SECURITY.md) for reporting vulnerabilities, supported versions, and secure deployment guidance.**
+> **See our [Security Policy](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/SECURITY.md) for reporting vulnerabilities, supported versions, and secure deployment guidance.**
 
 ### Cryptographic Security
 
@@ -572,7 +572,7 @@ pip install -e .
 - **Documentation**: [https://ciaf.readthedocs.io](https://ciaf.readthedocs.io)
 - **Issues**: [https://github.com/DenzilGreenwood/pyciaf/issues](https://github.com/DenzilGreenwood/pyciaf/issues)
 - **Discussions**: [https://github.com/DenzilGreenwood/pyciaf/discussions](https://github.com/DenzilGreenwood/pyciaf/discussions)
-- **Security**: See [ciaf/SECURITY.md](ciaf/SECURITY.md)
+- **Security**: See [ciaf/SECURITY.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/SECURITY.md)
 
 ---
 
