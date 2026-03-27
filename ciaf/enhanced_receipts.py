@@ -13,7 +13,8 @@ except ImportError:
     # Fallback for environments without pydantic
     PYDANTIC_AVAILABLE = False
     BaseModel = object
-    def Field(**kwargs):
+    def Field(*args, **kwargs):
+        # Accept both positional and keyword args for compatibility
         return kwargs.get('default')
     def field_validator(*args, **kwargs):
         def decorator(func):
@@ -119,12 +120,12 @@ class OversightDecision(BaseModel if PYDANTIC_AVAILABLE else object):
 class TrainingReceipt(BaseReceipt):
     """Enhanced training receipt schema."""
     model_config = {'protected_namespaces': ()}  # Allow model_anchor field
-    
+
     session_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    dataset_anchor: str = Field(..., min_length=64, max_length=64)  # hex string
-    model_anchor: str = Field(..., min_length=64, max_length=64)   # hex string
-    code_digest: str = Field(..., pattern=r'^sha256:[a-f0-9]{64}$')
-    config_digest: str = Field(..., pattern=r'^sha256:[a-f0-9]{64}$')
+    dataset_anchor: str = Field(min_length=64, max_length=64)  # hex string
+    model_anchor: str = Field(min_length=64, max_length=64)   # hex string
+    code_digest: str = Field(pattern=r'^sha256:[a-f0-9]{64}$')
+    config_digest: str = Field(pattern=r'^sha256:[a-f0-9]{64}$')
     random_seeds: RandomSeeds
     env: EnvironmentInfo
     metrics: Dict[str, Any] = Field(default_factory=dict)
@@ -150,10 +151,10 @@ class TrainingReceipt(BaseReceipt):
 class InferenceReceipt(BaseReceipt):
     """Enhanced inference receipt schema."""
     model_config = {'protected_namespaces': ()}  # Allow model_anchor field
-    
-    model_anchor: str = Field(..., min_length=64, max_length=64)
+
+    model_anchor: str = Field(min_length=64, max_length=64)
     input_commitment: Commitment
-    output_commitment: Commitment  
+    output_commitment: Commitment
     thresholds: Dict[str, float] = Field(default_factory=dict)
     decision: Dict[str, Any] = Field(default_factory=dict)
     oversight: OversightDecision = Field(default_factory=OversightDecision)
