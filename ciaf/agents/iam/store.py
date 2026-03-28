@@ -22,7 +22,7 @@ class IAMStore(IdentityProvider):
     conditions (ABAC) for CIAF agent systems.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the IAM store with empty collections."""
         self._identities: Dict[str, Identity] = {}
         self._roles: Dict[str, RoleDefinition] = {}

@@ -9,7 +9,7 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-from typing import List, Optional, Protocol, runtime_checkable
+from typing import Callable, List, Optional, Protocol, runtime_checkable
 
 from .types import (
     ActionReceipt,
@@ -86,7 +86,7 @@ class ToolMediator(Protocol):
         ...
 
     def register_tool(
-        self, tool_name: str, tool_function: callable, schema: dict
+        self, tool_name: str, tool_function: Callable, schema: dict
     ) -> None:
         """Register a mediated tool with its execution schema."""
         ...

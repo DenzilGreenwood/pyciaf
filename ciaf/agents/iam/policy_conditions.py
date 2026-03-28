@@ -43,7 +43,7 @@ def same_environment_only(identity: Identity, resource: Resource) -> bool:
     """
     identity_env = identity.environment or "production"
     resource_env = resource.attributes_dict.get("environment", "production")
-    return identity_env == resource_env
+    return bool(identity_env == resource_env)
 
 
 def sensitivity_level_check(
@@ -108,7 +108,7 @@ def identity_has_attribute(
 
     def condition(identity: Identity, resource: Resource) -> bool:
         identity_value = identity.attributes_dict.get(attribute_name)
-        return identity_value == required_value
+        return bool(identity_value == required_value)
 
     return condition
 

@@ -24,7 +24,7 @@ class PAMStore:
     and comprehensive audit trails.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the PAM store with empty grant storage."""
         self._grants: Dict[str, ElevationGrant] = {}
 

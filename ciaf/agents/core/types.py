@@ -45,19 +45,19 @@ class Identity:
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Ensure immutable collections are properly frozen."""
-        if not isinstance(self.roles, frozenset):
-            object.__setattr__(self, "roles", frozenset(self.roles))
-        if isinstance(self.attributes, dict):
-            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))
+        if not isinstance(self.roles, frozenset):  # type: ignore[unreachable]
+            object.__setattr__(self, "roles", frozenset(self.roles))  # type: ignore[unreachable]
+        if isinstance(self.attributes, dict):  # type: ignore[unreachable]
+            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))  # type: ignore[unreachable]
 
     @property
     def attributes_dict(self) -> Dict[str, Any]:
         """Get attributes as a dictionary."""
-        if isinstance(self.attributes, frozenset):
-            return dict(self.attributes)
-        return dict(self.attributes)
+        if isinstance(self.attributes, frozenset):  # type: ignore[unreachable]
+            return dict(self.attributes)  # type: ignore[unreachable]
+        return dict(self.attributes)  # type: ignore[unreachable]
 
     def get_fingerprint(self) -> str:
         """Generate cryptographic fingerprint of this identity."""
@@ -92,17 +92,17 @@ class Resource:
     attributes: Dict[str, Any] = field(default_factory=dict)
     sensitivity_level: str = "standard"  # standard, sensitive, critical
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Ensure immutable attributes."""
-        if isinstance(self.attributes, dict):
-            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))
+        if isinstance(self.attributes, dict):  # type: ignore[unreachable]
+            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))  # type: ignore[unreachable]
 
     @property
     def attributes_dict(self) -> Dict[str, Any]:
         """Get attributes as a dictionary."""
-        if isinstance(self.attributes, frozenset):
-            return dict(self.attributes)
-        return dict(self.attributes)
+        if isinstance(self.attributes, frozenset):  # type: ignore[unreachable]
+            return dict(self.attributes)  # type: ignore[unreachable]
+        return dict(self.attributes)  # type: ignore[unreachable]
 
 
 @dataclass
@@ -160,7 +160,7 @@ class ActionRequest:
 
     def get_params_hash(self) -> str:
         """Get cryptographic hash of parameters."""
-        return sha256_hash(str(sorted(self.params.items())))
+        return sha256_hash(str(sorted(self.params.items())).encode('utf-8'))
 
 
 @dataclass
@@ -265,4 +265,4 @@ class ActionReceipt:
             "params_hash": self.params_hash,
             "prior_receipt_hash": self.prior_receipt_hash,
         }
-        return sha256_hash(str(receipt_data))
+        return sha256_hash(str(receipt_data).encode('utf-8'))

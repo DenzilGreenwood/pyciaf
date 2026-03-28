@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from ..core.interfaces import EvidenceRecorder
-from ..core.types import ActionReceipt, ExecutionResult
+from ..core.types import ActionReceipt, ExecutionResult, PrincipalType
 
 
 class EvidenceVault(EvidenceRecorder):
@@ -65,7 +65,7 @@ class EvidenceVault(EvidenceRecorder):
         principal_type = (
             result.request.requested_by.principal_type
             if result.request.requested_by
-            else "unknown"
+            else PrincipalType.SYSTEM  # Use SYSTEM for unknown principals
         )
 
         # Create receipt
