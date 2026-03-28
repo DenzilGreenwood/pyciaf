@@ -193,12 +193,13 @@ class ImageForensicFragment(ForensicFragment):
     - Entropy score (to avoid blank sky or uniform regions)
     """
 
-    region_coordinates: tuple = (0, 0, 64, 64)  # (x, y, width, height)
+    # Required fields (no defaults) must come first
     patch_grid_position: str  # e.g., 'grid_2_4' (row/col in block grid)
-
-    # Dual-state patch hashing (perceptual hashes)
     patch_hash_before: str  # pHash of region before watermark
     patch_hash_after: str  # pHash of region after watermark
+
+    # Optional fields with defaults
+    region_coordinates: tuple = (0, 0, 64, 64)  # (x, y, width, height)
 
     # Alternative hashes
     patch_ahash_before: Optional[str] = None
