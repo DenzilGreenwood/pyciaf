@@ -3,16 +3,23 @@ CIAF Watermarking - Data Models
 
 Forensic provenance models for AI artifact watermarking and verification.
 
-This module implements a dual-state artifact integrity model:
+This module implements a dual-state artifact integrity model with sub-segment
+forensic records (DNA sampling):
 - State 1: pre-watermark artifact (original AI output)
 - State 2: distributed/watermarked artifact (with provenance tags)
+- State 3+: High-entropy forensic fragments for granular verification
 
 Both states are cryptographically bound into one signed CIAF receipt,
 enabling detection of watermark removal and content tampering.
 
+Additionally, forensic fragments enable:
+- Detection of mix-and-match attacks (spliced documents)
+- Legal defensibility through DNA-level provenanceation
+- Privacy protection (don't store entire documents in vault)
+
 Created: 2026-03-24
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.2.0
 """
 
 from __future__ import annotations
@@ -124,6 +131,193 @@ class WatermarkDescriptor:
 
 
 @dataclass
+class ForensicFragment:
+    """
+    Base forensic fragment for DNA-level artifact verification.
+
+    Stores hash of a high-entropy sub-segment of an artifact, enabling:
+    - Detection of mix-and-match attacks (spliced content)
+    - Legal defensibility ("we can prove THIS section is AI-generated")
+    - Privacy protection (don't store entire artifacts in vault)
+
+    Fragment selection uses entropy scoring to ensure we're not hashing
+    generic boilerplate text or blank image regions.
+    """
+
+    fragment_id: str  # Unique fragment identifier (e.g., 'frag_0_begin')
+    fragment_type: str  # 'text', 'image_patch', 'video_frame', 'audio_segment'
+    entropy_score: float  # 0.0-1.0 (1.0 = highest unique content)
+    sampling_method: str  # e.g., 'begin', 'middle', 'end' for text; 'spatial' for images
+    content_position: int  # For text: char offset; for image: patch index; for video: frame number
+
+
+@dataclass
+class TextForensicFragment(ForensicFragment):
+    """
+    High-entropy text fragment for granular verification.
+
+    Stores:
+    - Fragment hash before/after watermark
+    - Character position in original document
+    - Fragment length and entropy score
+    """
+
+    offset_start: int  # Character offset in document
+    offset_end: int  # End offset
+    fragment_length: int  # Length of fragment
+    sample_location: str  # 'beginning', 'middle', 'end'
+
+    # Dual-state fragment hashing
+    fragment_hash_before: str  # SHA-256 of fragment before watermark
+    fragment_hash_after: str  # SHA-256 of fragment after watermark
+
+    # Optional similarity hashing
+    fragment_simhash_before: Optional[str] = None
+    fragment_simhash_after: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        result = asdict(self)
+        result.pop('fragment_type', None)  # Avoid duplication
+        return result
+
+
+@dataclass
+class ImageForensicFragment(ForensicFragment):
+    """
+    High-entropy image patch for granular verification.
+
+    Stores:
+    - Patch hash before/after watermark
+    - Spatial region coordinates
+    - Entropy score (to avoid blank sky or uniform regions)
+    """
+
+    region_coordinates: tuple = (0, 0, 64, 64)  # (x, y, width, height)
+    patch_grid_position: str  # e.g., 'grid_2_4' (row/col in block grid)
+
+    # Dual-state patch hashing (perceptual hashes)
+    patch_hash_before: str  # pHash of region before watermark
+    patch_hash_after: str  # pHash of region after watermark
+
+    # Alternative hashes
+    patch_ahash_before: Optional[str] = None
+    patch_dhash_before: Optional[str] = None
+    patch_whash_before: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        result = asdict(self)
+        result.pop('fragment_type', None)
+        return result
+
+
+@dataclass
+class VideoForensicSnippet(ForensicFragment):
+    """
+    Temporal keyframe sample for video verification.
+
+    Stores:
+    - Selected I-frame (keyframe) hashes
+    - Temporal position and frame type
+    - Motion signature over 2-second window
+    """
+
+    timestamp_ms: int  # Position in timeline (milliseconds)
+    frame_index: int  # Frame number
+    frame_type: str  # 'I-Frame' (keyframe), identifies GOP structure
+    frame_duration_ms: int  # Duration from prior frame
+
+    # Keyframe patch hashes (visual DNA)
+    frame_patch_hashes: List[str] = field(default_factory=list)
+
+    # Motion signature (sequence of frames over 2-second window)
+    temporal_motion_hash: Optional[str] = None  # Signature of movement
+    motion_confidence: float = 0.0  # Confidence in motion hash
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        result = asdict(self)
+        result.pop('fragment_type', None)
+        return result
+
+
+@dataclass
+class AudioForensicSegment(ForensicFragment):
+    """
+    Spectrogram fingerprint for audio verification.
+
+    Stores:
+    - Spectral hash (frequency-domain fingerprint)
+    - Temporal position in audio
+    - Frequency characteristics for entropy scoring
+    """
+
+    start_time_ms: int  # Position in track (milliseconds)
+    segment_duration_ms: int  # Length of segment (typical: 2000-5000 ms)
+    
+    # Spectral analysis
+    spectrogram_hash: str  # Perceptual hash of spectrogram (pHash magnitude)
+    frequency_centroid: float  # Average frequency (Hz) - for entropy scoring
+    spectral_flatness: float  # 0.0-1.0 (higher = more noise/variety)
+    
+    # Before/after for dual-state
+    spectrogram_hash_before: Optional[str] = None
+    spectrogram_hash_after: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        result = asdict(self)
+        result.pop('fragment_type', None)
+        return result
+
+
+@dataclass
+class ForensicFragmentSet:
+    """
+    Collection of forensic fragments forming the "DNA" of an artifact.
+
+    Multi-point sampling approach:
+    - Text: 3 fragments (beginning, middle, end) - any 2 matches = 99.9% confidence
+    - Image: 4-6 high-complexity patches - spatial diversity
+    - Video: Keyframes at 25%, 50%, 75% + motion signatures
+    - Audio: Spectral samples at multiple timestamps
+
+    This provides legal defensibility: "We can prove AI origin of specific,
+    verifiable sections of this artifact with P < 10^-15."
+    """
+
+    fragment_count: int
+    sampling_strategy: str  # 'multi_point', 'spatial_diversity', 'temporal'
+    total_coverage_percent: float  # Estimated % of content represented
+
+    # Typed fragment lists
+    text_fragments: List[TextForensicFragment] = field(default_factory=list)
+    image_fragments: List[ImageForensicFragment] = field(default_factory=list)
+    video_snippets: List[VideoForensicSnippet] = field(default_factory=list)
+    audio_segments: List[AudioForensicSegment] = field(default_factory=list)
+
+    # Statistics
+    min_entropy_threshold: float = 0.6  # Minimum entropy to include
+    cumulative_entropy_score: float = 0.0  # Average entropy of selected fragments
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        result = asdict(self)
+        return result
+
+    @property
+    def all_fragments(self) -> List[ForensicFragment]:
+        """Get all fragments regardless of type."""
+        return (
+            self.text_fragments
+            + self.image_fragments
+            + self.video_snippets
+            + self.audio_segments
+        )
+
+
+@dataclass
 class ArtifactHashSet:
     """
     Dual-state hashing for forensic provenance.
@@ -135,6 +329,8 @@ class ArtifactHashSet:
     - content_hash_after_watermark: Exact distributed copy
     - content_hash_before_watermark: Watermark removed but content intact
     - Neither: Content was modified (use similarity fingerprints)
+
+    Additionally stores forensic fragments for DNA-level verification.
     """
 
     content_hash_before_watermark: str  # SHA-256 of original AI output
@@ -151,9 +347,15 @@ class ArtifactHashSet:
     simhash_before: Optional[str] = None  # SimHash for text
     simhash_after: Optional[str] = None
 
+    # NEW: Forensic fragments (sub-segment DNA records)
+    forensic_fragments: Optional[ForensicFragmentSet] = None
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        return asdict(self)
+        result = asdict(self)
+        if self.forensic_fragments:
+            result['forensic_fragments'] = self.forensic_fragments.to_dict()
+        return result
 
 
 @dataclass

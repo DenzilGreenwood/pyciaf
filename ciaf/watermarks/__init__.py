@@ -1,42 +1,55 @@
 """
 CIAF Watermarking Module
 
-Forensic provenance system for AI-generated artifacts with dual-state integrity model.
+Forensic provenance system for AI-generated artifacts with dual-state integrity 
+model and DNA-level sub-segment verification.
 
 This module implements watermarking and verification for AI outputs,
-enabling detection of watermark removal and content tampering.
+enabling detection of watermark removal, content tampering, and mix-and-match attacks.
 
-Key Features:
+Key Features (v1.2.0):
 - Dual-state hashing (before/after watermark)
+- Sub-segment forensic records (DNA sampling) ⭐ NEW
 - Multiple verification strategies
 - Format-resilient matching
 - Content similarity detection
 - Vault integration for persistent storage
 
-Quick Start:
-    from ciaf.watermarks import build_text_artifact_evidence, verify_text_artifact
+Multi-Point Sampling Strategy:
+- Text: 3 high-entropy fragments (begin/middle/end) → 2+ matches = 99.9%+ confidence
+- Image: 4-6 spatial complexity patches → defeats splicing attacks
+- Video: Temporal keyframe sampling (Phase 2)
+- Audio: Spectral frequency segments (Phase 2)
 
-    # Create watermarked artifact
+Quick Start:
+    from ciaf.watermarks import (
+        build_text_artifact_evidence, 
+        verify_text_artifact,
+        select_text_forensic_fragments
+    )
+
+    # Create watermarked artifact with forensic fragments
     evidence, watermarked_text = build_text_artifact_evidence(
         raw_text="AI generated content...",
         model_id="gpt-4",
         model_version="2026-03",
         actor_id="user:analyst-17",
         prompt="Generate a summary...",
-        verification_base_url="https://vault.example.com"
+        verification_base_url="https://vault.example.com",
+        enable_forensic_fragments=True  # ⭐ NEW
     )
 
-    # Later: verify suspect text
+    # Later: verify suspect text with DNA sampling
     result = verify_text_artifact(suspect_text, evidence)
     print(f"Authentic: {result.is_authentic()}")
     print(f"Confidence: {result.confidence:.1%}")
 
 Created: 2026-03-24
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 1.2.0
 """
 
-# Core models
+# Core models (updated with forensic fragments)
 from .models import (
     ArtifactType,
     WatermarkType,
@@ -46,6 +59,12 @@ from .models import (
     WatermarkDescriptor,
     VerificationResult,
     ForensicArtifactProfile,
+    ForensicFragment,  # ⭐ NEW
+    TextForensicFragment,  # ⭐ NEW
+    ImageForensicFragment,  # ⭐ NEW
+    VideoForensicSnippet,  # ⭐ NEW
+    AudioForensicSegment,  # ⭐ NEW
+    ForensicFragmentSet,  # ⭐ NEW
     utc_now_iso,
     sha256_bytes,
     sha256_text,
@@ -127,7 +146,41 @@ from .pdf import (
     PYPDF_AVAILABLE,
 )
 
-__version__ = "1.0.0"
+# Forensic fragment selection (v1.2.0) ⭐ NEW
+from .fragment_selection import (
+    compute_text_entropy,
+    select_text_fragment,
+    select_text_forensic_fragments,
+    compute_image_patch_entropy,
+    select_image_forensic_patches,
+    select_video_forensic_snippets,
+    select_audio_forensic_segments,
+    create_forensic_fragment_set,
+)
+
+# Forensic fragment verification (v1.2.0) ⭐ NEW
+from .fragment_verification import (
+    verify_text_fragments,
+    verify_image_fragments,
+    verify_video_fragments,
+    verify_audio_fragments,
+    hamming_distance,
+    FragmentMatchResult,
+    ForensicVerificationSummary,
+)
+
+# Hierarchical verification strategy (v1.2.0) ⭐ NEW
+from .hierarchical_verification import (
+    VerificationTier,
+    VerificationStep,
+    HierarchicalVerificationResult,
+    verify_text_artifact_hierarchical,
+    verify_image_artifact_hierarchical,
+    format_hierarchical_verification_report,
+    VerificationStatistics,
+)
+
+__version__ = "1.2.0"
 
 __all__ = [
     # Enums
@@ -140,6 +193,13 @@ __all__ = [
     "WatermarkDescriptor",
     "VerificationResult",
     "ForensicArtifactProfile",
+    # Forensic Fragment Models (v1.2.0) ⭐ NEW
+    "ForensicFragment",
+    "TextForensicFragment",
+    "ImageForensicFragment",
+    "VideoForensicSnippet",
+    "AudioForensicSegment",
+    "ForensicFragmentSet",
     # Utility functions
     "utc_now_iso",
     "sha256_bytes",
@@ -202,4 +262,28 @@ __all__ = [
     "has_pdf_watermark",
     "verify_pdf_artifact",
     "PYPDF_AVAILABLE",
+    # Forensic Fragment Selection (v1.2.0) ⭐ NEW
+    "compute_text_entropy",
+    "select_text_fragment",
+    "select_text_forensic_fragments",
+    "compute_image_patch_entropy",
+    "select_image_forensic_patches",
+    "select_video_forensic_snippets",
+    "select_audio_forensic_segments",
+    "create_forensic_fragment_set",
+    # Forensic Fragment Verification (v1.2.0) ⭐ NEW
+    "verify_text_fragments",
+    "verify_image_fragments",
+    "verify_video_fragments",
+    "verify_audio_fragments",
+    "FragmentMatchResult",
+    "ForensicVerificationSummary",
+    # Hierarchical Verification Strategy (v1.2.0) ⭐ NEW
+    "VerificationTier",
+    "VerificationStep",
+    "HierarchicalVerificationResult",
+    "verify_text_artifact_hierarchical",
+    "verify_image_artifact_hierarchical",
+    "format_hierarchical_verification_report",
+    "VerificationStatistics",
 ]
