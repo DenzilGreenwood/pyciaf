@@ -5,9 +5,9 @@ A modular framework for creating verifiable AI training and inference pipelines
 with lazy capsule materialization and cryptographic provenance tracking.
 
 Created: 2025-09-09
-Last Modified: 2026-03-27
+Last Modified: 2026-03-28
 Author: Denzil James Greenwood
-Version: 1.1.2
+Version: 1.3.0
 """
 
 # Anchoring module removed - using LCM system instead
@@ -178,6 +178,50 @@ try:
 except ImportError:
     METADATA_TAGS_AVAILABLE = False
 
+# Agentic Execution Boundaries (NEW in v1.3.0)
+try:
+    from . import agents
+    from .agents import (
+        Identity,
+        PrincipalType,
+        Resource,
+        ActionRequest,
+        Permission,
+        RoleDefinition,
+        ExecutionResult,
+        ElevationGrant,
+        ActionReceipt,
+        IAMStore,
+        PAMStore,
+        PolicyEngine,
+        EvidenceVault,
+        ToolExecutor,
+        same_tenant_only,
+        same_environment_only,
+        sensitivity_level_check,
+    )
+
+    AGENTS_AVAILABLE = True
+except ImportError:
+    AGENTS_AVAILABLE = False
+    Identity = None
+    PrincipalType = None
+    Resource = None
+    ActionRequest = None
+    Permission = None
+    RoleDefinition = None
+    ExecutionResult = None
+    ElevationGrant = None
+    ActionReceipt = None
+    IAMStore = None
+    PAMStore = None
+    PolicyEngine = None
+    EvidenceVault = None
+    ToolExecutor = None
+    same_tenant_only = None
+    same_environment_only = None
+    sensitivity_level_check = None
+
 try:
     from . import web
     from .web import (
@@ -215,7 +259,7 @@ except ImportError:
     generate_receipt = None
     WebAIVaultAdapter = None
 
-__version__ = "1.1.2"
+__version__ = "1.3.0"
 __all__ = [
     # Core components
     "CryptoUtils",
@@ -286,6 +330,24 @@ __all__ = [
     "create_model_manager",
     "create_compliance_tracker",
     "quick_log",
+    # Agentic Execution Boundaries (v1.3.0)
+    "Identity",
+    "PrincipalType",
+    "Resource",
+    "ActionRequest",
+    "Permission",
+    "RoleDefinition",
+    "ExecutionResult",
+    "ElevationGrant",
+    "ActionReceipt",
+    "IAMStore",
+    "PAMStore",
+    "PolicyEngine",
+    "EvidenceVault",
+    "ToolExecutor",
+    "same_tenant_only",
+    "same_environment_only",
+    "sensitivity_level_check",
     # Feature availability flags
     "COMPLIANCE_AVAILABLE",
     "ENTERPRISE_COMPLIANCE_AVAILABLE",
@@ -296,6 +358,7 @@ __all__ = [
     "UNCERTAINTY_AVAILABLE",
     "PREPROCESSING_AVAILABLE",
     "METADATA_TAGS_AVAILABLE",
+    "AGENTS_AVAILABLE",
 ]
 
 # Export enhanced API methods

@@ -7,6 +7,114 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0] - 2026-03-28
 
+### Major Feature: Agentic Execution Boundaries
+
+**Zero-trust IAM/PAM controls for autonomous AI agents**: Independent identity and access management system with cryptographic audit trails, designed specifically for autonomous agentic systems.
+
+### Added
+
+- **Agentic Execution Boundaries Module** (`ciaf/agents/`):
+  - **Core Types** (`ciaf/agents/core/`):
+    - `Identity`: Agent principals with cryptographic fingerprints and tenant isolation
+    - `Resource`: Protected resources with sensitivity levels and ownership
+    - `ActionRequest`: Authorization requests with justification and correlation
+    - `Permission`: RBAC/ABAC permission definitions with condition functions
+    - `RoleDefinition`: Named collections of permissions with inheritance
+    - `ActionReceipt`: Cryptographic evidence with HMAC-SHA256 signatures
+    - `ExecutionResult`: Complete authorization and execution outcomes
+    - `ElevationGrant`: Just-in-time privilege escalation grants
+
+  - **IAM Store** (`ciaf/agents/iam/`):
+    - Identity and role management with cryptographic tracking
+    - Role-based access control (RBAC) with role inheritance
+    - Attribute-based access control (ABAC) with custom conditions
+    - Policy conditions: `same_tenant_only`, `same_environment_only`, `sensitivity_level_check`
+    - Condition combinators: `combine_and`, `combine_or`
+    - Permission aggregation and caching
+
+  - **PAM Store** (`ciaf/agents/pam/`):
+    - Just-in-time (JIT) privilege elevation with time bounds
+    - Approval workflow tracking with ticket references
+    - Usage limits and automatic grant revocation
+    - Purpose binding and scope restrictions
+    - Grant lifecycle management
+
+  - **Policy Engine** (`ciaf/agents/policy/`):
+    - Combined RBAC + ABAC evaluation
+    - Sensitive action detection and enforcement
+    - Compliance framework integration (HIPAA, SOX, GDPR, ISO 27001, EU AI Act)
+    - Policy obligation enforcement (two-person review, heightened logging)
+    - Context-aware authorization decisions
+
+  - **Evidence Vault** (`ciaf/agents/evidence/`):
+    - HMAC-SHA256 signed cryptographic receipts
+    - Hash-chained audit trails (following CIAF patterns)
+    - Tamper-evident evidence preservation
+    - Chain-of-custody verification
+    - Receipt export and forensic analysis
+
+  - **Tool Executor** (`ciaf/agents/execution/`):
+    - Mediated tool invocation with authorization
+    - Automatic evidence recording
+    - Grant usage tracking
+    - Tool registration and schema validation
+
+- **Example Scenarios** (`examples/agents_scenarios/`):
+  - `healthcare_claims.py`: HIPAA compliance with PHI access controls
+  - `financial_approvals.py`: SOX compliance with monetary thresholds and dual control
+  - `production_changes.py`: Change management with ticket-based approval
+  - `run_all.py`: Execute all scenarios for comprehensive demonstration
+
+- **Documentation**:
+  - `ciaf/agents/README.md`: Complete module overview with architectural rationale
+  - `docs/agents/DEVELOPER_GUIDE.md`: Comprehensive integration guide with patterns
+  - `docs/agents/QUICKSTART.md`: 5-minute tutorial
+  - `docs/agents/RELEASE_NOTES_v1.3.0.md`: Detailed release documentation
+
+### Architectural Principles
+
+This release introduces seven non-negotiable design principles for agentic IAM/PAM:
+
+1. **Separate Principal Type for Agents**: Explicit `PrincipalType.AGENT` distinction
+2. **No Raw Standing Privilege**: Scoped, expiring capabilities only
+3. **Purpose-Bound PAM Grants**: Elevation includes reason, ticket, approver, scope, TTL
+4. **Mediated Execution Only**: All tools wrapped through `ToolExecutor`
+5. **Context-Aware Policy**: Decisions factor in tenant, environment, data class, risk
+6. **Evidence by Default**: Every action produces signed receipt
+7. **Independent Verification**: Security teams can verify without trusting agent framework
+
+### Why Independent IAM/PAM for Agents?
+
+Traditional enterprise IAM/PAM was designed for humans and static services. Autonomous agents require a separate control layer because they can:
+- Interpret goals and chain actions dynamically
+- Operate at machine speed continuously
+- Discover and exploit permission combinations
+- Chain low-risk permissions into high-impact outcomes
+
+This module provides the **runtime control envelope** between enterprise IAM (organizational authority) and CIAF evidence (cryptographic proof), ensuring agents only execute authorized, task-scoped actions with tamper-evident audit trails.
+
+### Integration with CIAF Core
+
+- Uses `ciaf.core.crypto` for cryptographic primitives (SHA-256, HMAC-SHA256)
+- Extends `ciaf.compliance.audit_trails` hash-chaining patterns
+- Maps to same compliance frameworks (EU AI Act, NIST, GDPR, HIPAA, SOX, ISO 27001)
+- Compatible with `ciaf.vault` for persistent evidence storage
+
+### Breaking Changes
+
+None. This is a purely additive release. All existing CIAF functionality remains unchanged.
+
+### Performance
+
+- IAM permission lookups: O(1) with caching
+- Policy evaluation: O(n) where n = number of permissions
+- Evidence recording: O(1) per action
+- Chain verification: O(n) where n = number of receipts
+
+---
+
+## [1.2.0] - 2026-03-27
+
 ### Major Feature: Hierarchical Three-Tier Verification Strategy
 
 **Revolutionary performance optimization**: Three-tier cost-optimized verification achieving **34× speedup** while maintaining **99%+ attack detection**.

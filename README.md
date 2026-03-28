@@ -1,9 +1,9 @@
 # CIAF – Cognitive Insight Audit Framework
 
-**Version:** 1.1.1 (Production-Capable)
+**Version:** 1.3.0 (Production-Capable with Agentic Execution Boundaries)
 
 > **✅ PRODUCTION-CAPABLE RELEASE**
-> CIAF v1.1.1 is production-capable with comprehensive enterprise features, hardened by extensive testing, benchmarks, and standard operating procedures. All mock implementations have been replaced with realistic, enterprise-grade functionality. This release includes enhanced compliance designed to support regulatory frameworks, performance optimization, and full test coverage.
+> CIAF v1.3.0 introduces **Agentic Execution Boundaries** - zero-trust IAM/PAM controls for autonomous AI agents. This release extends CIAF's cryptographic provenance with identity management, privilege elevation, and tamper-evident audit trails specifically designed for agent systems. All previous features remain production-capable with comprehensive enterprise features.
 
 A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and compliance mapping.
 
@@ -20,13 +20,14 @@ CIAF (Cognitive Insight Audit Framework) addresses AI transparency, auditability
 
 ### Key Features
 
-- **Cryptographic Provenance Tracking** — End-to-end verifiable data lineage with Merkle trees and hash connections.  
-- **Lazy Capsule Materialization (LCM)** — On-demand proof capsule materialization to minimize storage and exposure.  
-- **Compliance Mapping** — Artifacts designed to map to EU AI Act, NIST AI RMF, GDPR/HIPAA, SOX, ISO/IEC 27001 (see `docs/compliance/`).  
-- **Security-First Design** — Optional AES-256-GCM, secure anchor derivation, tamper-evident audit trails.  
-- **Risk Assessment Patterns** — Bias/fairness checks and uncertainty-quantification scaffolding.  
-- **Transparency & Explainability** — Hooks for decision transparency and receipt generation.  
-- **Healthcare Patterns** — PHI minimization and consent-tracking patterns (final compliance depends on deployment).  
+- **Cryptographic Provenance Tracking** — End-to-end verifiable data lineage with Merkle trees and hash connections.
+- **Lazy Capsule Materialization (LCM)** — On-demand proof capsule materialization to minimize storage and exposure.
+- **Agentic Execution Boundaries** (NEW in v1.3.0) — Zero-trust IAM/PAM controls for autonomous AI agents with cryptographic audit trails.
+- **Compliance Mapping** — Artifacts designed to map to EU AI Act, NIST AI RMF, GDPR/HIPAA, SOX, ISO/IEC 27001 (see `docs/compliance/`).
+- **Security-First Design** — Optional AES-256-GCM, secure anchor derivation, tamper-evident audit trails.
+- **Risk Assessment Patterns** — Bias/fairness checks and uncertainty-quantification scaffolding.
+- **Transparency & Explainability** — Hooks for decision transparency and receipt generation.
+- **Healthcare Patterns** — PHI minimization and consent-tracking patterns (final compliance depends on deployment).
 - **Performance Monitoring** — Basic metrics for LCM operations.
 - **Metadata Traceability** — Complete inference-to-model lineage tracking with single receipt lookup.
 
