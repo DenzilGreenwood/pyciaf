@@ -5,6 +5,31 @@ All notable changes to the Cognitive Insight Audit Framework (CIAF) will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-03-28
+
+### Patch Release: Bug Fixes and Export Corrections
+
+**Critical fixes for Agentic Execution Boundaries module.**
+
+### Fixed
+
+- **IAM Module Exports**: Added missing exports `combine_and`, `combine_or`, `identity_has_attribute` to `ciaf.agents.iam.__init__`
+- **Identity Fingerprint**: Fixed `Identity.get_fingerprint()` to properly encode strings to bytes before hashing
+- **PrincipalType Handling**: Added support for both enum and string types in fingerprint generation
+- **Import Errors**: Resolved `ImportError` when importing agent components
+- **Type Errors**: Fixed `TypeError: Strings must be encoded before hashing` in agent scenarios
+
+### Changed
+
+- **Code Quality**: Applied ruff auto-fix to remove 39 unused variables across codebase
+- **Dataclass Order**: Reordered `ImageForensicFragment` fields to satisfy Python dataclass requirements
+
+### Performance
+
+No performance changes in this patch release.
+
+---
+
 ## [1.3.0] - 2026-03-28
 
 ### Major Feature: Agentic Execution Boundaries
