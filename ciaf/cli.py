@@ -89,7 +89,7 @@ def main():
     show_parser.add_argument("--version", help="Model version (default: latest)")
 
     # Version command
-    version_parser = subparsers.add_parser("version", help="Show CIAF version")
+    subparsers.add_parser("version", help="Show CIAF version")
 
     # Parse arguments
     args = parser.parse_args()
@@ -134,7 +134,7 @@ def setup_command(args):
 
         # Initialize storage
         print(f"[DATABASE] Initializing {args.backend} storage at '{storage_path}'...")
-        storage = MetadataStorage(storage_path, args.backend)
+        MetadataStorage(storage_path, args.backend)
 
         # Create directory structure
         project_dir = Path(storage_path)

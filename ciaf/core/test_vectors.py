@@ -183,12 +183,9 @@ class CIAFTestVectors:
         test_private_key_hex = (
             "9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60"
         )
-        test_public_key_hex = (
-            "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a"
-        )
 
         # Create signer from known test key
-        private_key_bytes = bytes.fromhex(test_private_key_hex)
+        bytes.fromhex(test_private_key_hex)
 
         # Note: This is simplified - real implementation would need proper key loading
         # For now, generate a signer and use it consistently
@@ -229,7 +226,7 @@ class CIAFTestVectors:
         vectors = []
 
         # Fixed clock for deterministic timestamps
-        fixed_clock = DeterministicClock(self.fixed_time)
+        DeterministicClock(self.fixed_time)
 
         # Test policy configurations
         test_policies = [
@@ -254,7 +251,6 @@ class CIAFTestVectors:
 
         for i, (policy, root) in enumerate(zip(test_policies, test_roots)):
             # Mock the timestamp for deterministic results
-            original_timestamp = canonical_timestamp
 
             try:
                 anchor = make_anchor(root, policy, signer)
@@ -303,7 +299,7 @@ class CIAFTestVectors:
 
         for i, (op_id, entropy) in enumerate(test_operations):
             timestamp1 = fixed_clock.canonical_iso_format(fixed_clock.now())
-            timestamp2 = fixed_clock.canonical_iso_format(fixed_clock.now())
+            fixed_clock.canonical_iso_format(fixed_clock.now())
 
             # Test that deterministic operations are actually deterministic
             time_hash1 = fixed_clock.time_hash(f"{op_id}:{entropy}")

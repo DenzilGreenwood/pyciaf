@@ -160,7 +160,7 @@ class CIAFFramework:
         print(f"Committing dataset record: {record_meta.get('dataset_id', 'unknown')}")
 
         # Step 1: Canonicalize metadata
-        base_meta = canonicalize_and_hash(record_meta, self.policy.hash_algorithm)
+        canonicalize_and_hash(record_meta, self.policy.hash_algorithm)
 
         # Step 2: Enrich with compliance metadata
         enriched_meta = self.compliance.create_enhanced_capsule_metadata(
@@ -201,7 +201,7 @@ class CIAFFramework:
         print(f"Committing model checkpoint: {ckpt_meta.get('model_id', 'unknown')}")
 
         # Step 1: Canonicalize metadata
-        base_meta = canonicalize_and_hash(ckpt_meta, self.policy.hash_algorithm)
+        canonicalize_and_hash(ckpt_meta, self.policy.hash_algorithm)
 
         # Step 2: Enrich with compliance metadata
         enriched_meta = self.compliance.create_enhanced_capsule_metadata(
@@ -243,7 +243,7 @@ class CIAFFramework:
         print(f"Committing inference: {inf_meta.get('inference_id', 'unknown')}")
 
         # Step 1: Canonicalize metadata
-        base_meta = canonicalize_and_hash(inf_meta, self.policy.hash_algorithm)
+        canonicalize_and_hash(inf_meta, self.policy.hash_algorithm)
 
         # Step 2: Enrich with compliance metadata
         enriched_meta = self.compliance.create_enhanced_capsule_metadata(
@@ -431,7 +431,7 @@ class CIAFFramework:
         print(f"Creating dataset anchor for: {dataset_id}")
 
         # Generate dataset-specific salt
-        dataset_salt = hashlib.sha256(
+        hashlib.sha256(
             f"{dataset_id}_{self.framework_name}".encode()
         ).digest()
 
@@ -959,7 +959,7 @@ class CIAFFramework:
         if model_name not in self.audit_generators:
             self.audit_generators[model_name] = AuditTrailGenerator(model_name)
 
-        model_anchor_record = self.model_anchors[model_name]
+        self.model_anchors[model_name]
         inference_connections = self.inference_connections[model_name]
         audit_generator = self.audit_generators[model_name]
 
@@ -1323,12 +1323,12 @@ class CIAFFramework:
         print("Starting complete LCM workflow...")
 
         # Step 1: Create dataset with LCM
-        dataset_anchor = self.create_dataset_anchor_lcm(
+        self.create_dataset_anchor_lcm(
             dataset_id, dataset_metadata, master_password or dataset_id
         )
 
         # Step 2: Create model with LCM
-        model_anchor = self.create_model_anchor_lcm(
+        self.create_model_anchor_lcm(
             model_name,
             model_parameters,
             authorized_datasets=[dataset_id],
@@ -1341,7 +1341,7 @@ class CIAFFramework:
         )
 
         # Step 4: Perform inference with LCM
-        inference_receipt = self.perform_inference_with_lcm(
+        self.perform_inference_with_lcm(
             model_name, query, ai_output
         )
 

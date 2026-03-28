@@ -137,7 +137,7 @@ CIAF Setup Help:
         Previously: comprehensive_error_logging_with_detailed_context_and_stack_trace_analysis()
         """
         user_message = CIAFErrorUtils.translate_error(error)
-        category = CIAFErrorUtils.categorize_error(error)
+        CIAFErrorUtils.categorize_error(error)
 
         log_message = f"❌ {user_message}"
         if context:

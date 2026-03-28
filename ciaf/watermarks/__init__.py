@@ -1,7 +1,7 @@
 """
 CIAF Watermarking Module
 
-Forensic provenance system for AI-generated artifacts with dual-state integrity 
+Forensic provenance system for AI-generated artifacts with dual-state integrity
 model and DNA-level sub-segment verification.
 
 This module implements watermarking and verification for AI outputs,
@@ -23,7 +23,7 @@ Multi-Point Sampling Strategy:
 
 Quick Start:
     from ciaf.watermarks import (
-        build_text_artifact_evidence, 
+        build_text_artifact_evidence,
         verify_text_artifact,
         select_text_forensic_fragments
     )

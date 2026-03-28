@@ -147,8 +147,12 @@ class ForensicFragment:
     fragment_id: str  # Unique fragment identifier (e.g., 'frag_0_begin')
     fragment_type: str  # 'text', 'image_patch', 'video_frame', 'audio_segment'
     entropy_score: float  # 0.0-1.0 (1.0 = highest unique content)
-    sampling_method: str  # e.g., 'begin', 'middle', 'end' for text; 'spatial' for images
-    content_position: int  # For text: char offset; for image: patch index; for video: frame number
+    sampling_method: (
+        str  # e.g., 'begin', 'middle', 'end' for text; 'spatial' for images
+    )
+    content_position: (
+        int  # For text: char offset; for image: patch index; for video: frame number
+    )
 
 
 @dataclass
@@ -178,7 +182,7 @@ class TextForensicFragment(ForensicFragment):
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         result = asdict(self)
-        result.pop('fragment_type', None)  # Avoid duplication
+        result.pop("fragment_type", None)  # Avoid duplication
         return result
 
 
@@ -209,7 +213,7 @@ class ImageForensicFragment(ForensicFragment):
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         result = asdict(self)
-        result.pop('fragment_type', None)
+        result.pop("fragment_type", None)
         return result
 
 
@@ -239,7 +243,7 @@ class VideoForensicSnippet(ForensicFragment):
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         result = asdict(self)
-        result.pop('fragment_type', None)
+        result.pop("fragment_type", None)
         return result
 
 
@@ -256,12 +260,12 @@ class AudioForensicSegment(ForensicFragment):
 
     start_time_ms: int  # Position in track (milliseconds)
     segment_duration_ms: int  # Length of segment (typical: 2000-5000 ms)
-    
+
     # Spectral analysis
     spectrogram_hash: str  # Perceptual hash of spectrogram (pHash magnitude)
     frequency_centroid: float  # Average frequency (Hz) - for entropy scoring
     spectral_flatness: float  # 0.0-1.0 (higher = more noise/variety)
-    
+
     # Before/after for dual-state
     spectrogram_hash_before: Optional[str] = None
     spectrogram_hash_after: Optional[str] = None
@@ -269,7 +273,7 @@ class AudioForensicSegment(ForensicFragment):
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         result = asdict(self)
-        result.pop('fragment_type', None)
+        result.pop("fragment_type", None)
         return result
 
 
@@ -355,7 +359,7 @@ class ArtifactHashSet:
         """Convert to dictionary."""
         result = asdict(self)
         if self.forensic_fragments:
-            result['forensic_fragments'] = self.forensic_fragments.to_dict()
+            result["forensic_fragments"] = self.forensic_fragments.to_dict()
         return result
 
 

@@ -81,9 +81,7 @@ class EvidenceRecorder(Protocol):
 class ToolMediator(Protocol):
     """Protocol for mediated tool execution."""
 
-    def execute_tool(
-        self, tool_name: str, request: ActionRequest
-    ) -> ExecutionResult:
+    def execute_tool(self, tool_name: str, request: ActionRequest) -> ExecutionResult:
         """Execute a tool with mediation and controls."""
         ...
 

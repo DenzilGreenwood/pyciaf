@@ -211,7 +211,7 @@ class DefaultRiskAssessor(RiskAssessor):
         risk_score = 0.0
 
         # Assess based on model type and deployment context
-        model_type = model_metadata.get("model_type", "unknown")
+        model_metadata.get("model_type", "unknown")
         domain = deployment_context.get("domain", "general")
 
         # High-risk domains

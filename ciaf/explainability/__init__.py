@@ -96,7 +96,7 @@ class CIAFExplainer:
             "feature_importance": ExplanationMethod.FEATURE_IMPORTANCE,
         }
 
-        explanation_method = method_map.get(method, ExplanationMethod.SHAP_KERNEL)
+        method_map.get(method, ExplanationMethod.SHAP_KERNEL)
 
         # Create new-style explainer
         self._explainer = create_auto_explainer(model, feature_names)

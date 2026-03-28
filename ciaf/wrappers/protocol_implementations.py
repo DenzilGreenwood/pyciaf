@@ -364,7 +364,7 @@ class DefaultModelAdapter(ModelAdapter):
                     try:
                         from sklearn.feature_extraction.text import TfidfVectorizer
 
-                        vectorizer = TfidfVectorizer(max_features=1000)
+                        TfidfVectorizer(max_features=1000)
                         # This is a simplified approach - in practice, should use fitted vectorizer
                         input_vector = np.array(
                             [[len(input_data), hash(input_data) % 1000]]
@@ -620,7 +620,7 @@ class DefaultModelValidator(ModelValidator):
                 result["errors"].append("Query input is None")
 
             # Type-specific validation
-            model_type = DefaultModelAdapter().detect_model_type(model)
+            DefaultModelAdapter().detect_model_type(model)
 
             if isinstance(query, str) and len(query.strip()) == 0:
                 result["warnings"].append("Query is empty string")

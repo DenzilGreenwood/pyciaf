@@ -45,29 +45,29 @@ def example_1_exact_match():
         enable_forensic_fragments=True,
     )
 
-    print(f"\n✓ Created evidence for original artifact")
+    print("\n✓ Created evidence for original artifact")
     print(f"  Original hash: {evidence.hashes.content_hash_before_watermark[:16]}...")
     print(f"  Watermarked hash: {evidence.hashes.content_hash_after_watermark[:16]}...")
 
     # Case A: Exact copy detected
-    print(f"\n[Case A] Exact redistribution:")
+    print("\n[Case A] Exact redistribution:")
     suspect_text_exact = original_text  # Exact copy
     result = verify_text_artifact_hierarchical(suspect_text_exact, evidence)
 
     print(f"  Result: {result.final_tier.value}")
     print(f"  Confidence: {result.overall_confidence:.1%}")
     print(f"  Time: {result.total_execution_time_ms:.2f} ms")
-    print(f"  ✓ Detected in Tier 1 (instant)")
+    print("  ✓ Detected in Tier 1 (instant)")
 
     # Case B: Watermark removed (content unchanged)
-    print(f"\n[Case B] Watermark removal:")
+    print("\n[Case B] Watermark removal:")
     suspect_text_no_watermark = original_text
     result = verify_text_artifact_hierarchical(suspect_text_no_watermark, evidence)
 
     print(f"  Result: {result.final_tier.value}")
     print(f"  Confidence: {result.overall_confidence:.1%}")
     print(f"  Time: {result.total_execution_time_ms:.2f} ms")
-    print(f"  ✓ Detected in Tier 1 (instant)")
+    print("  ✓ Detected in Tier 1 (instant)")
 
 
 def example_2_spliced_content():
@@ -96,7 +96,7 @@ def example_2_spliced_content():
         enable_forensic_fragments=True,
     )
 
-    print(f"\n✓ Created evidence for original AI text")
+    print("\n✓ Created evidence for original AI text")
 
     # Case: Mix 50% AI + 50% human
     human_text = """
@@ -106,9 +106,9 @@ def example_2_spliced_content():
     correction and maintaining coherence times.
     """
 
-    spliced_text = ai_text[:len(ai_text) // 2] + human_text[len(human_text) // 2 :]
+    spliced_text = ai_text[: len(ai_text) // 2] + human_text[len(human_text) // 2 :]
 
-    print(f"\n[Case] Spliced content (50% AI + 50% human):")
+    print("\n[Case] Spliced content (50% AI + 50% human):")
     result = verify_text_artifact_hierarchical(spliced_text, evidence)
 
     print(f"  Result: {result.final_tier.value}")
@@ -116,7 +116,7 @@ def example_2_spliced_content():
     print(f"  Time: {result.total_execution_time_ms:.2f} ms")
 
     if result.final_tier == VerificationTier.TIER2_FRAGMENTS:
-        print(f"  ✓ Detected in Tier 2 (DNA fragments)")
+        print("  ✓ Detected in Tier 2 (DNA fragments)")
         if result.tier2_fragment_results:
             print(
                 f"    Fragments matched: {result.tier2_fragment_results.fragments_matched}/{result.tier2_fragment_results.total_fragments_checked}"
@@ -148,7 +148,7 @@ def example_3_paraphrased_content():
         enable_forensic_fragments=True,
     )
 
-    print(f"\n✓ Created evidence for original text")
+    print("\n✓ Created evidence for original text")
 
     # Paraphrased version (same meaning, different wording)
     paraphrased_text = """
@@ -160,7 +160,7 @@ def example_3_paraphrased_content():
     they can process per second.
     """
 
-    print(f"\n[Case] Paraphrased content:")
+    print("\n[Case] Paraphrased content:")
     result = verify_text_artifact_hierarchical(paraphrased_text, evidence)
 
     print(f"  Result: {result.final_tier.value}")
@@ -168,7 +168,7 @@ def example_3_paraphrased_content():
     print(f"  Time: {result.total_execution_time_ms:.2f} ms")
 
     if result.final_tier == VerificationTier.TIER3_SIMILARITY:
-        print(f"  ✓ Detected in Tier 3 (similarity matching)")
+        print("  ✓ Detected in Tier 3 (similarity matching)")
 
 
 def example_4_batch_performance():
@@ -204,13 +204,15 @@ def example_4_batch_performance():
 
     stats = VerificationStatistics()
 
-    print(f"\n✓ Running 4 verification tests:")
+    print("\n✓ Running 4 verification tests:")
 
     for test_name, description, is_different in test_cases:
         if not is_different:
             suspect = original_text
         else:
-            suspect = "Completely different content that has nothing to do with the original"
+            suspect = (
+                "Completely different content that has nothing to do with the original"
+            )
 
         result = verify_text_artifact_hierarchical(suspect, evidence)
         stats.add_result(result)
@@ -221,7 +223,7 @@ def example_4_batch_performance():
             f"\n     → Tier: {result.final_tier.value}, Confidence: {result.overall_confidence:.1%}, Time: {result.total_execution_time_ms:.2f} ms"
         )
 
-    print(f"\n" + "-" * 70)
+    print("\n" + "-" * 70)
     print(stats.get_summary())
 
 
@@ -254,7 +256,7 @@ def example_5_detailed_report():
 
     result = verify_text_artifact_hierarchical(suspect, evidence)
 
-    print(f"\nGenerating detailed report:")
+    print("\nGenerating detailed report:")
     print(format_hierarchical_verification_report(result))
 
 

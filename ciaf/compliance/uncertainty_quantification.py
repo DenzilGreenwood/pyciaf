@@ -392,7 +392,7 @@ def demo_uncertainty_quantification():
 
     # Export metadata
     print("\n5. Uncertainty Metadata Export")
-    metadata = quantifier.export_uncertainty_metadata(mc_uncertainty)
+    quantifier.export_uncertainty_metadata(mc_uncertainty)
     print("    Uncertainty metadata exported for compliance documentation")
 
     return quantifier, mc_uncertainty, receipt

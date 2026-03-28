@@ -9,10 +9,12 @@ This test validates that:
 """
 
 import sys
-sys.path.insert(0, '.')
+
+sys.path.insert(0, ".")
 
 from ciaf.watermarks.text import build_text_artifact_evidence
 from ciaf.watermarks.hashing import sha256_text
+
 
 def test_dual_state_hashing():
     """Test that dual-state hashing produces different hashes."""
@@ -111,7 +113,9 @@ in the world."""
     print("-" * 70)
     print(f"Normalized before: {evidence.hashes.normalized_hash_before}")
     print(f"Normalized after:  {evidence.hashes.normalized_hash_after}")
-    print(f"Different:         {evidence.hashes.normalized_hash_before != evidence.hashes.normalized_hash_after}")
+    print(
+        f"Different:         {evidence.hashes.normalized_hash_before != evidence.hashes.normalized_hash_after}"
+    )
     print("-" * 70)
 
     # SimHash fingerprints
@@ -120,7 +124,9 @@ in the world."""
         print("-" * 70)
         print(f"SimHash before: {evidence.hashes.simhash_before}")
         print(f"SimHash after:  {evidence.hashes.simhash_after}")
-        print(f"Different:      {evidence.hashes.simhash_before != evidence.hashes.simhash_after}")
+        print(
+            f"Different:      {evidence.hashes.simhash_before != evidence.hashes.simhash_after}"
+        )
         print("-" * 70)
 
     # FINAL ASSERTIONS
@@ -130,15 +136,23 @@ in the world."""
 
     # Critical assertions
     assert hash_before != hash_after, "❌ FAIL: Hashes should be different!"
-    assert hash_before == manual_hash_before, "❌ FAIL: hash_before doesn't match original!"
-    assert hash_after == manual_hash_after, "❌ FAIL: hash_after doesn't match watermarked!"
-    assert original_content_in_watermark, "❌ FAIL: Original AI response not in watermark!"
+    assert (
+        hash_before == manual_hash_before
+    ), "❌ FAIL: hash_before doesn't match original!"
+    assert (
+        hash_after == manual_hash_after
+    ), "❌ FAIL: hash_after doesn't match watermarked!"
+    assert (
+        original_content_in_watermark
+    ), "❌ FAIL: Original AI response not in watermark!"
     assert watermark_tag_present, "❌ FAIL: Watermark tag missing!"
     assert verification_url_present, "❌ FAIL: Verification URL missing!"
 
     # Additional checks
     assert evidence.output_hash_raw == hash_before, "❌ FAIL: output_hash_raw mismatch!"
-    assert evidence.output_hash_distributed == hash_after, "❌ FAIL: output_hash_distributed mismatch!"
+    assert (
+        evidence.output_hash_distributed == hash_after
+    ), "❌ FAIL: output_hash_distributed mismatch!"
 
     print("✅ ALL TESTS PASSED!")
     print()
@@ -153,6 +167,7 @@ in the world."""
 
     return True
 
+
 if __name__ == "__main__":
     try:
         test_dual_state_hashing()
@@ -164,5 +179,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ ERROR: {e}\n")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)

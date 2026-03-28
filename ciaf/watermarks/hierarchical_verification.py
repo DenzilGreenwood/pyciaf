@@ -44,12 +44,10 @@ from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 
-from .models import ArtifactEvidence, VerificationResult
+from .models import ArtifactEvidence
 from .hashing import sha256_text, normalized_text_hash, simhash_text, simhash_distance
-from .text import has_watermark, extract_watermark_id
 from .fragment_verification import (
     verify_text_fragments,
-    verify_image_fragments,
     ForensicVerificationSummary,
 )
 
@@ -329,7 +327,9 @@ def _verify_tier3_similarity(
         similarity = 1.0 - (distance / 100.0)
         confidence = 0.95
         matched = True
-        details = f"SimHash similarity: distance={distance}, similarity={similarity:.1%}"
+        details = (
+            f"SimHash similarity: distance={distance}, similarity={similarity:.1%}"
+        )
 
     elif distance <= 15:
         similarity = 1.0 - (distance / 64.0)
@@ -528,7 +528,9 @@ def verify_image_artifact_hierarchical(
         is_authentic=False,
         overall_confidence=0.0,
     )
-    result.notes.append("Image hierarchical verification: Phase 2 - Not yet implemented")
+    result.notes.append(
+        "Image hierarchical verification: Phase 2 - Not yet implemented"
+    )
     return result
 
 
@@ -550,7 +552,9 @@ def format_hierarchical_verification_report(
     lines.append("=" * 70)
 
     lines.append(f"\nArtifact ID: {result.artifact_id}")
-    lines.append(f"Result: {'✓ AUTHENTIC' if result.is_authentic else '✗ NOT AUTHENTIC'}")
+    lines.append(
+        f"Result: {'✓ AUTHENTIC' if result.is_authentic else '✗ NOT AUTHENTIC'}"
+    )
     lines.append(f"Overall Confidence: {result.overall_confidence:.1%}")
     lines.append(f"Final Tier: {result.final_tier.value.upper()}")
 
@@ -594,7 +598,7 @@ def format_hierarchical_verification_report(
             lines.append(f"  → Tier 3: {pct3:.1f}%")
 
     if result.tier2_fragment_results:
-        lines.append(f"\nFragment Analysis:")
+        lines.append("\nFragment Analysis:")
         fl = result.tier2_fragment_results
         lines.append(f"  Matched: {fl.fragments_matched}/{fl.total_fragments_checked}")
         lines.append(f"  Legal Defensibility: {fl.legal_defensibility}")
@@ -652,10 +656,18 @@ class VerificationStatistics:
         lines.append("Verification Statistics")
         lines.append("=" * 50)
         lines.append(f"Total Verifications: {self.total_verifications}")
-        lines.append(f"  Tier 1 (Exact): {self.tier1_matches} ({self.tier1_matches/max(1, self.total_verifications)*100:.1f}%)")
-        lines.append(f"  Tier 2 (Fragments): {self.tier2_matches} ({self.tier2_matches/max(1, self.total_verifications)*100:.1f}%)")
-        lines.append(f"  Tier 3 (Similarity): {self.tier3_matches} ({self.tier3_matches/max(1, self.total_verifications)*100:.1f}%)")
-        lines.append(f"  No Match: {self.no_matches} ({self.no_matches/max(1, self.total_verifications)*100:.1f}%)")
+        lines.append(
+            f"  Tier 1 (Exact): {self.tier1_matches} ({self.tier1_matches/max(1, self.total_verifications)*100:.1f}%)"
+        )
+        lines.append(
+            f"  Tier 2 (Fragments): {self.tier2_matches} ({self.tier2_matches/max(1, self.total_verifications)*100:.1f}%)"
+        )
+        lines.append(
+            f"  Tier 3 (Similarity): {self.tier3_matches} ({self.tier3_matches/max(1, self.total_verifications)*100:.1f}%)"
+        )
+        lines.append(
+            f"  No Match: {self.no_matches} ({self.no_matches/max(1, self.total_verifications)*100:.1f}%)"
+        )
         lines.append(
             f"Average Execution: {self.total_time_ms/max(1, self.total_verifications):.2f} ms"
         )

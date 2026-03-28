@@ -508,12 +508,12 @@ class CapsuleBuilder:
             # Convert merkle_path format if needed
             if merkle_path and isinstance(merkle_path[0], str):
                 # Simple list format - convert to (hash, position) tuples
-                proof_tuples = [
+                [
                     (path_elem, "right" if i % 2 == 0 else "left")
                     for i, path_elem in enumerate(merkle_path)
                 ]
             else:
-                proof_tuples = merkle_path
+                pass
 
             # Verify proof (simplified - would need actual Merkle tree verification)
             verification_results["merkle_proof_valid"] = True  # Placeholder

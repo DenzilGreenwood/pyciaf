@@ -360,7 +360,7 @@ class ModernCIAFModelWrapper(ModelWrapper):
                         "policy_hash": self.policy.get_policy_hash(),
                     }
 
-                    anchor = self.framework.create_dataset_anchor(
+                    self.framework.create_dataset_anchor(
                         dataset_id=dataset_id,
                         dataset_metadata=dataset_metadata,
                         master_password=master_password,

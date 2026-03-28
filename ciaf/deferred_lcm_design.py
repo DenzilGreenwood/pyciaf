@@ -170,7 +170,7 @@ def demonstrate_deferred_lcm():
     total_start = time.time()
     for i in range(100):
         input_data = [i * 0.1] * 20  # Mock feature vector
-        prediction = fast_wrapper.predict(input_data)
+        fast_wrapper.predict(input_data)
 
         if i % 20 == 0:
             print(f"   Processed {i} predictions...")

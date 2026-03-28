@@ -26,8 +26,6 @@ from dataclasses import dataclass
 from .models import (
     TextForensicFragment,
     ImageForensicFragment,
-    ForensicFragmentSet,
-    sha256_text,
     sha256_bytes,
 )
 
@@ -184,9 +182,7 @@ def verify_text_fragments(
     if matches_found >= 2:
         match_confidence = 0.99
         legal_defensibility = "high"
-        notes.append(
-            f"✓ {matches_found} of {total_fragments} fragments matched"
-        )
+        notes.append(f"✓ {matches_found} of {total_fragments} fragments matched")
         notes.append("  ➜ P(false positive) < 10^-15 - Legally airtight")
         if matches_found == total_fragments:
             notes.append("  ➜ All fragments present: Perfect match")
@@ -265,9 +261,6 @@ def verify_image_fragment_spatial_search(
         # For now, use grid search with stride
         stride = 8  # Check every 8 pixels
 
-        best_confidence = 0.0
-        best_position = (0, 0)
-        found = False
 
         for y in range(0, img_h - patch_h, stride):
             for x in range(0, img_w - patch_w, stride):

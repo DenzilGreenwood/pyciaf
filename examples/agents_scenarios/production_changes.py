@@ -193,7 +193,7 @@ def run_production_changes_scenario():
     print(f"✓ Change approval grant: {grant.grant_id}")
     print(f"  Change ticket: {grant.ticket_reference}")
     print(f"  Approved by: {grant.approved_by}")
-    print(f"  Valid for: 2 hours")
+    print("  Valid for: 2 hours")
     print(f"  Max operations: {grant.max_uses}")
     print()
 
@@ -273,15 +273,15 @@ def run_production_changes_scenario():
     print(f"✓ Total infrastructure operations: {len(all_receipts)}")
     print(f"✓ Approved operations: {len(approved_changes)}")
     print(f"✓ Denied operations: {len([r for r in all_receipts if not r.decision])}")
-    print(f"✓ Change tickets referenced: {len(set(r.elevation_grant_id for r in approved_changes))}")
+    print(
+        f"✓ Change tickets referenced: {len(set(r.elevation_grant_id for r in approved_changes))}"
+    )
     print(f"✓ Chain integrity: {chain_valid}")
     print()
 
     # Critical operations logging
     critical_ops = [
-        r
-        for r in all_receipts
-        if "heightened_logging" in r.policy_obligations
+        r for r in all_receipts if "heightened_logging" in r.policy_obligations
     ]
     print(f"✓ Operations with heightened logging: {len(critical_ops)}")
     print()

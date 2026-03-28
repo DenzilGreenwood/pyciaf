@@ -24,11 +24,7 @@ Version: 1.2.0
 
 from __future__ import annotations
 
-import random
-import re
-import hashlib
 from typing import List, Tuple, Optional
-from dataclasses import dataclass
 
 from .models import (
     TextForensicFragment,
@@ -39,7 +35,6 @@ from .models import (
     sha256_text,
     sha256_bytes,
 )
-
 
 # ============================================================================
 # TEXT FRAGMENT SELECTION
@@ -253,8 +248,12 @@ def compute_image_patch_entropy(
 
         # Spatial diversity: gradient edges
         edges = np.zeros_like(patch[:, :, 0], dtype=float)
-        edges[:-1, :] += np.abs(patch[1:, :, 0].astype(float) - patch[:-1, :, 0].astype(float))
-        edges[:, :-1] += np.abs(patch[:, 1:, 0].astype(float) - patch[:, :-1, 0].astype(float))
+        edges[:-1, :] += np.abs(
+            patch[1:, :, 0].astype(float) - patch[:-1, :, 0].astype(float)
+        )
+        edges[:, :-1] += np.abs(
+            patch[:, 1:, 0].astype(float) - patch[:, :-1, 0].astype(float)
+        )
 
         edge_strength = np.mean(edges) / 255.0
 
@@ -348,7 +347,7 @@ def select_image_forensic_patches(
 
         return fragments
 
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -478,12 +477,12 @@ def create_forensic_fragment_set(
 
         # Compute aggregate statistics
         if fragment_set.all_fragments:
-            avg_entropy = sum(f.entropy_score for f in fragment_set.all_fragments) / len(
-                fragment_set.all_fragments
-            )
+            avg_entropy = sum(
+                f.entropy_score for f in fragment_set.all_fragments
+            ) / len(fragment_set.all_fragments)
             fragment_set.cumulative_entropy_score = avg_entropy
 
         return fragment_set if fragment_set.fragment_count > 0 else None
 
-    except Exception as e:
+    except Exception:
         return None

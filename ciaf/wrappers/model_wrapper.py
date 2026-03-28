@@ -236,7 +236,7 @@ class CIAFModelWrapper:
                 "compliance_mode": self.compliance_mode,
             }
 
-            anchor = self.framework.create_dataset_anchor(
+            self.framework.create_dataset_anchor(
                 dataset_id=dataset_id,
                 dataset_metadata=dataset_metadata,
                 master_password=master_password,
@@ -460,7 +460,7 @@ class CIAFModelWrapper:
                         )
 
                     # Add receipt with proper parameters
-                    lcm_receipt = connections.add_receipt(
+                    connections.add_receipt(
                         receipt_id=receipt.receipt_hash,
                         model_anchor_ref=(
                             self.training_snapshot.snapshot_id
@@ -906,7 +906,7 @@ class CIAFModelWrapper:
                     for receipt_data in conn_data.get("receipts", []):
                         try:
                             # Recreate the LCM receipt with proper parameters
-                            lcm_receipt = connections.add_receipt(
+                            connections.add_receipt(
                                 receipt_id=receipt_data.get("receipt_id", "unknown"),
                                 model_anchor_ref=receipt_data.get(
                                     "model_anchor_ref", "unknown"

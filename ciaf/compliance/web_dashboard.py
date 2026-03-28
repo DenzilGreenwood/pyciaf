@@ -481,7 +481,6 @@ class DashboardData:
 
             # Adjust based on model characteristics
             if hasattr(anchor, "compliance_metadata"):
-                compliance_data = anchor.compliance_metadata
                 # Factor in actual compliance metrics
                 base_score += random.uniform(-10, 10)
 

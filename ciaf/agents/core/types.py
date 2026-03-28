@@ -50,9 +50,7 @@ class Identity:
         if not isinstance(self.roles, frozenset):
             object.__setattr__(self, "roles", frozenset(self.roles))
         if isinstance(self.attributes, dict):
-            object.__setattr__(
-                self, "attributes", frozenset(self.attributes.items())
-            )
+            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))
 
     @property
     def attributes_dict(self) -> Dict[str, Any]:
@@ -90,9 +88,7 @@ class Resource:
     def __post_init__(self):
         """Ensure immutable attributes."""
         if isinstance(self.attributes, dict):
-            object.__setattr__(
-                self, "attributes", frozenset(self.attributes.items())
-            )
+            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))
 
     @property
     def attributes_dict(self) -> Dict[str, Any]:
@@ -209,9 +205,7 @@ class ElevationGrant:
             now = datetime.now(timezone.utc)
 
         valid_from_dt = datetime.fromisoformat(self.valid_from.replace("Z", "+00:00"))
-        valid_until_dt = datetime.fromisoformat(
-            self.valid_until.replace("Z", "+00:00")
-        )
+        valid_until_dt = datetime.fromisoformat(self.valid_until.replace("Z", "+00:00"))
 
         time_valid = valid_from_dt <= now <= valid_until_dt
 

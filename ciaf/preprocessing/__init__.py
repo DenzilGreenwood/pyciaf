@@ -250,7 +250,7 @@ class MixedDataPreprocessor:
     def fit(self, data):
         self.data_type = self._detector.detect_data_type(data)
         self._impl = create_preprocessor(self.data_type, self._policy)
-        result = self._impl.fit(data)
+        self._impl.fit(data)
         self.is_fitted = self._impl.is_fitted()
         return self
 

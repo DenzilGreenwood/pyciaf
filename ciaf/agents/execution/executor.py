@@ -9,7 +9,7 @@ Author: Denzil James Greenwood
 Version: 1.0.0
 """
 
-from typing import Any, Callable, Dict, Optional
+from typing import Callable, Dict, Optional
 
 from ..core.interfaces import ToolMediator
 from ..core.types import ActionRequest, ExecutionResult
@@ -63,9 +63,7 @@ class ToolExecutor(ToolMediator):
         if schema:
             self._tool_schemas[tool_name] = schema
 
-    def execute_tool(
-        self, tool_name: str, request: ActionRequest
-    ) -> ExecutionResult:
+    def execute_tool(self, tool_name: str, request: ActionRequest) -> ExecutionResult:
         """
         Execute a tool with full mediation and audit.
 

@@ -103,7 +103,7 @@ class UniversalModelDetector:
         try:
             model_class = model.__class__
             module_name = model_class.__module__.lower()
-            class_name = model_class.__name__.lower()
+            model_class.__name__.lower()
 
             # Check module-based detection first
             for framework, signature in self.framework_signatures.items():

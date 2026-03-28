@@ -178,7 +178,7 @@ class AuditTrailGenerator(AuditTrailProvider):
             "model_architecture": training_params.get("model_architecture", "unknown"),
         }
 
-        event_id = self.record_event(
+        self.record_event(
             AuditEventType.MODEL_TRAINING,
             event_data,
             user_id=user_id,
@@ -219,7 +219,7 @@ class AuditTrailGenerator(AuditTrailProvider):
             "metadata": query_metadata,
         }
 
-        event_id = self.record_event(
+        self.record_event(
             AuditEventType.INFERENCE_REQUEST,
             event_data,
             user_id=user_id,
@@ -259,7 +259,7 @@ class AuditTrailGenerator(AuditTrailProvider):
             "retention_period": data_summary.get("retention_period", "as_needed"),
         }
 
-        event_id = self.record_event(
+        self.record_event(
             AuditEventType.DATA_ACCESS,
             event_data,
             user_id=user_id,
@@ -298,7 +298,7 @@ class AuditTrailGenerator(AuditTrailProvider):
             "overall_status": results.get("overall_status", "unknown"),
         }
 
-        event_id = self.record_event(
+        self.record_event(
             AuditEventType.COMPLIANCE_CHECK,
             event_data,
             user_id=user_id,

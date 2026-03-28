@@ -351,7 +351,7 @@ class LCMInferenceManager:
 
         lines = []
         for i, receipt in enumerate(connections.receipts[:3]):  # Show first 3
-            input_preview = (
+            (
                 receipt.query[:30] + "..." if len(receipt.query) > 30 else receipt.query
             )
             lines.append(
