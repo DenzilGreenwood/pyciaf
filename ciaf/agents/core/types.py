@@ -61,14 +61,21 @@ class Identity:
 
     def get_fingerprint(self) -> str:
         """Generate cryptographic fingerprint of this identity."""
+        # Handle both PrincipalType enum and string
+        principal_type_str = (
+            self.principal_type.value
+            if isinstance(self.principal_type, PrincipalType)
+            else str(self.principal_type)
+        )
+
         identity_data = {
             "principal_id": self.principal_id,
-            "principal_type": self.principal_type.value,
+            "principal_type": principal_type_str,
             "roles": sorted(list(self.roles)),
             "tenant_id": self.tenant_id,
             "environment": self.environment,
         }
-        return sha256_hash(str(identity_data))
+        return sha256_hash(str(identity_data).encode('utf-8'))
 
 
 @dataclass(frozen=True)

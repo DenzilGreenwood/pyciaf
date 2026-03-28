@@ -15,6 +15,9 @@ from .policy_conditions import (
     same_environment_only,
     sensitivity_level_check,
     create_attribute_matcher,
+    identity_has_attribute,
+    combine_and,
+    combine_or,
 )
 
 __all__ = [
@@ -23,4 +26,7 @@ __all__ = [
     "same_environment_only",
     "sensitivity_level_check",
     "create_attribute_matcher",
+    "identity_has_attribute",
+    "combine_and",
+    "combine_or",
 ]
