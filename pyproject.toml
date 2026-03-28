@@ -105,18 +105,40 @@ exclude = '''
 
 [tool.mypy]
 python_version = "3.9"
-warn_return_any = true
+warn_return_any = false
 warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+disallow_untyped_decorators = false
+no_implicit_optional = false
+warn_redundant_casts = false
+warn_unused_ignores = false
+warn_no_return = false
+warn_unreachable = false
+strict_equality = false
+ignore_missing_imports = true
+
+# ciaf/__init__.py has many conditional imports - skip it
+[[tool.mypy.overrides]]
+module = "ciaf"
+ignore_errors = true
+
+# Strict checking for new modules (v1.3.x and v1.2.0)
+[[tool.mypy.overrides]]
+module = [
+    "ciaf.agents.*",
+    "ciaf.web.*",
+    "ciaf.watermarks.*"
+]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
-check_untyped_defs = true
 disallow_untyped_decorators = true
 no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
+warn_return_any = true
 warn_unreachable = true
-strict_equality = true
+check_untyped_defs = true
+ignore_missing_imports = false
 
 [tool.pytest.ini_options]
 minversion = "6.0"

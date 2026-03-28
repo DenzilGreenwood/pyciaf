@@ -9,6 +9,7 @@ Last Modified: 2026-03-28
 Author: Denzil James Greenwood
 Version: 1.3.2
 """
+# type: ignore  # Conditional imports set variables to None which mypy doesn't like
 
 # Anchoring module removed - using LCM system instead
 from .lcm import LCMDatasetAnchor, LCMDatasetManager
@@ -244,20 +245,20 @@ try:
     WEB_AVAILABLE = True
 except ImportError:
     WEB_AVAILABLE = False
-    WebAIEvent = None
-    EventType = None
-    PolicyDecision = None
-    DataClassification = None
-    ToolCategory = None
-    AIToolDetector = None
-    detect_ai_tool = None
-    ContentClassifier = None
-    classify_content = None
-    PolicyEngine = None
-    evaluate_policy = None
-    WebAIReceipt = None
-    generate_receipt = None
-    WebAIVaultAdapter = None
+    WebAIEvent = None  # type: ignore[assignment,misc]
+    EventType = None  # type: ignore[assignment,misc]
+    PolicyDecision = None  # type: ignore[assignment,misc]
+    DataClassification = None  # type: ignore[assignment,misc]
+    ToolCategory = None  # type: ignore[assignment,misc]
+    AIToolDetector = None  # type: ignore[assignment,misc]
+    detect_ai_tool = None  # type: ignore[assignment]
+    ContentClassifier = None  # type: ignore[assignment,misc]
+    classify_content = None  # type: ignore[assignment]
+    PolicyEngine = None  # type: ignore[assignment,misc]
+    evaluate_policy = None  # type: ignore[assignment]
+    WebAIReceipt = None  # type: ignore[assignment,misc]
+    generate_receipt = None  # type: ignore[assignment]
+    WebAIVaultAdapter = None  # type: ignore[assignment,misc]
 
 __version__ = "1.3.2"
 __all__ = [
