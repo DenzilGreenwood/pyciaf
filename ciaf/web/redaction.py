@@ -58,7 +58,9 @@ class RedactionRule:
     def redact(self, text: str) -> str:
         """Apply redaction to text."""
         if self.replacement_fn:
-            return self.pattern.sub(lambda m: self.replacement_fn(m.group(0)), text)
+            # Type narrowing: replacement_fn is guaranteed not None here
+            fn = self.replacement_fn
+            return self.pattern.sub(lambda m: fn(m.group(0)), text)
         else:
             return self.pattern.sub(self.replacement, text)
 
@@ -191,11 +193,11 @@ class ContentRedactor:
 
         return redacted
 
-    def add_rule(self, name: str, rule: RedactionRule):
+    def add_rule(self, name: str, rule: RedactionRule) -> None:
         """Add custom redaction rule."""
         self.rules[name] = rule
 
-    def remove_rule(self, name: str):
+    def remove_rule(self, name: str) -> None:
         """Remove redaction rule."""
         self.rules.pop(name, None)
 

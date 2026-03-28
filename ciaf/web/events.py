@@ -149,7 +149,7 @@ class WebAIEvent:
         session_id: str,
         tool_name: Optional[str] = None,
         tool_domain: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> WebAIEvent:
         """
         Create a new WebAIEvent with auto-generated ID and timestamp.
@@ -180,7 +180,7 @@ class WebAIEvent:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert event to dictionary for serialization."""
-        result = {
+        result: Dict[str, Any] = {
             "event_id": self.event_id,
             "event_type": self.event_type.value,
             "occurred_at": self.occurred_at,

@@ -78,7 +78,7 @@ class WebAIReceipt:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert receipt to dictionary."""
-        result = {
+        result: Dict[str, Any] = {
             "receipt_id": self.receipt_id,
             "event_id": self.event_id,
             "created_at": self.created_at,
