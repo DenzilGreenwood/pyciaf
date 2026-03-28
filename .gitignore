@@ -137,3 +137,6 @@ test_optimized/
 # OS
 .DS_Store
 Thumbs.db
+
+# Documentation to exclude
+COMPREHENSIVE_REVIEW.md
