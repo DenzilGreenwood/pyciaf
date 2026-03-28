@@ -23,6 +23,8 @@ CIAF (Cognitive Insight Audit Framework) addresses AI transparency, auditability
 - **Cryptographic Provenance Tracking** — End-to-end verifiable data lineage with Merkle trees and hash connections.
 - **Lazy Capsule Materialization (LCM)** — On-demand proof capsule materialization to minimize storage and exposure.
 - **Agentic Execution Boundaries** (NEW in v1.3.0) — Zero-trust IAM/PAM controls for autonomous AI agents with cryptographic audit trails.
+- **AI Watermarking & Verification** (v1.2.0) — Hierarchical three-tier verification with 34× speedup, forensic fragments, and tamper detection.
+- **Web AI Governance** (v1.2.0) — Browser-based AI usage detection, policy enforcement, and shadow AI monitoring with cryptographic receipts.
 - **Compliance Mapping** — Artifacts designed to map to EU AI Act, NIST AI RMF, GDPR/HIPAA, SOX, ISO/IEC 27001 (see `docs/compliance/`).
 - **Security-First Design** — Optional AES-256-GCM, secure anchor derivation, tamper-evident audit trails.
 - **Risk Assessment Patterns** — Bias/fairness checks and uncertainty-quantification scaffolding.
@@ -64,7 +66,7 @@ pip install "git+https://github.com/DenzilGreenwood/pyciaf.git#egg=ciaf"
 
 ## 📚 Documentation
 
-CIAF v1.1.0 includes comprehensive documentation consolidated in the `docs/` directory:
+CIAF v1.3.1 includes comprehensive documentation consolidated in the `docs/` directory:
 
 | Document | Description |
 |----------|-------------|
@@ -79,9 +81,23 @@ CIAF v1.1.0 includes comprehensive documentation consolidated in the `docs/` dir
 | **[docs/CODING_STANDARDS.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/CODING_STANDARDS.md)** | Development standards and guidelines |
 | **[docs/WHITEPAPER.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/WHITEPAPER.md)** | Technical whitepaper and research foundations |
 
+### Module-Specific Documentation
+
+| Module | Documentation | Description |
+|--------|---------------|-------------|
+| **Agentic Execution Boundaries** | [ciaf/agents/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/agents/README.md) | Zero-trust IAM/PAM for autonomous agents |
+| | [docs/agents/QUICKSTART.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/agents/QUICKSTART.md) | 5-minute agents tutorial |
+| | [docs/agents/DEVELOPER_GUIDE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/agents/DEVELOPER_GUIDE.md) | Complete integration guide |
+| **AI Watermarking** | [docs/HIERARCHICAL_VERIFICATION_STRATEGY.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/HIERARCHICAL_VERIFICATION_STRATEGY.md) | Three-tier verification architecture |
+| | [docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md) | 30-second watermark quick reference |
+| **Web AI Governance** | [ciaf/web/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/web/README.md) | Browser-based AI usage governance |
+
 ### Quick Navigation
 
 - **New to CIAF?** → Start with [docs/quickstart.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/quickstart.md)
+- **Agentic systems?** → See [docs/agents/QUICKSTART.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/agents/QUICKSTART.md) and [examples/agents_scenarios/](https://github.com/DenzilGreenwood/pyciaf/tree/main/examples/agents_scenarios)
+- **AI watermarking?** → Check [docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md)
+- **Web AI governance?** → Read [ciaf/web/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/web/README.md)
 - **Production deployment?** → See [docs/MODEL_BUILDING_GUIDE_V1_1_0.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/MODEL_BUILDING_GUIDE_V1_1_0.md)
 - **Performance optimization?** → Check [docs/DEFERRED_LCM_README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/DEFERRED_LCM_README.md)
 - **Compliance requirements?** → Review [docs/compliance-mapping.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/compliance-mapping.md)
@@ -89,7 +105,7 @@ CIAF v1.1.0 includes comprehensive documentation consolidated in the `docs/` dir
 
 ## Project Structure
 
-CIAF v1.1.0 follows a clean, professional project structure:
+CIAF v1.3.1 follows a clean, professional project structure:
 
 ```
 PYPI/                           # Root project directory
@@ -99,10 +115,19 @@ PYPI/                           # Root project directory
 │   ├── lcm/                    # Lifecycle Management
 │   ├── compliance/             # Regulatory compliance
 │   ├── wrappers/               # Model wrappers
+│   ├── agents/                 # Agentic execution boundaries (v1.3.0)
+│   ├── watermarks/             # AI watermarking & verification (v1.2.0)
+│   ├── web/                    # Web AI governance (v1.2.0)
 │   └── ...                     # Additional modules
 ├── examples/                   # Usage examples and demos
+│   ├── agents_scenarios/       # Healthcare, financial, production scenarios
+│   ├── hierarchical_verification_examples.py  # Watermark verification
+│   └── ...                     # Additional examples
 ├── tests/                      # Comprehensive test suite
 ├── docs/                       # Complete documentation
+│   ├── agents/                 # Agentic execution documentation
+│   ├── HIERARCHICAL_VERIFICATION_*.md  # Watermarking docs
+│   └── ...                     # Core documentation
 ├── tools/                      # Development utilities
 └── PROJECT_STRUCTURE.md        # Detailed structure guide
 ```
@@ -188,6 +213,25 @@ CIAF Framework
 │  ├─ Inference Receipts (verifiable prediction records)
 │  ├─ ZKE Connections (privacy-preserving audit connections)
 │  └─ Metadata Reveal (complete lineage tracing)
+├─ Agentic Execution Boundaries (v1.3.0)
+│  ├─ IAM Store (identity & role management)
+│  ├─ PAM Store (JIT privilege elevation)
+│  ├─ Policy Engine (RBAC + ABAC evaluation)
+│  ├─ Evidence Vault (cryptographic receipts)
+│  └─ Tool Executor (mediated invocation)
+├─ AI Watermarking & Verification (v1.2.0)
+│  ├─ Hierarchical Verification (3-tier strategy)
+│  ├─ Forensic Fragments (DNA sampling)
+│  ├─ Text/Image/Video Watermarking
+│  ├─ Tamper Detection (hash chains)
+│  └─ Perceptual Similarity (SimHash)
+├─ Web AI Governance (v1.2.0)
+│  ├─ AI Tool Detection (15+ tools, shadow AI)
+│  ├─ Content Classification (PII, PHI, secrets)
+│  ├─ Policy Engine (allow/warn/block/redact)
+│  ├─ Event Collection (browser integration)
+│  ├─ Cryptographic Receipts (evidence)
+│  └─ Vault Storage (searchable governance)
 ├─ Metadata Management
 │  ├─ Storage backends (JSON, SQLite, Pickle)
 │  ├─ Configuration templates

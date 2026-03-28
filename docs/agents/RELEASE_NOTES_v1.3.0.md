@@ -3,8 +3,11 @@
 ## Release: Agentic Execution Boundaries
 
 **Version:** 1.3.0
+
 **Release Date:** 2026-03-28
+
 **Type:** Major Feature Addition
+
 
 ## Overview
 
