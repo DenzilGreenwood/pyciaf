@@ -1,20 +1,25 @@
 """
 Core data types for CIAF Agentic Execution Boundaries.
 
-Defines dataclasses for identity, resources, permissions, and execution tracking
+Defines Pydantic models for identity, resources, permissions, and execution tracking
 that integrate with CIAF's cryptographic provenance system.
 
 Created: 2026-03-28
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models with schema validation
 """
 
-from dataclasses import dataclass, field
+import re
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, Optional, Set
+from typing import Any, Callable, Dict, List, Optional, Set
+
+from pydantic import BaseModel, Field, field_validator, computed_field, ConfigDict
 
 from ...core import sha256_hash
+
+# SHA-256 hash pattern from schema
+SHA256_PATTERN = re.compile(r"^[a-f0-9]{64}$")
 
 
 class PrincipalType(str, Enum):
@@ -26,38 +31,48 @@ class PrincipalType(str, Enum):
     SYSTEM = "system"
 
 
-@dataclass(frozen=True)
-class Identity:
+
+class Identity(BaseModel):
     """
     Immutable identity for an agent or human principal.
 
     Integrates with CIAF's cryptographic anchoring system.
+    Schema: identity.schema.json
     """
 
-    principal_id: str
-    principal_type: PrincipalType
-    display_name: str
-    roles: Set[str] = field(default_factory=set)
-    attributes: Dict[str, Any] = field(default_factory=dict)
-    tenant_id: Optional[str] = None
-    environment: Optional[str] = None
-    created_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    model_config = ConfigDict(
+        frozen=True,
+        validate_assignment=True,
+        extra='forbid'
     )
 
-    def __post_init__(self) -> None:
-        """Ensure immutable collections are properly frozen."""
-        if not isinstance(self.roles, frozenset):  # type: ignore[unreachable]
-            object.__setattr__(self, "roles", frozenset(self.roles))  # type: ignore[unreachable]
-        if isinstance(self.attributes, dict):  # type: ignore[unreachable]
-            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))  # type: ignore[unreachable]
+    principal_id: str = Field(..., description="Unique principal identifier")
+    principal_type: PrincipalType = Field(..., description="Type of principal")
+    display_name: str = Field(..., description="Human-readable display name")
+    roles: Set[str] = Field(default_factory=set, description="Assigned roles")
+    attributes: Dict[str, Any] = Field(default_factory=dict, description="Additional principal attributes")
+    tenant_id: Optional[str] = Field(None, description="Tenant/organization identifier")
+    environment: Optional[str] = Field(None, description="Environment where principal operates")
+    created_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat(),
+        description="ISO 8601 creation timestamp"
+    )
 
+    @field_validator('created_at')
+    @classmethod
+    def validate_timestamp(cls, v: str) -> str:
+        """Validate ISO 8601 timestamp format."""
+        try:
+            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
+
+    @computed_field
     @property
     def attributes_dict(self) -> Dict[str, Any]:
         """Get attributes as a dictionary."""
-        if isinstance(self.attributes, frozenset):  # type: ignore[unreachable]
-            return dict(self.attributes)  # type: ignore[unreachable]
-        return dict(self.attributes)  # type: ignore[unreachable]
+        return dict(self.attributes)
 
     def get_fingerprint(self) -> str:
         """Generate cryptographic fingerprint of this identity."""
@@ -78,46 +93,64 @@ class Identity:
         return sha256_hash(str(identity_data).encode("utf-8"))
 
 
-@dataclass(frozen=True)
-class Resource:
+
+class Resource(BaseModel):
     """
     A resource that can be accessed or modified.
 
     Resources are CIAF-tracked entities with cryptographic identity.
+    Schema: resource.schema.json
     """
 
-    resource_id: str
-    resource_type: str
-    owner_tenant: Optional[str] = None
-    attributes: Dict[str, Any] = field(default_factory=dict)
-    sensitivity_level: str = "standard"  # standard, sensitive, critical
+    model_config = ConfigDict(
+        frozen=True,
+        validate_assignment=True,
+        extra='forbid'
+    )
 
-    def __post_init__(self) -> None:
-        """Ensure immutable attributes."""
-        if isinstance(self.attributes, dict):  # type: ignore[unreachable]
-            object.__setattr__(self, "attributes", frozenset(self.attributes.items()))  # type: ignore[unreachable]
+    resource_id: str = Field(..., description="Unique resource identifier")
+    resource_type: str = Field(..., description="Resource type (e.g., model, dataset, file)")
+    owner_tenant: Optional[str] = Field(None, description="Owning tenant identifier")
+    attributes: Dict[str, Any] = Field(default_factory=dict, description="Resource attributes")
+    sensitivity_level: str = Field(
+        default="standard",
+        description="Resource sensitivity classification (standard, sensitive, critical, confidential)"
+    )
 
+    @computed_field
     @property
     def attributes_dict(self) -> Dict[str, Any]:
         """Get attributes as a dictionary."""
-        if isinstance(self.attributes, frozenset):  # type: ignore[unreachable]
-            return dict(self.attributes)  # type: ignore[unreachable]
-        return dict(self.attributes)  # type: ignore[unreachable]
+        return dict(self.attributes)
 
 
-@dataclass
-class Permission:
+
+class Permission(BaseModel):
     """
     A permission granting an action on a resource type.
 
     Supports both RBAC and ABAC through condition functions.
+    Schema: permission.schema.json
     """
 
-    action: str
-    resource_type: str
-    condition: Optional[Callable[[Identity, Resource], bool]] = None
-    description: str = ""
-    requires_elevation: bool = False
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid',
+        arbitrary_types_allowed=True  # Required for Callable field
+    )
+
+    action: str = Field(..., description="Permitted action (e.g., read, write, execute, delete)")
+    resource_type: str = Field(..., description="Type of resource this permission applies to")
+    condition: Optional[Callable[[Identity, Resource], bool]] = Field(
+        None,
+        exclude=True,  # Don't serialize Callable to JSON
+        description="ABAC condition function"
+    )
+    description: str = Field(default="", description="Human-readable description of permission")
+    requires_elevation: bool = Field(
+        default=False,
+        description="Whether this permission requires privilege elevation"
+    )
 
     def allows(self, identity: Identity, resource: Resource) -> bool:
         """Check if this permission allows the action."""
@@ -126,85 +159,139 @@ class Permission:
         return self.condition(identity, resource)
 
 
-@dataclass
-class RoleDefinition:
+
+class RoleDefinition(BaseModel):
     """
     A named collection of permissions.
 
     Roles are the primary RBAC mechanism in CIAF agents.
     """
 
-    name: str
-    permissions: list[Permission] = field(default_factory=list)
-    description: str = ""
-    inherits_from: Set[str] = field(default_factory=set)
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid',
+        arbitrary_types_allowed=True  # Required for Permission with Callable fields
+    )
+
+    name: str = Field(..., description="Role name")
+    permissions: List[Permission] = Field(default_factory=list, description="List of permissions")
+    description: str = Field(default="", description="Human-readable description")
+    inherits_from: Set[str] = Field(default_factory=set, description="Roles this role inherits from")
 
 
-@dataclass
-class ActionRequest:
+
+class ActionRequest(BaseModel):
     """
     A request to perform an action on a resource.
 
     Central type for authorization and audit trails.
+    Schema: action-request.schema.json
     """
 
-    action: str
-    resource: Resource
-    params: Dict[str, Any] = field(default_factory=dict)
-    justification: str = ""
-    requested_by: Optional[Identity] = None
-    correlation_id: Optional[str] = None
-    timestamp: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
     )
+
+    action: str = Field(..., description="Action to perform (e.g., read, write, execute)")
+    resource: Resource = Field(..., description="Target resource")
+    params: Dict[str, Any] = Field(default_factory=dict, description="Action parameters")
+    justification: str = Field(default="", description="Justification for the action")
+    requested_by: Optional[Identity] = Field(None, description="Requesting principal")
+    correlation_id: Optional[str] = Field(None, description="Correlation identifier for tracing")
+    timestamp: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat(),
+        description="Request timestamp"
+    )
+
+    @field_validator('timestamp')
+    @classmethod
+    def validate_timestamp(cls, v: str) -> str:
+        """Validate ISO 8601 timestamp format."""
+        try:
+            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
 
     def get_params_hash(self) -> str:
         """Get cryptographic hash of parameters."""
         return sha256_hash(str(sorted(self.params.items())).encode("utf-8"))
 
 
-@dataclass
-class ExecutionResult:
+
+class ExecutionResult(BaseModel):
     """
     Result of an action execution attempt.
 
     Contains authorization decision and execution outcome.
+    Schema: execution-result.schema.json
     """
 
-    request: ActionRequest
-    allowed: bool
-    reason: str
-    executed: bool = False
-    result: Any = None
-    error: Optional[str] = None
-    elevation_grant_id: Optional[str] = None
-    policy_obligations: list[str] = field(default_factory=list)
-    timestamp: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
     )
 
+    request: ActionRequest = Field(..., description="Original action request")
+    allowed: bool = Field(..., description="Whether action was allowed")
+    reason: str = Field(..., description="Reason for decision")
+    executed: bool = Field(default=False, description="Whether action was actually executed")
+    result: Any = Field(None, description="Execution result data (any type)")
+    error: Optional[str] = Field(None, description="Error message if execution failed")
+    elevation_grant_id: Optional[str] = Field(None, description="Elevation grant ID used if applicable")
+    policy_obligations: List[str] = Field(default_factory=list, description="Policy obligations that must be fulfilled")
+    timestamp: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat(),
+        description="Result timestamp"
+    )
 
-@dataclass
-class ElevationGrant:
+    @field_validator('timestamp')
+    @classmethod
+    def validate_timestamp(cls, v: str) -> str:
+        """Validate ISO 8601 timestamp format."""
+        try:
+            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
+
+
+
+class ElevationGrant(BaseModel):
     """
     A just-in-time privilege elevation grant.
 
     Implements PAM-style temporary privilege escalation.
+    Schema: elevation-grant.schema.json
     """
 
-    grant_id: str
-    principal_id: str
-    elevated_role: str
-    scope: Dict[str, Any] = field(default_factory=dict)
-    approved_by: str = ""
-    ticket_reference: str = ""
-    valid_from: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
     )
-    valid_until: str = ""
-    purpose: str = ""
-    used_count: int = 0
-    max_uses: Optional[int] = None
+
+    grant_id: str = Field(..., description="Unique grant identifier")
+    principal_id: str = Field(..., description="Principal receiving elevated privileges")
+    elevated_role: str = Field(..., description="Role being granted temporarily")
+    scope: Dict[str, Any] = Field(default_factory=dict, description="Scope limitations for the grant")
+    approved_by: str = Field(..., description="Approver principal ID")  # Required per schema
+    ticket_reference: str = Field(default="", description="Reference to approval ticket or workflow")
+    valid_from: str = Field(..., description="Grant validity start time")  # Required per schema
+    valid_until: str = Field(..., description="Grant expiration time")  # Required per schema
+    purpose: str = Field(default="", description="Purpose/justification for elevation")
+    used_count: int = Field(default=0, ge=0, description="Number of times grant has been used")
+    max_uses: Optional[int] = Field(None, ge=1, description="Maximum number of uses (optional)")
+
+    @field_validator('valid_from', 'valid_until')
+    @classmethod
+    def validate_timestamp(cls, v: str) -> str:
+        """Validate ISO 8601 timestamp format."""
+        try:
+            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
 
     def is_valid(self, now: Optional[datetime] = None) -> bool:
         """Check if this grant is currently valid."""
@@ -224,30 +311,58 @@ class ElevationGrant:
         return time_valid and uses_valid
 
 
-@dataclass
-class ActionReceipt:
+
+class ActionReceipt(BaseModel):
     """
     Cryptographic receipt of an action execution.
 
     Integrates with CIAF's audit trail and evidence system.
+    Schema: action-receipt.schema.json
     """
 
-    receipt_id: str
-    timestamp: str
-    principal_id: str
-    principal_type: PrincipalType
-    action: str
-    resource_id: str
-    resource_type: str
-    correlation_id: Optional[str] = None
-    decision: bool = False
-    reason: str = ""
-    elevation_grant_id: Optional[str] = None
-    approved_by: Optional[str] = None
-    params_hash: str = ""
-    policy_obligations: list[str] = field(default_factory=list)
-    prior_receipt_hash: str = "0" * 64
-    signature: str = ""
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    receipt_id: str = Field(..., description="Unique receipt identifier")
+    timestamp: str = Field(..., description="Execution timestamp")
+    principal_id: str = Field(..., description="Principal who performed the action")
+    principal_type: PrincipalType = Field(..., description="Type of principal")
+    action: str = Field(..., description="Action performed")
+    resource_id: str = Field(..., description="Resource identifier")
+    resource_type: str = Field(..., description="Resource type")
+    correlation_id: Optional[str] = Field(None, description="Correlation identifier")
+    decision: bool = Field(default=False, description="Authorization decision (true=allowed)")
+    reason: str = Field(default="", description="Decision reason")
+    elevation_grant_id: Optional[str] = Field(None, description="Elevation grant ID if privileges were elevated")
+    approved_by: Optional[str] = Field(None, description="Approver principal ID for elevated actions")
+    params_hash: str = Field(default="", description="SHA-256 hash of action parameters")
+    policy_obligations: List[str] = Field(default_factory=list, description="Policy obligations that must be fulfilled")
+    prior_receipt_hash: str = Field(
+        default="0" * 64,
+        description="Hash of prior receipt for chain linking"
+    )
+    signature: str = Field(default="", description="Cryptographic signature envelope")
+
+    @field_validator('timestamp')
+    @classmethod
+    def validate_timestamp(cls, v: str) -> str:
+        """Validate ISO 8601 timestamp format."""
+        try:
+            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
+
+    @field_validator('params_hash', 'prior_receipt_hash')
+    @classmethod
+    def validate_sha256(cls, v: str) -> str:
+        """Validate SHA-256 hash format (64 character hex string)."""
+        if v and v != "0" * 64:  # Allow genesis hash (all zeros)
+            if not SHA256_PATTERN.match(v):
+                raise ValueError(f"Invalid SHA-256 hash format: {v}")
+        return v
 
     def get_receipt_hash(self) -> str:
         """

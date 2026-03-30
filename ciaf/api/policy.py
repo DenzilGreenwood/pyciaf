@@ -7,14 +7,15 @@ control over API behavior, security, compliance, and operational parameters.
 
 Created: 2025-09-28
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any, Set
 from enum import Enum
 from datetime import datetime, timedelta
+
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 
 class APIMode(Enum):
@@ -79,82 +80,114 @@ class CachingStrategy(Enum):
     NONE = "none"
 
 
-@dataclass
-class SecurityPolicy:
+
+class SecurityPolicy(BaseModel):
     """API security policy configuration."""
 
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
     # Authentication
-    authentication_method: AuthenticationMethod = AuthenticationMethod.JWT
-    require_authentication: bool = True
-    session_timeout: timedelta = field(default_factory=lambda: timedelta(hours=24))
-    max_login_attempts: int = 3
-    lockout_duration: timedelta = field(default_factory=lambda: timedelta(minutes=15))
+    authentication_method: AuthenticationMethod = Field(
+        default=AuthenticationMethod.JWT,
+        description="Authentication method to use"
+    )
+    require_authentication: bool = Field(default=True, description="Require authentication for API access")
+    session_timeout: timedelta = Field(
+        default_factory=lambda: timedelta(hours=24),
+        description="Session timeout duration"
+    )
+    max_login_attempts: int = Field(default=3, ge=1, description="Maximum login attempts before lockout")
+    lockout_duration: timedelta = Field(
+        default_factory=lambda: timedelta(minutes=15),
+        description="Lockout duration after max attempts"
+    )
 
     # Authorization
-    enable_rbac: bool = True
-    default_permissions: Set[str] = field(default_factory=set)
-    admin_permissions: Set[str] = field(
+    enable_rbac: bool = Field(default=True, description="Enable role-based access control")
+    default_permissions: Set[str] = Field(default_factory=set, description="Default permissions for users")
+    admin_permissions: Set[str] = Field(
         default_factory=lambda: {
             "create_model",
             "delete_model",
             "manage_users",
             "view_audit_logs",
-        }
+        },
+        description="Admin permissions"
     )
 
     # API Security
-    enable_cors: bool = True
-    allowed_origins: List[str] = field(default_factory=lambda: ["*"])
-    enable_https_only: bool = True
-    api_key_length: int = 32
+    enable_cors: bool = Field(default=True, description="Enable CORS")
+    allowed_origins: List[str] = Field(default_factory=lambda: ["*"], description="Allowed CORS origins")
+    enable_https_only: bool = Field(default=True, description="Require HTTPS only")
+    api_key_length: int = Field(default=32, ge=16, le=128, description="API key length in characters")
 
     # Audit
-    log_all_requests: bool = True
-    log_request_bodies: bool = False  # May contain sensitive data
-    log_response_bodies: bool = False
-    audit_sensitive_operations: bool = True
+    log_all_requests: bool = Field(default=True, description="Log all API requests")
+    log_request_bodies: bool = Field(default=False, description="Log request bodies (may contain sensitive data)")
+    log_response_bodies: bool = Field(default=False, description="Log response bodies")
+    audit_sensitive_operations: bool = Field(default=True, description="Audit sensitive operations")
 
 
-@dataclass
-class RateLimitPolicy:
+
+class RateLimitPolicy(BaseModel):
     """Rate limiting policy configuration."""
 
-    enabled: bool = True
-    strategy: RateLimitStrategy = RateLimitStrategy.TOKEN_BUCKET
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    enabled: bool = Field(default=True, description="Enable rate limiting")
+    strategy: RateLimitStrategy = Field(default=RateLimitStrategy.TOKEN_BUCKET, description="Rate limiting strategy")
 
     # Global limits
-    global_requests_per_minute: int = 1000
-    global_requests_per_hour: int = 10000
+    global_requests_per_minute: int = Field(default=1000, ge=0, description="Global requests per minute")
+    global_requests_per_hour: int = Field(default=10000, ge=0, description="Global requests per hour")
 
     # Per-user limits
-    user_requests_per_minute: int = 100
-    user_requests_per_hour: int = 1000
+    user_requests_per_minute: int = Field(default=100, ge=0, description="User requests per minute")
+    user_requests_per_hour: int = Field(default=1000, ge=0, description="User requests per hour")
 
     # Endpoint-specific limits
-    endpoint_limits: Dict[str, Dict[str, int]] = field(
+    endpoint_limits: Dict[str, Dict[str, int]] = Field(
         default_factory=lambda: {
             "/api/v1/inference": {"requests_per_minute": 50, "requests_per_hour": 500},
             "/api/v1/training": {"requests_per_minute": 10, "requests_per_hour": 100},
             "/api/v1/models": {"requests_per_minute": 20, "requests_per_hour": 200},
-        }
+        },
+        description="Endpoint-specific rate limits"
     )
 
     # Burst handling
-    allow_burst: bool = True
-    burst_multiplier: float = 2.0
-    burst_window: timedelta = field(default_factory=lambda: timedelta(seconds=30))
+    allow_burst: bool = Field(default=True, description="Allow burst traffic")
+    burst_multiplier: float = Field(default=2.0, gt=1.0, description="Burst multiplier")
+    burst_window: timedelta = Field(
+        default_factory=lambda: timedelta(seconds=30),
+        description="Burst window duration"
+    )
 
 
-@dataclass
-class CachingPolicy:
+
+class CachingPolicy(BaseModel):
     """API caching policy configuration."""
 
-    enabled: bool = True
-    strategy: CachingStrategy = CachingStrategy.MEMORY
-    default_ttl: timedelta = field(default_factory=lambda: timedelta(minutes=15))
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    enabled: bool = Field(default=True, description="Enable caching")
+    strategy: CachingStrategy = Field(default=CachingStrategy.MEMORY, description="Caching strategy")
+    default_ttl: timedelta = Field(
+        default_factory=lambda: timedelta(minutes=15),
+        description="Default cache TTL"
+    )
 
     # Endpoint-specific caching
-    endpoint_cache_config: Dict[str, Dict[str, Any]] = field(
+    endpoint_cache_config: Dict[str, Dict[str, Any]] = Field(
         default_factory=lambda: {
             "/api/v1/models": {"ttl": timedelta(hours=1), "enabled": True},
             "/api/v1/datasets": {"ttl": timedelta(hours=2), "enabled": True},
@@ -163,168 +196,214 @@ class CachingPolicy:
                 "ttl": timedelta(minutes=1),
                 "enabled": False,
             },  # Fresh data needed
-        }
+        },
+        description="Endpoint-specific cache configuration"
     )
 
     # Cache invalidation
-    auto_invalidate: bool = True
-    invalidation_patterns: Dict[str, List[str]] = field(
+    auto_invalidate: bool = Field(default=True, description="Enable auto cache invalidation")
+    invalidation_patterns: Dict[str, List[str]] = Field(
         default_factory=lambda: {
             "model_updated": ["/api/v1/models/*", "/api/v1/metrics/models/*"],
             "dataset_updated": ["/api/v1/datasets/*", "/api/v1/metrics/datasets/*"],
-        }
+        },
+        description="Cache invalidation patterns"
     )
 
 
-@dataclass
-class CompliancePolicy:
+
+class CompliancePolicy(BaseModel):
     """Compliance policy configuration."""
 
-    enabled_frameworks: List[ComplianceFramework] = field(
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    enabled_frameworks: List[ComplianceFramework] = Field(
         default_factory=lambda: [
             ComplianceFramework.GDPR,
             ComplianceFramework.EU_AI_ACT,
-        ]
+        ],
+        description="Enabled compliance frameworks"
     )
 
     # GDPR settings
-    gdpr_config: Dict[str, Any] = field(
+    gdpr_config: Dict[str, Any] = Field(
         default_factory=lambda: {
             "data_retention_days": 2555,  # 7 years
             "require_consent": True,
             "enable_right_to_be_forgotten": True,
             "data_portability": True,
             "privacy_by_design": True,
-        }
+        },
+        description="GDPR configuration"
     )
 
     # EU AI Act settings
-    ai_act_config: Dict[str, Any] = field(
+    ai_act_config: Dict[str, Any] = Field(
         default_factory=lambda: {
             "high_risk_system": False,
             "transparency_requirements": True,
             "human_oversight": True,
             "accuracy_requirements": True,
             "robustness_testing": True,
-        }
+        },
+        description="EU AI Act configuration"
     )
 
     # Audit requirements
-    compliance_audit_frequency: timedelta = field(
-        default_factory=lambda: timedelta(days=30)
+    compliance_audit_frequency: timedelta = Field(
+        default_factory=lambda: timedelta(days=30),
+        description="Compliance audit frequency"
     )
-    automated_compliance_checks: bool = True
-    compliance_reporting: bool = True
+    automated_compliance_checks: bool = Field(default=True, description="Enable automated compliance checks")
+    compliance_reporting: bool = Field(default=True, description="Enable compliance reporting")
 
 
-@dataclass
-class PerformancePolicy:
+
+class PerformancePolicy(BaseModel):
     """API performance policy configuration."""
 
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
     # Request handling
-    max_request_size: int = 10 * 1024 * 1024  # 10MB
-    max_response_size: int = 50 * 1024 * 1024  # 50MB
-    request_timeout: timedelta = field(default_factory=lambda: timedelta(seconds=30))
+    max_request_size: int = Field(
+        default=10 * 1024 * 1024,
+        ge=1024,
+        description="Maximum request size in bytes (10MB)"
+    )
+    max_response_size: int = Field(
+        default=50 * 1024 * 1024,
+        ge=1024,
+        description="Maximum response size in bytes (50MB)"
+    )
+    request_timeout: timedelta = Field(
+        default_factory=lambda: timedelta(seconds=30),
+        description="Request timeout duration"
+    )
 
     # Connection handling
-    max_concurrent_connections: int = 1000
-    connection_pool_size: int = 100
-    keep_alive_timeout: timedelta = field(default_factory=lambda: timedelta(seconds=60))
+    max_concurrent_connections: int = Field(default=1000, ge=1, description="Maximum concurrent connections")
+    connection_pool_size: int = Field(default=100, ge=1, description="Connection pool size")
+    keep_alive_timeout: timedelta = Field(
+        default_factory=lambda: timedelta(seconds=60),
+        description="Keep-alive timeout"
+    )
 
     # Background processing
-    enable_async_processing: bool = True
-    background_task_queue_size: int = 1000
-    worker_threads: int = 4
+    enable_async_processing: bool = Field(default=True, description="Enable async processing")
+    background_task_queue_size: int = Field(default=1000, ge=1, description="Background task queue size")
+    worker_threads: int = Field(default=4, ge=1, description="Number of worker threads")
 
     # Monitoring
-    enable_performance_monitoring: bool = True
-    metrics_collection_interval: timedelta = field(
-        default_factory=lambda: timedelta(seconds=30)
+    enable_performance_monitoring: bool = Field(default=True, description="Enable performance monitoring")
+    metrics_collection_interval: timedelta = Field(
+        default_factory=lambda: timedelta(seconds=30),
+        description="Metrics collection interval"
     )
-    performance_alerting: bool = True
+    performance_alerting: bool = Field(default=True, description="Enable performance alerting")
 
 
-@dataclass
-class IntegrationPolicy:
+
+class IntegrationPolicy(BaseModel):
     """Integration policy for external systems."""
 
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
     # LCM Integration
-    enable_lcm_integration: bool = True
-    lcm_auto_tracking: bool = True
-    lcm_audit_level: str = "full"
+    enable_lcm_integration: bool = Field(default=True, description="Enable LCM integration")
+    lcm_auto_tracking: bool = Field(default=True, description="Enable automatic LCM tracking")
+    lcm_audit_level: str = Field(default="full", description="LCM audit level")
 
     # Wrapper Integration
-    enable_universal_wrappers: bool = True
-    auto_detect_model_types: bool = True
-    fallback_to_legacy_wrappers: bool = True
+    enable_universal_wrappers: bool = Field(default=True, description="Enable universal wrappers")
+    auto_detect_model_types: bool = Field(default=True, description="Auto-detect model types")
+    fallback_to_legacy_wrappers: bool = Field(default=True, description="Fallback to legacy wrappers")
 
     # Compliance Integration
-    enable_realtime_compliance: bool = True
-    compliance_validation_level: str = "strict"
+    enable_realtime_compliance: bool = Field(default=True, description="Enable real-time compliance")
+    compliance_validation_level: str = Field(default="strict", description="Compliance validation level")
 
     # External APIs
-    external_api_timeout: timedelta = field(
-        default_factory=lambda: timedelta(seconds=10)
+    external_api_timeout: timedelta = Field(
+        default_factory=lambda: timedelta(seconds=10),
+        description="External API timeout"
     )
-    external_api_retries: int = 3
-    external_api_circuit_breaker: bool = True
+    external_api_retries: int = Field(default=3, ge=0, description="External API retry count")
+    external_api_circuit_breaker: bool = Field(default=True, description="Enable circuit breaker")
 
 
-@dataclass
-class LoggingPolicy:
+class LoggingPolicy(BaseModel):
     """Logging policy configuration."""
 
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
     # Log levels
-    default_log_level: str = "INFO"
-    security_log_level: str = "WARNING"
-    audit_log_level: str = "INFO"
+    default_log_level: str = Field(default="INFO", description="Default log level")
+    security_log_level: str = Field(default="WARNING", description="Security log level")
+    audit_log_level: str = Field(default="INFO", description="Audit log level")
 
     # Log destinations
-    log_to_file: bool = True
-    log_to_console: bool = True
-    log_to_syslog: bool = False
+    log_to_file: bool = Field(default=True, description="Log to file")
+    log_to_console: bool = Field(default=True, description="Log to console")
+    log_to_syslog: bool = Field(default=False, description="Log to syslog")
 
     # Log rotation
-    log_file_max_size: str = "100MB"
-    log_file_backup_count: int = 10
-    log_rotation_when: str = "midnight"
+    log_file_max_size: str = Field(default="100MB", description="Maximum log file size")
+    log_file_backup_count: int = Field(default=10, ge=0, description="Log file backup count")
+    log_rotation_when: str = Field(default="midnight", description="Log rotation schedule")
 
     # Log content
-    include_request_id: bool = True
-    include_user_id: bool = True
-    include_stack_trace: bool = True
-    mask_sensitive_data: bool = True
+    include_request_id: bool = Field(default=True, description="Include request ID in logs")
+    include_user_id: bool = Field(default=True, description="Include user ID in logs")
+    include_stack_trace: bool = Field(default=True, description="Include stack traces")
+    mask_sensitive_data: bool = Field(default=True, description="Mask sensitive data in logs")
 
     # Audit logging
-    audit_log_file: str = "ciaf_audit.log"
-    audit_log_format: str = "JSON"
-    audit_log_retention_days: int = 2555  # 7 years
+    audit_log_file: str = Field(default="ciaf_audit.log", description="Audit log file name")
+    audit_log_format: str = Field(default="JSON", description="Audit log format")
+    audit_log_retention_days: int = Field(default=2555, ge=0, description="Audit log retention (7 years)")
 
 
-@dataclass
-class APIPolicy:
+
+class APIPolicy(BaseModel):
     """Complete API policy configuration."""
 
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
     # Basic configuration
-    policy_id: str = "ciaf_api_default_v1"
-    version: str = "1.0.0"
-    created_at: datetime = field(default_factory=datetime.now)
+    policy_id: str = Field(default="ciaf_api_default_v1", description="Policy identifier")
+    version: str = Field(default="1.0.0", description="Policy version")
+    created_at: datetime = Field(default_factory=datetime.now, description="Policy creation timestamp")
 
     # Operating mode
-    api_mode: APIMode = APIMode.PRODUCTION
-    debug_mode: bool = False
+    api_mode: APIMode = Field(default=APIMode.PRODUCTION, description="API operating mode")
+    debug_mode: bool = Field(default=False, description="Enable debug mode")
 
     # Policy components
-    security: SecurityPolicy = field(default_factory=SecurityPolicy)
-    rate_limiting: RateLimitPolicy = field(default_factory=RateLimitPolicy)
-    caching: CachingPolicy = field(default_factory=CachingPolicy)
-    compliance: CompliancePolicy = field(default_factory=CompliancePolicy)
-    performance: PerformancePolicy = field(default_factory=PerformancePolicy)
-    integration: IntegrationPolicy = field(default_factory=IntegrationPolicy)
-    logging: LoggingPolicy = field(default_factory=LoggingPolicy)
+    security: SecurityPolicy = Field(default_factory=SecurityPolicy, description="Security policy")
+    rate_limiting: RateLimitPolicy = Field(default_factory=RateLimitPolicy, description="Rate limiting policy")
+    caching: CachingPolicy = Field(default_factory=CachingPolicy, description="Caching policy")
+    compliance: CompliancePolicy = Field(default_factory=CompliancePolicy, description="Compliance policy")
+    performance: PerformancePolicy = Field(default_factory=PerformancePolicy, description="Performance policy")
+    integration: IntegrationPolicy = Field(default_factory=IntegrationPolicy, description="Integration policy")
+    logging: LoggingPolicy = Field(default_factory=LoggingPolicy, description="Logging policy")
 
     # Custom extensions
-    custom_config: Dict[str, Any] = field(default_factory=dict)
+    custom_config: Dict[str, Any] = Field(default_factory=dict, description="Custom configuration extensions")
 
     def is_development_mode(self) -> bool:
         """Check if API is in development mode."""

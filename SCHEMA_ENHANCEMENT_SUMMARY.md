@@ -1,7 +1,11 @@
+> **⚠️ SUPERSEDED:** This document has been replaced by [CIAF_SCHEMA_SPECIFICATION.md](CIAF_SCHEMA_SPECIFICATION.md) - See Section 12 (Schema Catalog) for current schemas.
+
+---
+
 # CIAF Schema Enhancement Implementation Summary
 
 ## Date: March 30, 2026
-## Version: 2.0.0 - Major Enhancement Release
+## Status: ⚠️ SUPERSEDED - Historical Reference Only
 
 ---
 

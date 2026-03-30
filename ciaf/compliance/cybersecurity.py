@@ -5,15 +5,16 @@ This module provides cybersecurity compliance capabilities aligned with
 ISO 27001, SOC 2, and other security frameworks for AI systems.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
-from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 
 class SecurityFramework(Enum):
@@ -63,56 +64,62 @@ class ComplianceStatus(Enum):
     IN_PROGRESS = "In Progress"
 
 
-@dataclass
-class SecurityControlImplementation:
+class SecurityControlImplementation(BaseModel):
     """Implementation details for a security control."""
 
-    control_id: str
-    control_name: str
-    framework: SecurityFramework
-    control_type: SecurityControl
-    implementation_level: SecurityLevel
-    status: ComplianceStatus
-    description: str
-    implementation_date: str
-    last_assessment_date: Optional[str] = None
-    next_assessment_date: Optional[str] = None
-    responsible_party: str = ""
-    evidence_files: List[str] = None
-    test_results: Optional[Dict[str, Any]] = None
-    remediation_plan: Optional[str] = None
-    cost: Optional[float] = None
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
 
-    def __post_init__(self):
-        """Post-initialization processing."""
-        if self.evidence_files is None:
-            self.evidence_files = []
+    control_id: str = Field(..., description="Unique control identifier")
+    control_name: str = Field(..., description="Name of the security control")
+    framework: SecurityFramework = Field(..., description="Security framework")
+    control_type: SecurityControl = Field(..., description="Type of control")
+    implementation_level: SecurityLevel = Field(..., description="Implementation level")
+    status: ComplianceStatus = Field(..., description="Compliance status")
+    description: str = Field(..., description="Detailed description")
+    implementation_date: str = Field(..., description="Implementation date")
+    last_assessment_date: Optional[str] = Field(None, description="Last assessment date")
+    next_assessment_date: Optional[str] = Field(None, description="Next assessment date")
+    responsible_party: str = Field(default="", description="Responsible party")
+    evidence_files: List[str] = Field(default_factory=list, description="Evidence file references")
+    test_results: Optional[Dict[str, Any]] = Field(None, description="Test results")
+    remediation_plan: Optional[str] = Field(None, description="Remediation plan")
+    cost: Optional[float] = Field(None, ge=0, description="Implementation cost")
 
-        # Set next assessment date if not provided
+    @model_validator(mode='after')
+    def set_next_assessment_date(self) -> 'SecurityControlImplementation':
+        """Set next assessment date if not provided."""
         if self.next_assessment_date is None and self.last_assessment_date:
             last_date = datetime.fromisoformat(
                 self.last_assessment_date.replace("Z", "+00:00")
             )
             next_date = last_date + timedelta(days=365)  # Annual assessment
             self.next_assessment_date = next_date.isoformat()
+        return self
 
 
-@dataclass
-class CybersecurityAssessment:
+class CybersecurityAssessment(BaseModel):
     """Comprehensive cybersecurity assessment."""
 
-    assessment_id: str
-    model_name: str
-    assessment_date: str
-    assessor: str
-    frameworks_assessed: List[SecurityFramework]
-    control_implementations: List[SecurityControlImplementation]
-    overall_compliance_score: float
-    risk_level: str
-    findings: List[Dict[str, Any]]
-    recommendations: List[str]
-    next_assessment_date: str
-    external_audit_report: Optional[str] = None
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    assessment_id: str = Field(..., description="Unique assessment identifier")
+    model_name: str = Field(..., description="Model being assessed")
+    assessment_date: str = Field(..., description="Assessment date")
+    assessor: str = Field(..., description="Person/team conducting assessment")
+    frameworks_assessed: List[SecurityFramework] = Field(..., description="Security frameworks assessed")
+    control_implementations: List[SecurityControlImplementation] = Field(..., description="Control implementations")
+    overall_compliance_score: float = Field(..., ge=0, le=1, description="Overall compliance score (0-1)")
+    risk_level: str = Field(..., description="Overall risk level")
+    findings: List[Dict[str, Any]] = Field(..., description="Assessment findings")
+    recommendations: List[str] = Field(..., description="Recommendations")
+    next_assessment_date: str = Field(..., description="Next assessment date")
+    external_audit_report: Optional[str] = Field(None, description="External audit report reference")
 
     def get_compliance_by_framework(
         self, framework: SecurityFramework
@@ -554,7 +561,7 @@ class CybersecurityComplianceEngine:
             }
         elif format == "detailed":
             return {
-                "assessment": asdict(assessment),
+                "assessment": assessment.model_dump(),
                 "export_timestamp": datetime.now(timezone.utc).isoformat(),
             }
 

@@ -1,4 +1,10 @@
+> **⚠️ SUPERSEDED:** For schema specification, see [CIAF_SCHEMA_SPECIFICATION.md](CIAF_SCHEMA_SPECIFICATION.md). Migration tools remain functional - see `tools/README_TOOLS.md` for current documentation.
+
+---
+
 # Schema Migration Tools - Quick Start Guide
+
+## Status: ⚠️ Tools Active, Documentation Superseded
 
 ## Overview
 

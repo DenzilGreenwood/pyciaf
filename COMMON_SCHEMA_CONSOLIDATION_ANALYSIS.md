@@ -1,7 +1,11 @@
+> **⚠️ SUPERSEDED:** This document has been replaced by [CIAF_SCHEMA_SPECIFICATION.md](CIAF_SCHEMA_SPECIFICATION.md) - See Section 3 (Schema Architecture) for common schema details.
+
+---
+
 # Common Schema Consolidation Analysis
 
 ## Date: March 30, 2026
-## Status: ✅ Complete - 15 Common Schemas Created
+## Status: ⚠️ SUPERSEDED - Historical Reference Only
 
 ---
 

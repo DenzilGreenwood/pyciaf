@@ -1,7 +1,11 @@
+> **⚠️ SUPERSEDED:** This document has been replaced by [CIAF_SCHEMA_SPECIFICATION.md](CIAF_SCHEMA_SPECIFICATION.md) - See Section 4.2 (Signature Envelope) for current specification.
+
+---
+
 # Schema Migration to Signature-Envelope Structure
 
 ## Date: March 30, 2026
-## Status: ✅ Complete
+## Status: ⚠️ SUPERSEDED - Historical Reference Only
 
 ---
 

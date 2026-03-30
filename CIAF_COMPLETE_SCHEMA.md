@@ -1,8 +1,12 @@
+> **⚠️ SUPERSEDED:** This document has been replaced by [CIAF_SCHEMA_SPECIFICATION.md](CIAF_SCHEMA_SPECIFICATION.md) - the authoritative single source of truth for CIAF schemas. Retained for historical reference only.
+
+---
+
 # CIAF Complete Schema Documentation
 
 **Version**: 2.0.0
 **Date**: 2026-03-30
-**Status**: Production-Ready with Agentic Events
+**Status**: ⚠️ SUPERSEDED - See CIAF_SCHEMA_SPECIFICATION.md
 
 ---
 

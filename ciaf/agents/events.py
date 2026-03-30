@@ -9,18 +9,23 @@ and governance events that can be stored, queried, and analyzed.
 
 Created: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models with validation
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import re
+import uuid
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
-import uuid
+
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 from ..core import sha256_hash
+
+# SHA-256 hash pattern
+SHA256_PATTERN = re.compile(r"^[a-f0-9]{64}$")
 
 
 class AgentEventType(str, Enum):
@@ -137,8 +142,8 @@ class SensitivityLevel(str, Enum):
     HIGHLY_RESTRICTED = "highly_restricted"
 
 
-@dataclass
-class AgentEvent:
+
+class AgentEvent(BaseModel):
     """
     First-class agent governance event.
 
@@ -147,67 +152,103 @@ class AgentEvent:
     governance, audit, and compliance tracking.
     """
 
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
     # Primary identifiers (required)
-    event_id: str
-    event_type: AgentEventType
-    occurred_at: str  # ISO 8601 timestamp
+    event_id: str = Field(..., description="Unique event identifier")
+    event_type: AgentEventType = Field(..., description="Type of agent event")
+    occurred_at: str = Field(..., description="ISO 8601 timestamp")
 
     # Agent identity (required)
-    agent_id: str
-    agent_name: str
-    principal_type: str  # "agent", "human", "service", "system"
-    session_id: str
+    agent_id: str = Field(..., description="Agent identifier")
+    agent_name: str = Field(..., description="Display name for agent")
+    principal_type: str = Field(..., description="Type: agent, human, service, system")
+    session_id: str = Field(..., description="Session identifier")
 
     # Action details (required)
-    action: str  # Can be AgentActionType or custom string
-    resource_type: str
-    resource_id: str
+    action: str = Field(..., description="Action being performed (AgentActionType or custom)")
+    resource_type: str = Field(..., description="Type of resource")
+    resource_id: str = Field(..., description="Resource identifier")
 
     # Organizational context (optional)
-    org_id: Optional[str] = None
-    tenant_id: Optional[str] = None
-    environment: Optional[str] = None  # dev/staging/prod
+    org_id: Optional[str] = Field(None, description="Organization identifier")
+    tenant_id: Optional[str] = Field(None, description="Tenant identifier")
+    environment: Optional[str] = Field(None, description="Environment (dev/staging/prod)")
 
     # Action context (optional with defaults)
-    params: Dict[str, Any] = field(default_factory=dict)
-    justification: str = ""
-    correlation_id: Optional[str] = None
+    params: Dict[str, Any] = Field(default_factory=dict, description="Action parameters")
+    justification: str = Field(default="", description="Justification for action")
+    correlation_id: Optional[str] = Field(None, description="Correlation identifier")
 
     # Authorization & policy (optional with defaults)
-    policy_decision: PolicyDecision = PolicyDecision.NOT_EVALUATED
-    policy_rule_id: Optional[str] = None
-    policy_reason: Optional[str] = None
-    elevation_grant_id: Optional[str] = None
-    approved_by: Optional[str] = None
+    policy_decision: PolicyDecision = Field(
+        default=PolicyDecision.NOT_EVALUATED,
+        description="Policy evaluation result"
+    )
+    policy_rule_id: Optional[str] = Field(None, description="Policy rule identifier")
+    policy_reason: Optional[str] = Field(None, description="Policy decision reason")
+    elevation_grant_id: Optional[str] = Field(None, description="Elevation grant ID if applicable")
+    approved_by: Optional[str] = Field(None, description="Approver principal ID")
 
     # Data classification (optional)
-    sensitivity_level: Optional[SensitivityLevel] = None
-    data_classification: Optional[str] = None
+    sensitivity_level: Optional[SensitivityLevel] = Field(None, description="Data sensitivity level")
+    data_classification: Optional[str] = Field(None, description="Data classification label")
 
     # Execution outcome (optional with defaults)
-    executed: bool = False
-    success: bool = False
-    error_message: Optional[str] = None
+    executed: bool = Field(default=False, description="Whether action was executed")
+    success: bool = Field(default=False, description="Whether execution succeeded")
+    error_message: Optional[str] = Field(None, description="Error message if failed")
 
     # Privacy-preserving hashes
-    params_hash: str = ""
-    input_hash: str = ""
-    output_hash: str = ""
+    params_hash: str = Field(default="", description="SHA-256 hash of parameters")
+    input_hash: str = Field(default="", description="SHA-256 hash of input")
+    output_hash: str = Field(default="", description="SHA-256 hash of output")
 
     # Cryptographic evidence
-    signature: Optional[str] = None
-    signature_algorithm: Optional[str] = None
+    signature: Optional[str] = Field(None, description="Cryptographic signature")
+    signature_algorithm: Optional[str] = Field(None, description="Signature algorithm used")
 
     # Hash chaining (audit trail)
-    prior_event_hash: str = "0" * 64  # Genesis hash for first event
+    prior_event_hash: str = Field(
+        default="0" * 64,
+        description="Hash of prior event for chain linking"
+    )
 
     # Compliance & obligations
-    compliance_frameworks: List[str] = field(default_factory=list)
-    policy_obligations: List[str] = field(default_factory=list)
+    compliance_frameworks: List[str] = Field(
+        default_factory=list,
+        description="Applicable compliance frameworks"
+    )
+    policy_obligations: List[str] = Field(
+        default_factory=list,
+        description="Policy obligations triggered"
+    )
 
     # Metadata
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    tags: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
+    tags: List[str] = Field(default_factory=list, description="Event tags")
+
+    @field_validator('occurred_at')
+    @classmethod
+    def validate_timestamp(cls, v: str) -> str:
+        """Validate ISO 8601 timestamp format."""
+        try:
+            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
+
+    @field_validator('params_hash', 'input_hash', 'output_hash', 'prior_event_hash')
+    @classmethod
+    def validate_sha256(cls, v: str) -> str:
+        """Validate SHA-256 hash format if provided."""
+        if v and v != "0" * 64:  # Allow genesis hash
+            if not SHA256_PATTERN.match(v):
+                raise ValueError(f"Invalid SHA-256 hash format: {v}")
+        return v
 
     @classmethod
     def create(
@@ -253,87 +294,8 @@ class AgentEvent:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert event to dictionary for serialization."""
-        result: Dict[str, Any] = {
-            "event_id": self.event_id,
-            "event_type": self.event_type.value,
-            "occurred_at": self.occurred_at,
-            "agent_id": self.agent_id,
-            "agent_name": self.agent_name,
-            "principal_type": self.principal_type,
-            "session_id": self.session_id,
-            "action": self.action,
-            "resource_type": self.resource_type,
-            "resource_id": self.resource_id,
-        }
-
-        # Optional organizational context
-        if self.org_id:
-            result["org_id"] = self.org_id
-        if self.tenant_id:
-            result["tenant_id"] = self.tenant_id
-        if self.environment:
-            result["environment"] = self.environment
-
-        # Action context
-        if self.params:
-            result["params"] = self.params
-        if self.justification:
-            result["justification"] = self.justification
-        if self.correlation_id:
-            result["correlation_id"] = self.correlation_id
-
-        # Policy & authorization
-        if self.policy_decision != PolicyDecision.NOT_EVALUATED:
-            result["policy_decision"] = self.policy_decision.value
-        if self.policy_rule_id:
-            result["policy_rule_id"] = self.policy_rule_id
-        if self.policy_reason:
-            result["policy_reason"] = self.policy_reason
-        if self.elevation_grant_id:
-            result["elevation_grant_id"] = self.elevation_grant_id
-        if self.approved_by:
-            result["approved_by"] = self.approved_by
-
-        # Classification
-        if self.sensitivity_level:
-            result["sensitivity_level"] = self.sensitivity_level.value
-        if self.data_classification:
-            result["data_classification"] = self.data_classification
-
-        # Execution
-        result["executed"] = self.executed
-        result["success"] = self.success
-        if self.error_message:
-            result["error_message"] = self.error_message
-
-        # Hashes
-        if self.params_hash:
-            result["params_hash"] = self.params_hash
-        if self.input_hash:
-            result["input_hash"] = self.input_hash
-        if self.output_hash:
-            result["output_hash"] = self.output_hash
-
-        # Evidence
-        if self.signature:
-            result["signature"] = self.signature
-        if self.signature_algorithm:
-            result["signature_algorithm"] = self.signature_algorithm
-        result["prior_event_hash"] = self.prior_event_hash
-
-        # Compliance
-        if self.compliance_frameworks:
-            result["compliance_frameworks"] = self.compliance_frameworks
-        if self.policy_obligations:
-            result["policy_obligations"] = self.policy_obligations
-
-        # Metadata
-        if self.metadata:
-            result["metadata"] = self.metadata
-        if self.tags:
-            result["tags"] = self.tags
-
-        return result
+        # Use Pydantic's model_dump with exclude_none to omit None values
+        return self.model_dump(mode='json', exclude_none=True)
 
     def get_event_hash(self) -> str:
         """
@@ -388,20 +350,35 @@ class AgentEvent:
         return self.action in high_risk_actions or self.is_sensitive()
 
 
-@dataclass
-class AgentEventBatch:
+
+class AgentEventBatch(BaseModel):
     """
     Batch of agent events for efficient processing.
 
     Used for bulk operations like batch storage or analysis.
     """
 
-    batch_id: str
-    events: List[AgentEvent]
-    created_at: str
-    agent_id: str
-    session_id: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    batch_id: str = Field(..., description="Unique batch identifier")
+    events: List[AgentEvent] = Field(..., description="List of agent events")
+    created_at: str = Field(..., description="Batch creation timestamp")
+    agent_id: str = Field(..., description="Primary agent ID")
+    session_id: Optional[str] = Field(None, description="Session identifier")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Batch metadata")
+
+    @field_validator('created_at')
+    @classmethod
+    def validate_timestamp(cls, v: str) -> str:
+        """Validate ISO 8601 timestamp format."""
+        try:
+            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            return v
+        except ValueError:
+            raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
 
     @classmethod
     def create(

@@ -5,18 +5,19 @@ This module provides comprehensive corrective action tracking and management
 for AI model retraining, remediation, and compliance corrections.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import hashlib
 import json
 import uuid
-from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
+
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class ActionType(Enum):
@@ -59,52 +60,45 @@ class TriggerType(Enum):
     AUTOMATED_ALERT = "Automated alert"
 
 
-@dataclass
-class CorrectiveAction:
+class CorrectiveAction(BaseModel):
     """Individual corrective action record."""
 
-    action_id: str
-    trigger: str
-    trigger_type: TriggerType
-    detection_method: str
-    action_type: ActionType
-    description: str
-    approved_by: str
-    implemented_by: Optional[str] = None
-    date_created: str = None
-    date_approved: Optional[str] = None
-    date_applied: Optional[str] = None
-    date_verified: Optional[str] = None
-    status: ActionStatus = ActionStatus.PENDING
-    priority: str = "Medium"
-    linked_training_snapshot: Optional[str] = None
-    linked_model_version: Optional[str] = None
-    evidence_files: List[str] = None
-    verification_criteria: List[str] = None
-    verification_results: Optional[Dict[str, Any]] = None
-    cost_estimate: Optional[float] = None
-    actual_cost: Optional[float] = None
-    effectiveness_score: Optional[float] = None
-    metadata: Optional[Dict[str, Any]] = None
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
 
-    def __post_init__(self):
-        """Post-initialization processing."""
-        if self.date_created is None:
-            self.date_created = datetime.now(timezone.utc).isoformat()
-        if self.evidence_files is None:
-            self.evidence_files = []
-        if self.verification_criteria is None:
-            self.verification_criteria = []
-        if self.metadata is None:
-            self.metadata = {}
+    action_id: str = Field(..., description="Unique action identifier")
+    trigger: str = Field(..., description="What triggered this action")
+    trigger_type: TriggerType = Field(..., description="Type of trigger")
+    detection_method: str = Field(..., description="How the issue was detected")
+    action_type: ActionType = Field(..., description="Type of corrective action")
+    description: str = Field(..., description="Detailed description")
+    approved_by: str = Field(..., description="Who approved this action")
+    implemented_by: Optional[str] = Field(None, description="Who implemented the action")
+    date_created: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat(),
+        description="Creation timestamp"
+    )
+    date_approved: Optional[str] = Field(None, description="Approval timestamp")
+    date_applied: Optional[str] = Field(None, description="Implementation timestamp")
+    date_verified: Optional[str] = Field(None, description="Verification timestamp")
+    status: ActionStatus = Field(default=ActionStatus.PENDING, description="Current status")
+    priority: str = Field(default="Medium", description="Priority level")
+    linked_training_snapshot: Optional[str] = Field(None, description="Linked training snapshot ID")
+    linked_model_version: Optional[str] = Field(None, description="Linked model version")
+    evidence_files: List[str] = Field(default_factory=list, description="Evidence file references")
+    verification_criteria: List[str] = Field(default_factory=list, description="Verification criteria")
+    verification_results: Optional[Dict[str, Any]] = Field(None, description="Verification results")
+    cost_estimate: Optional[float] = Field(None, ge=0, description="Estimated cost")
+    actual_cost: Optional[float] = Field(None, ge=0, description="Actual cost")
+    effectiveness_score: Optional[float] = Field(None, ge=0, le=1, description="Effectiveness score (0-1)")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
-        result = asdict(self)
-        # Convert enums to string values
-        result["trigger_type"] = self.trigger_type.value
-        result["action_type"] = self.action_type.value
-        result["status"] = self.status.value
+        result = self.model_dump()
+        # Convert enums to string values (Pydantic already does this with mode='json')
         return result
 
     def get_action_hash(self) -> str:
@@ -121,19 +115,23 @@ class CorrectiveAction:
         return hashlib.sha256(data_str.encode()).hexdigest()
 
 
-@dataclass
-class CorrectiveActionSummary:
+class CorrectiveActionSummary(BaseModel):
     """Summary of corrective actions for reporting."""
 
-    total_actions: int
-    by_status: Dict[str, int]
-    by_type: Dict[str, int]
-    by_trigger: Dict[str, int]
-    avg_resolution_time_days: float
-    effectiveness_scores: List[float]
-    total_cost: float
-    period_start: str
-    period_end: str
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    total_actions: int = Field(..., ge=0, description="Total number of actions")
+    by_status: Dict[str, int] = Field(..., description="Actions grouped by status")
+    by_type: Dict[str, int] = Field(..., description="Actions grouped by type")
+    by_trigger: Dict[str, int] = Field(..., description="Actions grouped by trigger")
+    avg_resolution_time_days: float = Field(..., ge=0, description="Average resolution time in days")
+    effectiveness_scores: List[float] = Field(..., description="List of effectiveness scores")
+    total_cost: float = Field(..., ge=0, description="Total cost of all actions")
+    period_start: str = Field(..., description="Report period start date")
+    period_end: str = Field(..., description="Report period end date")
 
 
 class CorrectiveActionLogger:

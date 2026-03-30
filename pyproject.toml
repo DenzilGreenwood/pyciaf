@@ -38,7 +38,8 @@ requires-python = ">=3.9"
 dependencies = [
     "cryptography>=3.4.8",
     "blake3>=0.3.3",
-    "numpy>=1.21.0"
+    "numpy>=1.21.0",
+    "pydantic>=2.0.0,<3.0.0"
 ]
 
 [project.optional-dependencies]

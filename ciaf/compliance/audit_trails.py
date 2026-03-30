@@ -6,16 +6,17 @@ training, inference, and model lifecycle events with cryptographic integrity.
 Integrates with the LCM (Lazy Capsule Materialization) system for proper anchoring.
 
 Created: 2025-09-09
-Last Modified: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.1.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 
 from ..core import sha256_hash
 from ..lcm.policy import canonical_json
@@ -28,45 +29,43 @@ if TYPE_CHECKING:
     from ..provenance import TrainingSnapshot
 
 
-@dataclass
-class ComplianceAuditRecord:
+class ComplianceAuditRecord(BaseModel):
     """Individual audit record with compliance metadata."""
 
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
     # Core audit fields
-    event_id: str
-    event_type: AuditEventType
-    timestamp: str
-    model_name: str
-    model_version: str
-    user_id: Optional[str] = None
+    event_id: str = Field(..., description="Unique event identifier")
+    event_type: AuditEventType = Field(..., description="Type of audit event")
+    timestamp: str = Field(..., description="ISO 8601 timestamp of event")
+    model_name: str = Field(..., description="Model name being audited")
+    model_version: str = Field(..., description="Model version")
+    user_id: Optional[str] = Field(None, description="User performing the action")
 
     # Event-specific data
-    event_data: Dict[str, Any] = None
+    event_data: Dict[str, Any] = Field(default_factory=dict, description="Event-specific data")
 
     # Compliance metadata
-    regulatory_frameworks: List[str] = None
-    risk_level: str = "low"
-    compliance_status: str = "compliant"
+    regulatory_frameworks: List[str] = Field(default_factory=list, description="Applicable regulatory frameworks")
+    risk_level: str = Field(default="low", description="Risk level assessment")
+    compliance_status: str = Field(default="compliant", description="Compliance status")
 
     # Cryptographic integrity
-    data_hash: str = ""
-    previous_hash: str = ""
-    audit_hash: str = ""
+    data_hash: str = Field(default="", description="SHA-256 hash of event data")
+    previous_hash: str = Field(default="", description="Hash of previous audit record (chain)")
+    audit_hash: str = Field(default="", description="SHA-256 hash of this audit record")
 
     # Privacy and security
-    contains_pii: bool = False
-    encryption_used: bool = True
-    access_controls: List[str] = None
+    contains_pii: bool = Field(default=False, description="Whether record contains PII")
+    encryption_used: bool = Field(default=True, description="Whether encryption was used")
+    access_controls: List[str] = Field(default_factory=list, description="Access control requirements")
 
-    def __post_init__(self):
+    @model_validator(mode='after')
+    def compute_hashes(self) -> 'ComplianceAuditRecord':
         """Compute hashes after initialization."""
-        if not self.event_data:
-            self.event_data = {}
-        if not self.regulatory_frameworks:
-            self.regulatory_frameworks = []
-        if not self.access_controls:
-            self.access_controls = []
-
         # Compute data hash
         data_str = json.dumps(self.event_data, sort_keys=True)
         self.data_hash = hashlib.sha256(data_str.encode()).hexdigest()
@@ -83,6 +82,8 @@ class ComplianceAuditRecord:
         }
         audit_str = json.dumps(audit_data, sort_keys=True)
         self.audit_hash = hashlib.sha256(audit_str.encode()).hexdigest()
+
+        return self
 
 
 class AuditTrailGenerator(AuditTrailProvider):
@@ -381,7 +382,7 @@ class AuditTrailGenerator(AuditTrailProvider):
             ]
 
         # Convert to dict format for protocol compliance
-        return [asdict(record) for record in filtered_records]
+        return [record.model_dump() for record in filtered_records]
 
     def verify_integrity(self) -> Dict[str, Any]:
         """Verify the cryptographic integrity of the audit trail (Protocol implementation)."""
@@ -449,7 +450,7 @@ class AuditTrailGenerator(AuditTrailProvider):
         """Export audit trail in specified format."""
 
         if format.lower() == "json":
-            records_dict = [asdict(record) for record in self.audit_records]
+            records_dict = [record.model_dump() for record in self.audit_records]
             # Convert enum to string
             for record_dict in records_dict:
                 record_dict["event_type"] = record_dict["event_type"].value

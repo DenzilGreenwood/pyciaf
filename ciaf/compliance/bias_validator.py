@@ -7,14 +7,15 @@ EU AI Act Articles 10 and 15, and NIST AI RMF MEASURE functions.
 
 Created: 2025-09-12
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import numpy as np
 from typing import Dict, List, Any, Optional, Tuple
-from dataclasses import dataclass
 from enum import Enum
 import logging
+
+from pydantic import BaseModel, Field, ConfigDict
 
 logger = logging.getLogger(__name__)
 
@@ -29,29 +30,37 @@ class BiasMetric(Enum):
     INDIVIDUAL_FAIRNESS = "individual_fairness"
 
 
-@dataclass
-class BiasResult:
+class BiasResult(BaseModel):
     """Result of bias assessment for a protected group."""
 
-    protected_attribute: str
-    group_value: str
-    metric_name: str
-    metric_value: float
-    threshold: float
-    is_fair: bool
-    sample_size: int
-    confidence_interval: Optional[Tuple[float, float]] = None
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    protected_attribute: str = Field(..., description="Name of protected attribute")
+    group_value: str = Field(..., description="Value of the protected group")
+    metric_name: str = Field(..., description="Name of bias metric")
+    metric_value: float = Field(..., description="Computed metric value")
+    threshold: float = Field(..., description="Fairness threshold")
+    is_fair: bool = Field(..., description="Whether group meets fairness threshold")
+    sample_size: int = Field(..., ge=0, description="Sample size for this group")
+    confidence_interval: Optional[Tuple[float, float]] = Field(None, description="95% confidence interval")
 
 
-@dataclass
-class BiasAssessment:
+class BiasAssessment(BaseModel):
     """Comprehensive bias assessment results."""
 
-    overall_fairness_score: float
-    individual_results: List[BiasResult]
-    summary_statistics: Dict[str, Any]
-    recommendations: List[str]
-    compliance_status: str
+    model_config = ConfigDict(
+        validate_assignment=True,
+        extra='forbid'
+    )
+
+    overall_fairness_score: float = Field(..., ge=0.0, le=1.0, description="Overall fairness score (0-1)")
+    individual_results: List[BiasResult] = Field(..., description="Per-group bias results")
+    summary_statistics: Dict[str, Any] = Field(..., description="Summary statistics")
+    recommendations: List[str] = Field(..., description="Recommendations for improvement")
+    compliance_status: str = Field(..., description="Compliance status assessment")
 
 
 class BiasValidator:
