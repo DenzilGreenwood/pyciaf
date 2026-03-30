@@ -1,0 +1,73 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/text-forensic-fragment.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Text Forensic Fragment",
+  "description": "High-entropy text fragment for granular verification",
+  "type": "object",
+  "required": ["fragment_id", "offset_start", "offset_end", "fragment_length", "sample_location", "fragment_hash_before", "fragment_hash_after", "entropy_score"],
+  "properties": {
+    "fragment_id": {
+      "type": "string",
+      "description": "Unique fragment identifier"
+    },
+    "fragment_type": {
+      "type": "string",
+      "const": "text",
+      "description": "Fragment type identifier"
+    },
+    "offset_start": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Character offset start in document"
+    },
+    "offset_end": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Character offset end in document"
+    },
+    "fragment_length": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Length of text fragment in characters"
+    },
+    "sample_location": {
+      "type": "string",
+      "enum": ["beginning", "middle", "end"],
+      "description": "Location in document"
+    },
+    "fragment_hash_before": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash before watermark"
+    },
+    "fragment_hash_after": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash after watermark"
+    },
+    "entropy_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Entropy score (0.0-1.0, higher = more unique)"
+    },
+    "sampling_method": {
+      "type": "string",
+      "description": "Sampling method used"
+    },
+    "content_position": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Position in content"
+    },
+    "fragment_simhash_before": {
+      "type": "string",
+      "description": "SimHash before watermark (optional)"
+    },
+    "fragment_simhash_after": {
+      "type": "string",
+      "description": "SimHash after watermark (optional)"
+    }
+  },
+  "additionalProperties": false
+}

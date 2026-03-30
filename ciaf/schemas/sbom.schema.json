@@ -1,0 +1,38 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/sbom.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Software Bill of Materials",
+  "description": "Software Bill of Materials for deployment tracking",
+  "type": "object",
+  "required": ["dependencies", "security_scan_digest"],
+  "properties": {
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Package dependencies (name: version)"
+    },
+    "security_scan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest of security scan results"
+    },
+    "vulnerability_count": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Number of known vulnerabilities"
+    },
+    "compliance_status": {
+      "type": "string",
+      "enum": ["compliant", "non_compliant", "unknown", "review_required"],
+      "default": "unknown",
+      "description": "Compliance status"
+    },
+    "sbom_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest of complete SBOM"
+    }
+  },
+  "additionalProperties": false
+}

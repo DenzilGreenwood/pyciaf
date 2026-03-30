@@ -1,0 +1,60 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/elevation-grant.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Elevation Grant",
+  "description": "Just-in-time privilege elevation grant for temporary escalation",
+  "type": "object",
+  "required": ["grant_id", "principal_id", "elevated_role", "approved_by", "valid_from", "valid_until"],
+  "properties": {
+    "grant_id": {
+      "type": "string",
+      "description": "Unique grant identifier"
+    },
+    "principal_id": {
+      "type": "string",
+      "description": "Principal receiving elevated privileges"
+    },
+    "elevated_role": {
+      "type": "string",
+      "description": "Role being granted temporarily"
+    },
+    "scope": {
+      "type": "object",
+      "description": "Scope limitations for the grant"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Approver principal ID"
+    },
+    "ticket_reference": {
+      "type": "string",
+      "description": "Reference to approval ticket or workflow"
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Grant validity start time"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Grant expiration time"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "Purpose/justification for elevation"
+    },
+    "used_count": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0,
+      "description": "Number of times grant has been used"
+    },
+    "max_uses": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum number of uses (optional)"
+    }
+  },
+  "additionalProperties": false
+}

@@ -260,6 +260,223 @@ class PostgreSQLBackend:
                 ON {self.schema}.ciaf_provenance_capsules(timestamp);
             """)
 
+            # Create agent events table
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.schema}.agent_events (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    event_id TEXT UNIQUE NOT NULL,
+                    event_type TEXT NOT NULL,
+                    occurred_at TIMESTAMPTZ NOT NULL,
+
+                    -- Agent identity
+                    agent_id TEXT NOT NULL,
+                    agent_name TEXT NOT NULL,
+                    principal_type TEXT NOT NULL,
+                    session_id TEXT NOT NULL,
+
+                    -- Organizational context
+                    org_id TEXT,
+                    tenant_id TEXT,
+                    environment TEXT,
+
+                    -- Action details
+                    action TEXT NOT NULL,
+                    resource_type TEXT NOT NULL,
+                    resource_id TEXT NOT NULL,
+                    justification TEXT,
+                    correlation_id TEXT,
+
+                    -- Policy & authorization
+                    policy_decision TEXT,
+                    policy_rule_id TEXT,
+                    policy_reason TEXT,
+                    elevation_grant_id TEXT,
+                    approved_by TEXT,
+
+                    -- Classification
+                    sensitivity_level TEXT,
+                    data_classification TEXT,
+
+                    -- Execution
+                    executed BOOLEAN DEFAULT FALSE,
+                    success BOOLEAN DEFAULT FALSE,
+                    error_message TEXT,
+
+                    -- Hashes (privacy-preserving)
+                    params_hash TEXT,
+                    input_hash TEXT,
+                    output_hash TEXT,
+
+                    -- Evidence
+                    signature TEXT,
+                    signature_algorithm TEXT,
+                    prior_event_hash TEXT DEFAULT '0000000000000000000000000000000000000000000000000000000000000000',
+
+                    -- Full event data
+                    event_json JSONB NOT NULL,
+
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+            """)
+
+            # Create indexes for agent events
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_agent_id
+                ON {self.schema}.agent_events(agent_id);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_session_id
+                ON {self.schema}.agent_events(session_id);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_org_id
+                ON {self.schema}.agent_events(org_id);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_occurred_at
+                ON {self.schema}.agent_events(occurred_at);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_action
+                ON {self.schema}.agent_events(action);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_resource_type
+                ON {self.schema}.agent_events(resource_type);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_policy_decision
+                ON {self.schema}.agent_events(policy_decision);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_elevation
+                ON {self.schema}.agent_events(elevation_grant_id)
+                WHERE elevation_grant_id IS NOT NULL;
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_high_risk
+                ON {self.schema}.agent_events(sensitivity_level)
+                WHERE sensitivity_level IN ('restricted', 'highly_restricted');
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_agent_event_json
+                ON {self.schema}.agent_events USING GIN(event_json);
+            """)
+
+            # Create web AI events table
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.schema}.web_ai_events (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    event_id TEXT UNIQUE NOT NULL,
+                    event_type TEXT NOT NULL,
+                    occurred_at TIMESTAMPTZ NOT NULL,
+
+                    -- User context
+                    org_id TEXT NOT NULL,
+                    user_id TEXT NOT NULL,
+                    session_id TEXT NOT NULL,
+                    device_id TEXT,
+                    browser_id TEXT,
+
+                    -- Tool context
+                    tool_name TEXT,
+                    tool_domain TEXT,
+                    tool_category TEXT,
+                    tool_approved BOOLEAN,
+
+                    -- Privacy-preserving hashes
+                    page_url_hash TEXT,
+                    prompt_hash TEXT,
+                    output_hash TEXT,
+
+                    -- Classification & policy
+                    data_classification TEXT,
+                    sensitivity_score NUMERIC(3, 2),
+                    policy_decision TEXT,
+                    policy_rule_id TEXT,
+                    policy_reason TEXT,
+
+                    -- Evidence
+                    signature TEXT,
+                    witness_hash TEXT,
+
+                    -- Full event data
+                    event_json JSONB NOT NULL,
+
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+            """)
+
+            # Create indexes for web AI events
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_event_org_id
+                ON {self.schema}.web_ai_events(org_id);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_event_user_id
+                ON {self.schema}.web_ai_events(user_id);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_event_tool_name
+                ON {self.schema}.web_ai_events(tool_name);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_event_occurred_at
+                ON {self.schema}.web_ai_events(occurred_at);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_event_shadow_ai
+                ON {self.schema}.web_ai_events(tool_approved)
+                WHERE tool_approved = false;
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_event_high_risk
+                ON {self.schema}.web_ai_events(sensitivity_score)
+                WHERE sensitivity_score >= 0.7;
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_event_json
+                ON {self.schema}.web_ai_events USING GIN(event_json);
+            """)
+
+            # Create web AI receipts table
+            cursor.execute(f"""
+                CREATE TABLE IF NOT EXISTS {self.schema}.web_ai_receipts (
+                    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                    receipt_id TEXT UNIQUE NOT NULL,
+                    event_id TEXT REFERENCES {self.schema}.web_ai_events(event_id),
+                    org_id TEXT NOT NULL,
+                    issued_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+                    -- Crypt proof
+                    event_hash TEXT NOT NULL,
+                    receipt_hash TEXT NOT NULL,
+                    signature TEXT NOT NULL,
+                    signature_algorithm TEXT DEFAULT 'HMAC-SHA256',
+
+                    -- Chain of custody
+                    previous_receipt_id TEXT,
+                    chain_position INTEGER,
+
+                    receipt_json JSONB NOT NULL,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                );
+            """)
+
+            # Create indexes for web AI receipts
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_receipt_event_id
+                ON {self.schema}.web_ai_receipts(event_id);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_receipt_org_id
+                ON {self.schema}.web_ai_receipts(org_id);
+            """)
+            cursor.execute(f"""
+                CREATE INDEX IF NOT EXISTS idx_web_ai_receipt_chain
+                ON {self.schema}.web_ai_receipts(previous_receipt_id);
+            """)
+
             conn.commit()
             cursor.close()
         finally:

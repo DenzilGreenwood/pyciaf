@@ -53,6 +53,16 @@ from .evidence import EvidenceVault
 # Tool execution
 from .execution import ToolExecutor
 
+# Agent events (first-class governance events)
+from .events import (
+    AgentEvent,
+    AgentEventBatch,
+    AgentEventType,
+    AgentActionType,
+    PolicyDecision as AgentPolicyDecision,
+    SensitivityLevel,
+)
+
 __version__ = "1.0.0"
 
 __all__ = [
@@ -71,6 +81,13 @@ __all__ = [
     "PolicyEvaluator",
     "EvidenceRecorder",
     "ToolMediator",
+    # Agent events
+    "AgentEvent",
+    "AgentEventBatch",
+    "AgentEventType",
+    "AgentActionType",
+    "AgentPolicyDecision",
+    "SensitivityLevel",
     # IAM
     "IAMStore",
     "same_tenant_only",

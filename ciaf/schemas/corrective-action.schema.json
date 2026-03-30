@@ -1,0 +1,119 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/corrective-action.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Corrective Action",
+  "description": "Individual corrective action record for compliance",
+  "type": "object",
+  "required": ["action_id", "trigger", "trigger_type", "detection_method", "action_type", "description", "approved_by"],
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "description": "Unique action identifier"
+    },
+    "trigger": {
+      "type": "string",
+      "description": "What triggered this action"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": ["bias_detected", "performance_degradation", "compliance_violation", "security_issue", "data_drift", "model_drift"],
+      "description": "Type of trigger"
+    },
+    "detection_method": {
+      "type": "string",
+      "description": "How the issue was detected"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": ["retrain", "reweight", "audit", "disable", "notify", "investigate", "update_policy"],
+      "description": "Type of corrective action"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the action"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Approver identifier"
+    },
+    "implemented_by": {
+      "type": "string",
+      "description": "Implementer identifier"
+    },
+    "date_created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp"
+    },
+    "date_approved": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Approval timestamp"
+    },
+    "date_applied": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Application timestamp"
+    },
+    "date_verified": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Verification timestamp"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "approved", "in_progress", "completed", "verified", "rejected"],
+      "default": "pending",
+      "description": "Action status"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["Low", "Medium", "High", "Critical"],
+      "default": "Medium",
+      "description": "Priority level"
+    },
+    "linked_training_snapshot": {
+      "type": "string",
+      "description": "Linked training snapshot ID"
+    },
+    "linked_model_version": {
+      "type": "string",
+      "description": "Linked model version"
+    },
+    "evidence_files": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Paths to evidence files"
+    },
+    "verification_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Criteria for verification"
+    },
+    "verification_results": {
+      "type": "object",
+      "description": "Verification results data"
+    },
+    "cost_estimate": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Estimated cost"
+    },
+    "actual_cost": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Actual cost incurred"
+    },
+    "effectiveness_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Effectiveness score (0.0-1.0)"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata"
+    }
+  },
+  "additionalProperties": false
+}

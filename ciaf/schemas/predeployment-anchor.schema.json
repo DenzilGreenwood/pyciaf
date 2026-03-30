@@ -1,0 +1,55 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/predeployment-anchor.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Pre-deployment Anchor",
+  "description": "Pre-deployment anchor for LCM with build artifacts and SBOM",
+  "type": "object",
+  "required": ["predeployment_id", "build_artifact", "sbom", "approval_ticket_id", "intended_env", "intended_region"],
+  "properties": {
+    "predeployment_id": {
+      "type": "string",
+      "description": "Unique pre-deployment identifier"
+    },
+    "build_artifact": {
+      "$ref": "build-artifact.schema.json",
+      "description": "Build artifact metadata"
+    },
+    "sbom": {
+      "$ref": "sbom.schema.json",
+      "description": "Software Bill of Materials"
+    },
+    "approval_ticket_id": {
+      "type": "string",
+      "description": "Approval ticket or workflow ID"
+    },
+    "intended_env": {
+      "type": "string",
+      "enum": ["production", "staging", "development", "test"],
+      "description": "Intended deployment environment"
+    },
+    "intended_region": {
+      "type": "string",
+      "description": "Intended deployment region/location"
+    },
+    "rollout_plan_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest of rollout plan document"
+    },
+    "predeployment_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of pre-deployment data"
+    },
+    "anchor_id": {
+      "type": "string",
+      "description": "Anchor identifier (pd_hash prefix)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["prepared", "deployed", "failed", "rollback"],
+      "description": "Pre-deployment status"
+    }
+  },
+  "additionalProperties": false
+}

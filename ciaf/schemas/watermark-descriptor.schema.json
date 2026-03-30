@@ -1,0 +1,51 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/watermark-descriptor.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Watermark Descriptor",
+  "description": "Complete watermark metadata for provenance tracking",
+  "type": "object",
+  "required": ["watermark_id", "watermark_type"],
+  "properties": {
+    "watermark_id": {
+      "type": "string",
+      "description": "Unique watermark identifier"
+    },
+    "watermark_type": {
+      "type": "string",
+      "enum": ["text_embedded", "image_steganographic", "image_visible", "metadata", "qr_code", "perceptual", "none"],
+      "description": "Watermarking technique used"
+    },
+    "tag_text": {
+      "type": "string",
+      "description": "Human-readable tag text"
+    },
+    "verification_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL for online verification"
+    },
+    "qr_payload": {
+      "type": "string",
+      "description": "QR code data if applicable"
+    },
+    "metadata_fields": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Custom metadata fields"
+    },
+    "embed_method": {
+      "type": "string",
+      "description": "Technical embedding method details"
+    },
+    "removal_resistance": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "description": "Resistance to removal attacks"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where watermark appears in artifact"
+    }
+  },
+  "additionalProperties": false
+}

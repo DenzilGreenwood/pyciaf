@@ -1,0 +1,82 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/artifact-evidence.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Artifact Evidence",
+  "description": "Complete forensic provenance record for AI-generated artifact",
+  "type": "object",
+  "required": ["artifact_id", "artifact_type", "mime_type", "created_at", "model_id", "model_version", "actor_id", "prompt_hash", "output_hash_raw", "output_hash_distributed"],
+  "properties": {
+    "artifact_id": {
+      "type": "string",
+      "description": "Unique artifact identifier"
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": ["text", "image", "video", "audio", "code", "mixed"],
+      "description": "Type of AI-generated artifact"
+    },
+    "mime_type": {
+      "type": "string",
+      "description": "MIME type (e.g., text/plain, image/png)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 creation timestamp"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Model identifier"
+    },
+    "model_version": {
+      "type": "string",
+      "description": "Model version"
+    },
+    "actor_id": {
+      "type": "string",
+      "description": "User/system that generated artifact"
+    },
+    "prompt_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of input prompt"
+    },
+    "output_hash_raw": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Hash of raw output (pre-watermark)"
+    },
+    "output_hash_distributed": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Hash of distributed output (post-watermark)"
+    },
+    "watermark_descriptor": {
+      "$ref": "watermark-descriptor.schema.json",
+      "description": "Watermark metadata"
+    },
+    "hash_set": {
+      "$ref": "artifact-hash-set.schema.json",
+      "description": "Complete dual-state hash set"
+    },
+    "fingerprints": {
+      "type": "array",
+      "items": { "$ref": "artifact-fingerprint.schema.json" },
+      "description": "Similarity fingerprints"
+    },
+    "prior_artifact_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Hash of previous artifact in chain"
+    },
+    "vault_storage_path": {
+      "type": "string",
+      "description": "Path in CIAF vault where evidence is stored"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional custom metadata"
+    }
+  },
+  "additionalProperties": false
+}

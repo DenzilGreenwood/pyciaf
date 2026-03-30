@@ -1,0 +1,94 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/training-receipt-enhanced.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Enhanced Training Receipt",
+  "description": "Enhanced training receipt with strict validation and comprehensive metadata",
+  "type": "object",
+  "required": ["receipt_id", "session_id", "dataset_anchor", "model_anchor", "code_digest", "config_digest", "random_seeds", "env"],
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique receipt identifier (UUID)"
+    },
+    "session_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Training session identifier (UUID)"
+    },
+    "dataset_anchor": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Dataset anchor (64 character hex string)"
+    },
+    "model_anchor": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Model anchor (64 character hex string)"
+    },
+    "code_digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "Training code digest (sha256:hash format)"
+    },
+    "config_digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$",
+      "description": "Configuration digest (sha256:hash format)"
+    },
+    "random_seeds": {
+      "type": "object",
+      "properties": {
+        "python": { "type": "integer" },
+        "numpy": { "type": "integer" },
+        "torch": { "type": "integer" },
+        "tensorflow": { "type": "integer" }
+      },
+      "description": "Random seeds for reproducibility"
+    },
+    "env": {
+      "type": "object",
+      "required": ["python", "hardware"],
+      "properties": {
+        "python": { "type": "string" },
+        "frameworks": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "hardware": { "type": "string" },
+        "git_commit": { "type": "string" }
+      },
+      "description": "Environment information"
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Training metrics"
+    },
+    "merkle_path": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "description": "Merkle path for inclusion proof"
+    },
+    "evidence_strength": {
+      "type": "string",
+      "enum": ["real", "simulated", "fallback"],
+      "default": "real",
+      "description": "Evidence strength level"
+    },
+    "committed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC3339 timestamp"
+    },
+    "fallback_reasons": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Reasons for fallback evidence"
+    }
+  },
+  "additionalProperties": false
+}

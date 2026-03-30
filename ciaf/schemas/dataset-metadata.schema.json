@@ -1,0 +1,248 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/dataset-metadata.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF LCM Dataset Metadata",
+  "description": "Enhanced dataset metadata for LCM with comprehensive dataset information",
+  "type": "object",
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Dataset name"
+    },
+    "owner": {
+      "type": "string",
+      "default": "unknown",
+      "description": "Dataset owner"
+    },
+    "license": {
+      "type": "string",
+      "default": "unknown",
+      "description": "Dataset license"
+    },
+    "schema_digest": {
+      "type": "string",
+      "description": "SHA-256 digest of dataset schema"
+    },
+    "sampling_rules": {
+      "type": "object",
+      "description": "Sampling rules for dataset splits"
+    },
+    "version": {
+      "type": "string",
+      "default": "1.0.0",
+      "description": "Dataset version"
+    },
+    "content_root": {
+      "type": "string",
+      "description": "Merkle root or rolling hash of dataset content"
+    },
+    "contains_pii": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether dataset contains personally identifiable information"
+    },
+    "privacy_level": {
+      "type": "string",
+      "enum": ["public", "internal", "confidential", "restricted"],
+      "default": "public",
+      "description": "Privacy classification level"
+    },
+    "compliance_frameworks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of compliance frameworks (e.g., GDPR, HIPAA)"
+    },
+    "creation_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of dataset creation"
+    },
+    "description": {
+      "type": "string",
+      "description": "Dataset description"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Dataset tags for categorization"
+    },
+    "rng_seed": {
+      "type": "integer",
+      "description": "Random number generator seed for reproducibility"
+    },
+    "rng_source": {
+      "type": "string",
+      "enum": ["numpy", "torch", "random", "python"],
+      "description": "RNG source library"
+    },
+    "stratify_by": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Column names used for stratification during splitting"
+    },
+    "split_assignment_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest over sorted record IDs or Merkle root"
+    },
+    "num_samples": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of samples in dataset"
+    },
+    "num_features": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of features/columns"
+    },
+    "feature_names": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of feature names"
+    },
+    "feature_types": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["numerical", "categorical", "text", "image", "audio", "video", "binary", "date", "timestamp"]
+      },
+      "description": "Mapping of feature names to their types"
+    },
+    "target_column": {
+      "type": "string",
+      "description": "Name of target/label column"
+    },
+    "target_type": {
+      "type": "string",
+      "enum": ["classification", "regression", "multilabel", "multiclass", "binary"],
+      "description": "Type of prediction task"
+    },
+    "feature_statistics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      },
+      "description": "Statistical information per feature"
+    },
+    "missing_values": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "description": "Count of missing values per feature"
+    },
+    "categorical_mappings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "integer" }
+      },
+      "description": "Categorical value distributions per feature"
+    },
+    "duplicate_rows": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of duplicate rows detected"
+    },
+    "data_quality_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Overall data quality score (0.0 to 1.0)"
+    },
+    "outlier_count": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "description": "Number of outliers per feature"
+    },
+    "data_shape": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Dataset dimensions [rows, columns]"
+    },
+    "file_format": {
+      "type": "string",
+      "enum": ["csv", "parquet", "json", "tfrecord", "hdf5", "pickle", "feather"],
+      "description": "File format of dataset"
+    },
+    "encoding": {
+      "type": "string",
+      "default": "utf-8",
+      "description": "Character encoding"
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["healthcare", "finance", "nlp", "computer_vision", "robotics", "audio", "general"],
+      "description": "Application domain"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": ["supervised", "unsupervised", "reinforcement", "semi_supervised", "self_supervised"],
+      "description": "Machine learning task type"
+    },
+    "benchmark_dataset": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a known benchmark dataset"
+    },
+    "source_datasets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of source datasets if derived"
+    },
+    "preprocessing_steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of preprocessing operations applied"
+    },
+    "data_collection_method": {
+      "type": "string",
+      "enum": ["web_scraping", "survey", "experiment", "simulation", "manual", "automated"],
+      "description": "Method used to collect data"
+    },
+    "temporal_coverage": {
+      "type": "object",
+      "properties": {
+        "start": { "type": "string", "format": "date" },
+        "end": { "type": "string", "format": "date" }
+      },
+      "description": "Temporal range covered by dataset"
+    },
+    "update_frequency": {
+      "type": "string",
+      "enum": ["static", "daily", "weekly", "monthly", "yearly", "continuous"],
+      "description": "How frequently dataset is updated"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last update"
+    },
+    "geographical_coverage": {
+      "type": "string",
+      "description": "Geographical regions covered (e.g., 'global', 'US', 'EU')"
+    },
+    "known_biases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Documented biases in the dataset"
+    },
+    "protected_attributes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Features that should be monitored for bias"
+    },
+    "fairness_constraints": {
+      "type": "object",
+      "description": "Fairness requirements and constraints"
+    }
+  },
+  "additionalProperties": false
+}

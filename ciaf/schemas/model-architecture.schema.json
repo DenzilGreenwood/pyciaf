@@ -1,0 +1,42 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/model-architecture.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Model Architecture",
+  "description": "Model architecture definition for LCM",
+  "type": "object",
+  "required": ["type", "layers"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["MLP", "CNN", "RNN", "LSTM", "GRU", "Transformer", "ResNet", "VGG", "BERT", "GPT", "ViT", "Custom"],
+      "description": "Architecture type"
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "layer_type": { "type": "string" },
+          "params": { "type": "object" }
+        }
+      },
+      "description": "Layer definitions"
+    },
+    "input_dim": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Input dimension"
+    },
+    "output_dim": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Output dimension"
+    },
+    "total_params": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of parameters"
+    }
+  },
+  "additionalProperties": false
+}

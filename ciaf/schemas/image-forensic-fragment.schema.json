@@ -1,0 +1,67 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/image-forensic-fragment.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Image Forensic Fragment",
+  "description": "High-entropy image patch for granular verification",
+  "type": "object",
+  "required": ["fragment_id", "patch_grid_position", "patch_hash_before", "patch_hash_after", "entropy_score"],
+  "properties": {
+    "fragment_id": {
+      "type": "string",
+      "description": "Unique fragment identifier"
+    },
+    "fragment_type": {
+      "type": "string",
+      "const": "image_patch",
+      "description": "Fragment type identifier"
+    },
+    "patch_grid_position": {
+      "type": "string",
+      "pattern": "^grid_\\d+_\\d+$",
+      "description": "Grid position (e.g., 'grid_2_4')"
+    },
+    "patch_hash_before": {
+      "type": "string",
+      "description": "Perceptual hash before watermark"
+    },
+    "patch_hash_after": {
+      "type": "string",
+      "description": "Perceptual hash after watermark"
+    },
+    "region_coordinates": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "Region coordinates [x, y, width, height]"
+    },
+    "entropy_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Entropy score (0.0-1.0)"
+    },
+    "sampling_method": {
+      "type": "string",
+      "description": "Sampling method used"
+    },
+    "content_position": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Patch index in grid"
+    },
+    "patch_ahash_before": {
+      "type": "string",
+      "description": "Average hash before (optional)"
+    },
+    "patch_dhash_before": {
+      "type": "string",
+      "description": "Difference hash before (optional)"
+    },
+    "patch_whash_before": {
+      "type": "string",
+      "description": "Wavelet hash before (optional)"
+    }
+  },
+  "additionalProperties": false
+}

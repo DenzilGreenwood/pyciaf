@@ -140,3 +140,7 @@ Thumbs.db
 
 # Documentation to exclude
 COMPREHENSIVE_REVIEW.md
+
+# Do not push to git
+CIAF_VAULT_WEBSITE_PLAN.md
+CIAF_VAULT_GAP_ANALYSIS.md

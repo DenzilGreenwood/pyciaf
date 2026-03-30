@@ -1,0 +1,56 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/artifact-hash-set.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Artifact Hash Set",
+  "description": "Dual-state hashing for forensic provenance with before/after watermark",
+  "type": "object",
+  "required": ["content_hash_before_watermark", "content_hash_after_watermark"],
+  "properties": {
+    "content_hash_before_watermark": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of original AI output (before watermark)"
+    },
+    "content_hash_after_watermark": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 of watermarked version"
+    },
+    "canonical_receipt_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Hash of complete receipt"
+    },
+    "normalized_hash_before": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Normalized hash before watermark (resilient to formatting)"
+    },
+    "normalized_hash_after": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Normalized hash after watermark"
+    },
+    "perceptual_hash_before": {
+      "type": "string",
+      "description": "Perceptual hash before watermark (images)"
+    },
+    "perceptual_hash_after": {
+      "type": "string",
+      "description": "Perceptual hash after watermark (images)"
+    },
+    "simhash_before": {
+      "type": "string",
+      "description": "SimHash before watermark (text)"
+    },
+    "simhash_after": {
+      "type": "string",
+      "description": "SimHash after watermark (text)"
+    },
+    "forensic_fragments": {
+      "$ref": "forensic-fragment-set.schema.json",
+      "description": "DNA-level forensic fragments"
+    }
+  },
+  "additionalProperties": false
+}

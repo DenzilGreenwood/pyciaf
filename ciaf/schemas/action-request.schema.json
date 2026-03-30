@@ -1,0 +1,40 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/action-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Action Request",
+  "description": "A request to perform an action on a resource",
+  "type": "object",
+  "required": ["action", "resource"],
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "Action to perform (e.g., read, write, execute)"
+    },
+    "resource": {
+      "$ref": "resource.schema.json",
+      "description": "Target resource"
+    },
+    "params": {
+      "type": "object",
+      "description": "Action parameters"
+    },
+    "justification": {
+      "type": "string",
+      "description": "Justification for the action"
+    },
+    "requested_by": {
+      "$ref": "identity.schema.json",
+      "description": "Requesting principal"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Correlation identifier for tracing"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Request timestamp"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,33 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/resource.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Agentic Resource",
+  "description": "A resource that can be accessed or modified by agents",
+  "type": "object",
+  "required": ["resource_id", "resource_type"],
+  "properties": {
+    "resource_id": {
+      "type": "string",
+      "description": "Unique resource identifier"
+    },
+    "resource_type": {
+      "type": "string",
+      "description": "Resource type (e.g., model, dataset, file)"
+    },
+    "owner_tenant": {
+      "type": "string",
+      "description": "Owning tenant identifier"
+    },
+    "attributes": {
+      "type": "object",
+      "description": "Resource attributes"
+    },
+    "sensitivity_level": {
+      "type": "string",
+      "enum": ["standard", "sensitive", "critical", "confidential"],
+      "default": "standard",
+      "description": "Resource sensitivity classification"
+    }
+  },
+  "additionalProperties": false
+}

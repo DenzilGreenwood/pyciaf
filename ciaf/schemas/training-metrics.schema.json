@@ -1,0 +1,37 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/training-metrics.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Training Metrics",
+  "description": "Training metrics collection for LCM",
+  "type": "object",
+  "required": ["train_metrics", "val_metrics", "epochs"],
+  "properties": {
+    "train_metrics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "number" }
+      },
+      "description": "Training metrics per epoch (e.g., {loss: [1.0, 0.8, 0.6]})"
+    },
+    "val_metrics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "number" }
+      },
+      "description": "Validation metrics per epoch"
+    },
+    "epochs": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "description": "List of epoch numbers"
+    },
+    "metrics_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest of all metrics"
+    }
+  },
+  "additionalProperties": false
+}

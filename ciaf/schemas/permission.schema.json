@@ -1,0 +1,28 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/permission.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Permission",
+  "description": "Permission granting an action on a resource type",
+  "type": "object",
+  "required": ["action", "resource_type"],
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "Permitted action (e.g., read, write, execute, delete)"
+    },
+    "resource_type": {
+      "type": "string",
+      "description": "Type of resource this permission applies to"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of permission"
+    },
+    "requires_elevation": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this permission requires privilege elevation"
+    }
+  },
+  "additionalProperties": false
+}

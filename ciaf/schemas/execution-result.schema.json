@@ -1,0 +1,49 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/execution-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Execution Result",
+  "description": "Result of an action execution attempt with authorization decision",
+  "type": "object",
+  "required": ["request", "allowed", "reason"],
+  "properties": {
+    "request": {
+      "$ref": "action-request.schema.json",
+      "description": "Original action request"
+    },
+    "allowed": {
+      "type": "boolean",
+      "description": "Whether action was allowed"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for decision"
+    },
+    "executed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether action was actually executed"
+    },
+    "result": {
+      "description": "Execution result data (any type)"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if execution failed"
+    },
+    "elevation_grant_id": {
+      "type": "string",
+      "description": "Elevation grant ID used if applicable"
+    },
+    "policy_obligations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Policy obligations that must be fulfilled"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Result timestamp"
+    }
+  },
+  "additionalProperties": false
+}

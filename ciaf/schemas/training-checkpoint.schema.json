@@ -1,0 +1,45 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/training-checkpoint.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Training Checkpoint",
+  "description": "Training checkpoint metadata for LCM",
+  "type": "object",
+  "required": ["checkpoint_id", "epoch", "step", "metrics", "model_state_digest", "optimizer_state_digest"],
+  "properties": {
+    "checkpoint_id": {
+      "type": "string",
+      "description": "Unique checkpoint identifier"
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Training epoch number"
+    },
+    "step": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Training step number"
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": { "type": "number" },
+      "description": "Metrics at this checkpoint (e.g., loss, accuracy)"
+    },
+    "model_state_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest of model state"
+    },
+    "optimizer_state_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest of optimizer state"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp"
+    }
+  },
+  "additionalProperties": false
+}

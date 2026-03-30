@@ -1,0 +1,81 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/action-receipt.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Action Receipt",
+  "description": "Cryptographic receipt of an action execution for audit trails",
+  "type": "object",
+  "required": ["receipt_id", "timestamp", "principal_id", "principal_type", "action", "resource_id", "resource_type"],
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "description": "Unique receipt identifier"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Execution timestamp"
+    },
+    "principal_id": {
+      "type": "string",
+      "description": "Principal who performed the action"
+    },
+    "principal_type": {
+      "type": "string",
+      "enum": ["agent", "human", "service", "system"],
+      "description": "Type of principal"
+    },
+    "action": {
+      "type": "string",
+      "description": "Action performed"
+    },
+    "resource_id": {
+      "type": "string",
+      "description": "Resource identifier"
+    },
+    "resource_type": {
+      "type": "string",
+      "description": "Resource type"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Correlation identifier"
+    },
+    "decision": {
+      "type": "boolean",
+      "default": false,
+      "description": "Authorization decision (true=allowed)"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Decision reason"
+    },
+    "elevation_grant_id": {
+      "type": "string",
+      "description": "Elevation grant ID if privileges were elevated"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Approver principal ID for elevated actions"
+    },
+    "params_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of action parameters"
+    },
+    "policy_obligations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Policy obligations that must be fulfilled"
+    },
+    "prior_receipt_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Hash of prior receipt for chain linking"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature of receipt"
+    }
+  },
+  "additionalProperties": false
+}

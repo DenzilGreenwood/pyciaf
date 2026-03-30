@@ -1,0 +1,31 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/artifact-fingerprint.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Artifact Fingerprint",
+  "description": "Forensic fingerprint for artifact similarity matching",
+  "type": "object",
+  "required": ["algorithm", "value", "role"],
+  "properties": {
+    "algorithm": {
+      "type": "string",
+      "enum": ["simhash", "perceptual_hash", "minihash", "phash", "dhash", "ahash", "whash"],
+      "description": "Fingerprinting algorithm used"
+    },
+    "value": {
+      "type": "string",
+      "description": "Fingerprint value"
+    },
+    "role": {
+      "type": "string",
+      "enum": ["exact_content", "perceptual", "simhash", "embedding_ref"],
+      "description": "Purpose of this fingerprint"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Matching confidence threshold"
+    }
+  },
+  "additionalProperties": false
+}

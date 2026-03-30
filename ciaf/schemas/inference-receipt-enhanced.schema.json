@@ -1,0 +1,70 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/inference-receipt-enhanced.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Enhanced Inference Receipt",
+  "description": "Enhanced inference receipt with comprehensive tracking and validation",
+  "type": "object",
+  "required": ["receipt_id", "inference_id", "model_anchor", "input_hash", "output_hash"],
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique receipt identifier (UUID)"
+    },
+    "inference_id": {
+      "type": "string",
+      "description": "Unique inference identifier"
+    },
+    "model_anchor": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Model anchor (64 character hex string)"
+    },
+    "input_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of input"
+    },
+    "output_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of output"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Inference timestamp"
+    },
+    "evidence_strength": {
+      "type": "string",
+      "enum": ["real", "simulated", "fallback"],
+      "default": "real",
+      "description": "Evidence strength level"
+    },
+    "committed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "RFC3339 timestamp"
+    },
+    "merkle_path": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "description": "Merkle path for inclusion proof"
+    },
+    "latency_ms": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Inference latency in milliseconds"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Model confidence score"
+    }
+  },
+  "additionalProperties": false
+}

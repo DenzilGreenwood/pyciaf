@@ -1,0 +1,42 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/training-environment.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Training Environment",
+  "description": "Training environment metadata for reproducibility",
+  "type": "object",
+  "required": ["python_version", "framework", "framework_version"],
+  "properties": {
+    "python_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Python version (e.g., 3.11.0)"
+    },
+    "framework": {
+      "type": "string",
+      "enum": ["pytorch", "tensorflow", "sklearn", "jax", "keras", "mxnet", "custom"],
+      "description": "Machine learning framework"
+    },
+    "framework_version": {
+      "type": "string",
+      "description": "Framework version string"
+    },
+    "cuda_version": {
+      "type": "string",
+      "description": "CUDA version if GPU was used"
+    },
+    "os_info": {
+      "type": "string",
+      "description": "Operating system information"
+    },
+    "hardware": {
+      "type": "string",
+      "description": "Hardware description (CPU/GPU models)"
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Package dependencies (name: version)"
+    }
+  },
+  "additionalProperties": false
+}
