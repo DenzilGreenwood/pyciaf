@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Generic Metadata Object",
   "description": "Flexible key-value metadata object for additional context",
+  "version": "1.0.0",
   "type": "object",
   "additionalProperties": true,
   "examples": [

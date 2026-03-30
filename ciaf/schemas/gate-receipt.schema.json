@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Gate Receipt",
   "description": "Cryptographic receipt proving gate evaluation was performed before action",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "receipt_id",

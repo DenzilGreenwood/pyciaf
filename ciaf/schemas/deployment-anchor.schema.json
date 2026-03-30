@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Deployment Anchor",
   "description": "Deployment anchor for LCM with infrastructure tracking",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "deployment_id",

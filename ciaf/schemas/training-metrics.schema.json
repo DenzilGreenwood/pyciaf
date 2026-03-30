@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Training Metrics",
   "description": "Training metrics collection for LCM",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "train_metrics",

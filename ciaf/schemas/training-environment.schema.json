@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Training Environment",
   "description": "Training environment metadata for reproducibility",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "python_version",

@@ -3,8 +3,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Forensic Fragment Set",
   "description": "Collection of forensic fragments forming the DNA of an artifact",
+  "version": "1.0.0",
   "type": "object",
-  "required": ["fragment_count", "sampling_strategy", "total_coverage_percent"],
+  "required": [
+    "fragment_count",
+    "sampling_strategy",
+    "total_coverage_percent"
+  ],
   "properties": {
     "fragment_count": {
       "type": "integer",
@@ -13,7 +18,12 @@
     },
     "sampling_strategy": {
       "type": "string",
-      "enum": ["multi_point", "spatial_diversity", "temporal", "entropy_based"],
+      "enum": [
+        "multi_point",
+        "spatial_diversity",
+        "temporal",
+        "entropy_based"
+      ],
       "description": "Sampling strategy used"
     },
     "total_coverage_percent": {
@@ -24,22 +34,30 @@
     },
     "text_fragments": {
       "type": "array",
-      "items": { "$ref": "text-forensic-fragment.schema.json" },
+      "items": {
+        "$ref": "text-forensic-fragment.schema.json"
+      },
       "description": "Text forensic fragments"
     },
     "image_fragments": {
       "type": "array",
-      "items": { "$ref": "image-forensic-fragment.schema.json" },
+      "items": {
+        "$ref": "image-forensic-fragment.schema.json"
+      },
       "description": "Image forensic fragments"
     },
     "video_snippets": {
       "type": "array",
-      "items": { "type": "object" },
+      "items": {
+        "type": "object"
+      },
       "description": "Video forensic snippets"
     },
     "audio_segments": {
       "type": "array",
-      "items": { "type": "object" },
+      "items": {
+        "type": "object"
+      },
       "description": "Audio forensic segments"
     },
     "min_entropy_threshold": {

@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Elevation Grant",
   "description": "Just-in-time privilege elevation grant for temporary escalation",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "grant_id",

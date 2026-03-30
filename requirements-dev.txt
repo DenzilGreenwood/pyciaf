@@ -21,3 +21,7 @@ sphinx-rtd-theme>=1.0.0
 
 # Configuration reading
 toml>=0.10.0
+
+# images
+Pillow>=10.2.0
+ImageHash>=4.3.2

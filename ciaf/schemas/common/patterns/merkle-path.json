@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Merkle Path",
   "description": "Array of SHA-256 hashes representing a Merkle proof path",
+  "version": "1.0.0",
   "type": "array",
   "items": {
     "type": "string",

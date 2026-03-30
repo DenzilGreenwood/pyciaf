@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ISO 8601 Timestamp",
   "description": "Standard RFC3339/ISO 8601 timestamp format used throughout CIAF",
+  "version": "1.0.0",
   "type": "string",
   "format": "date-time",
   "examples": [

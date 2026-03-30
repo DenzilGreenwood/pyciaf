@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Artifact Hash Set",
   "description": "Dual-state hashing for forensic provenance with before/after watermark",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "content_hash_before_watermark",

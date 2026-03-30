@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Lineage References",
   "description": "Standard lineage reference fields for provenance linkage across CIAF objects",
+  "version": "1.0.0",
   "type": "object",
   "properties": {
     "dataset_anchor_ref": {

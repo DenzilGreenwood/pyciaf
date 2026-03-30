@@ -3,6 +3,7 @@
   "$id": "https://cognitiveinsight.ai/schemas/common/cryptographic-policy.json",
   "title": "CryptographicPolicy",
   "description": "CIAF-LCM standard cryptographic policy profile.",
+  "version": "1.0.0",
   "type": "object",
   "additionalProperties": false,
   "required": [

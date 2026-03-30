@@ -3,8 +3,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Environment Type",
   "description": "Deployment environment classification",
+  "version": "1.0.0",
   "type": "string",
-  "enum": ["production", "staging", "development", "test"],
+  "enum": [
+    "production",
+    "staging",
+    "development",
+    "test"
+  ],
   "examples": [
     "production",
     "staging"

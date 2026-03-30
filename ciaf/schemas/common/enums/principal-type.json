@@ -3,8 +3,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Principal Type",
   "description": "Type of entity performing an action in the CIAF system",
+  "version": "1.0.0",
   "type": "string",
-  "enum": ["agent", "human", "service", "system"],
+  "enum": [
+    "agent",
+    "human",
+    "service",
+    "system"
+  ],
   "examples": [
     "agent",
     "human",

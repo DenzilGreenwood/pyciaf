@@ -3,8 +3,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Hash Algorithm",
   "description": "Supported cryptographic hash algorithms in CIAF",
+  "version": "1.0.0",
   "type": "string",
-  "enum": ["sha256", "sha3-256", "blake3"],
+  "enum": [
+    "sha256",
+    "sha3-256",
+    "blake3"
+  ],
   "default": "sha256",
   "examples": [
     "sha256"

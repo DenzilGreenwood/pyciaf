@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Approval Decision",
   "description": "Record of human approval decision for gate passage or privilege elevation",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "approval_id",

@@ -3,6 +3,7 @@
   "$id": "https://cognitiveinsight.ai/schemas/merkle/merkle-batch.json",
   "title": "MerkleBatch",
   "description": "Merkle batch object for grouped CIAF-LCM receipts with cryptographic proof.",
+  "version": "1.0.0",
   "type": "object",
   "additionalProperties": false,
   "required": [

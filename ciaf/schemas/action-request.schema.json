@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Action Request",
   "description": "A request to perform an action on a resource",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "action",

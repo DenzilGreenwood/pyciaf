@@ -3,8 +3,15 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Image Forensic Fragment",
   "description": "High-entropy image patch for granular verification",
+  "version": "1.0.0",
   "type": "object",
-  "required": ["fragment_id", "patch_grid_position", "patch_hash_before", "patch_hash_after", "entropy_score"],
+  "required": [
+    "fragment_id",
+    "patch_grid_position",
+    "patch_hash_before",
+    "patch_hash_after",
+    "entropy_score"
+  ],
   "properties": {
     "fragment_id": {
       "type": "string",
@@ -30,7 +37,9 @@
     },
     "region_coordinates": {
       "type": "array",
-      "items": { "type": "integer" },
+      "items": {
+        "type": "integer"
+      },
       "minItems": 4,
       "maxItems": 4,
       "description": "Region coordinates [x, y, width, height]"

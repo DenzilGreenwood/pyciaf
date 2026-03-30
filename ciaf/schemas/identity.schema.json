@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Agentic Identity",
   "description": "Immutable identity for an agent or human principal",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "principal_id",

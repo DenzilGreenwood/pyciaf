@@ -18,8 +18,9 @@ Additionally, forensic fragments enable:
 - Privacy protection (don't store entire documents in vault)
 
 Created: 2026-03-24
+Updated: 2026-03-30 (Signature Envelope migration)
 Author: Denzil James Greenwood
-Version: 1.2.0
+Version: 1.3.0
 """
 
 from __future__ import annotations
@@ -27,9 +28,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 import hashlib
 import json
+
+if TYPE_CHECKING:
+    from .signature_envelope import SignatureEnvelope
 
 
 class ArtifactType(str, Enum):
@@ -418,8 +422,8 @@ class ArtifactEvidence:
     # Receipt chaining (link to previous artifact)
     prior_receipt_hash: Optional[str] = None
 
-    # Signature (added after creation)
-    signature: Optional[str] = None
+    # Signature (✅ Updated to SignatureEnvelope pattern for v1.3.0)
+    signature: Optional[SignatureEnvelope] = None  # type: ignore
     merkle_leaf_hash: Optional[str] = None
 
     def to_canonical_dict(self) -> Dict[str, Any]:
@@ -427,12 +431,20 @@ class ArtifactEvidence:
         Convert to canonical dictionary for hashing/signing.
 
         Ensures consistent serialization for cryptographic operations.
+        
+        Note: Signature field is excluded from canonical dict as it's
+        computed over the content (not self-referential).
         """
         result = asdict(self)
         result["artifact_type"] = self.artifact_type.value
         result["watermark"] = self.watermark.to_dict()
         result["hashes"] = self.hashes.to_dict()
-        result["fingerprints"] = [fp.to_dict() for fp in self.fingerprints]
+        result["fingerprints"] = [asdict(fp) for fp in self.fingerprints]
+        
+        # Remove signature from canonical form (computed after canonicalization)
+        result.pop("signature", None)
+        result.pop("merkle_leaf_hash", None)  # Also computed after
+        
         return result
 
     def to_canonical_bytes(self) -> bytes:
@@ -444,8 +456,25 @@ class ArtifactEvidence:
         return sha256_bytes(self.to_canonical_bytes())
 
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary (alias for to_canonical_dict)."""
-        return self.to_canonical_dict()
+        """
+        Convert to full dictionary including signature.
+        
+        This includes the signature envelope if present.
+        """
+        result = self.to_canonical_dict()
+        
+        # Add signature back in (for serialization)
+        if self.signature:
+            from .signature_envelope import SignatureEnvelope
+            if isinstance(self.signature, SignatureEnvelope):
+                result["signature"] = self.signature.to_dict()
+            else:
+                result["signature"] = self.signature
+        
+        if self.merkle_leaf_hash:
+            result["merkle_leaf_hash"] = self.merkle_leaf_hash
+        
+        return result
 
 
 @dataclass

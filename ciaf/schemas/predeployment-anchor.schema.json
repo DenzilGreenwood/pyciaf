@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Pre-deployment Anchor",
   "description": "Pre-deployment anchor for LCM with build artifacts and SBOM",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "predeployment_id",

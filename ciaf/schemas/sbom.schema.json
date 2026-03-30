@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Software Bill of Materials",
   "description": "Software Bill of Materials for deployment tracking",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "dependencies",

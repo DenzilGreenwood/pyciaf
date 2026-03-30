@@ -3,6 +3,7 @@
   "$id": "https://cognitiveinsight.ai/schemas/common/signature-metadata.json",
   "title": "SignatureMetadata",
   "description": "Common metadata describing how a CIAF-LCM object was signed.",
+  "version": "1.0.0",
   "type": "object",
   "additionalProperties": false,
   "required": [

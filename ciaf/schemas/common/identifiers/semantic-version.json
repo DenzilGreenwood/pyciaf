@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Semantic Version",
   "description": "Semantic versioning pattern (major.minor.patch)",
+  "version": "1.0.0",
   "type": "string",
   "pattern": "^\\d+\\.\\d+\\.\\d+$",
   "examples": [

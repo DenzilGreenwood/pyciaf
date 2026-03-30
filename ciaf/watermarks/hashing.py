@@ -211,32 +211,159 @@ def simhash_distance(hash1: str, hash2: str) -> int:
     return SimHash.hamming_distance(hash1, hash2)
 
 
-# Perceptual hashing placeholder
-# For production, integrate:
-# - imagehash library for images (pHash, dHash, wHash)
-# - chromaprint for audio
-# - video fingerprinting libraries
+# ============================================================================
+# PERCEPTUAL HASHING (Content-Based Similarity)
+# ============================================================================
+#
+# Perceptual hashing creates fingerprints that remain similar even when content
+# is modified, compressed, or resized. Unlike cryptographic hashes (SHA-256)
+# which change completely with any modification, perceptual hashes are designed
+# for similarity detection.
+#
+# ALGORITHM COMPARISON:
+#
+# 1. pHash (Perceptual Hash) - MOST ROBUST
+#    - Uses Discrete Cosine Transform (DCT) to capture image structure
+#    - Robust to: resizing, compression, minor edits, watermark removal
+#    - Best for: General-purpose forensic matching
+#    - Speed: Medium
+#    - False positive rate: Very low
+#
+# 2. aHash (Average Hash) - FASTEST
+#    - Compares each pixel to average brightness
+#    - Robust to: exact duplicates, minor color shifts
+#    - Best for: Quick duplicate detection
+#    - Speed: Very fast
+#    - False positive rate: Low
+#
+# 3. dHash (Difference Hash) - GRADIENT-BASED
+#    - Tracks gradients between adjacent pixels
+#    - Robust to: edits, color changes, compression
+#    - Best for: Detecting modified content
+#    - Speed: Fast
+#    - False positive rate: Low
+#
+# 4. wHash (Wavelet Hash) - MOST ROBUST
+#    - Uses Discrete Wavelet Transform (DWT)
+#    - Robust to: heavy compression, significant modifications, scaling
+#    - Best for: Maximum robustness when content heavily modified
+#    - Speed: Slower
+#    - False positive rate: Very low
+#
+# HAMMING DISTANCE THRESHOLDS:
+#    0-5:   Near identical (99.9%+ similar)
+#    6-10:  Very similar (forensic match likely)
+#    11-15: Similar (related content)
+#    16-20: Somewhat similar
+#    >20:   Different images
 
 
-def perceptual_hash_placeholder(data: bytes, algorithm: str = "phash") -> str:
+def perceptual_hash_image(data: bytes, algorithm: str = "phash") -> str:
     """
-    Placeholder for perceptual hashing.
-
-    For production:
-    - Images: Use imagehash library (pHash, dHash, aHash, wHash)
-    - Audio: Use chromaprint/AcoustID
-    - Video: Use video fingerprinting (e.g., VQMT)
-
+    Compute perceptual hash of image data.
+    
+    ✅ IMPLEMENTATION: Uses real perceptual hashing via imagehash library.
+    
+    This replaces the previous placeholder that just truncated SHA-256.
+    True perceptual hashing enables similarity detection even when:
+    - Image is resized or cropped
+    - Watermark is removed
+    - Image is compressed (JPEG artifacts)
+    - Colors are adjusted
+    - Minor edits are made
+    
+    Supported algorithms:
+    - "phash" (default) - Most robust, general-purpose
+    - "ahash" - Fastest, good for duplicates
+    - "dhash" - Good for detecting edits
+    - "whash" - Most robust to heavy modifications
+    
     Args:
-        data: Binary data (image, audio, video)
-        algorithm: Algorithm name
-
+        data: Image bytes (JPEG, PNG, etc.)
+        algorithm: Hash algorithm ("phash", "ahash", "dhash", "whash")
+    
     Returns:
-        Hex string of perceptual hash
+        Hex string of perceptual hash (16 characters for 8x8 hash)
+    
+    Raises:
+        ImportError: If imagehash library not available
+        ValueError: If algorithm not recognized
+    
+    Example:
+        >>> image_data = open("photo.jpg", "rb").read()
+        >>> hash1 = perceptual_hash_image(image_data, "phash")
+        >>> # Resize image and compute hash again
+        >>> hash2 = perceptual_hash_image(resized_data, "phash")
+        >>> # Hashes will be similar despite resize
+        >>> from ciaf.watermarks.images import hamming_distance
+        >>> distance = hamming_distance(hash1, hash2)
+        >>> assert distance < 10  # Very similar
     """
-    # Placeholder: just return regular hash
-    # TODO: Integrate proper perceptual hashing libraries
-    return sha256_bytes(data)[:16]  # Truncated hash as placeholder
+    try:
+        from ciaf.watermarks.images import (
+            compute_perceptual_hash,
+            compute_average_hash,
+            compute_difference_hash,
+            compute_wavelet_hash,
+        )
+    except ImportError:
+        raise ImportError(
+            "Image perceptual hashing requires: pip install imagehash Pillow"
+        )
+    
+    algorithm = algorithm.lower()
+    
+    if algorithm == "phash":
+        return compute_perceptual_hash(data)
+    elif algorithm == "ahash":
+        return compute_average_hash(data)
+    elif algorithm == "dhash":
+        return compute_difference_hash(data)
+    elif algorithm == "whash":
+        return compute_wavelet_hash(data)
+    else:
+        raise ValueError(
+            f"Unknown algorithm '{algorithm}'. "
+            f"Use: phash, ahash, dhash, or whash"
+        )
+
+
+def perceptual_hash_placeholder_audio(data: bytes) -> str:
+    """
+    Placeholder for audio perceptual hashing.
+    
+    For production audio fingerprinting, integrate:
+    - chromaprint (AcoustID) - Most popular
+    - dejavu - Python audio fingerprinting
+    - echoprint - Open source audio fingerprinting
+    
+    Args:
+        data: Audio data bytes
+    
+    Returns:
+        Placeholder hash (truncated SHA-256)
+    """
+    # TODO: Integrate chromaprint for production audio fingerprinting
+    return sha256_bytes(data)[:16]
+
+
+def perceptual_hash_placeholder_video(data: bytes) -> str:
+    """
+    Placeholder for video perceptual hashing.
+    
+    For production video fingerprinting, integrate:
+    - ffmpeg-python + imagehash for keyframe hashing
+    - Video Quality Metric Tool (VQMT)
+    - perceptual video hashing libraries
+    
+    Args:
+        data: Video data bytes
+    
+    Returns:
+        Placeholder hash (truncated SHA-256)
+    """
+    # TODO: Integrate video fingerprinting for production
+    return sha256_bytes(data)[:16]
 
 
 # MinHash implementation for document similarity
@@ -346,6 +473,8 @@ __all__ = [
     "MinHash",
     "minhash_text",
     "minhash_similarity",
-    # Perceptual (placeholder)
-    "perceptual_hash_placeholder",
+    # Perceptual hashing (✅ real implementation for images)
+    "perceptual_hash_image",
+    "perceptual_hash_placeholder_audio",  # TODO: implement with chromaprint
+    "perceptual_hash_placeholder_video",  # TODO: implement with video fingerprinting
 ]

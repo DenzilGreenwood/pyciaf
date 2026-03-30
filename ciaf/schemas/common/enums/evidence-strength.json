@@ -3,8 +3,13 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Evidence Strength",
   "description": "Strength classification of audit evidence",
+  "version": "1.0.0",
   "type": "string",
-  "enum": ["real", "simulated", "fallback"],
+  "enum": [
+    "real",
+    "simulated",
+    "fallback"
+  ],
   "default": "real",
   "examples": [
     "real",

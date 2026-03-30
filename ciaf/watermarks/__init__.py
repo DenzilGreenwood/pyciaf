@@ -7,13 +7,14 @@ model and DNA-level sub-segment verification.
 This module implements watermarking and verification for AI outputs,
 enabling detection of watermark removal, content tampering, and mix-and-match attacks.
 
-Key Features (v1.2.0):
-- Dual-state hashing (before/after watermark)
-- Sub-segment forensic records (DNA sampling) ⭐ NEW
-- Multiple verification strategies
-- Format-resilient matching
-- Content similarity detection
-- Vault integration for persistent storage
+Key Features (v1.3.0):
+- ✅ Dual-state hashing (before/after watermark)
+- ✅ Sub-segment forensic records (DNA sampling)
+- ✅ SignatureEnvelope pattern (production-ready signatures) ⭐ NEW
+- ✅ Multiple verification strategies
+- ✅ Format-resilient matching
+- ✅ Content similarity detection
+- ✅ Vault integration for persistent storage
 
 Multi-Point Sampling Strategy:
 - Text: 3 high-entropy fragments (begin/middle/end) → 2+ matches = 99.9%+ confidence
@@ -36,7 +37,7 @@ Quick Start:
         actor_id="user:analyst-17",
         prompt="Generate a summary...",
         verification_base_url="https://vault.example.com",
-        enable_forensic_fragments=True  # ⭐ NEW
+        enable_forensic_fragments=True
     )
 
     # Later: verify suspect text with DNA sampling
@@ -45,11 +46,21 @@ Quick Start:
     print(f"Confidence: {result.confidence:.1%}")
 
 Created: 2026-03-24
+Updated: 2026-03-30 (SignatureEnvelope pattern)
 Author: Denzil James Greenwood
-Version: 1.2.0
+Version: 1.3.0
 """
 
-# Core models (updated with forensic fragments)
+# Signature envelope (v1.3.0) ⭐ NEW
+from .signature_envelope import (
+    KeyBackend,
+    SignatureEncoding,
+    SignatureMetadata,
+    SignatureEnvelope,
+    create_signature_envelope,
+)
+
+# Core models (updated with forensic fragments and SignatureEnvelope)
 from .models import (
     ArtifactType,
     WatermarkType,
@@ -183,6 +194,12 @@ from .hierarchical_verification import (
 __version__ = "1.3.0"
 
 __all__ = [
+    # Signature Envelope (v1.3.0) ⭐ NEW
+    "KeyBackend",
+    "SignatureEncoding",
+    "SignatureMetadata",
+    "SignatureEnvelope",
+    "create_signature_envelope",
     # Enums
     "ArtifactType",
     "WatermarkType",

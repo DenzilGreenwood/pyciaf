@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "SHA-256 Hash",
   "description": "Standard SHA-256 hash pattern (64 character hex string)",
+  "version": "1.0.0",
   "type": "string",
   "pattern": "^[a-f0-9]{64}$",
   "minLength": 64,

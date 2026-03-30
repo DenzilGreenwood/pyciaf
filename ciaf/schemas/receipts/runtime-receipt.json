@@ -3,6 +3,7 @@
   "$id": "https://cognitiveinsight.ai/schemas/receipts/runtime-receipt.json",
   "title": "RuntimeReceipt",
   "description": "CIAF-LCM runtime receipt for AI inference, tool use, or agent action.",
+  "version": "1.0.0",
   "type": "object",
   "additionalProperties": false,
   "required": [

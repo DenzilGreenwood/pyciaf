@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Gate Definition",
   "description": "Definition of a governance gate that must be satisfied before an action proceeds",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "gate_id",

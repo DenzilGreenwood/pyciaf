@@ -3,12 +3,25 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Artifact Fingerprint",
   "description": "Forensic fingerprint for artifact similarity matching",
+  "version": "1.0.0",
   "type": "object",
-  "required": ["algorithm", "value", "role"],
+  "required": [
+    "algorithm",
+    "value",
+    "role"
+  ],
   "properties": {
     "algorithm": {
       "type": "string",
-      "enum": ["simhash", "perceptual_hash", "minihash", "phash", "dhash", "ahash", "whash"],
+      "enum": [
+        "simhash",
+        "perceptual_hash",
+        "minihash",
+        "phash",
+        "dhash",
+        "ahash",
+        "whash"
+      ],
       "description": "Fingerprinting algorithm used"
     },
     "value": {
@@ -17,7 +30,12 @@
     },
     "role": {
       "type": "string",
-      "enum": ["exact_content", "perceptual", "simhash", "embedding_ref"],
+      "enum": [
+        "exact_content",
+        "perceptual",
+        "simhash",
+        "embedding_ref"
+      ],
       "description": "Purpose of this fingerprint"
     },
     "confidence": {

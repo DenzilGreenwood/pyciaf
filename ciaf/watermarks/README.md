@@ -1,12 +1,14 @@
 # CIAF Watermarking - Forensic Provenance Layer for AI Artifacts
 
-**Version**: 1.0.0  
+**Version**: 1.2.0  
 **Created**: 2026-03-24  
+**Updated**: 2026-03-30  
 **Status**: 
 - ✅ **Production-Capable**: Text provenance tagging with dual-state hashing
+- ✅ **Production-Capable**: Forensic fragment verification (Bug #161 fixed)
+- ✅ **Production-Capable**: True perceptual hashing (pHash/aHash/dHash/wHash)
 - ⚠️ **Beta**: Image visual watermarking (validation ongoing)
-- ⚠️ **Alpha**: Forensic fragment verification (see known issues)
-- 🚧 **Roadmap**: PDF metadata, perceptual matching, steganography
+- 🚧 **Roadmap**: PDF metadata, steganography, video/audio fingerprinting
 
 ## Overview
 
@@ -230,6 +232,106 @@ else:
 
 # Detailed report
 print(format_verification_report(result))
+print(f"Watermark in metadata: {evidence.watermark.watermark_id}")
+```
+
+## Perceptual Hashing for Images
+
+✅ **New in v1.2.0**: True perceptual hashing implementation (replaces SHA-256 truncation placeholder)
+
+Perceptual hashing creates fingerprints that remain similar even when images are modified, compressed, or resized. Unlike cryptographic hashes (SHA-256) which change completely with any modification, perceptual hashes enable **similarity detection** for forensic matching.
+
+### Supported Algorithms
+
+CIAF supports four perceptual hashing algorithms:
+
+| Algorithm | Speed | Robustness | Best For |
+|-----------|-------|------------|----------|
+| **pHash** | Medium | Very Good | **General forensics (RECOMMENDED)** |
+| **aHash** | Very Fast | Moderate | Quick duplicate detection |
+| **dHash** | Fast | Good | Edit/modification detection |
+| **wHash** | Slower | Excellent | Heavy modifications |
+
+#### Usage Example
+
+```python
+from ciaf.watermarks.hashing import perceptual_hash_image
+from ciaf.watermarks.images import hamming_distance, similarity_score
+
+# Compute perceptual hash
+image_data = open("photo.jpg", "rb").read()
+hash1 = perceptual_hash_image(image_data, algorithm="phash")  
+print(f"pHash: {hash1}")  # e.g., "a874ff7c985c012b"
+
+# Compare with modified image (resized, compressed, etc.)
+modified_image = open("photo_small.jpg", "rb").read()
+hash2 = perceptual_hash_image(modified_image, algorithm="phash")
+
+# Measure similarity
+distance = hamming_distance(hash1, hash2)
+score = similarity_score(hash1, hash2)
+
+print(f"Hamming distance: {distance}/64")
+print(f"Similarity: {score:.1%}")
+
+# Forensic threshold: distance ≤ 10 indicates same source image
+if distance <= 10:
+    print("✓ MATCH: Images forensically similar")
+```
+
+### Algorithm Characteristics
+
+**pHash (Perceptual Hash)** - RECOMMENDED
+- Uses Discrete Cosine Transform (DCT)
+- Robust to: resizing, compression, minorEdits, watermark removal
+- **Best for general forensic matching**
+
+**aHash (Average Hash)** - FASTEST  
+- Compares pixels to average brightness
+- Robust to: exact duplicates, minor color shifts
+- **Best for quick screening**
+
+**dHash (Difference Hash)** - GRADIENT-BASED
+- Tracks gradients between adjacent pixels
+- Robust to: edits, color changes, filters
+- **Best for detecting manipulated images**
+
+**wHash (Wavelet Hash)** - MOST ROBUST
+- Uses Discrete Wavelet Transform (DWT)
+- Robust to: heavy compression, significant modifications
+- **Best when images heavily modified**
+
+### Hamming Distance Thresholds
+
+| Distance | Interpretation |
+|----------|----------------|
+| **0-5** | Near identical (99.9%+ similar) |
+| **6-10** | **Forensic match likely** - same source |
+| **11-15** | Similar content or derivative |
+| **16-20** | Somewhat similar |
+| **>20** | Different images |
+
+### Multi-Algorithm Forensics
+
+For maximum confidence, use all four algorithms:
+
+```python
+from ciaf.watermarks.images import compute_all_hashes, hamming_distance
+
+# Compute all hashes
+phash, ahash, dhash, whash = compute_all_hashes(original_bytes)
+phash_s, ahash_s, dhash_s, whash_s = compute_all_hashes(suspect_bytes)
+
+# Check all algorithms
+matches = 0
+for orig, susp in [(phash, phash_s), (ahash, ahash_s), 
+                    (dhash, dhash_s), (whash, whash_s)]:
+    if hamming_distance(orig, susp) <= 10:
+        matches += 1
+
+print(f"{matches}/4 algorithms show strong similarity")
+if matches >= 2:
+    print("✓ HIGH CONFIDENCE: Same source image")
 ```
 
 ## Forensic Detection Capabilities

@@ -3,6 +3,7 @@
   "$id": "https://cognitiveinsight.ai/schemas/common/signature-envelope.json",
   "title": "SignatureEnvelope",
   "description": "Cryptographic signature payload for CIAF-LCM receipts and related signed objects.",
+  "version": "1.0.0",
   "type": "object",
   "additionalProperties": false,
   "required": [

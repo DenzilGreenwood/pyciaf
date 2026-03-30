@@ -147,44 +147,44 @@ class AgentEvent:
     governance, audit, and compliance tracking.
     """
 
-    # Primary identifiers
+    # Primary identifiers (required)
     event_id: str
     event_type: AgentEventType
     occurred_at: str  # ISO 8601 timestamp
 
-    # Agent identity
+    # Agent identity (required)
     agent_id: str
     agent_name: str
     principal_type: str  # "agent", "human", "service", "system"
     session_id: str
 
-    # Organizational context
-    org_id: Optional[str] = None
-    tenant_id: Optional[str] = None
-    environment: Optional[str] = None  # dev/staging/prod
-
-    # Action details
+    # Action details (required)
     action: str  # Can be AgentActionType or custom string
     resource_type: str
     resource_id: str
 
-    # Action context
+    # Organizational context (optional)
+    org_id: Optional[str] = None
+    tenant_id: Optional[str] = None
+    environment: Optional[str] = None  # dev/staging/prod
+
+    # Action context (optional with defaults)
     params: Dict[str, Any] = field(default_factory=dict)
     justification: str = ""
     correlation_id: Optional[str] = None
 
-    # Authorization & policy
+    # Authorization & policy (optional with defaults)
     policy_decision: PolicyDecision = PolicyDecision.NOT_EVALUATED
     policy_rule_id: Optional[str] = None
     policy_reason: Optional[str] = None
     elevation_grant_id: Optional[str] = None
     approved_by: Optional[str] = None
 
-    # Data classification
+    # Data classification (optional)
     sensitivity_level: Optional[SensitivityLevel] = None
     data_classification: Optional[str] = None
 
-    # Execution outcome
+    # Execution outcome (optional with defaults)
     executed: bool = False
     success: bool = False
     error_message: Optional[str] = None

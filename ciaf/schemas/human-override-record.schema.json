@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Human Override Record",
   "description": "Record of human override of gate decision or policy enforcement",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "override_id",

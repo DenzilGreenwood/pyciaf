@@ -3,8 +3,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Permission",
   "description": "Permission granting an action on a resource type",
+  "version": "1.0.0",
   "type": "object",
-  "required": ["action", "resource_type"],
+  "required": [
+    "action",
+    "resource_type"
+  ],
   "properties": {
     "action": {
       "type": "string",

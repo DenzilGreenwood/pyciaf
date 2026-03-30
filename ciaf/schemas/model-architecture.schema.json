@@ -3,12 +3,29 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Model Architecture",
   "description": "Model architecture definition for LCM",
+  "version": "1.0.0",
   "type": "object",
-  "required": ["type", "layers"],
+  "required": [
+    "type",
+    "layers"
+  ],
   "properties": {
     "type": {
       "type": "string",
-      "enum": ["MLP", "CNN", "RNN", "LSTM", "GRU", "Transformer", "ResNet", "VGG", "BERT", "GPT", "ViT", "Custom"],
+      "enum": [
+        "MLP",
+        "CNN",
+        "RNN",
+        "LSTM",
+        "GRU",
+        "Transformer",
+        "ResNet",
+        "VGG",
+        "BERT",
+        "GPT",
+        "ViT",
+        "Custom"
+      ],
       "description": "Architecture type"
     },
     "layers": {
@@ -16,8 +33,12 @@
       "items": {
         "type": "object",
         "properties": {
-          "layer_type": { "type": "string" },
-          "params": { "type": "object" }
+          "layer_type": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object"
+          }
         }
       },
       "description": "Layer definitions"

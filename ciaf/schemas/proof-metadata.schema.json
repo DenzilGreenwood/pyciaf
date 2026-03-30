@@ -3,6 +3,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Proof Metadata",
   "description": "Standard cryptographic proof metadata for all proof-bearing CIAF objects",
+  "version": "1.0.0",
   "type": "object",
   "required": [
     "schema_version",

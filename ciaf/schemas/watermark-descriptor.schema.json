@@ -3,8 +3,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Watermark Descriptor",
   "description": "Complete watermark metadata for provenance tracking",
+  "version": "1.0.0",
   "type": "object",
-  "required": ["watermark_id", "watermark_type"],
+  "required": [
+    "watermark_id",
+    "watermark_type"
+  ],
   "properties": {
     "watermark_id": {
       "type": "string",
@@ -12,7 +16,15 @@
     },
     "watermark_type": {
       "type": "string",
-      "enum": ["text_embedded", "image_steganographic", "image_visible", "metadata", "qr_code", "perceptual", "none"],
+      "enum": [
+        "text_embedded",
+        "image_steganographic",
+        "image_visible",
+        "metadata",
+        "qr_code",
+        "perceptual",
+        "none"
+      ],
       "description": "Watermarking technique used"
     },
     "tag_text": {
@@ -30,7 +42,9 @@
     },
     "metadata_fields": {
       "type": "object",
-      "additionalProperties": { "type": "string" },
+      "additionalProperties": {
+        "type": "string"
+      },
       "description": "Custom metadata fields"
     },
     "embed_method": {
@@ -39,7 +53,11 @@
     },
     "removal_resistance": {
       "type": "string",
-      "enum": ["low", "medium", "high"],
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
       "description": "Resistance to removal attacks"
     },
     "location": {
