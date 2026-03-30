@@ -4,21 +4,33 @@
   "title": "CIAF Build Artifact",
   "description": "Build artifact metadata for deployment",
   "type": "object",
-  "required": ["artifact_type", "artifact_digest", "build_timestamp", "builder_info"],
+  "required": [
+    "artifact_type",
+    "artifact_digest",
+    "build_timestamp",
+    "builder_info"
+  ],
   "properties": {
     "artifact_type": {
       "type": "string",
-      "enum": ["wheel", "docker", "binary", "onnx", "torchscript", "savedmodel", "jar", "war"],
+      "enum": [
+        "wheel",
+        "docker",
+        "binary",
+        "onnx",
+        "torchscript",
+        "savedmodel",
+        "jar",
+        "war"
+      ],
       "description": "Type of build artifact"
     },
     "artifact_digest": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 digest of artifact"
     },
     "build_timestamp": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "ISO 8601 timestamp of build"
     },
     "builder_info": {

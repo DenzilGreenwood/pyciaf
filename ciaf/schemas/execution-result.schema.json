@@ -4,7 +4,11 @@
   "title": "CIAF Execution Result",
   "description": "Result of an action execution attempt with authorization decision",
   "type": "object",
-  "required": ["request", "allowed", "reason"],
+  "required": [
+    "request",
+    "allowed",
+    "reason"
+  ],
   "properties": {
     "request": {
       "$ref": "action-request.schema.json",
@@ -35,13 +39,11 @@
       "description": "Elevation grant ID used if applicable"
     },
     "policy_obligations": {
-      "type": "array",
-      "items": { "type": "string" },
+      "$ref": "common/patterns/policy-obligations.json",
       "description": "Policy obligations that must be fulfilled"
     },
     "timestamp": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Result timestamp"
     }
   },

@@ -4,7 +4,10 @@
   "title": "CIAF Action Request",
   "description": "A request to perform an action on a resource",
   "type": "object",
-  "required": ["action", "resource"],
+  "required": [
+    "action",
+    "resource"
+  ],
   "properties": {
     "action": {
       "type": "string",
@@ -31,8 +34,7 @@
       "description": "Correlation identifier for tracing"
     },
     "timestamp": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Request timestamp"
     }
   },

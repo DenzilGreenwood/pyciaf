@@ -431,9 +431,7 @@ class CIAFFramework:
         print(f"Creating dataset anchor for: {dataset_id}")
 
         # Generate dataset-specific salt
-        hashlib.sha256(
-            f"{dataset_id}_{self.framework_name}".encode()
-        ).digest()
+        hashlib.sha256(f"{dataset_id}_{self.framework_name}".encode()).digest()
 
         # Create LCM dataset metadata
         lcm_metadata = DatasetMetadata(
@@ -1341,9 +1339,7 @@ class CIAFFramework:
         )
 
         # Step 4: Perform inference with LCM
-        self.perform_inference_with_lcm(
-            model_name, query, ai_output
-        )
+        self.perform_inference_with_lcm(model_name, query, ai_output)
 
         # Complete workflow summary
         workflow_result = {

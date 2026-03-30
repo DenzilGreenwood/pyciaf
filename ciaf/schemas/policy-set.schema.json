@@ -1,0 +1,149 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/policy-set.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Policy Set",
+  "description": "Collection of related policies forming a governance contract",
+  "type": "object",
+  "required": [
+    "policy_set_id",
+    "name",
+    "version",
+    "rules",
+    "enforcement_mode"
+  ],
+  "properties": {
+    "policy_set_id": {
+      "type": "string",
+      "description": "Unique policy set identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Policy set name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Policy set description"
+    },
+    "version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Semantic version of policy set"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "policy-rule.schema.json"
+      },
+      "minItems": 1,
+      "description": "Policy rules in this set"
+    },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": [
+        "enforcing",
+        "permissive",
+        "audit_only",
+        "disabled"
+      ],
+      "description": "Enforcement mode for policy set"
+    },
+    "default_action": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "require_approval"
+      ],
+      "default": "deny",
+      "description": "Default action when no rule matches"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Principal who approved this policy set"
+    },
+    "approved_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Policy set approval timestamp"
+    },
+    "effective_from": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "When policy set becomes effective"
+    },
+    "effective_until": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "When policy set expires"
+    },
+    "supersedes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Previous policy set versions superseded"
+    },
+    "compliance_frameworks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Compliance frameworks this policy set supports"
+    },
+    "audit_level": {
+      "type": "string",
+      "enum": [
+        "minimal",
+        "standard",
+        "comprehensive"
+      ],
+      "default": "standard",
+      "description": "Audit detail level"
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "obligation_type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": [
+              "mandatory",
+              "optional"
+            ]
+          }
+        }
+      },
+      "description": "Policy obligations to fulfill"
+    },
+    "exception_handling": {
+      "type": "object",
+      "properties": {
+        "allow_exceptions": {
+          "type": "boolean"
+        },
+        "exception_approval_required": {
+          "type": "boolean"
+        },
+        "exception_roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Exception handling rules"
+    },
+    "metadata": {
+      "$ref": "common/patterns/metadata.json",
+      "description": "Additional policy set metadata"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
+  },
+  "additionalProperties": false
+}

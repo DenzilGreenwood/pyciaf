@@ -1,0 +1,19 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/patterns/merkle-path.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Merkle Path",
+  "description": "Array of SHA-256 hashes representing a Merkle proof path",
+  "type": "array",
+  "items": {
+    "type": "string",
+    "pattern": "^[a-f0-9]{64}$"
+  },
+  "examples": [
+    [
+      "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+      "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
+      "f3c6d1a4b5e8c9d2a3f4e5b6a7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6"
+    ]
+  ],
+  "$comment": "Used to prove inclusion of a leaf in a Merkle tree. Each element is a SHA-256 hash of a sibling node."
+}

@@ -4,7 +4,15 @@
   "title": "CIAF Corrective Action",
   "description": "Individual corrective action record for compliance",
   "type": "object",
-  "required": ["action_id", "trigger", "trigger_type", "detection_method", "action_type", "description", "approved_by"],
+  "required": [
+    "action_id",
+    "trigger",
+    "trigger_type",
+    "detection_method",
+    "action_type",
+    "description",
+    "approved_by"
+  ],
   "properties": {
     "action_id": {
       "type": "string",
@@ -16,7 +24,14 @@
     },
     "trigger_type": {
       "type": "string",
-      "enum": ["bias_detected", "performance_degradation", "compliance_violation", "security_issue", "data_drift", "model_drift"],
+      "enum": [
+        "bias_detected",
+        "performance_degradation",
+        "compliance_violation",
+        "security_issue",
+        "data_drift",
+        "model_drift"
+      ],
       "description": "Type of trigger"
     },
     "detection_method": {
@@ -25,7 +40,15 @@
     },
     "action_type": {
       "type": "string",
-      "enum": ["retrain", "reweight", "audit", "disable", "notify", "investigate", "update_policy"],
+      "enum": [
+        "retrain",
+        "reweight",
+        "audit",
+        "disable",
+        "notify",
+        "investigate",
+        "update_policy"
+      ],
       "description": "Type of corrective action"
     },
     "description": {
@@ -41,34 +64,42 @@
       "description": "Implementer identifier"
     },
     "date_created": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Creation timestamp"
     },
     "date_approved": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Approval timestamp"
     },
     "date_applied": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Application timestamp"
     },
     "date_verified": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Verification timestamp"
     },
     "status": {
       "type": "string",
-      "enum": ["pending", "approved", "in_progress", "completed", "verified", "rejected"],
+      "enum": [
+        "pending",
+        "approved",
+        "in_progress",
+        "completed",
+        "verified",
+        "rejected"
+      ],
       "default": "pending",
       "description": "Action status"
     },
     "priority": {
       "type": "string",
-      "enum": ["Low", "Medium", "High", "Critical"],
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
       "default": "Medium",
       "description": "Priority level"
     },
@@ -82,12 +113,16 @@
     },
     "evidence_files": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Paths to evidence files"
     },
     "verification_criteria": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Criteria for verification"
     },
     "verification_results": {
@@ -111,9 +146,18 @@
       "description": "Effectiveness score (0.0-1.0)"
     },
     "metadata": {
-      "type": "object",
+      "$ref": "common/patterns/metadata.json",
       "description": "Additional metadata"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
     }
   },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
   "additionalProperties": false
 }

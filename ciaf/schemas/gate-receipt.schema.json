@@ -1,0 +1,97 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/gate-receipt.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Gate Receipt",
+  "description": "Cryptographic receipt proving gate evaluation was performed before action",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "gate_id",
+    "evaluation_id",
+    "action_ref",
+    "decision",
+    "timestamp"
+  ],
+  "properties": {
+    "receipt_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Unique receipt identifier"
+    },
+    "gate_id": {
+      "type": "string",
+      "description": "Gate identifier"
+    },
+    "gate_type": {
+      "$ref": "common/enums/gate-type.json",
+      "description": "Type of gate"
+    },
+    "evaluation_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Reference to gate evaluation"
+    },
+    "action_ref": {
+      "type": "string",
+      "description": "Reference to action that triggered gate"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "override"
+      ],
+      "description": "Gate decision"
+    },
+    "timestamp": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Receipt creation timestamp"
+    },
+    "principal_id": {
+      "type": "string",
+      "description": "Principal requesting action"
+    },
+    "resource_id": {
+      "type": "string",
+      "description": "Resource being accessed"
+    },
+    "policy_versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "policy_id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Versions of policies evaluated"
+    },
+    "approval_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "References to approval records"
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Post-action obligations to fulfill"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
+  "additionalProperties": false
+}

@@ -4,7 +4,11 @@
   "title": "CIAF Deployment Anchor",
   "description": "Deployment anchor for LCM with infrastructure tracking",
   "type": "object",
-  "required": ["deployment_id", "predeployment_anchor", "deployment_time"],
+  "required": [
+    "deployment_id",
+    "predeployment_anchor",
+    "deployment_time"
+  ],
   "properties": {
     "deployment_id": {
       "type": "string",
@@ -15,13 +19,11 @@
       "description": "Associated pre-deployment anchor"
     },
     "deployment_time": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Actual deployment timestamp"
     },
     "deployment_env": {
-      "type": "string",
-      "enum": ["production", "staging", "development", "test"],
+      "$ref": "common/enums/environment-type.json",
       "description": "Actual deployment environment"
     },
     "location": {
@@ -29,18 +31,15 @@
       "description": "Actual deployment location/region"
     },
     "infrastructure_hash": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 hash of infrastructure specification"
     },
     "config_digest": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 digest of runtime configuration"
     },
     "deployment_hash": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 hash of deployment data"
     },
     "anchor_id": {
@@ -49,9 +48,23 @@
     },
     "status": {
       "type": "string",
-      "enum": ["prepared", "deployed", "failed", "rollback"],
+      "enum": [
+        "prepared",
+        "deployed",
+        "failed",
+        "rollback"
+      ],
       "description": "Deployment status"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
     }
   },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
   "additionalProperties": false
 }

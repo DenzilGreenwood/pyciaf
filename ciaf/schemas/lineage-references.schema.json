@@ -1,0 +1,46 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/lineage-references.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Lineage References",
+  "description": "Standard lineage reference fields for provenance linkage across CIAF objects",
+  "type": "object",
+  "properties": {
+    "dataset_anchor_ref": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "Reference to dataset anchor hash"
+    },
+    "training_snapshot_ref": {
+      "type": "string",
+      "description": "Reference to training snapshot identifier"
+    },
+    "training_receipt_ref": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Reference to training receipt UUID"
+    },
+    "model_anchor_ref": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "Reference to model anchor hash"
+    },
+    "predeployment_anchor_ref": {
+      "type": "string",
+      "description": "Reference to predeployment anchor identifier"
+    },
+    "deployment_anchor_ref": {
+      "type": "string",
+      "description": "Reference to deployment anchor identifier"
+    },
+    "inference_receipt_ref": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Reference to inference receipt UUID"
+    },
+    "artifact_evidence_ref": {
+      "type": "string",
+      "description": "Reference to artifact evidence identifier"
+    },
+    "prior_receipt_hash": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "Hash of prior receipt for chain linking"
+    }
+  },
+  "additionalProperties": false
+}

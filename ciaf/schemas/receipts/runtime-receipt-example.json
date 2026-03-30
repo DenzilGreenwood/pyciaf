@@ -1,0 +1,27 @@
+{
+  "receipt_id": "rcpt_01HZY9Q8J3T8XW4M9K7N2A1BCD",
+  "receipt_type": "policy_check",
+  "event_hash": "7d8b2f4cb8b1d8d8d7d99a8b3dc90a7c34d4fd1dfe2ef8a4a7c4dc0c9f2f43a1",
+  "timestamp": "2026-03-30T18:22:41Z",
+  "actor_id": "agent:risk-evaluator-prod",
+  "model_id": "credit-model-v3.2.1",
+  "policy_decision": "allow",
+  "correlation_id": "trace-abc123-xyz789",
+  "session_id": "session-2026-03-30-prod-001",
+  "signature": {
+    "payload_hash": "7d8b2f4cb8b1d8d8d7d99a8b3dc90a7c34d4fd1dfe2ef8a4a7c4dc0c9f2f43a1",
+    "hash_algorithm": "SHA-256",
+    "signature_value": "MEYCIQDxExampleOnlyReplaceWithRealEd25519SignatureValue1234567890ABCDEF==",
+    "signature_encoding": "base64",
+    "signed_at": "2026-03-30T18:22:42Z",
+    "metadata": {
+      "signature_algorithm": "Ed25519",
+      "key_id": "aws-kms:alias/ciaf-receipts-prod-2026-03",
+      "canonicalization_version": "RFC8785-like/1.0",
+      "key_backend": "kms",
+      "signing_service": "ciaf-vault-signer",
+      "public_key_ref": "jwks://cognitiveinsight.ai/keys/ciaf-prod-2026-01",
+      "verification_method": "ciaf-verify/v1"
+    }
+  }
+}

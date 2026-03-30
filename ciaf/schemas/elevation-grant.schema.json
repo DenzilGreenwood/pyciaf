@@ -4,7 +4,14 @@
   "title": "CIAF Elevation Grant",
   "description": "Just-in-time privilege elevation grant for temporary escalation",
   "type": "object",
-  "required": ["grant_id", "principal_id", "elevated_role", "approved_by", "valid_from", "valid_until"],
+  "required": [
+    "grant_id",
+    "principal_id",
+    "elevated_role",
+    "approved_by",
+    "valid_from",
+    "valid_until"
+  ],
   "properties": {
     "grant_id": {
       "type": "string",
@@ -31,13 +38,11 @@
       "description": "Reference to approval ticket or workflow"
     },
     "valid_from": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Grant validity start time"
     },
     "valid_until": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Grant expiration time"
     },
     "purpose": {

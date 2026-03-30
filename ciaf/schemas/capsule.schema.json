@@ -2,48 +2,150 @@
   "$id": "https://cognitiveinsight.ai/schemas/capsule.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Audit Capsule",
+  "description": "Portable audit proof capsule with Merkle inclusion proof and anchor",
   "type": "object",
-  "required": ["capsule_version","capsule_type","timestamp","record","proofs","anchor","verification"],
+  "required": [
+    "capsule_version",
+    "capsule_type",
+    "timestamp",
+    "record",
+    "proofs",
+    "anchor",
+    "verification"
+  ],
   "properties": {
-    "capsule_version": { "type": "string", "const": "1.0" },
-    "capsule_type": { "type": "string", "const": "audit_proof" },
-    "timestamp": { "type": "string", "format": "date-time" },
+    "capsule_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Capsule format version"
+    },
+    "capsule_type": {
+      "type": "string",
+      "enum": [
+        "audit_proof",
+        "training_proof",
+        "inference_proof",
+        "artifact_proof"
+      ],
+      "description": "Type of audit capsule"
+    },
+    "timestamp": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Capsule creation timestamp"
+    },
     "record": {
       "type": "object",
-      "required": ["type","metadata","leaf_hash"],
+      "required": [
+        "type",
+        "metadata",
+        "leaf_hash"
+      ],
       "properties": {
-        "type": { "enum": ["dataset","model","inference","anchor","monitoring","compliance"] },
-        "metadata": { "type": "object" },
-        "leaf_hash": { "type": "string" }
+        "type": {
+          "enum": [
+            "dataset",
+            "model",
+            "inference",
+            "anchor",
+            "monitoring",
+            "compliance",
+            "artifact",
+            "action"
+          ],
+          "description": "Record type"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Record metadata"
+        },
+        "leaf_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 leaf hash"
+        }
       }
     },
     "proofs": {
       "type": "object",
-      "required": ["merkle_path","merkle_root","inclusion_proof_valid"],
+      "required": [
+        "merkle_path",
+        "merkle_root",
+        "inclusion_proof_valid"
+      ],
       "properties": {
-        "merkle_path": { 
-          "type": "array", 
-          "items": { 
-            "type": "array", 
-            "prefixItems": [{ "type":"string" }, { "enum":["left","right"] }], 
-            "minItems":2, 
-            "maxItems":2 
-          } 
+        "merkle_path": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "left",
+                  "right"
+                ]
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "description": "Merkle proof path (hash, direction pairs)"
         },
-        "merkle_root": { "type": "string" },
-        "inclusion_proof_valid": { "type": "boolean" }
+        "merkle_root": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Merkle tree root hash"
+        },
+        "inclusion_proof_valid": {
+          "type": "boolean",
+          "description": "Whether inclusion proof validates"
+        },
+        "proof_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Depth of Merkle proof"
+        }
       }
     },
-    "anchor": { "$ref": "anchor.schema.json" },
+    "anchor": {
+      "$ref": "anchor.schema.json",
+      "description": "Signed anchor record"
+    },
     "verification": {
       "type": "object",
-      "required": ["capsule_hash","verifiable_independently","signature_valid"],
+      "required": [
+        "capsule_hash",
+        "verifiable_independently",
+        "signature_valid"
+      ],
       "properties": {
-        "capsule_hash": { "type": "string" },
-        "verifiable_independently": { "type": "boolean" },
-        "signature_valid": { "type": "boolean" }
+        "capsule_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of entire capsule"
+        },
+        "verifiable_independently": {
+          "type": "boolean",
+          "description": "Can be verified without CIAF system"
+        },
+        "signature_valid": {
+          "type": "boolean",
+          "description": "Whether anchor signature is valid"
+        },
+        "canonicalization_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Canonicalization version used"
+        }
       }
     }
   },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
   "additionalProperties": false
 }

@@ -1,0 +1,106 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/gate-definition.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Gate Definition",
+  "description": "Definition of a governance gate that must be satisfied before an action proceeds",
+  "type": "object",
+  "required": [
+    "gate_id",
+    "gate_type",
+    "name",
+    "description",
+    "enforcement_mode",
+    "default_action"
+  ],
+  "properties": {
+    "gate_id": {
+      "type": "string",
+      "description": "Unique gate identifier"
+    },
+    "gate_type": {
+      "$ref": "common/enums/gate-type.json",
+      "description": "Type of governance gate"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable gate name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed gate description"
+    },
+    "enforcement_mode": {
+      "type": "string",
+      "enum": [
+        "enforcing",
+        "permissive",
+        "audit_only"
+      ],
+      "description": "Gate enforcement mode"
+    },
+    "default_action": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "require_approval"
+      ],
+      "description": "Default action when gate conditions are not met"
+    },
+    "policy_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "References to policies evaluated by this gate"
+    },
+    "required_approvers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required approver roles or identities"
+    },
+    "approval_threshold": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of required approvals"
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Timeout for gate evaluation"
+    },
+    "human_override_allowed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether human override is permitted"
+    },
+    "override_roles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Roles permitted to override gate"
+    },
+    "audit_required": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether gate evaluation must be audited"
+    },
+    "version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Gate definition version"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether gate is currently active"
+    },
+    "metadata": {
+      "$ref": "common/patterns/metadata.json",
+      "description": "Additional gate metadata"
+    }
+  },
+  "additionalProperties": false
+}

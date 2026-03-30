@@ -2,13 +2,53 @@
   "$id": "https://cognitiveinsight.ai/schemas/receipt.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF Receipt",
+  "description": "Base CIAF receipt with anchor and leaf hash",
   "type": "object",
-  "required": ["metadata","anchor","leaf_hash","record_type"],
+  "required": [
+    "metadata",
+    "anchor",
+    "leaf_hash",
+    "record_type"
+  ],
   "properties": {
-    "metadata": { "type": "object" },
-    "anchor": { "$ref": "anchor.schema.json" },
-    "leaf_hash": { "type": "string" },
-    "record_type": { "enum": ["dataset","model","inference","anchor","monitoring","compliance"] }
+    "receipt_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Unique receipt identifier"
+    },
+    "metadata": {
+      "$ref": "common/patterns/metadata.json",
+      "description": "Record metadata"
+    },
+    "anchor": {
+      "$ref": "anchor.schema.json",
+      "description": "Anchor record"
+    },
+    "leaf_hash": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "SHA-256 leaf hash"
+    },
+    "record_type": {
+      "enum": [
+        "dataset",
+        "model",
+        "inference",
+        "anchor",
+        "monitoring",
+        "compliance",
+        "artifact",
+        "action"
+      ],
+      "description": "Type of record"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
   },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
   "additionalProperties": false
 }

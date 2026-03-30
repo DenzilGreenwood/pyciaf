@@ -1,24 +1,30 @@
-# CIAF Watermarking - Forensic Provenance for AI Artifacts
+# CIAF Watermarking - Forensic Provenance Layer for AI Artifacts
 
-**Version**: 1.0.0
-**Created**: 2026-03-24
-**Status**: Production-Ready (Text, Images, PDF Metadata) - ✅ Phase 1 Complete
+**Version**: 1.0.0  
+**Created**: 2026-03-24  
+**Status**: 
+- ✅ **Production-Capable**: Text provenance tagging with dual-state hashing
+- ⚠️ **Beta**: Image visual watermarking (validation ongoing)
+- ⚠️ **Alpha**: Forensic fragment verification (see known issues)
+- 🚧 **Roadmap**: PDF metadata, perceptual matching, steganography
 
 ## Overview
 
-The CIAF Watermarking module implements a **dual-state artifact integrity model** for forensic provenance of AI-generated content. It enables detection of:
-- Watermark removal attempts
-- Content tampering
-- Unauthorized modifications
-- AI-generated content verification
+The CIAF Watermarking module implements a **forensic provenance layer** for AI-generated artifacts. Unlike traditional watermarking, CIAF makes **watermark removal attempts forensically detectable** through dual-state cryptographic evidence.
 
-### Key Innovation: Before/After Hashing
+**Key Differentiator**: We don't just mark AI content - we create **tamper-evident audit trails** that prove:
+- This is the exact distributed copy (watermarked version)
+- This is the original with watermark removed (forensic evidence)
+- This content has been modified (tampering detection)
+- This is not from our system (no match)
+
+### Core Innovation: Dual-State Artifact Integrity
 
 Unlike traditional watermarking, CIAF stores **two cryptographic hashes**:
-1. **Before watermark**: Hash of original AI output
+1. **Before watermark**: Hash of original AI output (pre-distribution)
 2. **After watermark**: Hash of distributed version with provenance tag
 
-This enables forensic detection even when watermarks are removed!
+This dual-state model enables **forensic detection even when watermarks are removed**!
 
 ## Architecture
 
@@ -42,53 +48,55 @@ ciaf/watermarks/
 
 ## Features
 
-### ✅ Implemented - Phase 1 Complete
+### ✅ Production-Capable (Text Provenance)
 
 **Text Watermarking**:
-- Dual-state hashing (pre/post watermark)
-- Multiple verification strategies:
+- ✅ Dual-state hashing (pre/post watermark)
+- ✅ Multiple verification strategies:
   - Exact hash matching (cryptographic proof)
   - Normalized hash matching (format-resilient)
   - SimHash similarity (content-resilient)
-- Watermark styles: Footer, Header, Inline
-- Watermark removal detection
-- Content modification detection
-- Vault integration (persistent storage)
+- ✅ Watermark styles: Footer, Header, Inline
+- ✅ Watermark removal detection
+- ✅ Content modification detection
+- ✅ Vault integration (persistent storage)
 
-**Image Watermarking**:
-- Visual text overlays (9 positions, opacity control)
-- QR code overlays (verification URLs)
-- Combined text + QR watermarks
-- Perceptual hashing (pHash, aHash, dHash, wHash)
-- Image similarity detection (hamming distance)
-- Dual-state hashing for removal detection
-- Support for PNG, JPEG, and other PIL formats
+### ⚠️ Beta (Image Visual Watermarking)
 
-**PDF Watermarking**:
-- Metadata embedding (invisible watermarks)
-- Custom CIAF fields in PDF metadata
-- Watermark extraction and verification
-- Dual-state hashing for removal detection
-- Preserves original content exactly
+**Image Watermarking** (in `images/` package):
+- ⚠️ Visual text overlays (9 positions, opacity control)
+- ⚠️ QR code overlays (verification URLs)
+- ⚠️ Combined text + QR watermarks
+- ⚠️ Perceptual hashing (pHash, aHash, dHash, wHash) - **Needs validation**
+- ⚠️ Image similarity detection (hamming distance)
+- ✅ Dual-state hashing for removal detection
+- ⚠️ Support for PNG, JPEG, and other PIL formats
 
-**QR Code Generation**:
-- Verification URL QR codes
-- Compact CIAF token QR codes
-- Customizable styling (size, colors)
+**Note**: Image implementation exists but requires comprehensive testing before production use.
 
-### 🚧 Planned - Phase 2
+### ⚠️ Alpha (Known Issues)
 
+**Forensic Fragment Verification**:
+- 🐛 **Critical Bug**: Fragment verification passes hashes instead of text to matcher
+  - File: `fragment_verification.py:161`
+  - Impact: Sliding window search fails (searches for hash string, not content)
+  - Fix: Add `fragment_text` field to `TextForensicFragment` model
+- ⚠️ Concept is sound, implementation incomplete
+
+### 🚧 Roadmap (Phase 2 & 3)
+
+**Phase 2** (Planned):
 - PDF visible stamps (header/footer)
 - QR code placement in PDF pages
 - Hybrid image watermarking (visible + steganographic)
+- True perceptual hashing (currently uses truncated SHA-256 fallback)
 - Image verification helpers
 - Batch watermarking operations
 
-### 🔮 Future - Phase 3
-
+**Phase 3** (Future):
 - Steganographic image watermarking (LSB embedding)
 - Video watermarking (frame-based)
-- Audio watermarking
+- Audio watermarking (spectral fingerprints)
 
 
 ## Quick Start
@@ -865,6 +873,70 @@ When adding new watermarking features:
 4. Update verification in `verify.py`
 5. Add tests to `tests/test_watermarks.py`
 6. Update this README
+
+---
+
+## Known Issues & Limitations
+
+### Critical Issues
+
+**🐛 Fragment Verification Bug** (Priority: HIGH)
+- **File**: `fragment_verification.py:161`
+- **Problem**: Passes `fragment_hash_before` (SHA-256 hash) instead of actual fragment text to sliding window matcher
+- **Impact**: Fragment verification searches for 64-char hex strings instead of sampled content
+- **Fix Required**: Add `fragment_text: str` field to `TextForensicFragment` model and update verification logic
+- **Status**: Not usable in current form
+
+**⚠️ Perceptual Hashing Placeholder**
+- **File**: `hashing.py`
+- **Problem**: Perceptual hash implementation falls back to truncated SHA-256 instead of true perceptual hashing
+- **Impact**: Similarity matching claims for images/audio/video are not fully backed
+- **Fix Required**: Implement proper pHash/aHash/dHash using `imagehash` library
+- **Status**: Text similarity works, but image/media similarity is placeholder
+
+**⚠️ Signature Integration Incomplete**
+- **File**: `models.py` - `ArtifactEvidence`
+- **Problem**: Uses simple `signature: Optional[str]` instead of standardized `SignatureEnvelope`
+- **Impact**: Not aligned with CIAF's shared cryptographic signing architecture
+- **Fix Required**: Migrate to `ciaf/schemas/common/signature-envelope.json` pattern
+- **Status**: Works but not integrated with broader CIAF signing infrastructure
+
+### Architectural Limitations
+
+**Text Watermarks are Removable**:
+- Current implementation uses **visible provenance tags** (footer/header text)
+- Easy to strip with simple text processing
+- **Real value**: Forensic detection via dual-state hashing, not prevention
+- **Not a bug**: This is by design - we detect removal, not prevent it
+
+**Fragment Storage Tradeoffs**:
+- Storing fragments means keeping samples of AI output
+- May conflict with privacy requirements in some jurisdictions
+- Consider vault encryption and retention policies
+
+**Image Implementation Status**:
+- `images/` package appears functional but needs comprehensive testing
+- Old `images.py` placeholder at root level causes confusion (should be removed)
+- No production validation yet
+
+### Development Notes
+
+**Before claiming production-ready**:
+1. Fix fragment verification bug (#161)
+2. Validate image watermarking end-to-end
+3. Implement true perceptual hashing
+4. Migrate to standardized signature envelopes
+5. Add comprehensive test suite with attack scenarios
+6. Security audit of cryptographic binding
+7. Legal review of forensic defensibility claims
+
+**Recommended Use**:
+- ✅ Text provenance with exact/normalized matching: **Production-capable**
+- ⚠️ Image visual watermarking: **Beta - validate before production**
+- ❌ Fragment verification: **Do not use until bug fixed**
+- ❌ Perceptual/similarity matching: **Placeholder - not production-ready**
+
+---
 
 ## License
 

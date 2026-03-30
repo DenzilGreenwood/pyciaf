@@ -1,0 +1,101 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/human-override-record.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Human Override Record",
+  "description": "Record of human override of gate decision or policy enforcement",
+  "type": "object",
+  "required": [
+    "override_id",
+    "gate_id",
+    "overridden_by",
+    "original_decision",
+    "override_decision",
+    "timestamp",
+    "justification"
+  ],
+  "properties": {
+    "override_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Unique override identifier"
+    },
+    "gate_id": {
+      "type": "string",
+      "description": "Gate being overridden"
+    },
+    "evaluation_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Original gate evaluation"
+    },
+    "overridden_by": {
+      "type": "string",
+      "description": "Principal performing override"
+    },
+    "override_role": {
+      "type": "string",
+      "description": "Role granting override authority"
+    },
+    "original_decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "pending_approval"
+      ],
+      "description": "Original gate decision"
+    },
+    "override_decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny"
+      ],
+      "description": "Override decision"
+    },
+    "timestamp": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Override timestamp"
+    },
+    "justification": {
+      "type": "string",
+      "description": "Required justification for override"
+    },
+    "incident_reference": {
+      "type": "string",
+      "description": "Link to incident or emergency ticket"
+    },
+    "approval_chain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "approver_id": {
+            "type": "string"
+          },
+          "approved_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "description": "Approval chain for override authorization"
+    },
+    "expiry": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Override expiration time"
+    },
+    "audit_flag": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether override triggers audit review"
+    },
+    "metadata": {
+      "$ref": "common/patterns/metadata.json",
+      "description": "Additional override metadata"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
+  },
+  "additionalProperties": false
+}

@@ -4,7 +4,16 @@
   "title": "CIAF Text Forensic Fragment",
   "description": "High-entropy text fragment for granular verification",
   "type": "object",
-  "required": ["fragment_id", "offset_start", "offset_end", "fragment_length", "sample_location", "fragment_hash_before", "fragment_hash_after", "entropy_score"],
+  "required": [
+    "fragment_id",
+    "offset_start",
+    "offset_end",
+    "fragment_length",
+    "sample_location",
+    "fragment_hash_before",
+    "fragment_hash_after",
+    "entropy_score"
+  ],
   "properties": {
     "fragment_id": {
       "type": "string",
@@ -32,17 +41,19 @@
     },
     "sample_location": {
       "type": "string",
-      "enum": ["beginning", "middle", "end"],
+      "enum": [
+        "beginning",
+        "middle",
+        "end"
+      ],
       "description": "Location in document"
     },
     "fragment_hash_before": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 hash before watermark"
     },
     "fragment_hash_after": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 hash after watermark"
     },
     "entropy_score": {

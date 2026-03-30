@@ -1,0 +1,14 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/identifiers/correlation-id.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Correlation ID",
+  "description": "Identifier for correlating related events and receipts across systems",
+  "type": "string",
+  "minLength": 1,
+  "maxLength": 256,
+  "examples": [
+    "req_550e8400-e29b-41d4-a716-446655440000",
+    "trace_2026-03-30_abc123",
+    "session_xyz789"
+  ]
+}

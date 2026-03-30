@@ -4,13 +4,19 @@
   "title": "CIAF Training Metrics",
   "description": "Training metrics collection for LCM",
   "type": "object",
-  "required": ["train_metrics", "val_metrics", "epochs"],
+  "required": [
+    "train_metrics",
+    "val_metrics",
+    "epochs"
+  ],
   "properties": {
     "train_metrics": {
       "type": "object",
       "additionalProperties": {
         "type": "array",
-        "items": { "type": "number" }
+        "items": {
+          "type": "number"
+        }
       },
       "description": "Training metrics per epoch (e.g., {loss: [1.0, 0.8, 0.6]})"
     },
@@ -18,18 +24,21 @@
       "type": "object",
       "additionalProperties": {
         "type": "array",
-        "items": { "type": "number" }
+        "items": {
+          "type": "number"
+        }
       },
       "description": "Validation metrics per epoch"
     },
     "epochs": {
       "type": "array",
-      "items": { "type": "integer" },
+      "items": {
+        "type": "integer"
+      },
       "description": "List of epoch numbers"
     },
     "metrics_digest": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 digest of all metrics"
     }
   },

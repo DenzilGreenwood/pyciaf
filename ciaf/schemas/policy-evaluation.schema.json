@@ -1,0 +1,122 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/policy-evaluation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Policy Evaluation",
+  "description": "Record of policy rule evaluation determining action authorization",
+  "type": "object",
+  "required": [
+    "evaluation_id",
+    "policy_set_id",
+    "rule_id",
+    "evaluated_at",
+    "decision"
+  ],
+  "properties": {
+    "evaluation_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Unique evaluation identifier"
+    },
+    "policy_set_id": {
+      "type": "string",
+      "description": "Policy set being evaluated"
+    },
+    "policy_set_version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Policy set version"
+    },
+    "rule_id": {
+      "type": "string",
+      "description": "Rule being evaluated"
+    },
+    "rule_version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Rule version"
+    },
+    "evaluated_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Evaluation timestamp"
+    },
+    "decision": {
+      "$ref": "common/enums/decision-type.json",
+      "description": "Policy decision"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for decision"
+    },
+    "condition_result": {
+      "type": "object",
+      "properties": {
+        "matched": {
+          "type": "boolean"
+        },
+        "evaluation_trace": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "description": "Condition evaluation result"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "principal_id": {
+          "type": "string"
+        },
+        "resource_id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "object"
+        }
+      },
+      "description": "Evaluation context"
+    },
+    "obligations_triggered": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "obligation_type": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "fulfilled",
+              "failed"
+            ]
+          }
+        }
+      },
+      "description": "Obligations triggered by this evaluation"
+    },
+    "exceptions_applied": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Exception IDs that were applied"
+    },
+    "evaluation_duration_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Evaluation duration in milliseconds"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Correlation ID for request tracing"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,13 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/identifiers/semantic-version.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Semantic Version",
+  "description": "Semantic versioning pattern (major.minor.patch)",
+  "type": "string",
+  "pattern": "^\\d+\\.\\d+\\.\\d+$",
+  "examples": [
+    "1.0.0",
+    "2.3.1",
+    "10.15.23"
+  ]
+}

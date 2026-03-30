@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cognitiveinsight.ai/schemas/merkle/merkle-batch.json",
+  "title": "MerkleBatch",
+  "description": "Merkle batch object for grouped CIAF-LCM receipts with cryptographic proof.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "batch_id",
+    "root_hash",
+    "hash_algorithm",
+    "leaf_count",
+    "sealed_at",
+    "signature"
+  ],
+  "properties": {
+    "batch_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique batch identifier"
+    },
+    "root_hash": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "description": "SHA-256 Merkle root hash of all leaves in this batch"
+    },
+    "hash_algorithm": {
+      "type": "string",
+      "const": "SHA-256",
+      "description": "Hash algorithm used for Merkle tree construction"
+    },
+    "leaf_count": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of leaf nodes (receipts/events) in this batch"
+    },
+    "sealed_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "RFC3339 timestamp when batch was sealed"
+    },
+    "batch_type": {
+      "type": "string",
+      "enum": [
+        "inference_batch",
+        "training_batch",
+        "dataset_batch",
+        "action_batch",
+        "artifact_batch"
+      ],
+      "description": "Type of events batched in this Merkle tree"
+    },
+    "parent_batch_id": {
+      "type": "string",
+      "description": "Optional reference for tree-of-trees or hierarchical Merkle aggregation."
+    },
+    "batch_metadata": {
+      "type": "object",
+      "properties": {
+        "start_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of first event in batch"
+        },
+        "end_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last event in batch"
+        },
+        "batch_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Sequence number in the overall chain"
+        }
+      },
+      "description": "Additional batch metadata"
+    },
+    "signature": {
+      "$ref": "https://cognitiveinsight.ai/schemas/common/signature-envelope.json",
+      "description": "Cryptographic signature proving batch integrity and authenticity"
+    }
+  }
+}

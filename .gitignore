@@ -127,6 +127,9 @@ compliance_report_*.json
 test_optimized/
 *.cpython-*.pyc
 
+# Schema backups
+ciaf/schemas/backups/
+
 # IDE
 .vscode/
 .idea/

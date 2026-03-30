@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cognitiveinsight.ai/schemas/common/signature-envelope.json",
+  "title": "SignatureEnvelope",
+  "description": "Cryptographic signature payload for CIAF-LCM receipts and related signed objects.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "payload_hash",
+    "hash_algorithm",
+    "signature_value",
+    "signature_encoding",
+    "signed_at",
+    "metadata"
+  ],
+  "properties": {
+    "payload_hash": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "description": "SHA-256 hash of the canonicalized payload."
+    },
+    "hash_algorithm": {
+      "type": "string",
+      "const": "SHA-256",
+      "description": "Standard content hash algorithm for CIAF-LCM."
+    },
+    "signature_value": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Encoded Ed25519 signature value."
+    },
+    "signature_encoding": {
+      "type": "string",
+      "enum": [
+        "base64",
+        "base64url",
+        "hex"
+      ],
+      "default": "base64",
+      "description": "Encoding format for the signature value."
+    },
+    "signed_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "RFC3339 timestamp when the signing operation completed."
+    },
+    "metadata": {
+      "$ref": "https://cognitiveinsight.ai/schemas/common/signature-metadata.json",
+      "description": "Signature metadata including algorithm, key_id, and backend information."
+    }
+  }
+}

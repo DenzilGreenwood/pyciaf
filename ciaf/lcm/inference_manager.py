@@ -351,9 +351,7 @@ class LCMInferenceManager:
 
         lines = []
         for i, receipt in enumerate(connections.receipts[:3]):  # Show first 3
-            (
-                receipt.query[:30] + "..." if len(receipt.query) > 30 else receipt.query
-            )
+            (receipt.query[:30] + "..." if len(receipt.query) > 30 else receipt.query)
             lines.append(
                 f"  ▸ r{i+1} input_c={receipt.input_commitment.commitment_type.value}, output_c={receipt.output_commitment.commitment_type.value}"
             )

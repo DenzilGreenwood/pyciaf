@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cognitiveinsight.ai/schemas/common/signature-metadata.json",
+  "title": "SignatureMetadata",
+  "description": "Common metadata describing how a CIAF-LCM object was signed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "signature_algorithm",
+    "key_id",
+    "canonicalization_version",
+    "key_backend"
+  ],
+  "properties": {
+    "signature_algorithm": {
+      "type": "string",
+      "const": "Ed25519",
+      "description": "The cryptographic signature algorithm used for externally verifiable receipts."
+    },
+    "key_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for the signing key (enables key rotation and lookup)."
+    },
+    "canonicalization_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonicalization profile applied before hashing and signing (e.g., RFC8785-like/1.0)."
+    },
+    "key_backend": {
+      "type": "string",
+      "enum": [
+        "local",
+        "kms",
+        "hsm",
+        "cloudhsm",
+        "external_kms"
+      ],
+      "description": "Backend used to protect and/or invoke the signing key (mandatory for audit trail)."
+    },
+    "signing_service": {
+      "type": "string",
+      "description": "Logical service or provider performing the signing operation."
+    },
+    "public_key_ref": {
+      "type": "string",
+      "description": "Reference to the public verification key, certificate, or verifier material (e.g., jwks:// URL)."
+    },
+    "verification_method": {
+      "type": "string",
+      "description": "Reference to the verification profile or verification procedure (e.g., ciaf-verify/v1)."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/enums/environment-type.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Environment Type",
+  "description": "Deployment environment classification",
+  "type": "string",
+  "enum": ["production", "staging", "development", "test"],
+  "examples": [
+    "production",
+    "staging"
+  ],
+  "$comment": "production=live production, staging=pre-production, development=dev environment, test=testing/QA"
+}

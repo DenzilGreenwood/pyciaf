@@ -4,26 +4,31 @@
   "title": "CIAF Enhanced Training Receipt",
   "description": "Enhanced training receipt with strict validation and comprehensive metadata",
   "type": "object",
-  "required": ["receipt_id", "session_id", "dataset_anchor", "model_anchor", "code_digest", "config_digest", "random_seeds", "env"],
+  "required": [
+    "receipt_id",
+    "session_id",
+    "dataset_anchor",
+    "model_anchor",
+    "code_digest",
+    "config_digest",
+    "random_seeds",
+    "env"
+  ],
   "properties": {
     "receipt_id": {
-      "type": "string",
-      "format": "uuid",
+      "$ref": "common/identifiers/uuid.json",
       "description": "Unique receipt identifier (UUID)"
     },
     "session_id": {
-      "type": "string",
-      "format": "uuid",
+      "$ref": "common/identifiers/uuid.json",
       "description": "Training session identifier (UUID)"
     },
     "dataset_anchor": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "Dataset anchor (64 character hex string)"
     },
     "model_anchor": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "Model anchor (64 character hex string)"
     },
     "code_digest": {
@@ -39,24 +44,43 @@
     "random_seeds": {
       "type": "object",
       "properties": {
-        "python": { "type": "integer" },
-        "numpy": { "type": "integer" },
-        "torch": { "type": "integer" },
-        "tensorflow": { "type": "integer" }
+        "python": {
+          "type": "integer"
+        },
+        "numpy": {
+          "type": "integer"
+        },
+        "torch": {
+          "type": "integer"
+        },
+        "tensorflow": {
+          "type": "integer"
+        }
       },
       "description": "Random seeds for reproducibility"
     },
     "env": {
       "type": "object",
-      "required": ["python", "hardware"],
+      "required": [
+        "python",
+        "hardware"
+      ],
       "properties": {
-        "python": { "type": "string" },
+        "python": {
+          "type": "string"
+        },
         "frameworks": {
           "type": "object",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
-        "hardware": { "type": "string" },
-        "git_commit": { "type": "string" }
+        "hardware": {
+          "type": "string"
+        },
+        "git_commit": {
+          "type": "string"
+        }
       },
       "description": "Environment information"
     },
@@ -66,29 +90,34 @@
       "description": "Training metrics"
     },
     "merkle_path": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[a-f0-9]{64}$"
-      },
+      "$ref": "common/patterns/merkle-path.json",
       "description": "Merkle path for inclusion proof"
     },
     "evidence_strength": {
-      "type": "string",
-      "enum": ["real", "simulated", "fallback"],
-      "default": "real",
-      "description": "Evidence strength level"
+      "$ref": "common/enums/evidence-strength.json",
+      "description": "Evidence strength level",
+      "default": "real"
     },
     "committed_at": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "RFC3339 timestamp"
     },
     "fallback_reasons": {
       "type": "array",
-      "items": { "type": "object" },
+      "items": {
+        "type": "object"
+      },
       "description": "Reasons for fallback evidence"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
     }
   },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
   "additionalProperties": false
 }

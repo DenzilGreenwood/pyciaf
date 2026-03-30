@@ -4,15 +4,22 @@
   "title": "CIAF Action Receipt",
   "description": "Cryptographic receipt of an action execution for audit trails",
   "type": "object",
-  "required": ["receipt_id", "timestamp", "principal_id", "principal_type", "action", "resource_id", "resource_type"],
+  "required": [
+    "receipt_id",
+    "timestamp",
+    "principal_id",
+    "principal_type",
+    "action",
+    "resource_id",
+    "resource_type"
+  ],
   "properties": {
     "receipt_id": {
       "type": "string",
       "description": "Unique receipt identifier"
     },
     "timestamp": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "Execution timestamp"
     },
     "principal_id": {
@@ -20,8 +27,7 @@
       "description": "Principal who performed the action"
     },
     "principal_type": {
-      "type": "string",
-      "enum": ["agent", "human", "service", "system"],
+      "$ref": "common/enums/principal-type.json",
       "description": "Type of principal"
     },
     "action": {
@@ -58,23 +64,20 @@
       "description": "Approver principal ID for elevated actions"
     },
     "params_hash": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 hash of action parameters"
     },
     "policy_obligations": {
-      "type": "array",
-      "items": { "type": "string" },
+      "$ref": "common/patterns/policy-obligations.json",
       "description": "Policy obligations that must be fulfilled"
     },
     "prior_receipt_hash": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "Hash of prior receipt for chain linking"
     },
     "signature": {
-      "type": "string",
-      "description": "Cryptographic signature of receipt"
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
     }
   },
   "additionalProperties": false

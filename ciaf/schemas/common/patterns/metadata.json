@@ -1,0 +1,16 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/patterns/metadata.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Generic Metadata Object",
+  "description": "Flexible key-value metadata object for additional context",
+  "type": "object",
+  "additionalProperties": true,
+  "examples": [
+    {
+      "environment": "production",
+      "region": "us-east-1",
+      "custom_tag": "value"
+    }
+  ],
+  "$comment": "Used for extensible metadata that doesn't fit structured fields. Allows any JSON-serializable values."
+}

@@ -4,15 +4,18 @@
   "title": "CIAF Agentic Identity",
   "description": "Immutable identity for an agent or human principal",
   "type": "object",
-  "required": ["principal_id", "principal_type", "display_name"],
+  "required": [
+    "principal_id",
+    "principal_type",
+    "display_name"
+  ],
   "properties": {
     "principal_id": {
       "type": "string",
       "description": "Unique principal identifier"
     },
     "principal_type": {
-      "type": "string",
-      "enum": ["agent", "human", "service", "system"],
+      "$ref": "common/enums/principal-type.json",
       "description": "Type of principal"
     },
     "display_name": {
@@ -21,7 +24,9 @@
     },
     "roles": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "uniqueItems": true,
       "description": "Assigned roles"
     },
@@ -34,13 +39,11 @@
       "description": "Tenant/organization identifier"
     },
     "environment": {
-      "type": "string",
-      "enum": ["production", "staging", "development", "test"],
+      "$ref": "common/enums/environment-type.json",
       "description": "Environment where principal operates"
     },
     "created_at": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "ISO 8601 creation timestamp"
     }
   },

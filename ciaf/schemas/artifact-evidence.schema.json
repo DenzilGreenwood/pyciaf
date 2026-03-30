@@ -4,7 +4,18 @@
   "title": "CIAF Artifact Evidence",
   "description": "Complete forensic provenance record for AI-generated artifact",
   "type": "object",
-  "required": ["artifact_id", "artifact_type", "mime_type", "created_at", "model_id", "model_version", "actor_id", "prompt_hash", "output_hash_raw", "output_hash_distributed"],
+  "required": [
+    "artifact_id",
+    "artifact_type",
+    "mime_type",
+    "created_at",
+    "model_id",
+    "model_version",
+    "actor_id",
+    "prompt_hash",
+    "output_hash_raw",
+    "output_hash_distributed"
+  ],
   "properties": {
     "artifact_id": {
       "type": "string",
@@ -12,7 +23,14 @@
     },
     "artifact_type": {
       "type": "string",
-      "enum": ["text", "image", "video", "audio", "code", "mixed"],
+      "enum": [
+        "text",
+        "image",
+        "video",
+        "audio",
+        "code",
+        "mixed"
+      ],
       "description": "Type of AI-generated artifact"
     },
     "mime_type": {
@@ -20,8 +38,7 @@
       "description": "MIME type (e.g., text/plain, image/png)"
     },
     "created_at": {
-      "type": "string",
-      "format": "date-time",
+      "$ref": "common/patterns/timestamp.json",
       "description": "ISO 8601 creation timestamp"
     },
     "model_id": {
@@ -37,18 +54,15 @@
       "description": "User/system that generated artifact"
     },
     "prompt_hash": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 of input prompt"
     },
     "output_hash_raw": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "Hash of raw output (pre-watermark)"
     },
     "output_hash_distributed": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "Hash of distributed output (post-watermark)"
     },
     "watermark_descriptor": {
@@ -61,12 +75,13 @@
     },
     "fingerprints": {
       "type": "array",
-      "items": { "$ref": "artifact-fingerprint.schema.json" },
+      "items": {
+        "$ref": "artifact-fingerprint.schema.json"
+      },
       "description": "Similarity fingerprints"
     },
     "prior_artifact_hash": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "Hash of previous artifact in chain"
     },
     "vault_storage_path": {
@@ -74,9 +89,18 @@
       "description": "Path in CIAF vault where evidence is stored"
     },
     "metadata": {
-      "type": "object",
+      "$ref": "common/patterns/metadata.json",
       "description": "Additional custom metadata"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
     }
   },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
   "additionalProperties": false
 }

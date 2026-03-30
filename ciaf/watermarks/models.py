@@ -161,7 +161,8 @@ class TextForensicFragment(ForensicFragment):
     High-entropy text fragment for granular verification.
 
     Stores:
-    - Fragment hash before/after watermark
+    - Fragment text for sliding window matching
+    - Fragment hash before/after watermark for integrity verification
     - Character position in original document
     - Fragment length and entropy score
     """
@@ -171,7 +172,10 @@ class TextForensicFragment(ForensicFragment):
     fragment_length: int  # Length of fragment
     sample_location: str  # 'beginning', 'middle', 'end'
 
-    # Dual-state fragment hashing
+    # ✅ FIX #161: Store actual fragment text for sliding window matching
+    fragment_text: str  # The actual sampled text (critical for verification)
+
+    # Dual-state fragment hashing (for integrity verification)
     fragment_hash_before: str  # SHA-256 of fragment before watermark
     fragment_hash_after: str  # SHA-256 of fragment after watermark
 

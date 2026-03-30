@@ -4,16 +4,27 @@
   "title": "CIAF Training Environment",
   "description": "Training environment metadata for reproducibility",
   "type": "object",
-  "required": ["python_version", "framework", "framework_version"],
+  "required": [
+    "python_version",
+    "framework",
+    "framework_version"
+  ],
   "properties": {
     "python_version": {
-      "type": "string",
-      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "$ref": "common/identifiers/semantic-version.json",
       "description": "Python version (e.g., 3.11.0)"
     },
     "framework": {
       "type": "string",
-      "enum": ["pytorch", "tensorflow", "sklearn", "jax", "keras", "mxnet", "custom"],
+      "enum": [
+        "pytorch",
+        "tensorflow",
+        "sklearn",
+        "jax",
+        "keras",
+        "mxnet",
+        "custom"
+      ],
       "description": "Machine learning framework"
     },
     "framework_version": {
@@ -34,7 +45,9 @@
     },
     "dependencies": {
       "type": "object",
-      "additionalProperties": { "type": "string" },
+      "additionalProperties": {
+        "type": "string"
+      },
       "description": "Package dependencies (name: version)"
     }
   },

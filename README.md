@@ -25,7 +25,7 @@ CIAF (Cognitive Insight Audit Framework) addresses AI transparency, auditability
 - **Cryptographic Provenance Tracking** — End-to-end verifiable data lineage with Merkle trees and hash connections.
 - **Lazy Capsule Materialization (LCM)** — On-demand proof capsule materialization to minimize storage and exposure.
 - **Agentic Execution Boundaries** (NEW in v1.3.0) — Zero-trust IAM/PAM controls for autonomous AI agents with cryptographic audit trails.
-- **AI Watermarking & Verification** (v1.2.0) — Hierarchical three-tier verification with 34× speedup, forensic fragments, and tamper detection.
+- **AI Forensic Provenance Layer** (v1.2.0) — Dual-state watermarking with hierarchical verification, forensic fragment detection, and tamper evidence. Production-capable for text, beta for images.
 - **Web AI Governance** (v1.2.0) — Browser-based AI usage detection, policy enforcement, and shadow AI monitoring with cryptographic receipts.
 - **Compliance Mapping** — Artifacts designed to map to EU AI Act, NIST AI RMF, GDPR/HIPAA, SOX, ISO/IEC 27001 (see `docs/compliance/`).
 - **Security-First Design** — Optional AES-256-GCM, secure anchor derivation, tamper-evident audit trails.
@@ -90,15 +90,17 @@ CIAF v1.3.1 includes comprehensive documentation consolidated in the `docs/` dir
 | **Agentic Execution Boundaries** | [ciaf/agents/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/agents/README.md) | Zero-trust IAM/PAM for autonomous agents |
 | | [docs/agents/QUICKSTART.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/agents/QUICKSTART.md) | 5-minute agents tutorial |
 | | [docs/agents/DEVELOPER_GUIDE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/agents/DEVELOPER_GUIDE.md) | Complete integration guide |
-| **AI Watermarking** | [docs/HIERARCHICAL_VERIFICATION_STRATEGY.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/HIERARCHICAL_VERIFICATION_STRATEGY.md) | Three-tier verification architecture |
+| **AI Forensic Provenance** | [ciaf/watermarks/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/watermarks/README.md) | Dual-state watermarking & forensic verification |
+| | [docs/HIERARCHICAL_VERIFICATION_STRATEGY.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/HIERARCHICAL_VERIFICATION_STRATEGY.md) | Three-tier verification architecture |
 | | [docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md) | 30-second watermark quick reference |
+| | [WATERMARK_TECHNICAL_ASSESSMENT.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/WATERMARK_TECHNICAL_ASSESSMENT.md) | Technical review & known issues |
 | **Web AI Governance** | [ciaf/web/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/web/README.md) | Browser-based AI usage governance |
 
 ### Quick Navigation
 
 - **New to CIAF?** → Start with [docs/quickstart.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/quickstart.md)
 - **Agentic systems?** → See [docs/agents/QUICKSTART.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/agents/QUICKSTART.md) and [examples/agents_scenarios/](https://github.com/DenzilGreenwood/pyciaf/tree/main/examples/agents_scenarios)
-- **AI watermarking?** → Check [docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/HIERARCHICAL_VERIFICATION_QUICK_REFERENCE.md)
+- **AI forensic provenance?** → Check [ciaf/watermarks/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/watermarks/README.md) (text production-capable, see known issues)
 - **Web AI governance?** → Read [ciaf/web/README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/ciaf/web/README.md)
 - **Production deployment?** → See [docs/MODEL_BUILDING_GUIDE_V1_1_0.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/MODEL_BUILDING_GUIDE_V1_1_0.md)
 - **Performance optimization?** → Check [docs/DEFERRED_LCM_README.md](https://github.com/DenzilGreenwood/pyciaf/blob/main/docs/DEFERRED_LCM_README.md)

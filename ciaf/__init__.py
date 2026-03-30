@@ -9,6 +9,7 @@ Last Modified: 2026-03-28
 Author: Denzil James Greenwood
 Version: 1.3.2
 """
+
 # type: ignore  # Conditional imports set variables to None which mypy doesn't like
 
 # Anchoring module removed - using LCM system instead

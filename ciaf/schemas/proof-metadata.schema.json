@@ -1,0 +1,56 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/proof-metadata.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Proof Metadata",
+  "description": "Standard cryptographic proof metadata for all proof-bearing CIAF objects",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "hash_algorithm",
+    "signature_algorithm",
+    "key_id",
+    "signature",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Schema version (semantic versioning)"
+    },
+    "hash_algorithm": {
+      "$ref": "common/enums/hash-algorithm.json",
+      "description": "Content hashing algorithm (SHA-256 is standard)",
+      "default": "sha256"
+    },
+    "signature_algorithm": {
+      "type": "string",
+      "enum": [
+        "ed25519",
+        "hmac-sha256"
+      ],
+      "default": "ed25519",
+      "description": "Signature algorithm (Ed25519 for external verification, HMAC-SHA256 for internal only)"
+    },
+    "key_id": {
+      "type": "string",
+      "description": "Signing key identifier for verification"
+    },
+    "canonicalization_version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Canonicalization rule version for reproducible verification"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Cryptographic signature of canonical object"
+    },
+    "receipt_hash": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "SHA-256 hash of complete receipt/object"
+    },
+    "created_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "RFC3339 timestamp of creation"
+    }
+  },
+  "additionalProperties": false
+}

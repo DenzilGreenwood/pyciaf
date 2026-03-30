@@ -4,16 +4,20 @@
   "title": "CIAF Software Bill of Materials",
   "description": "Software Bill of Materials for deployment tracking",
   "type": "object",
-  "required": ["dependencies", "security_scan_digest"],
+  "required": [
+    "dependencies",
+    "security_scan_digest"
+  ],
   "properties": {
     "dependencies": {
       "type": "object",
-      "additionalProperties": { "type": "string" },
+      "additionalProperties": {
+        "type": "string"
+      },
       "description": "Package dependencies (name: version)"
     },
     "security_scan_digest": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 digest of security scan results"
     },
     "vulnerability_count": {
@@ -24,13 +28,17 @@
     },
     "compliance_status": {
       "type": "string",
-      "enum": ["compliant", "non_compliant", "unknown", "review_required"],
+      "enum": [
+        "compliant",
+        "non_compliant",
+        "unknown",
+        "review_required"
+      ],
       "default": "unknown",
       "description": "Compliance status"
     },
     "sbom_digest": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 digest of complete SBOM"
     }
   },

@@ -16,7 +16,15 @@
         },
         "artifact_type": {
           "type": "string",
-          "enum": ["text", "image", "pdf", "json", "binary", "video", "audio"],
+          "enum": [
+            "text",
+            "image",
+            "pdf",
+            "json",
+            "binary",
+            "video",
+            "audio"
+          ],
           "description": "Type of AI-generated artifact"
         },
         "mime_type": {
@@ -65,7 +73,14 @@
             },
             "watermark_type": {
               "type": "string",
-              "enum": ["none", "visible", "metadata", "embedded", "hybrid", "qr_code"],
+              "enum": [
+                "none",
+                "visible",
+                "metadata",
+                "embedded",
+                "hybrid",
+                "qr_code"
+              ],
               "description": "Watermarking technique"
             },
             "tag_text": {
@@ -83,11 +98,18 @@
             },
             "removal_resistance": {
               "type": "string",
-              "enum": ["low", "medium", "high"],
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
               "description": "Resistance to watermark removal"
             }
           },
-          "required": ["watermark_id", "watermark_type"]
+          "required": [
+            "watermark_id",
+            "watermark_type"
+          ]
         },
         "hashes": {
           "type": "object",
@@ -127,7 +149,10 @@
               "description": "SimHash fingerprint (post-watermark)"
             }
           },
-          "required": ["content_hash_before_watermark", "content_hash_after_watermark"]
+          "required": [
+            "content_hash_before_watermark",
+            "content_hash_after_watermark"
+          ]
         },
         "fingerprints": {
           "type": "array",
@@ -148,7 +173,11 @@
                 "description": "Fingerprint role"
               }
             },
-            "required": ["algorithm", "value", "role"]
+            "required": [
+              "algorithm",
+              "value",
+              "role"
+            ]
           }
         },
         "metadata": {
@@ -156,7 +185,20 @@
           "description": "Additional metadata"
         }
       },
-      "required": ["artifact_id", "artifact_type", "mime_type", "created_at", "model_id", "model_version", "actor_id", "prompt_hash", "output_hash_raw", "output_hash_distributed", "watermark", "hashes"]
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "mime_type",
+        "created_at",
+        "model_id",
+        "model_version",
+        "actor_id",
+        "prompt_hash",
+        "output_hash_raw",
+        "output_hash_distributed",
+        "watermark",
+        "hashes"
+      ]
     },
     "metadata_record": {
       "type": "object",
@@ -176,7 +218,13 @@
         },
         "stage": {
           "type": "string",
-          "enum": ["training", "validation", "testing", "inference", "deployment"],
+          "enum": [
+            "training",
+            "validation",
+            "testing",
+            "inference",
+            "deployment"
+          ],
           "description": "Stage of the ML pipeline"
         },
         "event_type": {
@@ -201,7 +249,14 @@
           "description": "Full metadata as JSON object"
         }
       },
-      "required": ["id", "model_name", "stage", "event_type", "timestamp", "metadata_json"]
+      "required": [
+        "id",
+        "model_name",
+        "stage",
+        "event_type",
+        "timestamp",
+        "metadata_json"
+      ]
     },
     "inference_receipt": {
       "type": "object",
@@ -261,7 +316,14 @@
           "description": "Full receipt data"
         }
       },
-      "required": ["receipt_id", "model_name", "timestamp", "query_hash", "output_hash", "receipt_data"]
+      "required": [
+        "receipt_id",
+        "model_name",
+        "timestamp",
+        "query_hash",
+        "output_hash",
+        "receipt_data"
+      ]
     },
     "training_snapshot": {
       "type": "object",
@@ -288,10 +350,18 @@
           "type": "object",
           "description": "Training metrics (loss, accuracy, etc.)",
           "properties": {
-            "loss": {"type": "number"},
-            "accuracy": {"type": "number"},
-            "val_loss": {"type": "number"},
-            "val_accuracy": {"type": "number"}
+            "loss": {
+              "type": "number"
+            },
+            "accuracy": {
+              "type": "number"
+            },
+            "val_loss": {
+              "type": "number"
+            },
+            "val_accuracy": {
+              "type": "number"
+            }
           }
         },
         "parameters_hash": {
@@ -307,7 +377,12 @@
           "description": "Full snapshot data"
         }
       },
-      "required": ["snapshot_id", "model_name", "timestamp", "snapshot_data"]
+      "required": [
+        "snapshot_id",
+        "model_name",
+        "timestamp",
+        "snapshot_data"
+      ]
     },
     "compliance_event": {
       "type": "object",
@@ -319,7 +394,14 @@
         },
         "framework": {
           "type": "string",
-          "enum": ["EU_AI_ACT", "GDPR", "HIPAA", "NIST_AI_RMF", "SOX", "ISO_27001"],
+          "enum": [
+            "EU_AI_ACT",
+            "GDPR",
+            "HIPAA",
+            "NIST_AI_RMF",
+            "SOX",
+            "ISO_27001"
+          ],
           "description": "Regulatory framework"
         },
         "requirement": {
@@ -328,7 +410,13 @@
         },
         "status": {
           "type": "string",
-          "enum": ["COMPLIANT", "NON_COMPLIANT", "PARTIAL", "NOT_APPLICABLE", "IN_PROGRESS"],
+          "enum": [
+            "COMPLIANT",
+            "NON_COMPLIANT",
+            "PARTIAL",
+            "NOT_APPLICABLE",
+            "IN_PROGRESS"
+          ],
           "description": "Compliance status"
         },
         "timestamp": {
@@ -345,7 +433,13 @@
           "description": "Supporting evidence for compliance"
         }
       },
-      "required": ["event_id", "framework", "requirement", "status", "timestamp"]
+      "required": [
+        "event_id",
+        "framework",
+        "requirement",
+        "status",
+        "timestamp"
+      ]
     },
     "provenance_capsule": {
       "type": "object",
@@ -393,7 +487,13 @@
           "description": "Full capsule data"
         }
       },
-      "required": ["capsule_id", "dataset_id", "data_hash", "timestamp", "capsule_data"]
+      "required": [
+        "capsule_id",
+        "dataset_id",
+        "data_hash",
+        "timestamp",
+        "capsule_data"
+      ]
     },
     "audit_trail_entry": {
       "type": "object",
@@ -429,14 +529,17 @@
           "description": "Additional audit metadata"
         }
       },
-      "required": ["audit_id", "action", "timestamp"]
+      "required": [
+        "audit_id",
+        "action",
+        "timestamp"
+      ]
     }
   },
   "properties": {
     "vault_version": {
-      "type": "string",
-      "description": "CIAF Vault schema version",
-      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "CIAF Vault schema version"
     },
     "watermarked_artifacts": {
       "type": "array",
@@ -488,5 +591,7 @@
       "description": "Complete audit trail"
     }
   },
-  "required": ["vault_version"]
+  "required": [
+    "vault_version"
+  ]
 }

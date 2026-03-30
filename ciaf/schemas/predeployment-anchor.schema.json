@@ -4,7 +4,14 @@
   "title": "CIAF Pre-deployment Anchor",
   "description": "Pre-deployment anchor for LCM with build artifacts and SBOM",
   "type": "object",
-  "required": ["predeployment_id", "build_artifact", "sbom", "approval_ticket_id", "intended_env", "intended_region"],
+  "required": [
+    "predeployment_id",
+    "build_artifact",
+    "sbom",
+    "approval_ticket_id",
+    "intended_env",
+    "intended_region"
+  ],
   "properties": {
     "predeployment_id": {
       "type": "string",
@@ -23,8 +30,7 @@
       "description": "Approval ticket or workflow ID"
     },
     "intended_env": {
-      "type": "string",
-      "enum": ["production", "staging", "development", "test"],
+      "$ref": "common/enums/environment-type.json",
       "description": "Intended deployment environment"
     },
     "intended_region": {
@@ -32,13 +38,11 @@
       "description": "Intended deployment region/location"
     },
     "rollout_plan_digest": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 digest of rollout plan document"
     },
     "predeployment_hash": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$",
+      "$ref": "common/identifiers/sha256-hash.json",
       "description": "SHA-256 hash of pre-deployment data"
     },
     "anchor_id": {
@@ -47,9 +51,23 @@
     },
     "status": {
       "type": "string",
-      "enum": ["prepared", "deployed", "failed", "rollback"],
+      "enum": [
+        "prepared",
+        "deployed",
+        "failed",
+        "rollback"
+      ],
       "description": "Pre-deployment status"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
     }
   },
+  "allOf": [
+    {
+      "$ref": "lineage-references.schema.json"
+    }
+  ],
   "additionalProperties": false
 }

@@ -1,24 +1,36 @@
 """
-CIAF Watermarking - Image Support (Placeholder)
+CIAF Watermarking - Image Support (DEPRECATED - PLACEHOLDER ONLY)
 
-Image watermarking and verification.
+⚠️ DEPRECATION NOTICE ⚠️
 
-TODO: Implement full image watermarking with:
-- Visible watermarks (logo/text overlay)
-- Invisible watermarks (steganography)
-- Perceptual hashing (pHash, dHash, aHash, wHash)
-- QR code embedding
-- Exif metadata watermarking
+This file is a non-functional placeholder and should NOT be used.
 
-For production, integrate:
-- Pillow (PIL) for image manipulation
-- imagehash for perceptual hashing
-- opencv-python for advanced watermarking
-- qrcode for QR code generation
+The actual working image watermarking implementation is in:
+    ciaf/watermarks/images/
+
+Use the images/ package for:
+- apply_visible_watermark() - Logo/text overlay
+- apply_invisible_watermark() - Steganographic embedding
+- build_image_artifact_evidence() - Full forensic evidence generation
+- extract_image_watermark() - Watermark extraction
+- compute_perceptual_hash() - True pHash/dHash/aHash/wHash
+
+This placeholder file exists for backwards compatibility only.
+It will be removed in a future version.
+
+To migrate:
+    # OLD (don't use):
+    from ciaf.watermarks.images import apply_image_watermark
+
+    # NEW (use this):
+    from ciaf.watermarks.images import apply_visible_watermark
+
+See: ciaf/watermarks/images/__init__.py
 
 Created: 2026-03-24
+Deprecated: 2026-03-28
 Author: Denzil James Greenwood
-Version: 1.0.0 (PLACEHOLDER)
+Version: 1.0.0 (DEPRECATED PLACEHOLDER)
 """
 
 from typing import Tuple, Optional
@@ -32,14 +44,13 @@ def apply_image_watermark(
     style: str = "corner",
 ) -> bytes:
     """
-    Apply watermark to image (placeholder).
+    Apply watermark to image (DEPRECATED - PLACEHOLDER ONLY).
 
-    TODO: Implement with Pillow for:
-    - Corner logo watermark
-    - Full image overlay
-    - QR code embedding
-    - Steganographic embedding
-
+    ⚠️ This function is a non-functional placeholder.
+    
+    Use instead:
+        from ciaf.watermarks.images import apply_visible_watermark
+        
     Args:
         image_bytes: Original image data
         watermark_id: Watermark identifier
@@ -48,9 +59,13 @@ def apply_image_watermark(
 
     Returns:
         Watermarked image bytes
+        
+    Raises:
+        NotImplementedError: Always - this is a placeholder
     """
     raise NotImplementedError(
-        "Image watermarking not yet implemented. Install Pillow and implement."
+        "❌ This function is a deprecated placeholder. "
+        "Use: from ciaf.watermarks.images import apply_visible_watermark"
     )
 
 
@@ -63,26 +78,44 @@ def build_image_artifact_evidence(
     verification_base_url: str,
 ) -> Tuple[ArtifactEvidence, bytes]:
     """
-    Build artifact evidence for image (placeholder).
+    Build artifact evidence for image (DEPRECATED - PLACEHOLDER ONLY).
 
-    TODO: Implement with perceptual hashing.
-
+    ⚠️ This function is a non-functional placeholder.
+    
+    Use instead:
+        from ciaf.watermarks.images import build_image_artifact_evidence
+        
     Returns:
         Tuple of (ArtifactEvidence, watermarked_image_bytes)
+        
+    Raises:
+        NotImplementedError: Always - this is a placeholder
     """
-    raise NotImplementedError("Image artifact evidence not yet implemented.")
+    raise NotImplementedError(
+        "❌ This function is a deprecated placeholder. "
+        "Use: from ciaf.watermarks.images import build_image_artifact_evidence"
+    )
 
 
 def extract_image_watermark(image_bytes: bytes) -> Optional[str]:
     """
-    Extract watermark ID from image (placeholder).
+    Extract watermark ID from image (DEPRECATED - PLACEHOLDER ONLY).
 
-    TODO: Implement watermark extraction.
-
+    ⚠️ This function is a non-functional placeholder.
+    
+    Use instead:
+        from ciaf.watermarks.images import extract_image_watermark
+        
     Returns:
         Watermark ID if found
+        
+    Raises:
+        NotImplementedError: Always - this is a placeholder
     """
-    raise NotImplementedError("Image watermark extraction not yet implemented.")
+    raise NotImplementedError(
+        "❌ This function is a deprecated placeholder. "
+        "Use: from ciaf.watermarks.images import extract_image_watermark"
+    )
 
 
 __all__ = [

@@ -27,6 +27,7 @@ from .models import (
     TextForensicFragment,
     ImageForensicFragment,
     sha256_bytes,
+    sha256_text,  # ✅ FIX #161: Import sha256_text for hash verification
 )
 
 
@@ -149,20 +150,39 @@ def verify_text_fragments(
     matches_found = 0
 
     for fragment in stored_fragments:
-        # Try to find fragment in suspect
+        # ✅ FIX #161: Use actual fragment text for sliding window matching
+        # (Previously passed fragment_hash_before which is a 64-char SHA-256 hex string)
         match_result = verify_text_fragment_sliding_window(
-            suspect_text, fragment.fragment_hash_before
+            suspect_text, fragment.fragment_text
         )
 
         if match_result:
             pos, confidence = match_result
+            
+            # Verify hash integrity after match for added security
+            extracted_text = suspect_text[pos : pos + len(fragment.fragment_text)]
+            extracted_hash = sha256_text(extracted_text)
+            
+            # Check if hash matches either before or after watermark state
+            hash_match = (
+                extracted_hash == fragment.fragment_hash_before
+                or extracted_hash == fragment.fragment_hash_after
+            )
+            
+            match_details = f"Found at character {pos}"
+            if hash_match:
+                match_details += f" (hash verified: {extracted_hash[:8]}...)"
+            else:
+                match_details += f" (hash mismatch - content may be modified)"
+                confidence *= 0.8  # Reduce confidence if hash doesn't match
+            
             results.append(
                 FragmentMatchResult(
                     fragment_id=fragment.fragment_id,
                     matched=True,
                     confidence=confidence,
                     match_position=pos,
-                    match_details=f"Found at character {pos}",
+                    match_details=match_details,
                 )
             )
             matches_found += 1
@@ -260,7 +280,6 @@ def verify_image_fragment_spatial_search(
         # Can optimize: use feature matching instead of grid search
         # For now, use grid search with stride
         stride = 8  # Check every 8 pixels
-
 
         for y in range(0, img_h - patch_h, stride):
             for x in range(0, img_w - patch_w, stride):

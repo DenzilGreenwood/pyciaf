@@ -1,0 +1,87 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/gate-evaluation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Gate Evaluation",
+  "description": "Record of a gate evaluation determining whether an action can proceed",
+  "type": "object",
+  "required": [
+    "evaluation_id",
+    "gate_id",
+    "gate_type",
+    "evaluated_at",
+    "decision",
+    "reason"
+  ],
+  "properties": {
+    "evaluation_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Unique evaluation identifier"
+    },
+    "gate_id": {
+      "type": "string",
+      "description": "Gate being evaluated"
+    },
+    "gate_type": {
+      "$ref": "common/enums/gate-type.json",
+      "description": "Type of gate"
+    },
+    "gate_version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Version of gate definition used"
+    },
+    "evaluated_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Evaluation timestamp"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "pending_approval",
+        "override"
+      ],
+      "description": "Gate decision"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for decision"
+    },
+    "policy_evaluations": {
+      "type": "array",
+      "items": {
+        "$ref": "policy-evaluation.schema.json"
+      },
+      "description": "Individual policy evaluation results"
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "$ref": "approval-decision.schema.json"
+      },
+      "description": "Approval decisions if required"
+    },
+    "override_record": {
+      "$ref": "human-override-record.schema.json",
+      "description": "Override record if gate was overridden"
+    },
+    "context": {
+      "type": "object",
+      "description": "Evaluation context (request details, resource state, etc.)"
+    },
+    "evaluation_duration_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Evaluation duration in milliseconds"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Correlation ID for request tracing"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
+  },
+  "additionalProperties": false
+}

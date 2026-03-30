@@ -1,0 +1,15 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/enums/evidence-strength.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Evidence Strength",
+  "description": "Strength classification of audit evidence",
+  "type": "string",
+  "enum": ["real", "simulated", "fallback"],
+  "default": "real",
+  "examples": [
+    "real",
+    "simulated",
+    "fallback"
+  ],
+  "$comment": "real=actual evidence captured, simulated=simulated/test evidence, fallback=degraded/fallback evidence due to system constraints"
+}

@@ -1,0 +1,13 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/patterns/hash-chain-reference.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hash Chain Reference",
+  "description": "Reference to previous receipt hash for tamper-evident chain linkage",
+  "type": "string",
+  "pattern": "^[a-f0-9]{64}$",
+  "examples": [
+    "7d8b2f4cb8b1d8d8d7d99a8b3dc90a7c34d4fd1dfe2ef8a4a7c4dc0c9f2f43a1",
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "$comment": "Genesis (first) receipt uses 64 zeros. Subsequent receipts link to SHA-256 of prior receipt."
+}

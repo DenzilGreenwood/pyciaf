@@ -1,0 +1,82 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/approval-decision.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Approval Decision",
+  "description": "Record of human approval decision for gate passage or privilege elevation",
+  "type": "object",
+  "required": [
+    "approval_id",
+    "gate_id",
+    "approver_id",
+    "decision",
+    "decided_at"
+  ],
+  "properties": {
+    "approval_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Unique approval identifier"
+    },
+    "gate_id": {
+      "type": "string",
+      "description": "Gate requiring approval"
+    },
+    "evaluation_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Gate evaluation being approved"
+    },
+    "approver_id": {
+      "type": "string",
+      "description": "Approver principal identifier"
+    },
+    "approver_role": {
+      "type": "string",
+      "description": "Role under which approval is granted"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "approve",
+        "deny",
+        "defer",
+        "escalate"
+      ],
+      "description": "Approval decision"
+    },
+    "decided_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Decision timestamp"
+    },
+    "justification": {
+      "type": "string",
+      "description": "Justification for decision"
+    },
+    "ticket_reference": {
+      "type": "string",
+      "description": "Reference to external ticket system"
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Conditions attached to approval"
+    },
+    "valid_until": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Approval expiration time"
+    },
+    "dual_control_approver": {
+      "type": "string",
+      "description": "Second approver for dual control"
+    },
+    "metadata": {
+      "$ref": "common/patterns/metadata.json",
+      "description": "Additional approval metadata"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
+  },
+  "additionalProperties": false
+}

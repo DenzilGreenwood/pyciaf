@@ -1,0 +1,15 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/patterns/policy-obligations.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Policy Obligations",
+  "description": "Array of policy obligation identifiers that must be fulfilled",
+  "type": "array",
+  "items": {
+    "type": "string"
+  },
+  "uniqueItems": true,
+  "examples": [
+    ["notify_admin", "log_audit_event", "require_dual_approval"]
+  ],
+  "$comment": "Obligations are post-decision actions that must be performed (e.g., notifications, audits, follow-ups)"
+}

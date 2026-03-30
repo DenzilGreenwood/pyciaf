@@ -1,0 +1,14 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/enums/decision-type.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Decision Type",
+  "description": "Authorization or policy decision outcome",
+  "type": "string",
+  "enum": ["allow", "deny", "require_approval", "not_applicable"],
+  "examples": [
+    "allow",
+    "deny",
+    "require_approval"
+  ],
+  "$comment": "allow=permitted, deny=blocked, require_approval=needs human approval, not_applicable=policy does not apply"
+}

@@ -75,7 +75,7 @@ class Identity:
             "tenant_id": self.tenant_id,
             "environment": self.environment,
         }
-        return sha256_hash(str(identity_data).encode('utf-8'))
+        return sha256_hash(str(identity_data).encode("utf-8"))
 
 
 @dataclass(frozen=True)
@@ -160,7 +160,7 @@ class ActionRequest:
 
     def get_params_hash(self) -> str:
         """Get cryptographic hash of parameters."""
-        return sha256_hash(str(sorted(self.params.items())).encode('utf-8'))
+        return sha256_hash(str(sorted(self.params.items())).encode("utf-8"))
 
 
 @dataclass
@@ -265,4 +265,4 @@ class ActionReceipt:
             "params_hash": self.params_hash,
             "prior_receipt_hash": self.prior_receipt_hash,
         }
-        return sha256_hash(str(receipt_data).encode('utf-8'))
+        return sha256_hash(str(receipt_data).encode("utf-8"))

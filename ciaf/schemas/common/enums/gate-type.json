@@ -1,0 +1,14 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/enums/gate-type.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gate Type",
+  "description": "Type of governance gate in the CIAF system",
+  "type": "string",
+  "enum": ["provenance", "validation", "approval", "runtime", "pre_action", "post_action"],
+  "examples": [
+    "provenance",
+    "validation",
+    "approval"
+  ],
+  "$comment": "provenance=provenance check, validation=data/model validation, approval=human approval gate, runtime=runtime evaluation, pre_action=before action execution, post_action=after action execution"
+}

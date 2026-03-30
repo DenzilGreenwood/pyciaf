@@ -1,0 +1,14 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/identifiers/sha256-hash.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SHA-256 Hash",
+  "description": "Standard SHA-256 hash pattern (64 character hex string)",
+  "type": "string",
+  "pattern": "^[a-f0-9]{64}$",
+  "minLength": 64,
+  "maxLength": 64,
+  "examples": [
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "7d8b2f4cb8b1d8d8d7d99a8b3dc90a7c34d4fd1dfe2ef8a4a7c4dc0c9f2f43a1"
+  ]
+}

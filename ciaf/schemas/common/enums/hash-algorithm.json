@@ -1,0 +1,13 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/enums/hash-algorithm.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hash Algorithm",
+  "description": "Supported cryptographic hash algorithms in CIAF",
+  "type": "string",
+  "enum": ["sha256", "sha3-256", "blake3"],
+  "default": "sha256",
+  "examples": [
+    "sha256"
+  ],
+  "$comment": "sha256=SHA-256 (default), sha3-256=SHA3-256, blake3=BLAKE3. SHA-256 is the CIAF standard."
+}

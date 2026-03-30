@@ -1,0 +1,15 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/enums/principal-type.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Principal Type",
+  "description": "Type of entity performing an action in the CIAF system",
+  "type": "string",
+  "enum": ["agent", "human", "service", "system"],
+  "examples": [
+    "agent",
+    "human",
+    "service",
+    "system"
+  ],
+  "$comment": "agent=AI agent, human=human user, service=API/microservice, system=automated system process"
+}

@@ -1,0 +1,14 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/common/patterns/timestamp.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ISO 8601 Timestamp",
+  "description": "Standard RFC3339/ISO 8601 timestamp format used throughout CIAF",
+  "type": "string",
+  "format": "date-time",
+  "examples": [
+    "2026-03-30T14:32:45.123456Z",
+    "2026-03-30T14:32:45Z",
+    "2026-03-30T14:32:45+00:00"
+  ],
+  "$comment": "Generated via datetime.now(timezone.utc).isoformat() in Python"
+}

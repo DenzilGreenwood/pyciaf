@@ -1,0 +1,29 @@
+{
+  "batch_id": "batch_inference_2026-03-30T18:00:00Z_001",
+  "root_hash": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd",
+  "hash_algorithm": "SHA-256",
+  "leaf_count": 1000,
+  "sealed_at": "2026-03-30T18:15:00Z",
+  "batch_type": "inference_batch",
+  "batch_metadata": {
+    "start_timestamp": "2026-03-30T18:00:00Z",
+    "end_timestamp": "2026-03-30T18:14:59Z",
+    "batch_sequence": 42
+  },
+  "signature": {
+    "payload_hash": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd",
+    "hash_algorithm": "SHA-256",
+    "signature_value": "ExampleEd25519SignatureForMerkleBatchRootHashProofOfIntegrity123456==",
+    "signature_encoding": "base64",
+    "signed_at": "2026-03-30T18:15:01Z",
+    "metadata": {
+      "signature_algorithm": "Ed25519",
+      "key_id": "cloudhsm:ciaf-merkle-signer-prod",
+      "canonicalization_version": "RFC8785-like/1.0",
+      "key_backend": "cloudhsm",
+      "signing_service": "ciaf-merkle-sealer",
+      "public_key_ref": "jwks://cognitiveinsight.ai/keys/merkle-prod-2026-01",
+      "verification_method": "ciaf-verify/v1"
+    }
+  }
+}

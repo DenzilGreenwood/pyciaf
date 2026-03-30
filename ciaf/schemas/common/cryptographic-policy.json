@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cognitiveinsight.ai/schemas/common/cryptographic-policy.json",
+  "title": "CryptographicPolicy",
+  "description": "CIAF-LCM standard cryptographic policy profile.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "content_hash_algorithm",
+    "receipt_signature_algorithm",
+    "approved_key_backends"
+  ],
+  "properties": {
+    "content_hash_algorithm": {
+      "type": "string",
+      "const": "SHA-256",
+      "description": "Required content hashing algorithm for all CIAF-LCM objects."
+    },
+    "receipt_signature_algorithm": {
+      "type": "string",
+      "const": "Ed25519",
+      "description": "Required external receipt signature algorithm for verifiable receipts."
+    },
+    "approved_key_backends": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "local",
+          "kms",
+          "hsm",
+          "cloudhsm",
+          "external_kms"
+        ]
+      },
+      "description": "Permitted key custody and signing backends."
+    },
+    "default_canonicalization_version": {
+      "type": "string",
+      "default": "RFC8785-like/1.0",
+      "description": "Default canonicalization profile for signed objects."
+    },
+    "require_key_backend_declaration": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether key_backend must be explicitly declared in signature metadata."
+    },
+    "minimum_key_strength": {
+      "type": "object",
+      "properties": {
+        "ed25519_bits": {
+          "type": "integer",
+          "const": 256,
+          "description": "Ed25519 uses 256-bit keys"
+        }
+      },
+      "description": "Minimum cryptographic key strength requirements."
+    }
+  }
+}

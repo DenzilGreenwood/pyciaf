@@ -354,7 +354,7 @@ class AgentEvent:
             "success": self.success,
             "prior_event_hash": self.prior_event_hash,
         }
-        return sha256_hash(str(event_data).encode('utf-8'))
+        return sha256_hash(str(event_data).encode("utf-8"))
 
     def requires_elevation(self) -> bool:
         """Check if action required privilege elevation."""

@@ -197,6 +197,7 @@ def select_text_forensic_fragments(
             offset_end=offset_end,
             fragment_length=len(fragment_text),
             sample_location=location,
+            fragment_text=fragment_text,  # ✅ FIX #161: Store actual text for sliding window matching
             fragment_hash_before=frag_hash_before,
             fragment_hash_after=frag_hash_after,
         )

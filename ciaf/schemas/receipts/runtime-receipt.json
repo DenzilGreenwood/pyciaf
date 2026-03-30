@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cognitiveinsight.ai/schemas/receipts/runtime-receipt.json",
+  "title": "RuntimeReceipt",
+  "description": "CIAF-LCM runtime receipt for AI inference, tool use, or agent action.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receipt_id",
+    "receipt_type",
+    "event_hash",
+    "timestamp",
+    "actor_id",
+    "signature"
+  ],
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique receipt identifier"
+    },
+    "receipt_type": {
+      "type": "string",
+      "enum": [
+        "runtime_inference",
+        "agent_action",
+        "policy_check",
+        "human_override",
+        "api_call",
+        "decision",
+        "tool_use"
+      ],
+      "description": "Type of runtime event being receipted"
+    },
+    "event_hash": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "description": "SHA-256 hash of the canonicalized event record."
+    },
+    "timestamp": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "RFC3339 timestamp of the event"
+    },
+    "actor_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identity of the actor (agent, human, service) performing the action"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Model identifier if this is an inference event"
+    },
+    "policy_decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "escalate"
+      ],
+      "description": "Policy decision result if applicable"
+    },
+    "correlation_id": {
+      "type": "string",
+      "description": "Correlation identifier for tracing across systems"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Session identifier for grouping related events"
+    },
+    "signature": {
+      "$ref": "https://cognitiveinsight.ai/schemas/common/signature-envelope.json",
+      "description": "Cryptographic signature proving authenticity and integrity"
+    }
+  }
+}

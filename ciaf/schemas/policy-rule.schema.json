@@ -1,0 +1,177 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/policy-rule.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Policy Rule",
+  "description": "Individual policy rule defining conditions, actions, and obligations",
+  "type": "object",
+  "required": [
+    "rule_id",
+    "name",
+    "version",
+    "condition",
+    "action"
+  ],
+  "properties": {
+    "rule_id": {
+      "type": "string",
+      "description": "Unique rule identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Rule name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Rule description"
+    },
+    "version": {
+      "$ref": "common/identifiers/semantic-version.json",
+      "description": "Rule version"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Rule priority (higher = evaluated first)"
+    },
+    "condition": {
+      "type": "object",
+      "properties": {
+        "expression": {
+          "type": "string"
+        },
+        "expression_language": {
+          "type": "string",
+          "enum": [
+            "rego",
+            "cel",
+            "json_logic",
+            "python"
+          ]
+        },
+        "required_context": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "expression"
+      ],
+      "description": "Rule condition to evaluate"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "deny",
+        "require_approval",
+        "log_only"
+      ],
+      "description": "Action to take when condition matches"
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "timing": {
+            "type": "string",
+            "enum": [
+              "pre",
+              "post",
+              "async"
+            ]
+          }
+        }
+      },
+      "description": "Obligations attached to this rule"
+    },
+    "approval_requirements": {
+      "type": "object",
+      "properties": {
+        "required_approvers": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "approver_roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeout_seconds": {
+          "type": "integer"
+        }
+      },
+      "description": "Approval requirements if action requires approval"
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "exception_id": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "object"
+          },
+          "override_action": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Rule exceptions"
+    },
+    "effective_from": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "When rule becomes effective"
+    },
+    "effective_until": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "When rule expires"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Who approved this rule"
+    },
+    "approved_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Rule approval timestamp"
+    },
+    "compliance_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "framework": {
+            "type": "string"
+          },
+          "section": {
+            "type": "string"
+          },
+          "requirement": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Compliance framework references"
+    },
+    "metadata": {
+      "$ref": "common/patterns/metadata.json",
+      "description": "Additional rule metadata"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    }
+  },
+  "additionalProperties": false
+}

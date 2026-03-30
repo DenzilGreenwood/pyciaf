@@ -2,17 +2,49 @@
   "$id": "https://cognitiveinsight.ai/schemas/anchor.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CIAF AnchorRecord",
+  "description": "Signed anchor record with cryptographic proof metadata",
   "type": "object",
-  "required": ["root","policy_id","schema_version","timestamp","domain_labels","signature","signing_key_id"],
+  "required": [
+    "root",
+    "policy_id",
+    "schema_version",
+    "timestamp",
+    "domain_labels",
+    "signature"
+  ],
   "properties": {
-    "root": { "type": "string" },
-    "policy_id": { "type": "string" },
-    "schema_version": { "type": "string", "const": "1.0" },
-    "timestamp": { "type": "string", "format": "date-time" },
-    "domain_labels": { "type": "array", "items": { "type": "string" } },
-    "signature": { "type": "string" },
-    "signing_key_id": { "type": "string" },
-    "external_anchor": { "type": "string" }
+    "root": {
+      "type": "string",
+      "description": "Merkle root hash"
+    },
+    "policy_id": {
+      "type": "string",
+      "description": "Policy identifier"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Schema version"
+    },
+    "timestamp": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Anchor creation timestamp"
+    },
+    "domain_labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Domain labels for classification"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    },
+    "external_anchor": {
+      "type": "string",
+      "description": "External timestamp or blockchain anchor"
+    }
   },
   "additionalProperties": false
 }
