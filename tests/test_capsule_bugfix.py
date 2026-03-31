@@ -52,6 +52,7 @@ def test_provenance_capsule_creation():
     assert decrypted2 == test_data
 
     print("[OK] PASSED")
+    return True
 
 
 def test_provenance_capsule_with_numbers():
@@ -72,6 +73,7 @@ def test_provenance_capsule_with_numbers():
     assert decrypted == "42.5"  # Should be string representation
 
     print("[OK] PASSED")
+    return True
 
 
 def main():
@@ -81,8 +83,17 @@ def main():
     print()
 
     results = []
-    results.append(test_provenance_capsule_creation())
-    results.append(test_provenance_capsule_with_numbers())
+    try:
+        results.append(test_provenance_capsule_creation())
+    except Exception as e:
+        print(f"[FAIL] Exception: {e}")
+        results.append(False)
+    
+    try:
+        results.append(test_provenance_capsule_with_numbers())
+    except Exception as e:
+        print(f"[FAIL] Exception: {e}")
+        results.append(False)
 
     print()
     print("=" * 60)
