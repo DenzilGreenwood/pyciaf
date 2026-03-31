@@ -63,8 +63,6 @@ def test_text_watermarking():
     print(f"[OK] Watermark detected: {watermark_id[:20]}...")
     print("[OK] Text watermarking test passed\n")
 
-    return raw_text, watermarked, artifact_id
-
 
 def test_watermark_removal_detection():
     """Test detection of watermark removal."""

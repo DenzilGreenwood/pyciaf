@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "key_id": "demo_signing_key_2025",
+    "key_type": "signing",
+    "algorithm": "ed25519",
+    "status": "active",
+    "created_at": "2026-03-31T17:29:22.584908Z",
+    "expires_at": "2026-04-30T17:29:22.584908Z",
+    "retired_at": null,
+    "purpose": "CIAF demonstration",
+    "tags": {
+      "environment": "demo",
+      "application": "ciaf"
+    }
+  },
+  "private_key_pem": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIJBze+g3pzjMddEW+jdCQTLJSMqoy/XMyDTUwes3sNN0\n-----END PRIVATE KEY-----\n",
+  "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA2/T/V44Ca0KACCZbGtKAub04Jj5PiHXESbWThHc/g5s=\n-----END PUBLIC KEY-----\n",
+  "key_material": null
+}

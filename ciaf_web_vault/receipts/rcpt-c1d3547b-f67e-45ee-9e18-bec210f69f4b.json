@@ -1,0 +1,12 @@
+{
+  "receipt_id": "rcpt-c1d3547b-f67e-45ee-9e18-bec210f69f4b",
+  "event_id": "c1d3547b-f67e-45ee-9e18-bec210f69f4b",
+  "created_at": "2026-03-31T16:48:19.045712+00:00",
+  "event_type": "prompt_submit",
+  "org_id": "test-org",
+  "user_id": "test-user",
+  "event_hash": "381d5939743436aea6b411def49337a6111cf021686773faaa34cc9acb8aaa9d",
+  "receipt_hash": "10df9d07247b4d8f760c3174494363e4d73339fa955e3806eaab25028f769c60",
+  "tool_name": "ChatGPT",
+  "policy_decision": "warn"
+}

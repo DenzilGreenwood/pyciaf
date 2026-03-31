@@ -165,8 +165,6 @@ in the world."""
     print("  ✓ Evidence record properly structured")
     print("=" * 70)
 
-    return True
-
 
 if __name__ == "__main__":
     try:

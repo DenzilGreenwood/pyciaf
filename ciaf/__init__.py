@@ -7,7 +7,7 @@ with lazy capsule materialization and cryptographic provenance tracking.
 Created: 2025-09-09
 Last Modified: 2026-03-31
 Author: Denzil James Greenwood
-Version: 1.3.3
+Version: 1.4.0
 """
 
 # type: ignore  # Conditional imports set variables to None which mypy doesn't like
@@ -261,7 +261,7 @@ except ImportError:
     generate_receipt = None  # type: ignore[assignment]
     WebAIVaultAdapter = None  # type: ignore[assignment,misc]
 
-__version__ = "1.3.2"
+__version__ = "1.4.0"
 __all__ = [
     # Core components
     "CryptoUtils",

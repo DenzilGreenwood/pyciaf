@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyciaf"
-version = "1.3.3"
+version = "1.4.0"
 description = "Cognitive Insight Audit Framework - A comprehensive framework for verifiable AI training and inference pipelines"
 readme = "README.md"
 license-files = ["LICENSE"]

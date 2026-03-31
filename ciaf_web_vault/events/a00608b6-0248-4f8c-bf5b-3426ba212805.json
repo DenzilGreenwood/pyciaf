@@ -1,0 +1,19 @@
+{
+  "event_id": "a00608b6-0248-4f8c-bf5b-3426ba212805",
+  "event_type": "prompt_submit",
+  "occurred_at": "2026-03-31T16:41:45.387684+00:00",
+  "org_id": "test-org",
+  "user_id": "test-user",
+  "session_id": "test-session",
+  "tool_name": "ChatGPT",
+  "tool_domain": "chat.openai.com",
+  "tool_category": "llm_chat",
+  "tool_approved": false,
+  "page_url_hash": "5297beb7ecaa4ee7e4449432f9d24f7ecc7271f688b735eb799274b9b2b312e0",
+  "prompt_hash": "40c84a0d69b0488a85b173e8b11d53e2dc7c83df65d5843361dcb39661db1c2d",
+  "data_classification": "public",
+  "sensitivity_score": 0.1,
+  "policy_decision": "warn",
+  "policy_rule_id": "warn_shadow_ai",
+  "policy_reason": "Unapproved AI tool detected: ChatGPT. Please use approved enterprise tools."
+}

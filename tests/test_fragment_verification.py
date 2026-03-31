@@ -89,7 +89,6 @@ def test_fragment_text_field_population():
         print(f"     Length: {len(frag.fragment_text)} chars")
 
     print("[OK] All fragments have valid fragment_text field\n")
-    return fragments
 
 
 def test_sliding_window_exact_match():

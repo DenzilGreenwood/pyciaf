@@ -1,11 +1,11 @@
 # CIAF – Cognitive Insight Audit Framework
 
-**Version:** 1.3.2 (Development)
+**Version:** 1.4.0 (Development)
 
 > **✅ PRODUCTION-CAPABLE RELEASE**
 > CIAF v1.3.1 introduces **Agentic Execution Boundaries** - zero-trust IAM/PAM controls for autonomous AI agents. This release extends CIAF's cryptographic provenance with identity management, privilege elevation, and tamper-evident audit trails specifically designed for agent systems. All previous features remain production-capable with comprehensive enterprise features.
 >
-> **Current Version:** v1.3.2 is in active development. Latest stable release: v1.3.1
+> **Current Version:** v1.4.0 is in active development. Latest stable release: v1.3.1
 
 A Python framework for verifiable AI training and inference with cryptographic provenance, selective ("lazy") capsule materialization, and compliance mapping.
 
