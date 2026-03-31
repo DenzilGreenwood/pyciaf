@@ -24,9 +24,10 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Optional, List, Dict, Callable
 from enum import Enum
+
+from pydantic import BaseModel, Field
 
 from .events import (
     WebAIEvent,
@@ -50,8 +51,7 @@ class PolicyCondition(str, Enum):
     COMPLIANCE_VIOLATION = "compliance_violation"
 
 
-@dataclass
-class PolicyRule:
+class PolicyRule(BaseModel):
     """
     A policy rule for AI usage governance.
 
@@ -66,7 +66,7 @@ class PolicyRule:
     priority: int = 100  # Lower = higher priority
     enabled: bool = True
     reason_template: str = ""
-    metadata: Dict = field(default_factory=dict)
+    metadata: Dict = Field(default_factory=dict)
 
     # Custom evaluation function (optional)
     evaluator: Optional[Callable[[WebAIEvent], bool]] = None
@@ -137,20 +137,18 @@ class PolicyRule:
         return self.description
 
 
-@dataclass
-class PolicyContext:
+class PolicyContext(BaseModel):
     """Additional context for policy evaluation."""
 
     content_size: Optional[int] = None
     device_trusted: bool = True
     time_of_day: Optional[str] = None
-    user_groups: List[str] = field(default_factory=list)
+    user_groups: List[str] = Field(default_factory=list)
     compliance_mode: Optional[str] = None
-    metadata: Dict = field(default_factory=dict)
+    metadata: Dict = Field(default_factory=dict)
 
 
-@dataclass
-class PolicyResult:
+class PolicyResult(BaseModel):
     """Result of policy evaluation."""
 
     decision: PolicyDecision
@@ -158,7 +156,7 @@ class PolicyResult:
     reason: str = ""
     allow_override: bool = False
     requires_review: bool = False
-    metadata: Dict = field(default_factory=dict)
+    metadata: Dict = Field(default_factory=dict)
 
     def is_allowed(self) -> bool:
         """Check if action is allowed."""

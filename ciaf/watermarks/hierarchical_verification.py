@@ -33,16 +33,18 @@ This approach ensures:
 - Cost scales with verification difficulty
 
 Created: 2026-03-28
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.2.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 from __future__ import annotations
 
 import time
 from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass, field
 from enum import Enum
+
+from pydantic import BaseModel, Field
 
 from .models import ArtifactEvidence
 from .hashing import sha256_text, normalized_text_hash, simhash_text, simhash_distance
@@ -61,50 +63,60 @@ class VerificationTier(str, Enum):
     NO_MATCH = "no_match"  # No match at any tier
 
 
-@dataclass
-class VerificationStep:
+class VerificationStep(BaseModel):
     """Single step in hierarchical verification."""
 
-    tier: VerificationTier
-    step_name: str
-    matched: bool
-    confidence: float
-    execution_time_ms: float
-    details: str = ""
+    tier: VerificationTier = Field(..., description="Verification tier")
+    step_name: str = Field(..., min_length=1, description="Step name")
+    matched: bool = Field(..., description="Whether step matched")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Step confidence")
+    execution_time_ms: float = Field(..., ge=0.0, description="Execution time in ms")
+    details: str = Field("", description="Step details")
 
 
-@dataclass
-class HierarchicalVerificationResult:
+class HierarchicalVerificationResult(BaseModel):
     """
     Result of three-tier hierarchical verification.
 
     Shows which tier matched, confidence, and cost breakdown.
     """
 
-    artifact_id: str
-    final_tier: VerificationTier
-    is_authentic: bool
-    overall_confidence: float  # 0.0-1.0
+    artifact_id: str = Field(..., min_length=1, description="Artifact identifier")
+    final_tier: VerificationTier = Field(..., description="Final tier reached")
+    is_authentic: bool = Field(..., description="Is artifact authentic")
+    overall_confidence: float = Field(
+        ..., ge=0.0, le=1.0, description="Overall confidence"
+    )
 
     # Tier execution details
-    tier1_result: Optional[VerificationStep] = None
-    tier2_result: Optional[VerificationStep] = None
-    tier3_result: Optional[VerificationStep] = None
+    tier1_result: Optional[VerificationStep] = Field(None, description="Tier 1 result")
+    tier2_result: Optional[VerificationStep] = Field(None, description="Tier 2 result")
+    tier3_result: Optional[VerificationStep] = Field(None, description="Tier 3 result")
 
     # Cost tracking
-    total_execution_time_ms: float = 0.0
-    tier1_cost_ms: float = 0.0
-    tier2_cost_ms: float = 0.0
-    tier3_cost_ms: float = 0.0
+    total_execution_time_ms: float = Field(
+        0.0, ge=0.0, description="Total execution time"
+    )
+    tier1_cost_ms: float = Field(0.0, ge=0.0, description="Tier 1 cost")
+    tier2_cost_ms: float = Field(0.0, ge=0.0, description="Tier 2 cost")
+    tier3_cost_ms: float = Field(0.0, ge=0.0, description="Tier 3 cost")
 
     # Detailed findings
-    steps: List[VerificationStep] = field(default_factory=list)
-    tier2_fragment_results: Optional[ForensicVerificationSummary] = None
-    tier3_similarity_score: Optional[float] = None
+    steps: List[VerificationStep] = Field(
+        default_factory=list, description="Verification steps"
+    )
+    tier2_fragment_results: Optional[ForensicVerificationSummary] = Field(
+        None, description="Tier 2 fragment results"
+    )
+    tier3_similarity_score: Optional[float] = Field(
+        None, ge=0.0, le=1.0, description="Tier 3 similarity score"
+    )
 
     # Notes for audit trail
-    notes: List[str] = field(default_factory=list)
-    evidence_record: Optional[ArtifactEvidence] = None
+    notes: List[str] = Field(default_factory=list, description="Verification notes")
+    evidence_record: Optional[ArtifactEvidence] = Field(
+        None, description="Evidence record"
+    )
 
     def to_dict(self) -> Dict:
         """Convert to dictionary for storage/logging."""
@@ -620,20 +632,19 @@ def format_hierarchical_verification_report(
 # ============================================================================
 
 
-@dataclass
-class VerificationStatistics:
+class VerificationStatistics(BaseModel):
     """Track verification statistics across multiple verifications."""
 
-    total_verifications: int = 0
-    tier1_matches: int = 0  # Exact hash matches
-    tier2_matches: int = 0  # Fragment matches
-    tier3_matches: int = 0  # Similarity matches
-    no_matches: int = 0
+    total_verifications: int = Field(0, ge=0, description="Total verifications")
+    tier1_matches: int = Field(0, ge=0, description="Tier 1 exact hash matches")
+    tier2_matches: int = Field(0, ge=0, description="Tier 2 fragment matches")
+    tier3_matches: int = Field(0, ge=0, description="Tier 3 similarity matches")
+    no_matches: int = Field(0, ge=0, description="No matches")
 
-    total_time_ms: float = 0.0
-    avg_tier1_time_ms: float = 0.0
-    avg_tier2_time_ms: float = 0.0
-    avg_tier3_time_ms: float = 0.0
+    total_time_ms: float = Field(0.0, ge=0.0, description="Total time")
+    avg_tier1_time_ms: float = Field(0.0, ge=0.0, description="Avg tier 1 time")
+    avg_tier2_time_ms: float = Field(0.0, ge=0.0, description="Avg tier 2 time")
+    avg_tier3_time_ms: float = Field(0.0, ge=0.0, description="Avg tier 3 time")
 
     def add_result(self, result: HierarchicalVerificationResult) -> None:
         """Add a verification result to statistics."""

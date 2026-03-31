@@ -30,15 +30,15 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Optional, List, Dict
 import re
+
+from pydantic import BaseModel
 
 from .events import DataClassification
 
 
-@dataclass
-class ClassificationRule:
+class ClassificationRule(BaseModel):
     """
     Rule for classifying content.
 
@@ -50,7 +50,7 @@ class ClassificationRule:
     name: str
     classification: DataClassification
     patterns: List[str]  # Regex patterns
-    keywords: List[str] = None
+    keywords: Optional[List[str]] = None
     weight: float = 1.0  # Score multiplier
     description: Optional[str] = None
 
@@ -309,8 +309,7 @@ class ContentClassifier:
         self.rules.append(rule)
 
 
-@dataclass
-class ClassificationResult:
+class ClassificationResult(BaseModel):
     """Result of content classification."""
 
     classification: DataClassification
@@ -318,7 +317,7 @@ class ClassificationResult:
     matched_rules: List[ClassificationRule]
     confidence: float = 1.0
     findings_count: int = 0
-    metadata: Dict = None
+    metadata: Optional[Dict] = None
 
     def is_high_risk(self, threshold: float = 0.7) -> bool:
         """Check if content is high risk."""

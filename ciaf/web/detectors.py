@@ -24,15 +24,15 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Optional, List, Dict, Set
 from urllib.parse import urlparse
+
+from pydantic import BaseModel
 
 from .events import ToolCategory
 
 
-@dataclass
-class AIToolSignature:
+class AIToolSignature(BaseModel):
     """
     Signature for detecting a specific AI tool.
 
@@ -42,9 +42,9 @@ class AIToolSignature:
     tool_name: str
     tool_category: ToolCategory
     domains: List[str]  # Domain patterns (can include wildcards)
-    api_patterns: List[str] = None  # API endpoint patterns
-    js_signatures: List[str] = None  # JavaScript identifiers
-    page_title_patterns: List[str] = None
+    api_patterns: Optional[List[str]] = None  # API endpoint patterns
+    js_signatures: Optional[List[str]] = None  # JavaScript identifiers
+    page_title_patterns: Optional[List[str]] = None
     vendor: Optional[str] = None
     is_enterprise: bool = False  # True if typically deployed as enterprise tool
 
@@ -279,8 +279,7 @@ class AIToolDetector:
         self.approved_tools.discard(tool_name.lower())
 
 
-@dataclass
-class DetectionResult:
+class DetectionResult(BaseModel):
     """Result of AI tool detection."""
 
     tool_name: str
@@ -291,7 +290,7 @@ class DetectionResult:
     is_enterprise: bool = False
     confidence: float = 1.0
     detection_method: str = "unknown"
-    metadata: Dict = None
+    metadata: Optional[Dict] = None
 
     def is_shadow_ai(self) -> bool:
         """Check if this is shadow AI."""

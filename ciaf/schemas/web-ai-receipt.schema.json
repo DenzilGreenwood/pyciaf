@@ -1,0 +1,100 @@
+{
+  "$id": "https://cognitiveinsight.ai/schemas/web-ai-receipt.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CIAF Web AI Receipt",
+  "description": "Cryptographic receipt for AI usage events in web/browser environments for governance and compliance",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "event_id",
+    "created_at",
+    "event_type",
+    "org_id",
+    "user_id",
+    "event_hash",
+    "receipt_hash"
+  ],
+  "properties": {
+    "receipt_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Unique receipt identifier"
+    },
+    "event_id": {
+      "$ref": "common/identifiers/uuid.json",
+      "description": "Reference to the web AI event"
+    },
+    "created_at": {
+      "$ref": "common/patterns/timestamp.json",
+      "description": "Receipt creation timestamp"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "prompt_submit",
+        "response_receive",
+        "tool_detect",
+        "policy_evaluate",
+        "content_capture"
+      ],
+      "description": "Type of AI usage event"
+    },
+    "org_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Organization identifier"
+    },
+    "user_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "User identifier"
+    },
+    "tool_name": {
+      "type": "string",
+      "description": "Detected AI tool name (e.g., ChatGPT, Claude, Gemini)"
+    },
+    "policy_decision": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "warn",
+        "block",
+        "require_approval"
+      ],
+      "description": "Governance policy decision"
+    },
+    "event_hash": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "SHA-256 hash of canonical event data"
+    },
+    "receipt_hash": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "SHA-256 hash of this receipt"
+    },
+    "prior_receipt_hash": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "Hash of prior receipt for chain linking"
+    },
+    "content_hash": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "SHA-256 hash of actual content (if captured)"
+    },
+    "merkle_root": {
+      "$ref": "common/identifiers/sha256-hash.json",
+      "description": "Merkle tree root for batch inclusion"
+    },
+    "merkle_proof": {
+      "$ref": "common/patterns/merkle-path.json",
+      "description": "Merkle inclusion proof path"
+    },
+    "signature": {
+      "$ref": "common/signature-envelope.json",
+      "description": "Cryptographic signature envelope"
+    },
+    "metadata": {
+      "$ref": "common/patterns/metadata.json",
+      "description": "Extensible metadata for additional context"
+    }
+  },
+  "additionalProperties": false
+}

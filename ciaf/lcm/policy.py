@@ -5,20 +5,21 @@ Defines the canonical policies for hashing, domains, Merkle trees, and commitmen
 used throughout the CIAF Lazy Capsule Materialization system.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 from enum import Enum
 from typing import Dict, List, Any, Optional, TYPE_CHECKING
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field, model_validator
 
 from ..core import secure_random_bytes, sha256_hash
 
 if TYPE_CHECKING:
-    from ..core.interfaces import Signer, RNG, AnchorDeriver, AnchorStore
+    from ..core.interfaces import RNG
 
 
 class DomainType(Enum):
@@ -41,41 +42,62 @@ class CommitmentType(Enum):
     PLAINTEXT = "plaintext"  # For non-sensitive data
 
 
-@dataclass
-class MerklePolicy:
+class MerklePolicy(BaseModel):
     """Merkle tree construction policy."""
 
-    fanout: int = 2
-    padding: str = "duplicate_last"
-    leaf_encoding: str = "raw32"
+    fanout: int = Field(2, ge=2, description="Merkle tree fanout")
+    padding: str = Field("duplicate_last", description="Padding strategy")
+    leaf_encoding: str = Field("raw32", description="Leaf encoding")
+
+    @property
+    def padding_strategy(self) -> str:
+        """Return padding as padding_strategy (backward compatibility)."""
+        return self.padding
 
 
-@dataclass
-class LCMPolicy:
+class LCMPolicy(BaseModel):
     """
     Comprehensive CIAF LCM policy defining all cryptographic and structural policies.
     Now includes protocol implementations for dependency injection.
     """
 
+    model_config = {"arbitrary_types_allowed": True}
+
     # Core policy
-    hash_algorithm: str = "SHA-256"
-    canonicalization: str = "json(sorted,utf-8)"
-    domains: List[DomainType] = None
-    merkle: MerklePolicy = None
-    commitments: CommitmentType = CommitmentType.SALTED
+    hash_algorithm: str = Field("SHA-256", description="Hash algorithm")
+    canonicalization: str = Field(
+        "json(sorted,utf-8)", description="Canonicalization method"
+    )
+    domains: List[DomainType] = Field(
+        default_factory=list, description="Enabled domains"
+    )
+    merkle: MerklePolicy = Field(
+        default_factory=MerklePolicy, description="Merkle policy"
+    )
+    commitments: CommitmentType = Field(
+        CommitmentType.SALTED, description="Commitment type"
+    )
 
     # Schema versions
-    anchor_schema_version: str = "1.0"
-    merkle_policy_version: str = "1.0"
+    anchor_schema_version: str = Field("1.0", description="Anchor schema version")
+    merkle_policy_version: str = Field("1.0", description="Merkle policy version")
 
     # Protocol implementations (optional, for dependency injection)
-    rng: Optional["RNG"] = None
-    anchor_deriver: Optional["AnchorDeriver"] = None
-    anchor_store: Optional["AnchorStore"] = None
-    signer: Optional["Signer"] = None
-    merkle_factory: Optional[Any] = None  # Callable that returns Merkle instances
+    rng: Optional[Any] = Field(None, description="RNG implementation")
+    anchor_deriver: Optional[Any] = Field(
+        None, description="Anchor deriver implementation"
+    )
+    anchor_store: Optional[Any] = Field(None, description="Anchor store implementation")
+    signer: Optional[Any] = Field(None, description="Signer implementation")
+    merkle_factory: Optional[Any] = Field(None, description="Merkle factory")
 
-    def __post_init__(self):
+    @property
+    def merkle_policy(self) -> MerklePolicy:
+        """Return merkle as merkle_policy (backward compatibility)."""
+        return self.merkle
+
+    @model_validator(mode="after")
+    def initialize_defaults(self) -> "LCMPolicy":
         """Initialize default values and protocols."""
         if self.domains is None:
             self.domains = [

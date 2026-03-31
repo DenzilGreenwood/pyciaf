@@ -5,19 +5,19 @@ This module provides uncertainty quantification capabilities for AI models,
 meeting NIST AI RMF requirements and EU AI Act uncertainty disclosure mandates.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
+from pydantic import BaseModel, Field, model_validator
 
 
 class UncertaintyMethod(Enum):
@@ -31,40 +31,57 @@ class UncertaintyMethod(Enum):
     BOOTSTRAP_SAMPLING = "Bootstrap Sampling"
 
 
-@dataclass
-class ConfidenceInterval:
+class ConfidenceInterval(BaseModel):
     """Confidence interval for predictions."""
 
-    lower_bound: float
-    upper_bound: float
-    confidence_level: float = 0.95
+    lower_bound: float = Field(..., description="Lower bound of interval")
+    upper_bound: float = Field(..., description="Upper bound of interval")
+    confidence_level: float = Field(
+        default=0.95, ge=0.0, le=1.0, description="Confidence level"
+    )
 
     def to_dict(self) -> Dict[str, float]:
         """Convert to dictionary."""
-        return asdict(self)
+        return self.model_dump()
 
     def width(self) -> float:
         """Calculate interval width."""
         return self.upper_bound - self.lower_bound
 
 
-@dataclass
-class UncertaintyMetrics:
+class UncertaintyMetrics(BaseModel):
     """Comprehensive uncertainty metrics for a prediction."""
 
-    prediction_variance: float
-    confidence_interval: ConfidenceInterval
-    method: UncertaintyMethod
-    iterations: int
-    epistemic_uncertainty: Optional[float] = None
-    aleatoric_uncertainty: Optional[float] = None
-    total_uncertainty: Optional[float] = None
-    entropy: Optional[float] = None
-    mutual_information: Optional[float] = None
-    explainability_ref: Optional[str] = None
-    calculation_timestamp: str = None
+    prediction_variance: float = Field(..., ge=0.0, description="Prediction variance")
+    confidence_interval: ConfidenceInterval = Field(
+        ..., description="Confidence interval"
+    )
+    method: UncertaintyMethod = Field(
+        ..., description="Uncertainty quantification method"
+    )
+    iterations: int = Field(..., ge=1, description="Number of iterations")
+    epistemic_uncertainty: Optional[float] = Field(
+        None, ge=0.0, description="Epistemic uncertainty"
+    )
+    aleatoric_uncertainty: Optional[float] = Field(
+        None, ge=0.0, description="Aleatoric uncertainty"
+    )
+    total_uncertainty: Optional[float] = Field(
+        None, ge=0.0, description="Total uncertainty"
+    )
+    entropy: Optional[float] = Field(None, ge=0.0, description="Entropy")
+    mutual_information: Optional[float] = Field(
+        None, ge=0.0, description="Mutual information"
+    )
+    explainability_ref: Optional[str] = Field(
+        None, description="Explainability reference"
+    )
+    calculation_timestamp: Optional[str] = Field(
+        None, description="Calculation timestamp"
+    )
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def compute_derived_values(self) -> "UncertaintyMetrics":
         """Post-initialization processing."""
         if self.calculation_timestamp is None:
             self.calculation_timestamp = datetime.now(timezone.utc).isoformat()
@@ -74,6 +91,8 @@ class UncertaintyMetrics:
             self.total_uncertainty = np.sqrt(
                 self.epistemic_uncertainty**2 + self.aleatoric_uncertainty**2
             )
+
+        return self
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""

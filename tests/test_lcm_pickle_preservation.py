@@ -14,12 +14,25 @@ import sys
 import pickle
 import tempfile
 from pathlib import Path
+import pytest
 
 # Add the CIAF package to the path
 sys.path.insert(0, str(Path(__file__).parent))
 
+# Check sklearn availability
+try:
+    from sklearn.linear_model import LinearRegression
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+
+# Skip all tests in this module if sklearn is not available
+pytestmark = pytest.mark.skipif(
+    not SKLEARN_AVAILABLE,
+    reason="scikit-learn required for pickle preservation tests"
+)
+
 from ciaf.wrappers import CIAFModelWrapper
-from sklearn.linear_model import LinearRegression
 
 
 def test_lcm_pickle_preservation():

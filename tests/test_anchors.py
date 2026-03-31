@@ -59,9 +59,11 @@ class TestAnchorDeterminism:
 
         anchor = derive_anchor_from_master(master_password, dataset_id)
 
-        # Anchor should be a non-empty string
-        assert isinstance(anchor, str)
-        assert len(anchor) > 0
-        # Should be hex-encoded (SHA256 = 64 chars)
-        assert len(anchor) == 64
-        assert all(c in "0123456789abcdef" for c in anchor.lower())
+        # Anchor should be bytes (32 bytes for SHA256)
+        assert isinstance(anchor, bytes)
+        assert len(anchor) == 32  # SHA-256 produces 32 bytes
+
+        # Convert to hex for validation
+        anchor_hex = anchor.hex()
+        assert len(anchor_hex) == 64  # 32 bytes = 64 hex chars
+        assert all(c in "0123456789abcdef" for c in anchor_hex.lower())

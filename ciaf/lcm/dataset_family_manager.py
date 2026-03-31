@@ -5,16 +5,17 @@ Enhanced dataset management that properly represents one dataset with multiple s
 rather than treating splits as separate datasets.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass
 from enum import Enum
+
+from pydantic import BaseModel, Field, model_validator
 
 from ..core import sha256_hash, MerkleTree
 from .policy import LCMPolicy, get_default_policy
@@ -56,53 +57,57 @@ class DatasetSplit(Enum):
     TEST = "test"
 
 
-@dataclass
-class DatasetFamilyMetadata:
+class DatasetFamilyMetadata(BaseModel):
     """Metadata for the complete dataset family."""
 
-    name: str
-    version: str
-    owner: str
-    license: str
-    description: str = ""
-    creation_date: str = None
-    tags: List[str] = None
+    name: str = Field(..., min_length=1, description="Dataset family name")
+    version: str = Field(..., min_length=1, description="Dataset version")
+    owner: str = Field(..., min_length=1, description="Dataset owner")
+    license: str = Field(..., min_length=1, description="Dataset license")
+    description: str = Field("", description="Dataset description")
+    creation_date: Optional[str] = Field(None, description="Creation timestamp")
+    tags: List[str] = Field(default_factory=list, description="Dataset tags")
 
     # Privacy and compliance
-    contains_pii: bool = False
-    privacy_level: str = "public"
-    compliance_frameworks: List[str] = None
+    contains_pii: bool = Field(False, description="Contains PII")
+    privacy_level: str = Field("public", description="Privacy level")
+    compliance_frameworks: List[str] = Field(
+        default_factory=list, description="Compliance frameworks"
+    )
 
-    def __post_init__(self):
-        """Initialize default values."""
+    @model_validator(mode="after")
+    def set_creation_date(self) -> "DatasetFamilyMetadata":
+        """Set creation date if not provided."""
         if self.creation_date is None:
             self.creation_date = datetime.now().isoformat()
-        if self.tags is None:
-            self.tags = []
-        if self.compliance_frameworks is None:
-            self.compliance_frameworks = []
+        return self
 
 
-@dataclass
-class SplitMetadata:
+class SplitMetadata(BaseModel):
     """Metadata for a specific dataset split."""
 
-    dataset_id: str
-    split_name: str
-    split_selection_rules: Dict[str, Any]
-    split_stats: Dict[str, Any]
-    sample_count: int = 0
+    dataset_id: str = Field(..., min_length=1, description="Dataset identifier")
+    split_name: str = Field(..., min_length=1, description="Split name")
+    split_selection_rules: Dict[str, Any] = Field(
+        default_factory=dict, description="Split selection rules"
+    )
+    split_stats: Dict[str, Any] = Field(
+        default_factory=dict, description="Split statistics"
+    )
+    sample_count: int = Field(0, ge=0, description="Number of samples")
 
     # RNG reproducibility
-    rng_seed: Optional[int] = None
-    rng_source: Optional[str] = None  # e.g., "numpy", "torch", "random"
+    rng_seed: Optional[int] = Field(None, description="RNG seed")
+    rng_source: Optional[str] = Field(
+        None, description="RNG source"
+    )  # e.g., "numpy", "torch", "random"
 
     # Stratification
-    stratify_by: Optional[List[str]] = None  # columns used for stratification
+    stratify_by: Optional[List[str]] = Field(None, description="Stratification columns")
 
     # Split assignment commitment
-    split_assignment_digest: Optional[str] = (
-        None  # SHA-256 over sorted record IDs or Merkle root
+    split_assignment_digest: Optional[str] = Field(
+        None, description="SHA-256 over sorted record IDs or Merkle root"
     )
 
 

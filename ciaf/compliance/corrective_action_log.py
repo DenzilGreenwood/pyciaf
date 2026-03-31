@@ -63,10 +63,7 @@ class TriggerType(Enum):
 class CorrectiveAction(BaseModel):
     """Individual corrective action record."""
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
-    )
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
     action_id: str = Field(..., description="Unique action identifier")
     trigger: str = Field(..., description="What triggered this action")
@@ -75,25 +72,43 @@ class CorrectiveAction(BaseModel):
     action_type: ActionType = Field(..., description="Type of corrective action")
     description: str = Field(..., description="Detailed description")
     approved_by: str = Field(..., description="Who approved this action")
-    implemented_by: Optional[str] = Field(None, description="Who implemented the action")
+    implemented_by: Optional[str] = Field(
+        None, description="Who implemented the action"
+    )
     date_created: str = Field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat(),
-        description="Creation timestamp"
+        description="Creation timestamp",
     )
     date_approved: Optional[str] = Field(None, description="Approval timestamp")
     date_applied: Optional[str] = Field(None, description="Implementation timestamp")
     date_verified: Optional[str] = Field(None, description="Verification timestamp")
-    status: ActionStatus = Field(default=ActionStatus.PENDING, description="Current status")
+    status: ActionStatus = Field(
+        default=ActionStatus.PENDING, description="Current status"
+    )
     priority: str = Field(default="Medium", description="Priority level")
-    linked_training_snapshot: Optional[str] = Field(None, description="Linked training snapshot ID")
-    linked_model_version: Optional[str] = Field(None, description="Linked model version")
-    evidence_files: List[str] = Field(default_factory=list, description="Evidence file references")
-    verification_criteria: List[str] = Field(default_factory=list, description="Verification criteria")
-    verification_results: Optional[Dict[str, Any]] = Field(None, description="Verification results")
+    linked_training_snapshot: Optional[str] = Field(
+        None, description="Linked training snapshot ID"
+    )
+    linked_model_version: Optional[str] = Field(
+        None, description="Linked model version"
+    )
+    evidence_files: List[str] = Field(
+        default_factory=list, description="Evidence file references"
+    )
+    verification_criteria: List[str] = Field(
+        default_factory=list, description="Verification criteria"
+    )
+    verification_results: Optional[Dict[str, Any]] = Field(
+        None, description="Verification results"
+    )
     cost_estimate: Optional[float] = Field(None, ge=0, description="Estimated cost")
     actual_cost: Optional[float] = Field(None, ge=0, description="Actual cost")
-    effectiveness_score: Optional[float] = Field(None, ge=0, le=1, description="Effectiveness score (0-1)")
-    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
+    effectiveness_score: Optional[float] = Field(
+        None, ge=0, le=1, description="Effectiveness score (0-1)"
+    )
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional metadata"
+    )
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -118,17 +133,18 @@ class CorrectiveAction(BaseModel):
 class CorrectiveActionSummary(BaseModel):
     """Summary of corrective actions for reporting."""
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
-    )
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
     total_actions: int = Field(..., ge=0, description="Total number of actions")
     by_status: Dict[str, int] = Field(..., description="Actions grouped by status")
     by_type: Dict[str, int] = Field(..., description="Actions grouped by type")
     by_trigger: Dict[str, int] = Field(..., description="Actions grouped by trigger")
-    avg_resolution_time_days: float = Field(..., ge=0, description="Average resolution time in days")
-    effectiveness_scores: List[float] = Field(..., description="List of effectiveness scores")
+    avg_resolution_time_days: float = Field(
+        ..., ge=0, description="Average resolution time in days"
+    )
+    effectiveness_scores: List[float] = Field(
+        ..., description="List of effectiveness scores"
+    )
     total_cost: float = Field(..., ge=0, description="Total cost of all actions")
     period_start: str = Field(..., description="Report period start date")
     period_end: str = Field(..., description="Report period end date")

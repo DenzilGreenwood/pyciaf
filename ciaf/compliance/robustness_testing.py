@@ -5,8 +5,9 @@ This module provides comprehensive robustness testing capabilities including
 adversarial attacks, distribution shift testing, and stress testing for AI models.
 
 Created: 2025-09-24
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
@@ -14,12 +15,12 @@ import logging
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class TestType(Enum):
@@ -43,37 +44,55 @@ class TestSeverity(Enum):
     CRITICAL = "critical"
 
 
-@dataclass
-class TestResult:
+class TestResult(BaseModel):
     """Individual test result."""
 
-    test_id: str
-    test_type: TestType
-    severity: TestSeverity
-    passed: bool
-    score: float
-    execution_time: float
-    error_message: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=datetime.now)
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
+
+    test_id: str = Field(..., min_length=1, description="Unique test identifier")
+    test_type: TestType = Field(..., description="Type of test")
+    severity: TestSeverity = Field(..., description="Test severity level")
+    passed: bool = Field(..., description="Whether test passed")
+    score: float = Field(..., ge=0.0, le=1.0, description="Test score (0-1)")
+    execution_time: float = Field(..., ge=0.0, description="Execution time in seconds")
+    error_message: Optional[str] = Field(
+        None, description="Error message if test failed"
+    )
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional test metadata"
+    )
+    timestamp: datetime = Field(
+        default_factory=datetime.now, description="Test timestamp"
+    )
 
 
-@dataclass
-class RobustnessReport:
+class RobustnessReport(BaseModel):
     """Comprehensive robustness testing report."""
 
-    test_session_id: str
-    model_name: str
-    model_version: str
-    start_time: datetime
-    end_time: Optional[datetime] = None
-    total_tests: int = 0
-    passed_tests: int = 0
-    failed_tests: int = 0
-    overall_score: float = 0.0
-    test_results: List[TestResult] = field(default_factory=list)
-    recommendations: List[str] = field(default_factory=list)
-    risk_assessment: Dict[str, Any] = field(default_factory=dict)
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
+
+    test_session_id: str = Field(
+        ..., min_length=1, description="Unique session identifier"
+    )
+    model_name: str = Field(..., min_length=1, description="Model name")
+    model_version: str = Field(..., min_length=1, description="Model version")
+    start_time: datetime = Field(..., description="Test session start time")
+    end_time: Optional[datetime] = Field(None, description="Test session end time")
+    total_tests: int = Field(default=0, ge=0, description="Total tests run")
+    passed_tests: int = Field(default=0, ge=0, description="Number of passed tests")
+    failed_tests: int = Field(default=0, ge=0, description="Number of failed tests")
+    overall_score: float = Field(
+        default=0.0, ge=0.0, le=1.0, description="Overall robustness score"
+    )
+    test_results: List[TestResult] = Field(
+        default_factory=list, description="Individual test results"
+    )
+    recommendations: List[str] = Field(
+        default_factory=list, description="Recommendations"
+    )
+    risk_assessment: Dict[str, Any] = Field(
+        default_factory=dict, description="Risk assessment data"
+    )
 
 
 class AdversarialTester:

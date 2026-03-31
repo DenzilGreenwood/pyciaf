@@ -5,15 +5,16 @@ This module provides stakeholder impact assessment capabilities and references
 to external documentation for comprehensive impact analysis.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
-from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 
 class StakeholderType(Enum):
@@ -66,78 +67,113 @@ class ImpactTimeline(Enum):
     ONGOING = "Ongoing"
 
 
-@dataclass
-class StakeholderGroup:
+class StakeholderGroup(BaseModel):
     """Definition of a stakeholder group."""
 
-    group_id: str
-    name: str
-    stakeholder_type: StakeholderType
-    description: str
-    size_estimate: Optional[int] = None
-    demographic_info: Optional[Dict[str, Any]] = None
-    vulnerability_factors: List[str] = None
-    contact_representatives: List[str] = None
-    engagement_methods: List[str] = None
+    group_id: str = Field(..., min_length=1, description="Unique group identifier")
+    name: str = Field(..., min_length=1, description="Group name")
+    stakeholder_type: StakeholderType = Field(..., description="Type of stakeholder")
+    description: str = Field(..., description="Group description")
+    size_estimate: Optional[int] = Field(None, ge=0, description="Estimated group size")
+    demographic_info: Optional[Dict[str, Any]] = Field(
+        None, description="Demographic information"
+    )
+    vulnerability_factors: Optional[List[str]] = Field(
+        None, description="Vulnerability factors"
+    )
+    contact_representatives: Optional[List[str]] = Field(
+        None, description="Contact representatives"
+    )
+    engagement_methods: Optional[List[str]] = Field(
+        None, description="Engagement methods"
+    )
 
-    def __post_init__(self):
-        """Post-initialization processing."""
+    @model_validator(mode="after")
+    def set_default_lists(self) -> "StakeholderGroup":
+        """Set default empty lists for optional fields."""
         if self.vulnerability_factors is None:
             self.vulnerability_factors = []
         if self.contact_representatives is None:
             self.contact_representatives = []
         if self.engagement_methods is None:
             self.engagement_methods = []
+        return self
 
 
-@dataclass
-class ImpactAssessment:
+class ImpactAssessment(BaseModel):
     """Individual impact assessment for a stakeholder group."""
 
-    assessment_id: str
-    stakeholder_group_id: str
-    impact_category: ImpactCategory
-    impact_description: str
-    severity: ImpactSeverity
-    timeline: ImpactTimeline
-    likelihood: float  # 0.0 to 1.0
-    potential_benefits: List[str]
-    potential_harms: List[str]
-    mitigation_measures: List[str]
-    monitoring_indicators: List[str]
-    assessment_date: str
-    assessor: str
-    confidence_level: float = 0.8  # 0.0 to 1.0
-    evidence_sources: List[str] = None
-    assumptions: List[str] = None
+    assessment_id: str = Field(..., min_length=1, description="Assessment identifier")
+    stakeholder_group_id: str = Field(
+        ..., min_length=1, description="Stakeholder group ID"
+    )
+    impact_category: ImpactCategory = Field(..., description="Impact category")
+    impact_description: str = Field(..., description="Impact description")
+    severity: ImpactSeverity = Field(..., description="Impact severity")
+    timeline: ImpactTimeline = Field(..., description="Timeline for impact")
+    likelihood: float = Field(..., ge=0.0, le=1.0, description="Likelihood (0-1)")
+    potential_benefits: List[str] = Field(
+        default_factory=list, description="Potential benefits"
+    )
+    potential_harms: List[str] = Field(
+        default_factory=list, description="Potential harms"
+    )
+    mitigation_measures: List[str] = Field(
+        default_factory=list, description="Mitigation measures"
+    )
+    monitoring_indicators: List[str] = Field(
+        default_factory=list, description="Monitoring indicators"
+    )
+    assessment_date: str = Field(..., description="Assessment date")
+    assessor: str = Field(..., min_length=1, description="Assessor name")
+    confidence_level: float = Field(
+        default=0.8, ge=0.0, le=1.0, description="Confidence level (0-1)"
+    )
+    evidence_sources: Optional[List[str]] = Field(None, description="Evidence sources")
+    assumptions: Optional[List[str]] = Field(None, description="Assumptions")
 
-    def __post_init__(self):
-        """Post-initialization processing."""
+    @model_validator(mode="after")
+    def set_default_evidence_assumptions(self) -> "ImpactAssessment":
+        """Set default empty lists for optional fields."""
         if self.evidence_sources is None:
             self.evidence_sources = []
         if self.assumptions is None:
             self.assumptions = []
+        return self
 
 
-@dataclass
-class ComprehensiveStakeholderImpactAssessment:
+class ComprehensiveStakeholderImpactAssessment(BaseModel):
     """Comprehensive stakeholder impact assessment."""
 
-    assessment_id: str
-    model_name: str
-    model_version: str
-    assessment_scope: str
-    stakeholder_groups: List[StakeholderGroup]
-    impact_assessments: List[ImpactAssessment]
-    overall_risk_level: ImpactSeverity
-    assessment_period: str
-    lead_assessor: str
-    review_board: List[str]
-    assessment_date: str
-    next_review_date: str
-    external_documents: List[str]
-    compliance_frameworks: List[str]
-    public_consultation: Optional[Dict[str, Any]] = None
+    model_config = ConfigDict(protected_namespaces=())
+
+    assessment_id: str = Field(..., min_length=1, description="Assessment identifier")
+    model_name: str = Field(..., min_length=1, description="Model name")
+    model_version: str = Field(..., min_length=1, description="Model version")
+    assessment_scope: str = Field(..., description="Scope of assessment")
+    stakeholder_groups: List[StakeholderGroup] = Field(
+        default_factory=list, description="Stakeholder groups"
+    )
+    impact_assessments: List[ImpactAssessment] = Field(
+        default_factory=list, description="Impact assessments"
+    )
+    overall_risk_level: ImpactSeverity = Field(..., description="Overall risk level")
+    assessment_period: str = Field(..., description="Assessment period")
+    lead_assessor: str = Field(..., min_length=1, description="Lead assessor")
+    review_board: List[str] = Field(
+        default_factory=list, description="Review board members"
+    )
+    assessment_date: str = Field(..., description="Assessment date")
+    next_review_date: str = Field(..., description="Next review date")
+    external_documents: List[str] = Field(
+        default_factory=list, description="External documents"
+    )
+    compliance_frameworks: List[str] = Field(
+        default_factory=list, description="Compliance frameworks"
+    )
+    public_consultation: Optional[Dict[str, Any]] = Field(
+        None, description="Public consultation data"
+    )
 
     def get_impacts_by_severity(
         self, severity: ImpactSeverity
@@ -505,7 +541,7 @@ class StakeholderImpactAssessmentEngine:
             }
         elif format == "detailed" and include_sensitive_data:
             return {
-                "assessment": asdict(assessment),
+                "assessment": assessment.model_dump(),
                 "summary": self.generate_assessment_summary(assessment),
                 "export_timestamp": datetime.now(timezone.utc).isoformat(),
             }

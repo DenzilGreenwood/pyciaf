@@ -5,7 +5,6 @@ This test ensures that Merkle tree root calculation is deterministic
 for a fixed set of leaves.
 """
 
-import pytest
 from ciaf.core.merkle import MerkleTree
 from ciaf.core.crypto import sha256_hash
 
@@ -76,9 +75,14 @@ class TestMerkleDeterminism:
 
     def test_merkle_empty_tree(self) -> None:
         """Test Merkle tree behavior with empty leaf set."""
-        with pytest.raises((ValueError, IndexError)):
-            # Empty tree should raise an error
-            MerkleTree([])
+        # Empty tree should be allowed and have a deterministic root
+        tree = MerkleTree([])
+        assert tree.root is not None
+        assert len(tree.root) == 64  # SHA-256 hex string
+
+        # Verify empty tree root is deterministic
+        tree2 = MerkleTree([])
+        assert tree.root == tree2.root
 
     def test_merkle_large_tree(self) -> None:
         """Test Merkle tree with larger dataset."""

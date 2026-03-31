@@ -14,14 +14,16 @@ Forensic Match Logic:
 - Audio: Spectral fingerprint matching
 
 Created: 2026-03-28
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.2.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 from __future__ import annotations
 
 from typing import List, Optional, Tuple
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field
 
 from .models import (
     TextForensicFragment,
@@ -31,28 +33,32 @@ from .models import (
 )
 
 
-@dataclass
-class FragmentMatchResult:
+class FragmentMatchResult(BaseModel):
     """Result of fragment matching."""
 
-    fragment_id: str
-    matched: bool
-    confidence: float  # 0.0-1.0
-    match_position: Optional[int] = None  # For text: char position
-    match_details: str = ""  # Human-readable details
+    fragment_id: str = Field(..., min_length=1, description="Fragment identifier")
+    matched: bool = Field(..., description="Whether fragment matched")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Match confidence")
+    match_position: Optional[int] = Field(None, description="Match position for text")
+    match_details: str = Field("", description="Human-readable details")
 
 
-@dataclass
-class ForensicVerificationSummary:
+class ForensicVerificationSummary(BaseModel):
     """Summary of forensic fragment verification."""
 
-    total_fragments_checked: int
-    fragments_matched: int
-    fragments_not_matched: int
-    match_confidence: float  # 0.0-1.0 overall
-    legal_defensibility: str  # 'high', 'medium', 'low'
-    forensic_matches: List[FragmentMatchResult]
-    notes: List[str]
+    total_fragments_checked: int = Field(
+        ..., ge=0, description="Total fragments checked"
+    )
+    fragments_matched: int = Field(..., ge=0, description="Fragments matched")
+    fragments_not_matched: int = Field(..., ge=0, description="Fragments not matched")
+    match_confidence: float = Field(
+        ..., ge=0.0, le=1.0, description="Overall confidence"
+    )
+    legal_defensibility: str = Field(..., description="Legal defensibility level")
+    forensic_matches: List[FragmentMatchResult] = Field(
+        default_factory=list, description="Forensic matches"
+    )
+    notes: List[str] = Field(default_factory=list, description="Verification notes")
 
 
 # ============================================================================
@@ -158,24 +164,24 @@ def verify_text_fragments(
 
         if match_result:
             pos, confidence = match_result
-            
+
             # Verify hash integrity after match for added security
             extracted_text = suspect_text[pos : pos + len(fragment.fragment_text)]
             extracted_hash = sha256_text(extracted_text)
-            
+
             # Check if hash matches either before or after watermark state
             hash_match = (
                 extracted_hash == fragment.fragment_hash_before
                 or extracted_hash == fragment.fragment_hash_after
             )
-            
+
             match_details = f"Found at character {pos}"
             if hash_match:
                 match_details += f" (hash verified: {extracted_hash[:8]}...)"
             else:
-                match_details += f" (hash mismatch - content may be modified)"
+                match_details += " (hash mismatch - content may be modified)"
                 confidence *= 0.8  # Reduce confidence if hash doesn't match
-            
+
             results.append(
                 FragmentMatchResult(
                     fragment_id=fragment.fragment_id,

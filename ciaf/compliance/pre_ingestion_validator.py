@@ -5,20 +5,20 @@ This module provides comprehensive data validation before train/test split
 to catch bias, quality issues, and compliance violations early in the pipeline.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 from __future__ import annotations
 
 import warnings
-from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+from pydantic import BaseModel, Field
 
 try:
     import pandas as pd
@@ -41,28 +41,38 @@ class ValidationSeverity(Enum):
     CRITICAL = "critical"
 
 
-@dataclass
-class ValidationIssue:
+class ValidationIssue(BaseModel):
     """Individual validation issue."""
 
-    issue_id: str
-    severity: ValidationSeverity
-    message: str
-    column: Optional[str] = None
-    affected_rows: Optional[int] = None
-    recommendation: Optional[str] = None
+    issue_id: str = Field(..., min_length=1, description="Unique issue identifier")
+    severity: ValidationSeverity = Field(..., description="Issue severity level")
+    message: str = Field(..., min_length=1, description="Issue message")
+    column: Optional[str] = Field(None, description="Affected column name")
+    affected_rows: Optional[int] = Field(
+        None, ge=0, description="Number of affected rows"
+    )
+    recommendation: Optional[str] = Field(
+        None, description="Recommendation to resolve issue"
+    )
 
 
-@dataclass
-class BiasDetectionResult:
+class BiasDetectionResult(BaseModel):
     """Result of bias detection analysis."""
 
-    protected_attribute: str
-    bias_detected: bool
-    bias_score: float
-    statistical_significance: float
-    affected_groups: List[str]
-    recommendation: str
+    protected_attribute: str = Field(
+        ..., min_length=1, description="Protected attribute analyzed"
+    )
+    bias_detected: bool = Field(..., description="Whether bias was detected")
+    bias_score: float = Field(..., ge=0.0, le=1.0, description="Bias score (0-1)")
+    statistical_significance: float = Field(
+        ..., ge=0.0, le=1.0, description="Statistical significance p-value"
+    )
+    affected_groups: List[str] = Field(
+        default_factory=list, description="Groups affected by bias"
+    )
+    recommendation: str = Field(
+        ..., min_length=1, description="Mitigation recommendation"
+    )
 
 
 class PreIngestionValidator:

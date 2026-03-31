@@ -261,9 +261,9 @@ def simhash_distance(hash1: str, hash2: str) -> int:
 def perceptual_hash_image(data: bytes, algorithm: str = "phash") -> str:
     """
     Compute perceptual hash of image data.
-    
+
     ✅ IMPLEMENTATION: Uses real perceptual hashing via imagehash library.
-    
+
     This replaces the previous placeholder that just truncated SHA-256.
     True perceptual hashing enables similarity detection even when:
     - Image is resized or cropped
@@ -271,24 +271,24 @@ def perceptual_hash_image(data: bytes, algorithm: str = "phash") -> str:
     - Image is compressed (JPEG artifacts)
     - Colors are adjusted
     - Minor edits are made
-    
+
     Supported algorithms:
     - "phash" (default) - Most robust, general-purpose
     - "ahash" - Fastest, good for duplicates
     - "dhash" - Good for detecting edits
     - "whash" - Most robust to heavy modifications
-    
+
     Args:
         data: Image bytes (JPEG, PNG, etc.)
         algorithm: Hash algorithm ("phash", "ahash", "dhash", "whash")
-    
+
     Returns:
         Hex string of perceptual hash (16 characters for 8x8 hash)
-    
+
     Raises:
         ImportError: If imagehash library not available
         ValueError: If algorithm not recognized
-    
+
     Example:
         >>> image_data = open("photo.jpg", "rb").read()
         >>> hash1 = perceptual_hash_image(image_data, "phash")
@@ -310,9 +310,9 @@ def perceptual_hash_image(data: bytes, algorithm: str = "phash") -> str:
         raise ImportError(
             "Image perceptual hashing requires: pip install imagehash Pillow"
         )
-    
+
     algorithm = algorithm.lower()
-    
+
     if algorithm == "phash":
         return compute_perceptual_hash(data)
     elif algorithm == "ahash":
@@ -323,23 +323,22 @@ def perceptual_hash_image(data: bytes, algorithm: str = "phash") -> str:
         return compute_wavelet_hash(data)
     else:
         raise ValueError(
-            f"Unknown algorithm '{algorithm}'. "
-            f"Use: phash, ahash, dhash, or whash"
+            f"Unknown algorithm '{algorithm}'. " f"Use: phash, ahash, dhash, or whash"
         )
 
 
 def perceptual_hash_placeholder_audio(data: bytes) -> str:
     """
     Placeholder for audio perceptual hashing.
-    
+
     For production audio fingerprinting, integrate:
     - chromaprint (AcoustID) - Most popular
     - dejavu - Python audio fingerprinting
     - echoprint - Open source audio fingerprinting
-    
+
     Args:
         data: Audio data bytes
-    
+
     Returns:
         Placeholder hash (truncated SHA-256)
     """
@@ -350,15 +349,15 @@ def perceptual_hash_placeholder_audio(data: bytes) -> str:
 def perceptual_hash_placeholder_video(data: bytes) -> str:
     """
     Placeholder for video perceptual hashing.
-    
+
     For production video fingerprinting, integrate:
     - ffmpeg-python + imagehash for keyframe hashing
     - Video Quality Metric Tool (VQMT)
     - perceptual video hashing libraries
-    
+
     Args:
         data: Video data bytes
-    
+
     Returns:
         Placeholder hash (truncated SHA-256)
     """

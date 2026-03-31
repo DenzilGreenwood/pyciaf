@@ -5,15 +5,17 @@ Implements PolicyEnforcer for high-risk domain detection, compliance
 checking, and audit policy enforcement throughout the CIAF pipeline.
 
 Created: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import re
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, ConfigDict
 
 from .canonicalization import Policy
 from .enums import RecordType
@@ -36,26 +38,34 @@ class ComplianceResult(str, Enum):
     REQUIRES_REVIEW = "requires_review"
 
 
-@dataclass
-class PolicyViolation:
+class PolicyViolation(BaseModel):
     """Represents a policy violation."""
 
-    rule_id: str
-    severity: RiskLevel
-    description: str
-    metadata: Dict[str, Any]
-    timestamp: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    rule_id: str = Field(..., min_length=1, description="Rule identifier")
+    severity: RiskLevel = Field(..., description="Violation severity")
+    description: str = Field(..., min_length=1, description="Violation description")
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Violation metadata"
+    )
+    timestamp: str = Field(..., description="Violation timestamp")
 
 
-@dataclass
-class RiskAssessment:
+class RiskAssessment(BaseModel):
     """Risk assessment result for an operation."""
 
-    risk_level: RiskLevel
-    risk_factors: List[str]
-    violations: List[PolicyViolation]
-    compliance_result: ComplianceResult
-    recommendations: List[str]
+    risk_level: RiskLevel = Field(..., description="Overall risk level")
+    risk_factors: List[str] = Field(
+        default_factory=list, description="Risk factors identified"
+    )
+    violations: List[PolicyViolation] = Field(
+        default_factory=list, description="Policy violations"
+    )
+    compliance_result: ComplianceResult = Field(..., description="Compliance result")
+    recommendations: List[str] = Field(
+        default_factory=list, description="Risk mitigation recommendations"
+    )
 
 
 class PolicyRule:

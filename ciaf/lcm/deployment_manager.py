@@ -5,16 +5,17 @@ Enhanced deployment management with pre-deployment and deployment stages,
 including artifact digests, SBOM, approvals, and infrastructure tracking.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 from datetime import datetime
 from enum import Enum
 from typing import Dict, Any, Optional, TYPE_CHECKING
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field
 
 from ..core import sha256_hash
 from .policy import LCMPolicy, get_default_policy
@@ -32,15 +33,14 @@ class DeploymentStatus(Enum):
     ROLLBACK = "rollback"
 
 
-@dataclass
-class BuildArtifact:
+class BuildArtifact(BaseModel):
     """Build artifact metadata."""
 
-    artifact_type: str  # e.g., "wheel", "docker", "binary"
-    artifact_digest: str
-    build_timestamp: str
-    builder_info: str
-    size_bytes: int = 0
+    artifact_type: str = Field(..., min_length=1, description="Artifact type")
+    artifact_digest: str = Field(..., min_length=1, description="Artifact digest")
+    build_timestamp: str = Field(..., description="Build timestamp")
+    builder_info: str = Field(..., min_length=1, description="Builder info")
+    size_bytes: int = Field(0, ge=0, description="Size in bytes")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -53,14 +53,17 @@ class BuildArtifact:
         }
 
 
-@dataclass
-class SBOM:
+class SBOM(BaseModel):
     """Software Bill of Materials."""
 
-    dependencies: Dict[str, str]  # package_name -> version
-    security_scan_digest: str
-    vulnerability_count: int = 0
-    compliance_status: str = "unknown"
+    dependencies: Dict[str, str] = Field(
+        default_factory=dict, description="Dependencies"
+    )  # package_name -> version
+    security_scan_digest: str = Field(
+        ..., min_length=1, description="Security scan digest"
+    )
+    vulnerability_count: int = Field(0, ge=0, description="Vulnerability count")
+    compliance_status: str = Field("unknown", description="Compliance status")
 
     def compute_sbom_digest(self) -> str:
         """Compute SBOM digest."""
@@ -128,6 +131,21 @@ class LCMPreDeploymentAnchor:
         print(
             f"🧰 Pre-deployment anchor '{self.predeployment_id}' created: {self.anchor_id}"
         )
+
+    @property
+    def intent_digest(self) -> str:
+        """Return predeployment hash as intent_digest (backward compatibility)."""
+        return self.predeployment_hash
+
+    @property
+    def sbom_digest(self) -> str:
+        """Return SBOM digest (backward compatibility)."""
+        return self.sbom.compute_sbom_digest()
+
+    @property
+    def artifacts(self) -> list:
+        """Return build artifact as list (backward compatibility)."""
+        return [self.build_artifact]
 
     def _compute_predeployment_hash(self) -> str:
         """Compute pre-deployment hash."""
@@ -204,6 +222,26 @@ class LCMDeploymentAnchor:
 
         print(f"🚀 Deployment anchor '{self.deployment_id}' created: {self.anchor_id}")
         print(f"   🔗 Intent→actual digest: {self.intent_to_actual_digest[:16]}...")
+
+    @property
+    def predeployment_ref(self) -> str:
+        """Return predeployment anchor ID (backward compatibility)."""
+        return self.predeployment_anchor.anchor_id
+
+    @property
+    def actual_digest(self) -> str:
+        """Return intent-to-actual digest (backward compatibility)."""
+        return self.intent_to_actual_digest
+
+    @property
+    def actual_environment(self) -> str:
+        """Return deployment environment (backward compatibility)."""
+        return self.deployment_env
+
+    @property
+    def actual_location(self) -> str:
+        """Return deployment location (backward compatibility)."""
+        return self.location
 
     def _compute_deployment_hash(self) -> str:
         """Compute deployment hash."""
@@ -487,15 +525,21 @@ class LCMDeploymentManager:
             compliance_status=scan_results["compliance_status"],
         )
 
-        # Create pre-deployment anchor using parent method
-        anchor = super().create_predeployment_anchor(
+        # Create pre-deployment anchor directly with proper objects
+        from ciaf.lcm.model_manager import LCMModelAnchor
+        anchor = LCMPreDeploymentAnchor(
             predeployment_id=predeployment_id,
-            artifact_digest=build_artifact.artifact_digest,
-            dependencies=sbom.dependencies,
+            build_artifact=build_artifact,
+            sbom=sbom,
             approval_ticket_id=f"APR-{hash(predeployment_id) % 10000:04d}",
             intended_env=build_config.get("target_env", "production"),
             intended_region=build_config.get("target_region", "us-east-1"),
+            rollout_plan_digest=None,
+            policy=self.policy,
         )
+        
+        # Store the anchor
+        self.predeployment_anchors[predeployment_id] = anchor
 
         print(f"✅ Pre-deployment anchor created: {anchor.anchor_id}")
         print(f"   🐳 Artifact size: {build_artifact.size_bytes / (1024*1024):.1f}MB")
@@ -668,14 +712,20 @@ class LCMDeploymentManager:
             infrastructure_config, predeployment_anchor
         )
 
-        # Create deployment anchor using parent method
-        anchor = super().create_deployment_anchor(
+        # Create deployment anchor directly
+        anchor = LCMDeploymentAnchor(
             deployment_id=deployment_id,
-            predeployment_id=predeployment_anchor.predeployment_id,
-            actual_env=deployment_config["target_env"],
-            actual_location=actual_location,
-            infrastructure_spec=infrastructure_spec,
+            predeployment_anchor=predeployment_anchor,
+            deployment_time=None,  # Will use current time
+            deployment_env=deployment_config["target_env"],
+            location=actual_location,
+            infrastructure_hash=sha256_hash(json.dumps(infrastructure_spec, sort_keys=True).encode()),
+            config_digest=sha256_hash(json.dumps(deployment_config, sort_keys=True).encode()),
+            policy=self.policy,
         )
+        
+        # Store the anchor
+        self.deployment_anchors[deployment_id] = anchor
 
         print(f"✅ Deployment anchor created: {anchor.anchor_id}")
         print(f"   🌍 Location: {actual_location}")

@@ -5,14 +5,16 @@ Provides reference test vectors for all cryptographic functions to ensure
 interoperability and correct implementation across different environments.
 
 Created: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
-from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from typing import Dict, List, Any
+
+from pydantic import BaseModel, Field
 
 from .canonicalization import canonical_json, canonicalize_and_hash, make_anchor, Policy
 from .crypto import sha256_hash, compute_hash
@@ -22,26 +24,26 @@ from .merkle import MerkleTree
 from .signers import Ed25519Signer
 
 
-@dataclass
-class TestVector:
+class TestVector(BaseModel):
     """Single test vector with input, expected output, and metadata."""
 
-    name: str
-    description: str
-    inputs: Dict[str, Any]
-    expected_outputs: Dict[str, Any]
-    algorithm: str
-    test_category: str
+    name: str = Field(..., min_length=1, description="Test name")
+    description: str = Field(..., description="Test description")
+    inputs: Dict[str, Any] = Field(default_factory=dict, description="Test inputs")
+    expected_outputs: Dict[str, Any] = Field(
+        default_factory=dict, description="Expected outputs"
+    )
+    algorithm: str = Field(..., min_length=1, description="Algorithm being tested")
+    test_category: str = Field(..., min_length=1, description="Test category")
 
 
-@dataclass
-class TestVectorSuite:
+class TestVectorSuite(BaseModel):
     """Complete suite of test vectors."""
 
-    version: str
-    created_at: str
-    description: str
-    vectors: List[TestVector]
+    version: str = Field(..., min_length=1, description="Suite version")
+    created_at: str = Field(..., description="Creation timestamp")
+    description: str = Field(..., description="Suite description")
+    vectors: List[TestVector] = Field(default_factory=list, description="Test vectors")
 
 
 class CIAFTestVectors:
@@ -261,7 +263,7 @@ class CIAFTestVectors:
                         description=f"Anchor creation test {i+1}",
                         inputs={
                             "root": root,
-                            "policy": asdict(policy),
+                            "policy": policy.model_dump(),
                             "signer_id": signer.key_id,
                         },
                         expected_outputs={
@@ -349,7 +351,7 @@ class CIAFTestVectors:
         suite = self.generate_all_vectors()
 
         # Convert to serializable format
-        suite_dict = asdict(suite)
+        suite_dict = suite.model_dump()
 
         with open(file_path, "w") as f:
             json.dump(suite_dict, f, indent=2, sort_keys=True)

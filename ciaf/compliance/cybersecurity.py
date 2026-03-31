@@ -67,10 +67,7 @@ class ComplianceStatus(Enum):
 class SecurityControlImplementation(BaseModel):
     """Implementation details for a security control."""
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
-    )
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
     control_id: str = Field(..., description="Unique control identifier")
     control_name: str = Field(..., description="Name of the security control")
@@ -80,16 +77,22 @@ class SecurityControlImplementation(BaseModel):
     status: ComplianceStatus = Field(..., description="Compliance status")
     description: str = Field(..., description="Detailed description")
     implementation_date: str = Field(..., description="Implementation date")
-    last_assessment_date: Optional[str] = Field(None, description="Last assessment date")
-    next_assessment_date: Optional[str] = Field(None, description="Next assessment date")
+    last_assessment_date: Optional[str] = Field(
+        None, description="Last assessment date"
+    )
+    next_assessment_date: Optional[str] = Field(
+        None, description="Next assessment date"
+    )
     responsible_party: str = Field(default="", description="Responsible party")
-    evidence_files: List[str] = Field(default_factory=list, description="Evidence file references")
+    evidence_files: List[str] = Field(
+        default_factory=list, description="Evidence file references"
+    )
     test_results: Optional[Dict[str, Any]] = Field(None, description="Test results")
     remediation_plan: Optional[str] = Field(None, description="Remediation plan")
     cost: Optional[float] = Field(None, ge=0, description="Implementation cost")
 
-    @model_validator(mode='after')
-    def set_next_assessment_date(self) -> 'SecurityControlImplementation':
+    @model_validator(mode="after")
+    def set_next_assessment_date(self) -> "SecurityControlImplementation":
         """Set next assessment date if not provided."""
         if self.next_assessment_date is None and self.last_assessment_date:
             last_date = datetime.fromisoformat(
@@ -104,22 +107,29 @@ class CybersecurityAssessment(BaseModel):
     """Comprehensive cybersecurity assessment."""
 
     model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
+        validate_assignment=True, extra="forbid", protected_namespaces=()
     )
 
     assessment_id: str = Field(..., description="Unique assessment identifier")
     model_name: str = Field(..., description="Model being assessed")
     assessment_date: str = Field(..., description="Assessment date")
     assessor: str = Field(..., description="Person/team conducting assessment")
-    frameworks_assessed: List[SecurityFramework] = Field(..., description="Security frameworks assessed")
-    control_implementations: List[SecurityControlImplementation] = Field(..., description="Control implementations")
-    overall_compliance_score: float = Field(..., ge=0, le=1, description="Overall compliance score (0-1)")
+    frameworks_assessed: List[SecurityFramework] = Field(
+        ..., description="Security frameworks assessed"
+    )
+    control_implementations: List[SecurityControlImplementation] = Field(
+        ..., description="Control implementations"
+    )
+    overall_compliance_score: float = Field(
+        ..., ge=0, le=1, description="Overall compliance score (0-1)"
+    )
     risk_level: str = Field(..., description="Overall risk level")
     findings: List[Dict[str, Any]] = Field(..., description="Assessment findings")
     recommendations: List[str] = Field(..., description="Recommendations")
     next_assessment_date: str = Field(..., description="Next assessment date")
-    external_audit_report: Optional[str] = Field(None, description="External audit report reference")
+    external_audit_report: Optional[str] = Field(
+        None, description="External audit report reference"
+    )
 
     def get_compliance_by_framework(
         self, framework: SecurityFramework

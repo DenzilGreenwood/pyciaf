@@ -145,7 +145,11 @@ class OversightDecision(BaseModel if PYDANTIC_AVAILABLE else object):
 
 
 class TrainingReceipt(BaseReceipt):
-    """Enhanced training receipt schema."""
+    """Enhanced training receipt schema.
+
+    Schema: training-receipt-enhanced.schema.json
+    Includes lineage references for full provenance tracking.
+    """
 
     model_config = {"protected_namespaces": ()}  # Allow model_anchor field
 
@@ -159,6 +163,16 @@ class TrainingReceipt(BaseReceipt):
     metrics: Dict[str, Any] = Field(default_factory=dict)
     merkle_path: List[str] = Field(default_factory=list)
     fallback_reasons: List[Dict[str, Any]] = Field(default_factory=list)
+
+    # Lineage references (allOf: lineage-references.schema.json)
+    dataset_anchor_ref: Optional[str] = None  # Reference to dataset anchor
+    training_snapshot_ref: Optional[str] = None  # Reference to training snapshot
+    training_receipt_ref: Optional[str] = None  # Reference to prior training
+    model_anchor_ref: Optional[str] = None  # Reference to model anchor
+    prior_receipt_hash: Optional[str] = None  # Hash chain linkage
+
+    # Signature envelope (follows common/signature-envelope.json)
+    signature: Optional[Dict[str, Any]] = None
 
     if PYDANTIC_AVAILABLE:
 
@@ -181,7 +195,11 @@ class TrainingReceipt(BaseReceipt):
 
 
 class InferenceReceipt(BaseReceipt):
-    """Enhanced inference receipt schema."""
+    """Enhanced inference receipt schema.
+
+    Schema: inference-receipt-enhanced.schema.json
+    Includes lineage references for full provenance tracking.
+    """
 
     model_config = {"protected_namespaces": ()}  # Allow model_anchor field
 
@@ -194,6 +212,16 @@ class InferenceReceipt(BaseReceipt):
     merkle_path: List[str] = Field(default_factory=list)
     performance_metrics: Dict[str, float] = Field(default_factory=dict)
     fallback_reasons: List[Dict[str, Any]] = Field(default_factory=list)
+
+    # Lineage references (allOf: lineage-references.schema.json)
+    training_receipt_ref: Optional[str] = None  # Reference to training receipt
+    model_anchor_ref: Optional[str] = None  # Reference to model anchor
+    deployment_anchor_ref: Optional[str] = None  # Reference to deployment
+    prior_receipt_hash: Optional[str] = None  # Hash chain linkage
+    artifact_evidence_ref: Optional[str] = None  # Reference to artifact evidence
+
+    # Signature envelope (follows common/signature-envelope.json)
+    signature: Optional[Dict[str, Any]] = None
 
     if PYDANTIC_AVAILABLE:
 
@@ -281,7 +309,7 @@ def create_training_receipt(
 
     if PYDANTIC_AVAILABLE:
         receipt = TrainingReceipt(**receipt_data)
-        return receipt.dict()
+        return receipt.model_dump()
     else:
         # Basic receipt without validation
         receipt_data.update(
@@ -313,7 +341,7 @@ def create_inference_receipt(
 
     if PYDANTIC_AVAILABLE:
         receipt = InferenceReceipt(**receipt_data)
-        return receipt.dict()
+        return receipt.model_dump()
     else:
         # Basic receipt without validation
         receipt_data.update(

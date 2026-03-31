@@ -25,15 +25,16 @@ Version: 1.3.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 import hashlib
 import json
 
+from pydantic import BaseModel, Field, ConfigDict
+
 if TYPE_CHECKING:
-    from .signature_envelope import SignatureEnvelope
+    pass
 
 
 class ArtifactType(str, Enum):
@@ -91,13 +92,14 @@ def canonical_json(data: Dict[str, Any]) -> bytes:
     ).encode("utf-8")
 
 
-@dataclass
-class ArtifactFingerprint:
+class ArtifactFingerprint(BaseModel):
     """
     Forensic fingerprint for artifact similarity matching.
 
     Used when exact hash matching fails (content modified after generation).
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     algorithm: str  # e.g., "simhash", "perceptual_hash", "minihash"
     value: str  # Fingerprint value
@@ -106,36 +108,36 @@ class ArtifactFingerprint:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        return asdict(self)
+        return self.model_dump()
 
 
-@dataclass
-class WatermarkDescriptor:
+class WatermarkDescriptor(BaseModel):
     """
     Complete watermark metadata for provenance tracking.
 
     Describes how the watermark was applied and how to verify it.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
+
     watermark_id: str  # Unique watermark identifier
     watermark_type: WatermarkType  # Technique used
     tag_text: Optional[str] = None  # Human-readable tag text
     verification_url: Optional[str] = None  # URL for online verification
     qr_payload: Optional[str] = None  # QR code data
-    metadata_fields: Dict[str, str] = field(default_factory=dict)  # Custom metadata
+    metadata_fields: Dict[str, str] = Field(default_factory=dict)  # Custom metadata
     embed_method: Optional[str] = None  # Technical embedding method
     removal_resistance: Optional[str] = None  # "low", "medium", "high"
     location: Optional[str] = None  # Where watermark appears
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         result["watermark_type"] = self.watermark_type.value
         return result
 
 
-@dataclass
-class ForensicFragment:
+class ForensicFragment(BaseModel):
     """
     Base forensic fragment for DNA-level artifact verification.
 
@@ -148,6 +150,8 @@ class ForensicFragment:
     generic boilerplate text or blank image regions.
     """
 
+    model_config = ConfigDict(protected_namespaces=())
+
     fragment_id: str  # Unique fragment identifier (e.g., 'frag_0_begin')
     fragment_type: str  # 'text', 'image_patch', 'video_frame', 'audio_segment'
     entropy_score: float  # 0.0-1.0 (1.0 = highest unique content)
@@ -159,7 +163,6 @@ class ForensicFragment:
     )
 
 
-@dataclass
 class TextForensicFragment(ForensicFragment):
     """
     High-entropy text fragment for granular verification.
@@ -189,12 +192,11 @@ class TextForensicFragment(ForensicFragment):
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         result.pop("fragment_type", None)  # Avoid duplication
         return result
 
 
-@dataclass
 class ImageForensicFragment(ForensicFragment):
     """
     High-entropy image patch for granular verification.
@@ -220,12 +222,11 @@ class ImageForensicFragment(ForensicFragment):
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         result.pop("fragment_type", None)
         return result
 
 
-@dataclass
 class VideoForensicSnippet(ForensicFragment):
     """
     Temporal keyframe sample for video verification.
@@ -242,7 +243,7 @@ class VideoForensicSnippet(ForensicFragment):
     frame_duration_ms: int  # Duration from prior frame
 
     # Keyframe patch hashes (visual DNA)
-    frame_patch_hashes: List[str] = field(default_factory=list)
+    frame_patch_hashes: List[str] = Field(default_factory=list)
 
     # Motion signature (sequence of frames over 2-second window)
     temporal_motion_hash: Optional[str] = None  # Signature of movement
@@ -250,12 +251,11 @@ class VideoForensicSnippet(ForensicFragment):
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         result.pop("fragment_type", None)
         return result
 
 
-@dataclass
 class AudioForensicSegment(ForensicFragment):
     """
     Spectrogram fingerprint for audio verification.
@@ -280,13 +280,12 @@ class AudioForensicSegment(ForensicFragment):
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         result.pop("fragment_type", None)
         return result
 
 
-@dataclass
-class ForensicFragmentSet:
+class ForensicFragmentSet(BaseModel):
     """
     Collection of forensic fragments forming the "DNA" of an artifact.
 
@@ -300,15 +299,17 @@ class ForensicFragmentSet:
     verifiable sections of this artifact with P < 10^-15."
     """
 
+    model_config = ConfigDict(protected_namespaces=())
+
     fragment_count: int
     sampling_strategy: str  # 'multi_point', 'spatial_diversity', 'temporal'
     total_coverage_percent: float  # Estimated % of content represented
 
     # Typed fragment lists
-    text_fragments: List[TextForensicFragment] = field(default_factory=list)
-    image_fragments: List[ImageForensicFragment] = field(default_factory=list)
-    video_snippets: List[VideoForensicSnippet] = field(default_factory=list)
-    audio_segments: List[AudioForensicSegment] = field(default_factory=list)
+    text_fragments: List[TextForensicFragment] = Field(default_factory=list)
+    image_fragments: List[ImageForensicFragment] = Field(default_factory=list)
+    video_snippets: List[VideoForensicSnippet] = Field(default_factory=list)
+    audio_segments: List[AudioForensicSegment] = Field(default_factory=list)
 
     # Statistics
     min_entropy_threshold: float = 0.6  # Minimum entropy to include
@@ -316,7 +317,7 @@ class ForensicFragmentSet:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         return result
 
     @property
@@ -330,8 +331,7 @@ class ForensicFragmentSet:
         )
 
 
-@dataclass
-class ArtifactHashSet:
+class ArtifactHashSet(BaseModel):
     """
     Dual-state hashing for forensic provenance.
 
@@ -345,6 +345,8 @@ class ArtifactHashSet:
 
     Additionally stores forensic fragments for DNA-level verification.
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     content_hash_before_watermark: str  # SHA-256 of original AI output
     content_hash_after_watermark: str  # SHA-256 of watermarked version
@@ -365,14 +367,13 @@ class ArtifactHashSet:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         if self.forensic_fragments:
             result["forensic_fragments"] = self.forensic_fragments.to_dict()
         return result
 
 
-@dataclass
-class ArtifactEvidence:
+class ArtifactEvidence(BaseModel):
     """
     Complete forensic provenance record for AI-generated artifact.
 
@@ -391,6 +392,8 @@ class ArtifactEvidence:
     3. Identifying modified versions via similarity
     4. Complete audit trail
     """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
 
     artifact_id: str  # Unique artifact ID
     artifact_type: ArtifactType  # Type of artifact
@@ -414,16 +417,18 @@ class ArtifactEvidence:
     hashes: ArtifactHashSet
 
     # Forensic fingerprints (for similarity matching)
-    fingerprints: List[ArtifactFingerprint] = field(default_factory=list)
+    fingerprints: List[ArtifactFingerprint] = Field(default_factory=list)
 
     # Additional metadata
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
     # Receipt chaining (link to previous artifact)
     prior_receipt_hash: Optional[str] = None
 
     # Signature (✅ Updated to SignatureEnvelope pattern for v1.3.0)
-    signature: Optional[SignatureEnvelope] = None  # type: ignore
+    signature: Optional[Any] = (
+        None  # SignatureEnvelope type - using Any to avoid circular import
+    )
     merkle_leaf_hash: Optional[str] = None
 
     def to_canonical_dict(self) -> Dict[str, Any]:
@@ -431,20 +436,20 @@ class ArtifactEvidence:
         Convert to canonical dictionary for hashing/signing.
 
         Ensures consistent serialization for cryptographic operations.
-        
+
         Note: Signature field is excluded from canonical dict as it's
         computed over the content (not self-referential).
         """
-        result = asdict(self)
+        result = self.model_dump()
         result["artifact_type"] = self.artifact_type.value
         result["watermark"] = self.watermark.to_dict()
         result["hashes"] = self.hashes.to_dict()
-        result["fingerprints"] = [asdict(fp) for fp in self.fingerprints]
-        
+        result["fingerprints"] = [fp.model_dump() for fp in self.fingerprints]
+
         # Remove signature from canonical form (computed after canonicalization)
         result.pop("signature", None)
         result.pop("merkle_leaf_hash", None)  # Also computed after
-        
+
         return result
 
     def to_canonical_bytes(self) -> bytes:
@@ -458,27 +463,27 @@ class ArtifactEvidence:
     def to_dict(self) -> Dict[str, Any]:
         """
         Convert to full dictionary including signature.
-        
+
         This includes the signature envelope if present.
         """
         result = self.to_canonical_dict()
-        
+
         # Add signature back in (for serialization)
         if self.signature:
             from .signature_envelope import SignatureEnvelope
+
             if isinstance(self.signature, SignatureEnvelope):
                 result["signature"] = self.signature.to_dict()
             else:
                 result["signature"] = self.signature
-        
+
         if self.merkle_leaf_hash:
             result["merkle_leaf_hash"] = self.merkle_leaf_hash
-        
+
         return result
 
 
-@dataclass
-class VerificationResult:
+class VerificationResult(BaseModel):
     """
     Result of artifact verification against stored evidence.
 
@@ -488,6 +493,8 @@ class VerificationResult:
     - Was the watermark likely removed?
     - How closely does it match?
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     artifact_id: str  # ID of evidence record checked against
     exact_match_after_watermark: bool  # Matches distributed version exactly
@@ -506,7 +513,7 @@ class VerificationResult:
     content_modified: bool = False
 
     # Explanation
-    notes: List[str] = field(default_factory=list)
+    notes: List[str] = Field(default_factory=list)
     confidence: float = 0.0  # Overall confidence (0.0-1.0)
 
     # Evidence reference
@@ -514,7 +521,7 @@ class VerificationResult:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         if self.evidence_record:
             result["evidence_record"] = self.evidence_record.to_dict()
         return result
@@ -539,14 +546,15 @@ class VerificationResult:
         )
 
 
-@dataclass
-class ForensicArtifactProfile:
+class ForensicArtifactProfile(BaseModel):
     """
     Extended forensic profile with full hash suite.
 
     This is an enhanced version of ArtifactHashSet with more forensic features.
     Used for high-security scenarios where multiple matching methods are needed.
     """
+
+    model_config = ConfigDict(protected_namespaces=())
 
     # Core hashes
     exact_hash_before_watermark: str
@@ -571,7 +579,7 @@ class ForensicArtifactProfile:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
-        return asdict(self)
+        return self.model_dump()
 
 
 # Type aliases for clarity

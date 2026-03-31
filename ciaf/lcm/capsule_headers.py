@@ -5,15 +5,16 @@ Implements compact JSON "capsule headers" that provide comprehensive CIAF LCM st
 including anchors, policy, and Merkle roots in a standardized JSON format.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 from datetime import datetime
 from typing import Dict, Any, Optional
-from dataclasses import dataclass, asdict
+
+from pydantic import BaseModel, Field
 
 from .policy import LCMPolicy, get_default_policy, DomainType, CommitmentType
 from .dataset_manager import LCMDatasetAnchor, LCMDatasetManager
@@ -28,34 +29,45 @@ from .inference_manager import LCMInferenceReceipt, LCMInferenceManager
 from .root_manager import TestEvaluationAnchor, LCMRootManager
 
 
-@dataclass
-class CapsuleHeader:
+class CapsuleHeader(BaseModel):
     """
     Compact JSON capsule header containing comprehensive CIAF LCM state.
     """
 
     # Core metadata
-    capsule_version: str
-    generated_at: str
-    policy: Dict[str, Any]
+    capsule_version: str = Field(..., min_length=1, description="Capsule version")
+    generated_at: str = Field(..., description="Generation timestamp")
+    policy: Dict[str, Any] = Field(
+        default_factory=dict, description="Policy configuration"
+    )
 
     # Canonical stages
-    stage_a_dataset: Optional[Dict[str, Any]] = None
-    stage_b_model: Optional[Dict[str, Any]] = None
-    stage_c_training: Optional[Dict[str, Any]] = None
-    stage_d_predeployment: Optional[Dict[str, Any]] = None
-    stage_e_deployment: Optional[Dict[str, Any]] = None
-    stage_f_test_evaluation: Optional[Dict[str, Any]] = None
-    stage_g_inference: Optional[Dict[str, Any]] = None
-    stage_h_roots: Optional[Dict[str, Any]] = None
+    stage_a_dataset: Optional[Dict[str, Any]] = Field(None, description="Dataset stage")
+    stage_b_model: Optional[Dict[str, Any]] = Field(None, description="Model stage")
+    stage_c_training: Optional[Dict[str, Any]] = Field(
+        None, description="Training stage"
+    )
+    stage_d_predeployment: Optional[Dict[str, Any]] = Field(
+        None, description="Pre-deployment stage"
+    )
+    stage_e_deployment: Optional[Dict[str, Any]] = Field(
+        None, description="Deployment stage"
+    )
+    stage_f_test_evaluation: Optional[Dict[str, Any]] = Field(
+        None, description="Test evaluation stage"
+    )
+    stage_g_inference: Optional[Dict[str, Any]] = Field(
+        None, description="Inference stage"
+    )
+    stage_h_roots: Optional[Dict[str, Any]] = Field(None, description="Roots stage")
 
     def to_json(self, indent: int = 2) -> str:
         """Convert to pretty-printed JSON."""
-        return json.dumps(asdict(self), indent=indent, sort_keys=True)
+        return json.dumps(self.model_dump(), indent=indent, sort_keys=True)
 
     def to_compact_json(self) -> str:
         """Convert to compact JSON."""
-        return json.dumps(asdict(self), separators=(",", ":"), sort_keys=True)
+        return json.dumps(self.model_dump(), separators=(",", ":"), sort_keys=True)
 
 
 class LCMCapsuleManager:

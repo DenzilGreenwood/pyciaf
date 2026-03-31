@@ -16,7 +16,7 @@ import json
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 from ..core import sha256_hash
 from ..lcm.policy import canonical_json
@@ -33,8 +33,7 @@ class ComplianceAuditRecord(BaseModel):
     """Individual audit record with compliance metadata."""
 
     model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
+        validate_assignment=True, extra="forbid", protected_namespaces=()
     )
 
     # Core audit fields
@@ -46,25 +45,35 @@ class ComplianceAuditRecord(BaseModel):
     user_id: Optional[str] = Field(None, description="User performing the action")
 
     # Event-specific data
-    event_data: Dict[str, Any] = Field(default_factory=dict, description="Event-specific data")
+    event_data: Dict[str, Any] = Field(
+        default_factory=dict, description="Event-specific data"
+    )
 
     # Compliance metadata
-    regulatory_frameworks: List[str] = Field(default_factory=list, description="Applicable regulatory frameworks")
+    regulatory_frameworks: List[str] = Field(
+        default_factory=list, description="Applicable regulatory frameworks"
+    )
     risk_level: str = Field(default="low", description="Risk level assessment")
     compliance_status: str = Field(default="compliant", description="Compliance status")
 
     # Cryptographic integrity
     data_hash: str = Field(default="", description="SHA-256 hash of event data")
-    previous_hash: str = Field(default="", description="Hash of previous audit record (chain)")
+    previous_hash: str = Field(
+        default="", description="Hash of previous audit record (chain)"
+    )
     audit_hash: str = Field(default="", description="SHA-256 hash of this audit record")
 
     # Privacy and security
     contains_pii: bool = Field(default=False, description="Whether record contains PII")
-    encryption_used: bool = Field(default=True, description="Whether encryption was used")
-    access_controls: List[str] = Field(default_factory=list, description="Access control requirements")
+    encryption_used: bool = Field(
+        default=True, description="Whether encryption was used"
+    )
+    access_controls: List[str] = Field(
+        default_factory=list, description="Access control requirements"
+    )
 
-    @model_validator(mode='after')
-    def compute_hashes(self) -> 'ComplianceAuditRecord':
+    @model_validator(mode="after")
+    def compute_hashes(self) -> "ComplianceAuditRecord":
         """Compute hashes after initialization."""
         # Compute data hash
         data_str = json.dumps(self.event_data, sort_keys=True)

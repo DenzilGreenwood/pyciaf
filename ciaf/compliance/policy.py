@@ -5,29 +5,23 @@ Defines the canonical policies for compliance validation, audit trail generation
 and regulatory framework mapping used throughout the CIAF compliance system.
 
 Created: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Any, Optional, TYPE_CHECKING
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 from ..core import sha256_hash
 from ..lcm.policy import canonical_json
 from .interfaces import ComplianceFramework, ValidationSeverity, AuditEventType
 
 if TYPE_CHECKING:
-    from .interfaces import (
-        ComplianceValidator,
-        AuditTrailProvider,
-        RiskAssessor,
-        BiasDetector,
-        DocumentationGenerator,
-        ComplianceStore,
-        AlertSystem,
-    )
+    pass
 
 
 class ComplianceLevel(Enum):
@@ -47,18 +41,29 @@ class RetentionPeriod(Enum):
     PERMANENT = "permanent"
 
 
-@dataclass
-class AuditPolicy:
+class AuditPolicy(BaseModel):
     """Audit trail generation and retention policy."""
 
-    enabled: bool = True
-    retention_period: RetentionPeriod = RetentionPeriod.LONG
-    integrity_verification: bool = True
-    encryption_required: bool = True
-    real_time_alerts: bool = True
-    event_types: List[AuditEventType] = None
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
 
-    def __post_init__(self):
+    enabled: bool = Field(default=True, description="Audit trail enabled flag")
+    retention_period: RetentionPeriod = Field(
+        default=RetentionPeriod.LONG, description="Data retention period"
+    )
+    integrity_verification: bool = Field(
+        default=True, description="Verify audit trail integrity"
+    )
+    encryption_required: bool = Field(
+        default=True, description="Require audit encryption"
+    )
+    real_time_alerts: bool = Field(default=True, description="Enable real-time alerts")
+    event_types: Optional[List[AuditEventType]] = Field(
+        default=None, description="Event types to audit"
+    )
+
+    @model_validator(mode="after")
+    def set_default_event_types(self) -> "AuditPolicy":
+        """Set default event types if not provided."""
         if self.event_types is None:
             self.event_types = [
                 AuditEventType.MODEL_TRAINING,
@@ -67,19 +72,34 @@ class AuditPolicy:
                 AuditEventType.COMPLIANCE_CHECK,
                 AuditEventType.RISK_ASSESSMENT,
             ]
+        return self
 
 
-@dataclass
-class ValidationPolicy:
+class ValidationPolicy(BaseModel):
     """Validation policy configuration."""
 
-    enabled_frameworks: List[ComplianceFramework] = None
-    validation_frequency: str = "daily"  # daily, weekly, monthly, on_demand
-    auto_remediation: bool = False
-    compliance_level: ComplianceLevel = ComplianceLevel.STANDARD
-    failure_threshold: Dict[ValidationSeverity, int] = None
+    model_config = ConfigDict(protected_namespaces=())
 
-    def __post_init__(self):
+    enabled_frameworks: Optional[List[ComplianceFramework]] = Field(
+        default=None, description="Enabled compliance frameworks"
+    )
+    validation_frequency: str = Field(
+        default="daily",
+        description="Validation frequency (daily, weekly, monthly, on_demand)",
+    )
+    auto_remediation: bool = Field(
+        default=False, description="Enable automatic remediation"
+    )
+    compliance_level: ComplianceLevel = Field(
+        default=ComplianceLevel.STANDARD, description="Compliance enforcement level"
+    )
+    failure_threshold: Optional[Dict[ValidationSeverity, int]] = Field(
+        default=None, description="Failure thresholds by severity"
+    )
+
+    @model_validator(mode="after")
+    def set_default_values(self) -> "ValidationPolicy":
+        """Set default frameworks and thresholds if not provided."""
         if self.enabled_frameworks is None:
             self.enabled_frameworks = [
                 ComplianceFramework.GENERAL,
@@ -94,57 +114,100 @@ class ValidationPolicy:
                 ValidationSeverity.LOW: 50,  # Max 50 low severity failures
                 ValidationSeverity.INFO: -1,  # No limit on info messages
             }
+        return self
 
 
-@dataclass
-class PrivacyPolicy:
+class PrivacyPolicy(BaseModel):
     """Privacy and data protection policy."""
 
-    pii_detection_enabled: bool = True
-    anonymization_required: bool = True
-    consent_tracking: bool = True
-    data_minimization: bool = True
-    right_to_erasure: bool = True
-    cross_border_restrictions: List[str] = None
+    pii_detection_enabled: bool = Field(
+        default=True, description="Enable PII detection"
+    )
+    anonymization_required: bool = Field(
+        default=True, description="Require data anonymization"
+    )
+    consent_tracking: bool = Field(default=True, description="Track user consent")
+    data_minimization: bool = Field(
+        default=True, description="Enforce data minimization"
+    )
+    right_to_erasure: bool = Field(default=True, description="Support right to erasure")
+    cross_border_restrictions: Optional[List[str]] = Field(
+        default=None, description="Cross-border data transfer restrictions"
+    )
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def set_default_restrictions(self) -> "PrivacyPolicy":
+        """Set default cross-border restrictions if not provided."""
         if self.cross_border_restrictions is None:
             self.cross_border_restrictions = []
+        return self
 
 
-@dataclass
-class CompliancePolicy:
+class CompliancePolicy(BaseModel):
     """
     Comprehensive CIAF compliance policy defining validation rules, audit requirements,
     and protocol implementations for dependency injection.
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
+
     # Core policy configuration
-    policy_version: str = "1.0"
-    effective_date: str = None
-    organization_name: str = "CIAF Implementation"
-    jurisdiction: List[str] = None
+    policy_version: str = Field(default="1.0", description="Policy version")
+    effective_date: Optional[str] = Field(
+        default=None, description="Policy effective date"
+    )
+    organization_name: str = Field(
+        default="CIAF Implementation", description="Organization name"
+    )
+    jurisdiction: Optional[List[str]] = Field(
+        default=None, description="Legal jurisdictions"
+    )
 
     # Sub-policies
-    audit_policy: AuditPolicy = None
-    validation_policy: ValidationPolicy = None
-    privacy_policy: PrivacyPolicy = None
+    audit_policy: Optional[AuditPolicy] = Field(
+        default=None, description="Audit trail policy"
+    )
+    validation_policy: Optional[ValidationPolicy] = Field(
+        default=None, description="Validation policy"
+    )
+    privacy_policy: Optional[PrivacyPolicy] = Field(
+        default=None, description="Privacy policy"
+    )
 
     # Integration settings
-    lcm_integration: bool = True
-    anchor_compliance_records: bool = True
-    merkle_audit_integrity: bool = True
+    lcm_integration: bool = Field(default=True, description="Enable LCM integration")
+    anchor_compliance_records: bool = Field(
+        default=True, description="Anchor compliance records"
+    )
+    merkle_audit_integrity: bool = Field(
+        default=True, description="Use Merkle tree audit integrity"
+    )
 
     # Protocol implementations (optional, for dependency injection)
-    validator: Optional["ComplianceValidator"] = None
-    audit_provider: Optional["AuditTrailProvider"] = None
-    risk_assessor: Optional["RiskAssessor"] = None
-    bias_detector: Optional["BiasDetector"] = None
-    doc_generator: Optional["DocumentationGenerator"] = None
-    compliance_store: Optional["ComplianceStore"] = None
-    alert_system: Optional["AlertSystem"] = None
+    validator: Optional[Any] = Field(
+        default=None, exclude=True, description="Compliance validator"
+    )
+    audit_provider: Optional[Any] = Field(
+        default=None, exclude=True, description="Audit trail provider"
+    )
+    risk_assessor: Optional[Any] = Field(
+        default=None, exclude=True, description="Risk assessor"
+    )
+    bias_detector: Optional[Any] = Field(
+        default=None, exclude=True, description="Bias detector"
+    )
+    doc_generator: Optional[Any] = Field(
+        default=None, exclude=True, description="Documentation generator"
+    )
+    compliance_store: Optional[Any] = Field(
+        default=None, exclude=True, description="Compliance data store"
+    )
+    alert_system: Optional[Any] = Field(
+        default=None, exclude=True, description="Alert system"
+    )
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def initialize_defaults(self) -> "CompliancePolicy":
         """Initialize default values and protocols."""
         if self.effective_date is None:
             self.effective_date = datetime.now().isoformat()
@@ -170,6 +233,8 @@ class CompliancePolicy:
             ]
         ):
             self._init_default_protocols()
+
+        return self
 
     def _init_default_protocols(self):
         """Initialize default protocol implementations."""

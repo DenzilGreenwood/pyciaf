@@ -6,14 +6,16 @@ the LCM and compliance policy systems. It enables fine-tuned control over
 explanation methods, quality thresholds, and regulatory compliance.
 
 Created: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
+
+from pydantic import BaseModel, Field
 
 from ..lcm.policy import canonical_json
 from ..core.crypto import sha256_hash
@@ -52,143 +54,204 @@ class ComplianceFramework(Enum):
     FAIR_ML = "fair_ml"
 
 
-@dataclass
-class ExplanationQualityPolicy:
+class ExplanationQualityPolicy(BaseModel):
     """Policy for explanation quality requirements."""
 
     # Confidence thresholds
-    min_explanation_confidence: float = 0.7
-    min_feature_coverage: int = 5
-    max_features_in_explanation: int = 20
+    min_explanation_confidence: float = Field(
+        0.7, ge=0.0, le=1.0, description="Minimum confidence threshold"
+    )
+    min_feature_coverage: int = Field(5, ge=1, description="Minimum feature coverage")
+    max_features_in_explanation: int = Field(
+        20, ge=1, description="Maximum features in explanation"
+    )
 
     # Feature attribution requirements
-    require_feature_names: bool = True
-    require_attribution_values: bool = True
-    require_importance_ranking: bool = True
+    require_feature_names: bool = Field(True, description="Require feature names")
+    require_attribution_values: bool = Field(
+        True, description="Require attribution values"
+    )
+    require_importance_ranking: bool = Field(
+        True, description="Require importance ranking"
+    )
 
     # Quality validation
-    validate_explanation_consistency: bool = True
-    explanation_stability_threshold: float = 0.8
+    validate_explanation_consistency: bool = Field(
+        True, description="Validate consistency"
+    )
+    explanation_stability_threshold: float = Field(
+        0.8, ge=0.0, le=1.0, description="Stability threshold"
+    )
 
     # Audit requirements
-    store_explanations: bool = True
-    explanation_retention_days: int = 365
-    require_explanation_audit_trail: bool = True
+    store_explanations: bool = Field(True, description="Store explanations")
+    explanation_retention_days: int = Field(365, ge=1, description="Retention days")
+    require_explanation_audit_trail: bool = Field(
+        True, description="Require audit trail"
+    )
 
 
-@dataclass
-class ComplianceRequirements:
+class ComplianceRequirements(BaseModel):
     """Compliance requirements for explainability."""
 
-    enabled_frameworks: Set[ComplianceFramework] = field(
+    enabled_frameworks: Set[ComplianceFramework] = Field(
         default_factory=lambda: {
             ComplianceFramework.EU_AI_ACT,
             ComplianceFramework.NIST_AI_RMF,
-        }
+        },
+        description="Enabled compliance frameworks",
     )
 
     # EU AI Act requirements
-    eu_ai_act_transparency_level: str = "high"  # low, medium, high
-    eu_ai_act_require_human_oversight: bool = True
+    eu_ai_act_transparency_level: str = Field(
+        "high", description="EU AI Act transparency level"
+    )  # low, medium, high
+    eu_ai_act_require_human_oversight: bool = Field(
+        True, description="Require human oversight"
+    )
 
     # NIST AI RMF requirements
-    nist_explain_function_level: str = "detailed"  # basic, detailed, comprehensive
-    nist_require_bias_assessment: bool = True
+    nist_explain_function_level: str = Field(
+        "detailed", description="NIST function level"
+    )  # basic, detailed, comprehensive
+    nist_require_bias_assessment: bool = Field(
+        True, description="Require bias assessment"
+    )
 
     # GDPR requirements
-    gdpr_right_to_explanation: bool = True
-    gdpr_automated_decision_threshold: float = 0.5
+    gdpr_right_to_explanation: bool = Field(
+        True, description="GDPR right to explanation"
+    )
+    gdpr_automated_decision_threshold: float = Field(
+        0.5, ge=0.0, le=1.0, description="Automated decision threshold"
+    )
 
     # General compliance
-    require_regulatory_metadata: bool = True
-    compliance_documentation_required: bool = True
+    require_regulatory_metadata: bool = Field(
+        True, description="Require regulatory metadata"
+    )
+    compliance_documentation_required: bool = Field(
+        True, description="Compliance documentation required"
+    )
 
 
-@dataclass
-class MethodPreferences:
+class MethodPreferences(BaseModel):
     """Preferences for explanation method selection."""
 
     # Preferred methods in order of preference
-    preferred_methods: List[ExplanationMethod] = field(
+    preferred_methods: List[ExplanationMethod] = Field(
         default_factory=lambda: [
             ExplanationMethod.SHAP_TREE,
             ExplanationMethod.SHAP_LINEAR,
             ExplanationMethod.LIME_TABULAR,
             ExplanationMethod.FEATURE_IMPORTANCE,
-        ]
+        ],
+        description="Preferred explanation methods",
     )
 
     # Method-specific configurations
-    shap_background_sample_size: int = 100
-    shap_max_evaluations: int = 500
-    lime_num_perturbations: int = 1000
-    lime_kernel_width: Optional[float] = None
+    shap_background_sample_size: int = Field(
+        100, ge=1, description="SHAP background sample size"
+    )
+    shap_max_evaluations: int = Field(500, ge=1, description="SHAP max evaluations")
+    lime_num_perturbations: int = Field(
+        1000, ge=1, description="LIME perturbation count"
+    )
+    lime_kernel_width: Optional[float] = Field(None, description="LIME kernel width")
 
     # Fallback behavior
-    enable_fallback_methods: bool = True
-    fallback_to_feature_importance: bool = True
+    enable_fallback_methods: bool = Field(True, description="Enable fallback methods")
+    fallback_to_feature_importance: bool = Field(
+        True, description="Fallback to feature importance"
+    )
 
 
-@dataclass
-class IntegrationPolicy:
+class IntegrationPolicy(BaseModel):
     """Policy for integration with other CIAF components."""
 
     # LCM integration
-    lcm_integration: bool = True
-    store_explanations_in_lcm: bool = True
-    lcm_explanation_commitment_type: str = "salted"
+    lcm_integration: bool = Field(True, description="Enable LCM integration")
+    store_explanations_in_lcm: bool = Field(
+        True, description="Store explanations in LCM"
+    )
+    lcm_explanation_commitment_type: str = Field(
+        "salted", description="LCM commitment type"
+    )
 
     # Compliance integration
-    compliance_integration: bool = True
-    auto_generate_compliance_reports: bool = True
+    compliance_integration: bool = Field(
+        True, description="Enable compliance integration"
+    )
+    auto_generate_compliance_reports: bool = Field(
+        True, description="Auto-generate reports"
+    )
 
     # Audit integration
-    audit_integration: bool = True
-    explanation_audit_sampling_rate: float = 0.1  # 10% of explanations audited
+    audit_integration: bool = Field(True, description="Enable audit integration")
+    explanation_audit_sampling_rate: float = Field(
+        0.1, ge=0.0, le=1.0, description="Audit sampling rate"
+    )
 
 
-@dataclass
-class PerformancePolicy:
+class PerformancePolicy(BaseModel):
     """Policy for explainability performance management."""
 
     # Resource limits
-    max_explanation_time_seconds: float = 30.0
-    max_memory_usage_mb: int = 1024
-    enable_explanation_caching: bool = True
-    cache_ttl_hours: int = 24
+    max_explanation_time_seconds: float = Field(
+        30.0, gt=0.0, description="Max explanation time"
+    )
+    max_memory_usage_mb: int = Field(1024, ge=1, description="Max memory usage")
+    enable_explanation_caching: bool = Field(True, description="Enable caching")
+    cache_ttl_hours: int = Field(24, ge=1, description="Cache TTL hours")
 
     # Batch processing
-    enable_batch_explanations: bool = True
-    batch_size: int = 100
-    max_concurrent_explanations: int = 5
+    enable_batch_explanations: bool = Field(True, description="Enable batch processing")
+    batch_size: int = Field(100, ge=1, description="Batch size")
+    max_concurrent_explanations: int = Field(
+        5, ge=1, description="Max concurrent explanations"
+    )
 
     # Background processing
-    enable_async_explanations: bool = False
-    async_explanation_timeout_seconds: float = 300.0
+    enable_async_explanations: bool = Field(
+        False, description="Enable async explanations"
+    )
+    async_explanation_timeout_seconds: float = Field(
+        300.0, gt=0.0, description="Async timeout"
+    )
 
 
-@dataclass
-class ExplainabilityPolicy:
+class ExplainabilityPolicy(BaseModel):
     """Comprehensive explainability policy configuration."""
 
     # Core policy components
-    explanation_level: ExplanationLevel = ExplanationLevel.STANDARD
-    quality_policy: ExplanationQualityPolicy = field(
-        default_factory=ExplanationQualityPolicy
+    explanation_level: ExplanationLevel = Field(
+        ExplanationLevel.STANDARD, description="Explanation detail level"
     )
-    compliance_requirements: ComplianceRequirements = field(
-        default_factory=ComplianceRequirements
+    quality_policy: ExplanationQualityPolicy = Field(
+        default_factory=ExplanationQualityPolicy, description="Quality policy"
     )
-    method_preferences: MethodPreferences = field(default_factory=MethodPreferences)
-    integration_policy: IntegrationPolicy = field(default_factory=IntegrationPolicy)
-    performance_policy: PerformancePolicy = field(default_factory=PerformancePolicy)
+    compliance_requirements: ComplianceRequirements = Field(
+        default_factory=ComplianceRequirements, description="Compliance requirements"
+    )
+    method_preferences: MethodPreferences = Field(
+        default_factory=MethodPreferences, description="Method preferences"
+    )
+    integration_policy: IntegrationPolicy = Field(
+        default_factory=IntegrationPolicy, description="Integration policy"
+    )
+    performance_policy: PerformancePolicy = Field(
+        default_factory=PerformancePolicy, description="Performance policy"
+    )
 
     # Metadata
-    policy_version: str = "1.0.0"
-    created_at: str = field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    policy_version: str = Field("1.0.0", description="Policy version")
+    created_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat(),
+        description="Creation timestamp",
     )
-    description: str = "CIAF Explainability Policy"
+    description: str = Field(
+        "CIAF Explainability Policy", description="Policy description"
+    )
 
     @classmethod
     def minimal(cls) -> "ExplainabilityPolicy":

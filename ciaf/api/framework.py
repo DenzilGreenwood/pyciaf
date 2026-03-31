@@ -124,7 +124,8 @@ class CIAFFramework:
         self.crypto_utils = CryptoUtils()
         self.dataset_anchors: Dict[str, Dict[DatasetSplit, LCMDatasetAnchor]] = {}
         self.model_anchors: Dict[str, Dict[str, Any]] = {}
-        # Lazy managers removed - functionality integrated into LCM system
+        # Lazy managers dictionary (needed for provenance capsules)
+        self.lazy_managers: Dict[str, Any] = {}
         self.ml_simulators: Dict[str, MLFrameworkSimulator] = {}
         self.inference_connections: Dict[str, ZKEConnections] = {}
         self.audit_generators: Dict[str, AuditTrailGenerator] = {}
@@ -595,7 +596,9 @@ class CIAFFramework:
         if authorized_datasets:
             for dataset_id in authorized_datasets:
                 if dataset_id in self.dataset_anchors:
-                    dataset_anchor = self.dataset_anchors[dataset_id]
+                    dataset_splits = self.dataset_anchors[dataset_id]
+                    # Get the first split as representative (or TRAIN split if available)
+                    dataset_anchor = dataset_splits.get(DatasetSplit.TRAIN) or next(iter(dataset_splits.values()))
                     model_anchor_record["authorized_dataset_anchors"][dataset_id] = {
                         "dataset_anchor": (
                             dataset_anchor.dataset_anchor.hex()
@@ -646,7 +649,7 @@ class CIAFFramework:
         self, dataset_id: str, data_items: List[Dict[str, Any]]
     ) -> List[ProvenanceCapsule]:
         """
-        Create provenance capsules for a dataset using lazy materialization.
+        Create provenance capsules for a dataset.
 
         Args:
             dataset_id: ID of the dataset
@@ -655,10 +658,10 @@ class CIAFFramework:
         Returns:
             List of ProvenanceCapsule instances
         """
-        if dataset_id not in self.lazy_managers:
-            raise ValueError(f"No lazy manager found for dataset: {dataset_id}")
+        # Check if dataset exists
+        if dataset_id not in self.dataset_anchors:
+            raise ValueError(f"No dataset anchor found for dataset: {dataset_id}")
 
-        lazy_manager = self.lazy_managers[dataset_id]
         capsules = []
 
         print(
@@ -666,11 +669,11 @@ class CIAFFramework:
         )
 
         for item in data_items:
-            # Create capsule using lazy manager
-            capsule = lazy_manager.create_lazy_capsule(
-                item_id=item["metadata"]["id"],
+            # Create capsule with proper constructor arguments
+            capsule = ProvenanceCapsule(
                 original_data=item["content"],
                 metadata=item["metadata"],
+                data_secret=f"{dataset_id}_{item['metadata']['id']}",
             )
             capsules.append(capsule)
 
@@ -698,7 +701,8 @@ class CIAFFramework:
         for dataset_id in authorized_datasets:
             if dataset_id in self.dataset_anchors:
                 anchor = self.dataset_anchors[dataset_id]
-                dataset_anchors[dataset_id] = anchor.dataset_anchor
+                # anchor is already a dict of splits, so just use it directly
+                dataset_anchors[dataset_id] = anchor
             else:
                 print(f"WARNING: Dataset {dataset_id} not found in anchors")
 
@@ -1213,25 +1217,15 @@ class CIAFFramework:
 
         # Dataset metrics
         if dataset_id:
-            if dataset_id not in self.lazy_managers:
-                metrics["error"] = f"No lazy manager found for dataset: {dataset_id}"
+            if dataset_id not in self.dataset_anchors:
+                metrics["error"] = f"No dataset anchor found for dataset: {dataset_id}"
                 return metrics
 
-            lazy_manager = self.lazy_managers[dataset_id]
+            dataset_splits = self.dataset_anchors[dataset_id]
             metrics["dataset"] = {
                 "dataset_id": dataset_id,
-                "total_items": len(lazy_manager.anchor.data_items),
-                "materialized_capsules": len(lazy_manager.materialized_capsules),
-                "materialization_rate": (
-                    len(lazy_manager.materialized_capsules)
-                    / len(lazy_manager.anchor.data_items)
-                    if lazy_manager.anchor.data_items
-                    else 0
-                ),
-                "dataset_anchor_derived": lazy_manager.anchor.dataset_anchor
-                is not None,
-                "merkle_root": lazy_manager.anchor.get_merkle_root(),
-                "total_samples": lazy_manager.anchor.total_samples,
+                "total_splits": len(dataset_splits),
+                "splits": list(dataset_splits.keys()),
             }
 
         # Model metrics
@@ -1274,7 +1268,6 @@ class CIAFFramework:
         metrics["framework_summary"] = {
             "total_datasets": len(self.dataset_anchors),
             "total_models": len(self.model_anchors),
-            "total_lazy_managers": len(self.lazy_managers),
             "total_ml_simulators": len(self.ml_simulators),
             "total_inference_connections": len(self.inference_connections),
             "total_audit_generators": len(self.audit_generators),

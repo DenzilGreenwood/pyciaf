@@ -6,21 +6,23 @@ Implements the signature-envelope.json and signature-metadata.json patterns
 for consistent cryptographic signing across all CIAF objects.
 
 Created: 2026-03-30
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, Optional
 
+from pydantic import BaseModel, Field
+
 
 class KeyBackend(str, Enum):
     """Key storage/custody backend for audit trail."""
-    
+
     LOCAL = "local"  # Local key file (dev/test only)
     KMS = "kms"  # AWS KMS, Azure Key Vault, etc.
     HSM = "hsm"  # Hardware Security Module
@@ -30,41 +32,54 @@ class KeyBackend(str, Enum):
 
 class SignatureEncoding(str, Enum):
     """Signature value encoding format."""
-    
+
     BASE64 = "base64"
     BASE64URL = "base64url"
     HEX = "hex"
 
 
-@dataclass
-class SignatureMetadata:
+class SignatureMetadata(BaseModel):
     """
     Signature metadata describing how an object was signed.
-    
+
     Maps to: ciaf/schemas/common/signature-metadata.json
-    
+
     Mandatory fields ensure complete audit trail of signing operation,
     including key custody (key_backend) for compliance tracking.
     """
-    
+
     # Required fields (per schema)
-    signature_algorithm: str  # "Ed25519" (const)
-    key_id: str  # Stable key identifier (e.g., "aws-kms:alias/ciaf-prod")
-    canonicalization_version: str  # e.g., "RFC8785-like/1.0"
-    key_backend: KeyBackend  # Mandatory for audit trail
-    
+    signature_algorithm: str = Field(
+        ..., min_length=1, description="Signature algorithm"
+    )  # "Ed25519" (const)
+    key_id: str = Field(
+        ..., min_length=1, description="Key identifier"
+    )  # Stable key identifier (e.g., "aws-kms:alias/ciaf-prod")
+    canonicalization_version: str = Field(
+        ..., min_length=1, description="Canonicalization version"
+    )  # e.g., "RFC8785-like/1.0"
+    key_backend: KeyBackend = Field(
+        ..., description="Key backend"
+    )  # Mandatory for audit trail
+
     # Optional but recommended
-    signing_service: Optional[str] = None  # e.g., "ciaf-vault-signer"
-    public_key_ref: Optional[str] = None  # e.g., "jwks://example.com/keys/123"
-    verification_method: Optional[str] = None  # e.g., "ciaf-verify/v1"
-    
+    signing_service: Optional[str] = Field(
+        None, description="Signing service"
+    )  # e.g., "ciaf-vault-signer"
+    public_key_ref: Optional[str] = Field(
+        None, description="Public key reference"
+    )  # e.g., "jwks://example.com/keys/123"
+    verification_method: Optional[str] = Field(
+        None, description="Verification method"
+    )  # e.g., "ciaf-verify/v1"
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
-        result = asdict(self)
+        result = self.model_dump()
         result["key_backend"] = self.key_backend.value
         # Remove None values for cleaner JSON
         return {k: v for k, v in result.items() if v is not None}
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> SignatureMetadata:
         """Create from dictionary."""
@@ -74,20 +89,19 @@ class SignatureMetadata:
         return cls(**data_copy)
 
 
-@dataclass
-class SignatureEnvelope:
+class SignatureEnvelope(BaseModel):
     """
     Complete cryptographic signature payload for CIAF objects.
-    
+
     Maps to: ciaf/schemas/common/signature-envelope.json
-    
+
     This structure ensures:
     - Complete audit trail (what, when, how, by whom)
     - Unambiguous signature encoding
     - Consistent canonicalization tracking
     - Key backend declaration (mandatory for compliance)
     - Separation of signature value from metadata
-    
+
     Usage:
         >>> envelope = SignatureEnvelope(
         ...     payload_hash="abc123...",
@@ -103,15 +117,25 @@ class SignatureEnvelope:
         ...     )
         ... )
     """
-    
+
     # Required fields (per schema)
-    payload_hash: str  # SHA-256 hash (64 hex chars)
-    hash_algorithm: str  # "SHA-256" (const)
-    signature_value: str  # Encoded Ed25519 signature
-    signature_encoding: SignatureEncoding  # base64, base64url, or hex
-    signed_at: str  # RFC3339 timestamp
-    metadata: SignatureMetadata  # Signature metadata
-    
+    payload_hash: str = Field(
+        ..., min_length=1, description="Payload hash"
+    )  # SHA-256 hash (64 hex chars)
+    hash_algorithm: str = Field(
+        ..., min_length=1, description="Hash algorithm"
+    )  # "SHA-256" (const)
+    signature_value: str = Field(
+        ..., description="Signature value"
+    )  # Encoded Ed25519 signature
+    signature_encoding: SignatureEncoding = Field(
+        ..., description="Signature encoding"
+    )  # base64, base64url, or hex
+    signed_at: str = Field(..., description="Signing timestamp")  # RFC3339 timestamp
+    metadata: SignatureMetadata = Field(
+        ..., description="Signature metadata"
+    )  # Signature metadata
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
@@ -122,7 +146,7 @@ class SignatureEnvelope:
             "signed_at": self.signed_at,
             "metadata": self.metadata.to_dict(),
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> SignatureEnvelope:
         """Create from dictionary."""
@@ -132,16 +156,14 @@ class SignatureEnvelope:
                 data_copy["signature_encoding"]
             )
         if "metadata" in data_copy:
-            data_copy["metadata"] = SignatureMetadata.from_dict(
-                data_copy["metadata"]
-            )
+            data_copy["metadata"] = SignatureMetadata.from_dict(data_copy["metadata"])
         return cls(**data_copy)
-    
+
     @classmethod
     def create_unsigned_placeholder(cls) -> SignatureEnvelope:
         """
         Create placeholder envelope for unsigned objects.
-        
+
         Useful during object construction before signing.
         """
         return cls(
@@ -170,9 +192,9 @@ def create_signature_envelope(
 ) -> SignatureEnvelope:
     """
     Factory function to create a signature envelope.
-    
+
     Simplifies creation with sensible defaults.
-    
+
     Args:
         payload_hash: SHA-256 hash of canonicalized payload (64 hex chars)
         signature_value: Encoded signature (base64, base64url, or hex)
@@ -181,10 +203,10 @@ def create_signature_envelope(
         signature_encoding: Signature encoding format (default: BASE64)
         signing_service: Optional signing service name
         public_key_ref: Optional public key reference (jwks:// URL)
-    
+
     Returns:
         SignatureEnvelope instance
-    
+
     Example:
         >>> envelope = create_signature_envelope(
         ...     payload_hash="abc123def456...",

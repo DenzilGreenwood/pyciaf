@@ -5,18 +5,20 @@ Provides persistent storage for Merkle trees and audit records with
 SQLite and LMDB adapters for production deployments.
 
 Created: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 import sqlite3
 import tempfile
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, model_validator
 
 try:
     import lmdb
@@ -30,21 +32,23 @@ from .enums import RecordType
 from .merkle import MerkleTree
 
 
-@dataclass
-class WORMRecord:
+class WORMRecord(BaseModel):
     """Single WORM record entry."""
 
-    id: str
-    timestamp: str
-    record_type: RecordType
-    data: Dict[str, Any]
-    hash: str
+    id: str = Field(..., min_length=1, description="Record identifier")
+    timestamp: str = Field(..., description="Record timestamp")
+    record_type: RecordType = Field(..., description="Type of record")
+    data: Dict[str, Any] = Field(default_factory=dict, description="Record data")
+    hash: str = Field("", description="Record hash")
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def compute_hash_if_empty(self) -> "WORMRecord":
+        """Compute hash if not provided."""
         if not self.hash:
             self.hash = sha256_hash(
                 json.dumps(self.data, sort_keys=True).encode("utf-8")
             )
+        return self
 
 
 class WORMStore(ABC):

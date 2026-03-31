@@ -16,10 +16,11 @@ Enhanced with:
 
 import warnings
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from ..api import CIAFFramework
 
-from ..api import CIAFFramework
 from ..inference import InferenceReceipt
 from ..provenance import ModelAggregationAnchor, TrainingSnapshot
 
@@ -97,7 +98,7 @@ class CIAFModelWrapper:
         enable_uncertainty: bool = True,
         enable_metadata_tags: bool = True,
         auto_configure: bool = True,
-        framework: Optional[CIAFFramework] = None,
+        framework: Optional["CIAFFramework"] = None,
     ):
         """
         Initialize the CIAFModelWrapper.
@@ -129,9 +130,11 @@ class CIAFModelWrapper:
         self.enable_metadata_tags = enable_metadata_tags and METADATA_TAGS_AVAILABLE
 
         # Initialize CIAF framework (use provided or create new)
-        self.framework = (
-            framework if framework is not None else CIAFFramework(self.model_name)
-        )
+        if framework is not None:
+            self.framework = framework
+        else:
+            from ..api import CIAFFramework
+            self.framework = CIAFFramework(self.model_name)
 
         # Enhanced components
         self.model_adapter = None
@@ -845,10 +848,17 @@ class CIAFModelWrapper:
         lcm_metadata = self.get_lcm_metadata_trail()
 
         state = self.__dict__.copy()
+        
+        # Remove unpicklable objects (framework contains cryptographic keys)
+        # We'll recreate the framework on unpickling
+        state.pop("framework", None)
 
         # Add LCM metadata to state
         state["_lcm_metadata_trail"] = lcm_metadata
         state["_lcm_serialization_timestamp"] = datetime.now().isoformat()
+
+        # Store simplified framework state that can be used to recreate it
+        state["_framework_name"] = self.framework.framework_name if hasattr(self.framework, "framework_name") else self.model_name
 
         # Store detailed framework LCM state
         if hasattr(self.framework, "lcm_inference_manager"):
@@ -888,6 +898,13 @@ class CIAFModelWrapper:
 
         # Restore basic state
         self.__dict__.update(state)
+
+        # Recreate framework if it was removed during pickling
+        if not hasattr(self, "framework") or self.framework is None:
+            from ..api import CIAFFramework
+            framework_name = state.get("_framework_name", self.model_name)
+            self.framework = CIAFFramework(framework_name)
+            print(f"🔧 [{self.model_name}] Recreated framework: {framework_name}")
 
         # Restore LCM connections if available
         total_restored_receipts = 0

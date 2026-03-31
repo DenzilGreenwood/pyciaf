@@ -6,15 +6,16 @@ with various regulatory frameworks and industry standards. Updated to use
 the new compliance interfaces and policy framework.
 
 Created: 2025-09-09
-Last Modified: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.1.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
-from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
+
+from pydantic import BaseModel, Field
 
 from .interfaces import (
     ComplianceValidator as IComplianceValidator,
@@ -30,21 +31,26 @@ from .regulatory_mapping import (
 from .policy import get_default_compliance_policy
 
 
-@dataclass
-class ValidationResult:
+class ValidationResult(BaseModel):
     """Individual validation result."""
 
-    validation_id: str
-    requirement_id: str
-    framework: str
-    title: str
-    severity: ValidationSeverity
-    status: str  # "pass", "fail", "warning", "not_applicable"
-    message: str
-    details: Dict[str, Any]
-    evidence: List[str]
-    recommendations: List[str]
-    timestamp: str
+    validation_id: str = Field(..., min_length=1, description="Validation identifier")
+    requirement_id: str = Field(..., min_length=1, description="Requirement identifier")
+    framework: str = Field(..., min_length=1, description="Compliance framework")
+    title: str = Field(..., min_length=1, description="Validation title")
+    severity: ValidationSeverity = Field(..., description="Validation severity")
+    status: str = Field(
+        ..., description="Validation status (pass, fail, warning, not_applicable)"
+    )
+    message: str = Field(..., description="Validation message")
+    details: Dict[str, Any] = Field(
+        default_factory=dict, description="Validation details"
+    )
+    evidence: List[str] = Field(default_factory=list, description="Supporting evidence")
+    recommendations: List[str] = Field(
+        default_factory=list, description="Recommendations"
+    )
+    timestamp: str = Field(..., description="Validation timestamp")
 
     def is_passing(self) -> bool:
         """Check if validation is passing."""

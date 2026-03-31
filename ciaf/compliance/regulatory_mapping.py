@@ -5,15 +5,16 @@ This module maps CIAF capabilities to various regulatory frameworks and provides
 compliance requirement checklists for different jurisdictions and industries.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
-from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class ComplianceFramework(Enum):
@@ -33,21 +34,28 @@ class ComplianceFramework(Enum):
     GENERAL = "general"
 
 
-@dataclass
-class ComplianceRequirement:
+class ComplianceRequirement(BaseModel):
     """Individual compliance requirement."""
 
-    requirement_id: str
-    framework: ComplianceFramework
-    title: str
-    description: str
-    category: str
-    mandatory: bool
-    ciaf_capabilities: List[str]
-    implementation_notes: str
-    verification_method: str
-    documentation_required: List[str]
-    risk_level: str = "medium"
+    requirement_id: str = Field(
+        ..., min_length=1, description="Unique requirement identifier"
+    )
+    framework: ComplianceFramework = Field(..., description="Compliance framework")
+    title: str = Field(..., min_length=1, description="Requirement title")
+    description: str = Field(..., description="Requirement description")
+    category: str = Field(..., min_length=1, description="Requirement category")
+    mandatory: bool = Field(..., description="Whether requirement is mandatory")
+    ciaf_capabilities: List[str] = Field(
+        default_factory=list, description="CIAF capabilities that satisfy requirement"
+    )
+    implementation_notes: str = Field(..., description="Implementation guidance")
+    verification_method: str = Field(..., description="How to verify compliance")
+    documentation_required: List[str] = Field(
+        default_factory=list, description="Required documentation"
+    )
+    risk_level: str = Field(
+        default="medium", description="Risk level (low, medium, high)"
+    )
 
     def is_satisfied_by_ciaf(self) -> bool:
         """Check if this requirement can be satisfied by CIAF capabilities."""

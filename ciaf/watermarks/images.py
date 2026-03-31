@@ -47,10 +47,10 @@ def apply_image_watermark(
     Apply watermark to image (DEPRECATED - PLACEHOLDER ONLY).
 
     ⚠️ This function is a non-functional placeholder.
-    
+
     Use instead:
         from ciaf.watermarks.images import apply_visible_watermark
-        
+
     Args:
         image_bytes: Original image data
         watermark_id: Watermark identifier
@@ -59,7 +59,7 @@ def apply_image_watermark(
 
     Returns:
         Watermarked image bytes
-        
+
     Raises:
         NotImplementedError: Always - this is a placeholder
     """
@@ -81,13 +81,13 @@ def build_image_artifact_evidence(
     Build artifact evidence for image (DEPRECATED - PLACEHOLDER ONLY).
 
     ⚠️ This function is a non-functional placeholder.
-    
+
     Use instead:
         from ciaf.watermarks.images import build_image_artifact_evidence
-        
+
     Returns:
         Tuple of (ArtifactEvidence, watermarked_image_bytes)
-        
+
     Raises:
         NotImplementedError: Always - this is a placeholder
     """
@@ -102,13 +102,13 @@ def extract_image_watermark(image_bytes: bytes) -> Optional[str]:
     Extract watermark ID from image (DEPRECATED - PLACEHOLDER ONLY).
 
     ⚠️ This function is a non-functional placeholder.
-    
+
     Use instead:
         from ciaf.watermarks.images import extract_image_watermark
-        
+
     Returns:
         Watermark ID if found
-        
+
     Raises:
         NotImplementedError: Always - this is a placeholder
     """

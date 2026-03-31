@@ -143,11 +143,16 @@ ignore_missing_imports = false
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q --strict-markers --strict-config"
+addopts = "-ra -q --strict-markers --strict-config -p no:asyncio"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+# Filter warnings from external libraries (not our code)
+filterwarnings = [
+    "ignore::DeprecationWarning:PyPDF2",
+    "ignore::DeprecationWarning:reportlab",
+]
 
 [tool.coverage.run]
 source = ["ciaf"]

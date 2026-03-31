@@ -100,6 +100,7 @@ def compute_hash(data: bytes, algorithm: str = "sha256") -> str:
 
 
 def hmac_sha256(key: bytes, data: bytes) -> str:
+    """ DO NOT USE THIS FOR ANYTHING"""
     return hmac.new(key, data, hashlib.sha256).hexdigest()
 
 

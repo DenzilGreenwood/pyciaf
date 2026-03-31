@@ -6,17 +6,18 @@ for AI models, including algorithmic transparency, decision explanations,
 and public disclosure documents.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 import os
-from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, List
+
+from pydantic import BaseModel, Field, ConfigDict
 
 from .audit_trails import AuditEventType, AuditTrailGenerator, ComplianceAuditRecord
 from .regulatory_mapping import ComplianceFramework, RegulatoryMapper
@@ -43,61 +44,106 @@ class ReportAudience(Enum):
     RESEARCHERS = "researchers"
 
 
-@dataclass
-class AlgorithmicTransparencyMetrics:
+class AlgorithmicTransparencyMetrics(BaseModel):
     """Metrics for algorithmic transparency."""
 
-    model_name: str
-    model_version: str
-    model_type: str
-    training_data_summary: Dict[str, Any]
-    performance_metrics: Dict[str, float]
-    bias_metrics: Dict[str, float]
-    fairness_indicators: Dict[str, float]
-    explainability_coverage: float  # Percentage of decisions with explanations
-    decision_boundary_analysis: Dict[str, Any]
-    feature_importance: Dict[str, float]
-    uncertainty_quantification: Dict[str, float]
-    last_updated: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    model_name: str = Field(..., min_length=1, description="Model name")
+    model_version: str = Field(..., min_length=1, description="Model version")
+    model_type: str = Field(..., min_length=1, description="Model type")
+    training_data_summary: Dict[str, Any] = Field(
+        default_factory=dict, description="Training data summary"
+    )
+    performance_metrics: Dict[str, float] = Field(
+        default_factory=dict, description="Performance metrics"
+    )
+    bias_metrics: Dict[str, float] = Field(
+        default_factory=dict, description="Bias metrics"
+    )
+    fairness_indicators: Dict[str, float] = Field(
+        default_factory=dict, description="Fairness indicators"
+    )
+    explainability_coverage: float = Field(
+        ..., ge=0.0, le=1.0, description="Percentage of decisions with explanations"
+    )
+    decision_boundary_analysis: Dict[str, Any] = Field(
+        default_factory=dict, description="Decision boundary analysis"
+    )
+    feature_importance: Dict[str, float] = Field(
+        default_factory=dict, description="Feature importance scores"
+    )
+    uncertainty_quantification: Dict[str, float] = Field(
+        default_factory=dict, description="Uncertainty metrics"
+    )
+    last_updated: str = Field(..., description="Last update timestamp")
 
 
-@dataclass
-class DecisionExplanation:
+class DecisionExplanation(BaseModel):
     """Individual decision explanation."""
 
-    decision_id: str
-    timestamp: str
-    input_data_summary: Dict[str, Any]
-    prediction: Any
-    confidence_score: float
-    explanation_method: str
-    feature_contributions: Dict[str, float]
-    decision_rationale: str
-    alternative_outcomes: List[Dict[str, Any]]
-    uncertainty_factors: List[str]
-    bias_check_results: Dict[str, Any]
-    human_review_required: bool
+    decision_id: str = Field(..., min_length=1, description="Decision identifier")
+    timestamp: str = Field(..., description="Decision timestamp")
+    input_data_summary: Dict[str, Any] = Field(
+        default_factory=dict, description="Input data summary"
+    )
+    prediction: Any = Field(..., description="Prediction result")
+    confidence_score: float = Field(..., ge=0.0, le=1.0, description="Confidence score")
+    explanation_method: str = Field(
+        ..., min_length=1, description="Explanation method used"
+    )
+    feature_contributions: Dict[str, float] = Field(
+        default_factory=dict, description="Feature contributions"
+    )
+    decision_rationale: str = Field(..., description="Decision rationale")
+    alternative_outcomes: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Alternative outcomes"
+    )
+    uncertainty_factors: List[str] = Field(
+        default_factory=list, description="Uncertainty factors"
+    )
+    bias_check_results: Dict[str, Any] = Field(
+        default_factory=dict, description="Bias check results"
+    )
+    human_review_required: bool = Field(
+        ..., description="Whether human review is required"
+    )
 
 
-@dataclass
-class TransparencyReport:
+class TransparencyReport(BaseModel):
     """Comprehensive transparency report."""
 
-    report_id: str
-    title: str
-    model_name: str
-    model_version: str
-    reporting_period: Dict[str, str]
-    transparency_level: TransparencyLevel
-    target_audience: ReportAudience
-    report_sections: List[Dict[str, Any]]
-    algorithmic_metrics: AlgorithmicTransparencyMetrics
-    decision_explanations_sample: List[DecisionExplanation]
-    public_interest_assessments: List[Dict[str, Any]]
-    accountability_measures: Dict[str, Any]
-    contact_information: Dict[str, str]
-    publication_date: str
-    next_report_due: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    report_id: str = Field(..., min_length=1, description="Report identifier")
+    title: str = Field(..., min_length=1, description="Report title")
+    model_name: str = Field(..., min_length=1, description="Model name")
+    model_version: str = Field(..., min_length=1, description="Model version")
+    reporting_period: Dict[str, str] = Field(
+        default_factory=dict, description="Reporting period"
+    )
+    transparency_level: TransparencyLevel = Field(..., description="Transparency level")
+    target_audience: ReportAudience = Field(..., description="Target audience")
+    report_sections: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Report sections"
+    )
+    algorithmic_metrics: AlgorithmicTransparencyMetrics = Field(
+        ..., description="Algorithmic transparency metrics"
+    )
+    decision_explanations_sample: List[DecisionExplanation] = Field(
+        default_factory=list, description="Sample decision explanations"
+    )
+    public_interest_assessments: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Public interest assessments"
+    )
+    accountability_measures: Dict[str, Any] = Field(
+        default_factory=dict, description="Accountability measures"
+    )
+    contact_information: Dict[str, str] = Field(
+        default_factory=dict, description="Contact information"
+    )
+    publication_date: str = Field(..., description="Publication date")
+    next_report_due: str = Field(..., description="Next report due date")
 
     def to_html(self) -> str:
         """Convert transparency report to HTML."""

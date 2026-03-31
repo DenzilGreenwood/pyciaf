@@ -5,19 +5,21 @@ Provides secure key generation, storage, rotation, and lifecycle management
 for cryptographic operations with multiple backend support.
 
 Created: 2025-09-26
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 import os
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict
 from datetime import datetime, timezone, timedelta
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -45,23 +47,18 @@ class KeyType(str, Enum):
     MASTER = "master"
 
 
-@dataclass
-class KeyMetadata:
+class KeyMetadata(BaseModel):
     """Metadata for a cryptographic key."""
 
-    key_id: str
-    key_type: KeyType
-    algorithm: str
-    status: KeyStatus
-    created_at: str
-    expires_at: Optional[str] = None
-    retired_at: Optional[str] = None
-    purpose: str = ""
-    tags: Dict[str, str] = None
-
-    def __post_init__(self):
-        if self.tags is None:
-            self.tags = {}
+    key_id: str = Field(..., min_length=1, description="Key identifier")
+    key_type: KeyType = Field(..., description="Type of key")
+    algorithm: str = Field(..., min_length=1, description="Cryptographic algorithm")
+    status: KeyStatus = Field(..., description="Key lifecycle status")
+    created_at: str = Field(..., description="Creation timestamp")
+    expires_at: Optional[str] = Field(None, description="Expiration timestamp")
+    retired_at: Optional[str] = Field(None, description="Retirement timestamp")
+    purpose: str = Field("", description="Key purpose description")
+    tags: Dict[str, str] = Field(default_factory=dict, description="Key tags")
 
     def is_active(self) -> bool:
         """Check if key is currently active."""
@@ -85,14 +82,15 @@ class KeyMetadata:
         return max(0, delta.days)
 
 
-@dataclass
-class KeyBundle:
+class KeyBundle(BaseModel):
     """Bundle containing key material and metadata."""
 
-    metadata: KeyMetadata
-    private_key_pem: Optional[str] = None
-    public_key_pem: Optional[str] = None
-    key_material: Optional[bytes] = None
+    metadata: KeyMetadata = Field(..., description="Key metadata")
+    private_key_pem: Optional[str] = Field(
+        None, description="Private key in PEM format"
+    )
+    public_key_pem: Optional[str] = Field(None, description="Public key in PEM format")
+    key_material: Optional[bytes] = Field(None, description="Raw key material")
 
     def get_signer(self) -> Optional[Ed25519Signer]:
         """Get signer instance if this is a signing key."""
@@ -169,7 +167,7 @@ class FileSystemKeyStore(KeyStore):
 
             # Serialize key bundle
             bundle_dict = {
-                "metadata": asdict(key_bundle.metadata),
+                "metadata": key_bundle.metadata.model_dump(),
                 "private_key_pem": key_bundle.private_key_pem,
                 "public_key_pem": key_bundle.public_key_pem,
                 "key_material": (

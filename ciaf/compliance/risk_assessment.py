@@ -5,16 +5,17 @@ This module provides comprehensive risk assessment capabilities for AI models,
 including bias detection, performance monitoring, and compliance risk evaluation.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
-from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
+
+from pydantic import BaseModel, Field, ConfigDict
 
 from .audit_trails import AuditEventType, AuditTrailGenerator, ComplianceAuditRecord
 from .regulatory_mapping import ComplianceFramework, RegulatoryMapper
@@ -53,21 +54,26 @@ class RiskLikelihood(Enum):
     VERY_LOW = "very_low"
 
 
-@dataclass
-class RiskFactor:
+class RiskFactor(BaseModel):
     """Individual risk factor assessment."""
 
-    factor_id: str
-    name: str
-    category: RiskCategory
-    description: str
-    likelihood: RiskLikelihood
-    impact: RiskLevel
-    risk_score: float  # Calculated risk score (0-100)
-    evidence: List[str]
-    mitigation_measures: List[str]
-    residual_risk: RiskLevel
-    last_assessed: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    factor_id: str = Field(..., min_length=1, description="Unique factor identifier")
+    name: str = Field(..., min_length=1, description="Risk factor name")
+    category: RiskCategory = Field(..., description="Risk category")
+    description: str = Field(..., description="Risk factor description")
+    likelihood: RiskLikelihood = Field(..., description="Occurrence likelihood")
+    impact: RiskLevel = Field(..., description="Impact level")
+    risk_score: float = Field(
+        default=0.0, ge=0.0, le=100.0, description="Calculated risk score (0-100)"
+    )
+    evidence: List[str] = Field(default_factory=list, description="Supporting evidence")
+    mitigation_measures: List[str] = Field(
+        default_factory=list, description="Mitigation measures"
+    )
+    residual_risk: RiskLevel = Field(..., description="Residual risk after mitigation")
+    last_assessed: str = Field(..., description="Last assessment timestamp")
 
     def calculate_risk_score(self) -> float:
         """Calculate quantitative risk score."""
@@ -96,20 +102,31 @@ class RiskFactor:
         return self.risk_score
 
 
-@dataclass
-class BiasAssessment:
+class BiasAssessment(BaseModel):
     """Bias assessment results."""
 
-    assessment_id: str
-    model_name: str
-    dataset_info: Dict[str, Any]
-    bias_metrics: Dict[str, float]
-    fairness_metrics: Dict[str, float]
-    protected_attributes: List[str]
-    bias_detected: bool
-    severity: RiskLevel
-    recommendations: List[str]
-    assessment_date: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    assessment_id: str = Field(..., min_length=1, description="Assessment identifier")
+    model_name: str = Field(..., min_length=1, description="Model name")
+    dataset_info: Dict[str, Any] = Field(
+        default_factory=dict, description="Dataset information"
+    )
+    bias_metrics: Dict[str, float] = Field(
+        default_factory=dict, description="Bias metrics"
+    )
+    fairness_metrics: Dict[str, float] = Field(
+        default_factory=dict, description="Fairness metrics"
+    )
+    protected_attributes: List[str] = Field(
+        default_factory=list, description="Protected attributes"
+    )
+    bias_detected: bool = Field(..., description="Whether bias was detected")
+    severity: RiskLevel = Field(..., description="Bias severity level")
+    recommendations: List[str] = Field(
+        default_factory=list, description="Recommendations"
+    )
+    assessment_date: str = Field(..., description="Assessment timestamp")
 
     def get_bias_summary(self) -> Dict[str, Any]:
         """Get summary of bias assessment."""
@@ -125,57 +142,104 @@ class BiasAssessment:
         }
 
 
-@dataclass
-class PerformanceAssessment:
+class PerformanceAssessment(BaseModel):
     """Model performance assessment."""
 
-    assessment_id: str
-    model_name: str
-    model_version: str
-    performance_metrics: Dict[str, float]
-    baseline_metrics: Dict[str, float]
-    performance_drift: Dict[str, float]
-    data_drift_detected: bool
-    concept_drift_detected: bool
-    reliability_score: float
-    assessment_period: Dict[str, str]
-    recommendations: List[str]
+    model_config = ConfigDict(protected_namespaces=())
+
+    assessment_id: str = Field(..., min_length=1, description="Assessment identifier")
+    model_name: str = Field(..., min_length=1, description="Model name")
+    model_version: str = Field(..., min_length=1, description="Model version")
+    performance_metrics: Dict[str, float] = Field(
+        default_factory=dict, description="Performance metrics"
+    )
+    baseline_metrics: Dict[str, float] = Field(
+        default_factory=dict, description="Baseline metrics for comparison"
+    )
+    performance_drift: Dict[str, float] = Field(
+        default_factory=dict, description="Performance drift metrics"
+    )
+    data_drift_detected: bool = Field(
+        ..., description="Whether data drift was detected"
+    )
+    concept_drift_detected: bool = Field(
+        ..., description="Whether concept drift was detected"
+    )
+    reliability_score: float = Field(
+        ..., ge=0.0, le=1.0, description="Overall reliability score"
+    )
+    assessment_period: Dict[str, str] = Field(
+        default_factory=dict, description="Assessment period"
+    )
+    recommendations: List[str] = Field(
+        default_factory=list, description="Recommendations"
+    )
 
 
-@dataclass
-class SecurityAssessment:
+class SecurityAssessment(BaseModel):
     """Security and robustness assessment."""
 
-    assessment_id: str
-    model_name: str
-    vulnerability_scan_results: Dict[str, Any]
-    adversarial_robustness: Dict[str, float]
-    data_poisoning_risk: RiskLevel
-    model_extraction_risk: RiskLevel
-    privacy_attack_risk: RiskLevel
-    security_score: float
-    recommendations: List[str]
-    assessment_date: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    assessment_id: str = Field(..., min_length=1, description="Assessment identifier")
+    model_name: str = Field(..., min_length=1, description="Model name")
+    vulnerability_scan_results: Dict[str, Any] = Field(
+        default_factory=dict, description="Vulnerability scan results"
+    )
+    adversarial_robustness: Dict[str, float] = Field(
+        default_factory=dict, description="Adversarial robustness metrics"
+    )
+    data_poisoning_risk: RiskLevel = Field(..., description="Data poisoning risk level")
+    model_extraction_risk: RiskLevel = Field(
+        ..., description="Model extraction risk level"
+    )
+    privacy_attack_risk: RiskLevel = Field(..., description="Privacy attack risk level")
+    security_score: float = Field(
+        ..., ge=0.0, le=100.0, description="Overall security score"
+    )
+    recommendations: List[str] = Field(
+        default_factory=list, description="Security recommendations"
+    )
+    assessment_date: str = Field(..., description="Assessment timestamp")
 
 
-@dataclass
-class ComprehensiveRiskAssessment:
+class ComprehensiveRiskAssessment(BaseModel):
     """Complete risk assessment for an AI model."""
 
-    assessment_id: str
-    model_name: str
-    model_version: str
-    assessment_date: str
-    assessment_period: Dict[str, str]
-    risk_factors: List[RiskFactor]
-    bias_assessment: Optional[BiasAssessment]
-    performance_assessment: Optional[PerformanceAssessment]
-    security_assessment: Optional[SecurityAssessment]
-    overall_risk_score: float
-    overall_risk_level: RiskLevel
-    compliance_risk: Dict[str, RiskLevel]
-    recommendations: List[str]
-    next_assessment_due: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    assessment_id: str = Field(..., min_length=1, description="Assessment identifier")
+    model_name: str = Field(..., min_length=1, description="Model name")
+    model_version: str = Field(..., min_length=1, description="Model version")
+    assessment_date: str = Field(..., description="Assessment timestamp")
+    assessment_period: Dict[str, str] = Field(
+        default_factory=dict, description="Assessment period"
+    )
+    risk_factors: List[RiskFactor] = Field(
+        default_factory=list, description="Identified risk factors"
+    )
+    bias_assessment: Optional[BiasAssessment] = Field(
+        None, description="Bias assessment results"
+    )
+    performance_assessment: Optional[PerformanceAssessment] = Field(
+        None, description="Performance assessment results"
+    )
+    security_assessment: Optional[SecurityAssessment] = Field(
+        None, description="Security assessment results"
+    )
+    overall_risk_score: float = Field(
+        default=0.0, ge=0.0, le=100.0, description="Overall risk score"
+    )
+    overall_risk_level: RiskLevel = Field(
+        default=RiskLevel.MINIMAL, description="Overall risk level"
+    )
+    compliance_risk: Dict[str, RiskLevel] = Field(
+        default_factory=dict, description="Compliance risk by framework"
+    )
+    recommendations: List[str] = Field(
+        default_factory=list, description="Overall recommendations"
+    )
+    next_assessment_due: str = Field(..., description="Next assessment due date")
 
     def calculate_overall_risk(self) -> Tuple[float, RiskLevel]:
         """Calculate overall risk score and level."""

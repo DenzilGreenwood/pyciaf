@@ -5,16 +5,17 @@ This module provides interactive 3D visualization capabilities for CIAF metadata
 provenance connections, and compliance data to enhance regulatory transparency.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
-from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union
+
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class VisualizationType(Enum):
@@ -55,19 +56,22 @@ class NodeType(Enum):
     STAKEHOLDER_GROUP = "Stakeholder Group"
 
 
-@dataclass
-class VisualizationNode:
+class VisualizationNode(BaseModel):
     """Node in a CIAF visualization graph."""
 
-    node_id: str
-    node_type: NodeType
-    label: str
-    position: Tuple[float, float, float]  # 3D coordinates
-    metadata: Dict[str, Any]
-    timestamp: str
-    color: str = "#3498db"
-    size: float = 1.0
-    opacity: float = 1.0
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    node_id: str = Field(..., min_length=1, description="Node identifier")
+    node_type: NodeType = Field(..., description="Type of node")
+    label: str = Field(..., min_length=1, description="Node label")
+    position: Tuple[float, float, float] = Field(
+        ..., description="3D coordinates (x, y, z)"
+    )
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Node metadata")
+    timestamp: str = Field(..., description="Node timestamp")
+    color: str = Field(default="#3498db", description="Node color")
+    size: float = Field(default=1.0, gt=0.0, description="Node size")
+    opacity: float = Field(default=1.0, ge=0.0, le=1.0, description="Node opacity")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert node to dictionary representation."""
@@ -86,19 +90,18 @@ class VisualizationNode:
         }
 
 
-@dataclass
-class VisualizationEdge:
+class VisualizationEdge(BaseModel):
     """Edge connecting nodes in a CIAF visualization graph."""
 
-    edge_id: str
-    source_node_id: str
-    target_node_id: str
-    relationship_type: str
-    metadata: Dict[str, Any]
-    timestamp: str
-    color: str = "#95a5a6"
-    width: float = 1.0
-    opacity: float = 0.8
+    edge_id: str = Field(..., min_length=1, description="Edge identifier")
+    source_node_id: str = Field(..., min_length=1, description="Source node ID")
+    target_node_id: str = Field(..., min_length=1, description="Target node ID")
+    relationship_type: str = Field(..., min_length=1, description="Relationship type")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Edge metadata")
+    timestamp: str = Field(..., description="Edge timestamp")
+    color: str = Field(default="#95a5a6", description="Edge color")
+    width: float = Field(default=1.0, gt=0.0, description="Edge width")
+    opacity: float = Field(default=0.8, ge=0.0, le=1.0, description="Edge opacity")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert edge to dictionary representation."""
@@ -117,23 +120,34 @@ class VisualizationEdge:
         }
 
 
-@dataclass
-class VisualizationConfig:
+class VisualizationConfig(BaseModel):
     """Configuration for CIAF visualizations."""
 
-    visualization_id: str
-    title: str
-    description: str
-    visualization_type: VisualizationType
-    export_formats: List[ExportFormat]
-    interactive_features: List[str]
-    accessibility_options: Dict[str, Any]
-    performance_settings: Dict[str, Any]
-    security_level: str = "internal"
+    visualization_id: str = Field(
+        ..., min_length=1, description="Visualization identifier"
+    )
+    title: str = Field(..., min_length=1, description="Visualization title")
+    description: str = Field(..., description="Visualization description")
+    visualization_type: VisualizationType = Field(
+        ..., description="Type of visualization"
+    )
+    export_formats: List[ExportFormat] = Field(
+        default_factory=list, description="Supported export formats"
+    )
+    interactive_features: List[str] = Field(
+        default_factory=list, description="Interactive features"
+    )
+    accessibility_options: Dict[str, Any] = Field(
+        default_factory=dict, description="Accessibility options"
+    )
+    performance_settings: Dict[str, Any] = Field(
+        default_factory=dict, description="Performance settings"
+    )
+    security_level: str = Field(default="internal", description="Security level")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert configuration to dictionary."""
-        result = asdict(self)
+        result = self.model_dump()
         result["visualization_type"] = self.visualization_type.value
         result["export_formats"] = [fmt.value for fmt in self.export_formats]
         return result

@@ -24,11 +24,12 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Optional, Any, Dict, List
 from enum import Enum
 import uuid
 from datetime import datetime, timezone
+
+from pydantic import BaseModel, Field
 
 
 class EventType(str, Enum):
@@ -87,8 +88,7 @@ class ToolCategory(str, Enum):
     OTHER = "other"
 
 
-@dataclass
-class WebAIEvent:
+class WebAIEvent(BaseModel):
     """
     Core event model for AI usage governance.
 
@@ -121,7 +121,7 @@ class WebAIEvent:
     page_url_hash: Optional[str] = None
     prompt_hash: Optional[str] = None
     output_hash: Optional[str] = None
-    uploaded_file_hashes: List[str] = field(default_factory=list)
+    uploaded_file_hashes: List[str] = Field(default_factory=list)
 
     # Classification & policy
     data_classification: Optional[DataClassification] = None
@@ -137,8 +137,8 @@ class WebAIEvent:
     witness_hash: Optional[str] = None  # Merkle tree inclusion
 
     # Metadata
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    tags: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
+    tags: List[str] = Field(default_factory=list)
 
     @classmethod
     def create(
@@ -274,8 +274,7 @@ class WebAIEvent:
         )
 
 
-@dataclass
-class EventBatch:
+class EventBatch(BaseModel):
     """
     Batch of events for efficient processing.
 
@@ -287,7 +286,7 @@ class EventBatch:
     events: List[WebAIEvent]
     created_at: str
     org_id: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
     @classmethod
     def create(cls, events: List[WebAIEvent], org_id: str) -> EventBatch:

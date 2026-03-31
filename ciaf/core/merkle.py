@@ -112,11 +112,19 @@ class MerkleTree:
         """Alias for get_proof to maintain backward compatibility."""
         return self.get_proof(leaf_hash)
 
-    def verify_proof(
-        self, leaf_hash: str, proof: List[Tuple[str, str]], root: str
-    ) -> bool:
-        """Instance method wrapper for static verify_proof."""
-        return self.verify_proof_static(leaf_hash, root, proof)
+    @staticmethod
+    def verify_proof(leaf_hash: str, root: str, proof: List[Tuple[str, str]]) -> bool:
+        """Static method for verifying Merkle proofs.
+
+        Args:
+            leaf_hash: Hash of the leaf to verify
+            root: Expected root hash
+            proof: Merkle proof path
+
+        Returns:
+            True if proof is valid
+        """
+        return MerkleTree.verify_proof_static(leaf_hash, root, proof)
 
     @staticmethod
     def verify_proof_static(

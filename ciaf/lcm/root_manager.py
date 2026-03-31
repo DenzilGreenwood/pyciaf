@@ -5,15 +5,16 @@ Manages the computation of various Merkle roots for training sessions, releases,
 and inference batches in the CIAF LCM system.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field, model_validator
 
 from ..core import sha256_hash, MerkleTree
 from .policy import LCMPolicy, get_default_policy
@@ -21,19 +22,23 @@ from .training_manager import LCMTrainingSession
 from .deployment_manager import LCMPreDeploymentAnchor, LCMDeploymentAnchor
 
 
-@dataclass
-class TestEvaluationAnchor:
+class TestEvaluationAnchor(BaseModel):
     """Test evaluation anchor for pre/post-deployment testing."""
 
-    test_id: str
-    test_metrics_digest: str
-    test_dataset_ref: str
-    evaluation_type: str  # "pre_deploy" or "post_deploy"
-    metrics: Dict[str, float]
-    timestamp: str = None
+    test_id: str = Field(..., min_length=1, description="Test identifier")
+    test_metrics_digest: str = Field("", description="Test metrics digest")
+    test_dataset_ref: str = Field(
+        ..., min_length=1, description="Test dataset reference"
+    )
+    evaluation_type: str = Field(
+        ..., min_length=1, description="Evaluation type"
+    )  # "pre_deploy" or "post_deploy"
+    metrics: Dict[str, float] = Field(default_factory=dict, description="Test metrics")
+    timestamp: Optional[str] = Field(None, description="Timestamp")
 
-    def __post_init__(self):
-        """Initialize timestamp if not provided."""
+    @model_validator(mode="after")
+    def initialize_timestamp_and_digest(self) -> "TestEvaluationAnchor":
+        """Initialize timestamp and compute digest if not provided."""
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
 
@@ -48,6 +53,8 @@ class TestEvaluationAnchor:
                 metrics_data, sort_keys=True, separators=(",", ":")
             )
             self.test_metrics_digest = sha256_hash(canonical_json.encode("utf-8"))
+
+        return self
 
     @property
     def anchor_id(self) -> str:

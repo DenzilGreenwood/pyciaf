@@ -5,16 +5,17 @@ This module provides automated generation of compliance documentation
 for various regulatory frameworks and standards.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import os
-from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, List
+
+from pydantic import BaseModel, Field, ConfigDict
 
 from .audit_trails import AuditTrailGenerator
 from .regulatory_mapping import (
@@ -39,16 +40,23 @@ class DocumentationType(Enum):
     USER_GUIDE = "user_guide"
 
 
-@dataclass
-class DocumentSection:
+class DocumentSection(BaseModel):
     """A section within a compliance document."""
 
-    section_id: str
-    title: str
-    content: str
-    subsections: List["DocumentSection"]
-    references: List[str]
-    compliance_mappings: List[str]
+    model_config = ConfigDict(protected_namespaces=())
+
+    section_id: str = Field(..., min_length=1, description="Unique section identifier")
+    title: str = Field(..., min_length=1, description="Section title")
+    content: str = Field(..., description="Section content")
+    subsections: List["DocumentSection"] = Field(
+        default_factory=list, description="Nested subsections"
+    )
+    references: List[str] = Field(
+        default_factory=list, description="Reference citations"
+    )
+    compliance_mappings: List[str] = Field(
+        default_factory=list, description="Framework compliance mappings"
+    )
 
     def to_html(self, level: int = 1) -> str:
         """Convert section to HTML."""
@@ -84,20 +92,31 @@ class DocumentSection:
         return md
 
 
-@dataclass
-class ComplianceDocument:
+class ComplianceDocument(BaseModel):
     """A complete compliance document."""
 
-    document_id: str
-    title: str
-    document_type: DocumentationType
-    framework: ComplianceFramework
-    model_name: str
-    version: str
-    sections: List[DocumentSection]
-    metadata: Dict[str, Any]
-    created_date: str
-    last_updated: str
+    model_config = ConfigDict(protected_namespaces=())
+
+    document_id: str = Field(
+        ..., min_length=1, description="Unique document identifier"
+    )
+    title: str = Field(..., min_length=1, description="Document title")
+    document_type: DocumentationType = Field(
+        ..., description="Type of compliance document"
+    )
+    framework: ComplianceFramework = Field(
+        ..., description="Primary compliance framework"
+    )
+    model_name: str = Field(..., min_length=1, description="AI model name")
+    version: str = Field(..., min_length=1, description="Model version")
+    sections: List[DocumentSection] = Field(
+        default_factory=list, description="Document sections"
+    )
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional metadata"
+    )
+    created_date: str = Field(..., description="ISO format creation date")
+    last_updated: str = Field(..., description="ISO format last update date")
 
     def to_html(self) -> str:
         """Convert document to HTML."""

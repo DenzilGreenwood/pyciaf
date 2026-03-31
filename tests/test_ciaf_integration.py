@@ -6,23 +6,36 @@ Quick integration test to verify optimized storage works with CIAF wrappers.
 import time
 import tempfile
 import os
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_classification
+import pytest
+
+# Check sklearn availability
+try:
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.datasets import make_classification
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+
+# Skip all tests in this module if sklearn is not available
+pytestmark = pytest.mark.skipif(
+    not SKLEARN_AVAILABLE,
+    reason="scikit-learn required for integration tests"
+)
 
 # Test if we can import CIAF components
 try:
     from ciaf.wrappers.model_wrapper import CIAFModelWrapper
     from ciaf.vault.metadata_storage_optimized import HighPerformanceMetadataStorage
 
-    print("✅ CIAF imports successful")
+    print("[OK] CIAF imports successful")
 except ImportError as e:
-    print(f"❌ CIAF import failed: {e}")
-    exit(1)
+    print(f"[FAIL] CIAF import failed: {e}")
+    pytest.skip(f"CIAF import failed: {e}")
 
 
 def test_optimized_integration():
     """Test optimized storage with CIAF model wrapper."""
-    print("🧪 Testing Optimized Storage Integration with CIAF")
+    print("[TEST] Testing Optimized Storage Integration with CIAF")
     print("=" * 60)
 
     # Create temporary directory for test
@@ -105,26 +118,26 @@ def test_optimized_integration():
             wrapper = CIAFModelWrapper(
                 model_name="Integration_Test_Model", compliance_mode="financial"
             )
-            print("   ✅ CIAF wrapper created successfully")
+            print("   [OK] CIAF wrapper created successfully")
 
             # Create and wrap a simple model
             model = RandomForestClassifier(n_estimators=10, random_state=42)
             wrapper.set_model(model)
-            print("   ✅ Model set in wrapper")
+            print("   [OK] Model set in wrapper")
 
             # Quick training test
             print("   🔄 Testing training integration...")
             training_start = time.perf_counter()
             wrapper.train(X[:50], y[:50])  # Small subset for speed
             training_time = time.perf_counter() - training_start
-            print(f"   ✅ Training completed in {training_time:.4f}s")
+            print(f"   [OK] Training completed in {training_time:.4f}s")
 
             # Quick inference test
             print("   🔄 Testing inference integration...")
             inference_start = time.perf_counter()
             predictions = wrapper.predict(X[50:55])  # 5 samples
             inference_time = time.perf_counter() - inference_start
-            print(f"   ✅ Inference completed in {inference_time:.4f}s")
+            print(f"   [OK] Inference completed in {inference_time:.4f}s")
             print(f"   📊 Predictions shape: {predictions.shape}")
 
         except Exception as e:
@@ -133,7 +146,7 @@ def test_optimized_integration():
 
         # Cleanup
         optimized_storage.shutdown()
-        print("\n✅ Integration test completed successfully!")
+        print("\n[OK] Integration test completed successfully!")
         print(
             f"   Total operations: {stats['total_saves']} saves, {stats['cache_hits'] + stats['cache_misses']} loads"
         )

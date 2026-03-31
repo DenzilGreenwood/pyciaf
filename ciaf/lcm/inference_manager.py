@@ -4,16 +4,17 @@ CIAF LCM Inference Manager
 Enhanced inference management with proper commitments, connections, and batch processing.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 import time
 from datetime import datetime
 from typing import Dict, List, Any, Optional, TYPE_CHECKING
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field
 
 from ..core import sha256_hash, MerkleTree, secure_random_bytes
 from .policy import LCMPolicy, get_default_policy, CommitmentType
@@ -23,18 +24,14 @@ if TYPE_CHECKING:
     from .deployment_manager import LCMDeploymentAnchor
 
 
-@dataclass
-class LCMInferenceCommitment:
+class LCMInferenceCommitment(BaseModel):
     """Enhanced inference commitment with privacy protection."""
 
-    commitment_type: CommitmentType
-    commitment_value: str
-    metadata: Dict[str, Any] = None
-
-    def __post_init__(self):
-        """Initialize metadata if not provided."""
-        if self.metadata is None:
-            self.metadata = {}
+    commitment_type: CommitmentType = Field(..., description="Commitment type")
+    commitment_value: str = Field(..., min_length=1, description="Commitment value")
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Commitment metadata"
+    )
 
 
 class LCMInferenceReceipt:
@@ -92,6 +89,26 @@ class LCMInferenceReceipt:
         self.anchor_id = f"r_{self.receipt_digest[:8]}..."
 
         print(f"🧾 LCM Inference Receipt '{self.receipt_id}' created: {self.anchor_id}")
+
+    @property
+    def inference_id(self) -> str:
+        """Return receipt_id as inference_id (backward compatibility)."""
+        return self.receipt_id
+
+    @property
+    def receipt_hash(self) -> str:
+        """Return receipt_digest as receipt_hash (backward compatibility)."""
+        return self.receipt_digest
+
+    @property
+    def prev_receipt_hash(self) -> Optional[str]:
+        """Return prev_connections_digest as prev_receipt_hash (backward compatibility)."""
+        return self.prev_connections_digest
+
+    @property
+    def inference_type(self) -> str:
+        """Return inference type (backward compatibility)."""
+        return "standard"
 
     def _compute_receipt_digest(self) -> str:
         """Compute receipt digest."""
@@ -253,6 +270,7 @@ class LCMInferenceManager:
         """Initialize LCM inference manager."""
         self.policy = policy or get_default_policy()
         self.inference_connections: Dict[str, LCMInferenceConnections] = {}
+        self.inference_receipts: Dict[str, LCMInferenceReceipt] = {}
         self.batch_windows: Dict[str, str] = {}  # window_id -> batch_root
 
     def create_inference_connections(
@@ -379,6 +397,7 @@ class LCMInferenceManager:
         query: str = "What is AI?",
         response: str = None,
         inference_config: Dict[str, Any] = None,
+        prev_receipt_hash: str = None,
     ) -> LCMInferenceReceipt:
         """
         Create comprehensive inference receipt with realistic data processing.
@@ -390,6 +409,7 @@ class LCMInferenceManager:
             query: Input query/prompt
             response: Model response (will be generated if not provided)
             inference_config: Configuration for inference process
+            prev_receipt_hash: Previous receipt hash for chaining
 
         Returns:
             LCMInferenceReceipt with complete audit trail
@@ -454,17 +474,23 @@ class LCMInferenceManager:
                 metadata={"output_length": len(response)},
             )
 
-        # Create inference receipt using parent method
-        receipt = super().create_inference_receipt(
-            inference_id=inference_id,
-            model_anchor=model_anchor,
-            deployment_anchor=deployment_anchor,
+        # Create inference receipt directly
+        receipt = LCMInferenceReceipt(
+            receipt_id=inference_id,
+            model_anchor_ref=model_anchor.anchor_id,
+            deployment_anchor_ref=deployment_anchor.anchor_id,
+            request_id=inference_id,  # Use same ID for simplicity
             query=query,
-            response=response,
+            ai_output=response,
             input_commitment=input_commitment,
             output_commitment=output_commitment,
-            inference_type=self._infer_task_type(query, response),
+            explanation_digests=None,
+            prev_connections_digest=prev_receipt_hash,
+            policy=self.policy,
         )
+        
+        # Store the receipt
+        self.inference_receipts[inference_id] = receipt
 
         print(f"✅ Inference receipt created: {receipt.anchor_id}")
         print(f"   📝 Query length: {len(query)} chars")

@@ -5,9 +5,9 @@ Enhanced model management with comprehensive metadata including params_root,
 arch_root, hp_digest, env_digest, trainer_commit, and authorized datasets.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import platform
@@ -15,7 +15,8 @@ import sys
 import subprocess
 from datetime import datetime
 from typing import Dict, List, Any, Optional, TYPE_CHECKING
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field, model_validator
 
 from ..core import SALT_LENGTH, to_hex
 from .policy import (
@@ -30,15 +31,16 @@ if TYPE_CHECKING:
     pass
 
 
-@dataclass
-class ModelArchitecture:
+class ModelArchitecture(BaseModel):
     """Model architecture definition."""
 
-    type: str  # e.g., "MLP", "Transformer", "CNN"
-    layers: List[Dict[str, Any]]
-    input_dim: Optional[int] = None
-    output_dim: Optional[int] = None
-    total_params: Optional[int] = None
+    type: str = Field(..., min_length=1, description="Architecture type")
+    layers: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Layer definitions"
+    )
+    input_dim: Optional[int] = Field(None, ge=0, description="Input dimension")
+    output_dim: Optional[int] = Field(None, ge=0, description="Output dimension")
+    total_params: Optional[int] = Field(None, ge=0, description="Total parameters")
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -51,26 +53,27 @@ class ModelArchitecture:
         }
 
 
-@dataclass
-class TrainingEnvironment:
+class TrainingEnvironment(BaseModel):
     """Training environment metadata."""
 
-    python_version: str
-    framework: str
-    framework_version: str
-    cuda_version: Optional[str] = None
-    os_info: str = ""
-    hardware: str = ""
-    dependencies: Dict[str, str] = None
+    python_version: str = Field("", description="Python version")
+    framework: str = Field(..., min_length=1, description="ML framework")
+    framework_version: str = Field(..., min_length=1, description="Framework version")
+    cuda_version: Optional[str] = Field(None, description="CUDA version")
+    os_info: str = Field("", description="OS information")
+    hardware: str = Field("", description="Hardware information")
+    dependencies: Dict[str, str] = Field(
+        default_factory=dict, description="Dependencies"
+    )
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def auto_populate_environment(self) -> "TrainingEnvironment":
         """Auto-populate environment info."""
         if not self.python_version:
             self.python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
         if not self.os_info:
             self.os_info = f"{platform.system()} {platform.release()}"
-        if self.dependencies is None:
-            self.dependencies = {}
+        return self
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -159,6 +162,11 @@ class LCMModelAnchor:
         print(
             f"LCM Model Anchor '{self.model_name}' v{self.version} initialized with anchor: {self.anchor_id}"
         )
+
+    @property
+    def model_id(self) -> str:
+        """Return model name as model_id (backward compatibility property)."""
+        return self.model_name
 
     def _compute_params_root(self) -> str:
         """Compute parameters root hash (layer-wise)."""
@@ -501,7 +509,7 @@ class LCMModelManager:
         return ModelArchitecture(
             type="inferred",
             layers=layers,
-            input_dim="unknown",
-            output_dim="unknown",
+            input_dim=None,
+            output_dim=None,
             total_params=total_params,
         )

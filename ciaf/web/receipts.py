@@ -29,21 +29,23 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Union
 import json
 import hashlib
+
+from pydantic import BaseModel, Field
 
 from .events import WebAIEvent, EventType, PolicyDecision
 
 
-@dataclass
-class WebAIReceipt:
+class WebAIReceipt(BaseModel):
     """
     Cryptographic receipt for AI usage event.
 
     Provides verifiable evidence that an event occurred
     with specific properties at a specific time.
+
+    Schema: web-ai-receipt.schema.json
     """
 
     # Receipt identifiers
@@ -55,8 +57,8 @@ class WebAIReceipt:
     event_type: EventType
     org_id: str
     user_id: str
-    tool_name: Optional[str]
-    policy_decision: Optional[PolicyDecision]
+    tool_name: Optional[str] = None
+    policy_decision: Optional[PolicyDecision] = None
 
     # Cryptographic hashes
     event_hash: str  # SHA-256 of canonical event
@@ -64,17 +66,16 @@ class WebAIReceipt:
     prior_receipt_hash: Optional[str] = None  # Hash chain linkage
     content_hash: Optional[str] = None  # Hash of actual content (if captured)
 
-    # Signatures
-    signature: Optional[str] = None
-    signature_algorithm: str = "Ed25519"
-    signer_id: Optional[str] = None
+    # Signature envelope (follows common/signature-envelope.json)
+    # Accepts both Dict (SignatureEnvelope) and str (legacy) for backward compatibility
+    signature: Optional[Union[Dict[str, Any], str]] = None
 
     # Merkle inclusion proof (optional)
     merkle_root: Optional[str] = None
     merkle_proof: Optional[List[str]] = None
 
     # Metadata
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = Field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert receipt to dictionary."""
@@ -99,10 +100,8 @@ class WebAIReceipt:
         if self.content_hash:
             result["content_hash"] = self.content_hash
         if self.signature:
+            # Signature can be Dict (SignatureEnvelope) or str (legacy)
             result["signature"] = self.signature
-            result["signature_algorithm"] = self.signature_algorithm
-        if self.signer_id:
-            result["signer_id"] = self.signer_id
         if self.merkle_root:
             result["merkle_root"] = self.merkle_root
         if self.merkle_proof:

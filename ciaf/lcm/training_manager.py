@@ -5,15 +5,16 @@ Enhanced training management with checkpoints, metrics digests, training session
 and split map digest computation.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 from datetime import datetime
 from typing import Dict, List, Any, Optional
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 from ..core import sha256_hash, MerkleTree
 from ..provenance import TrainingSnapshot
@@ -22,22 +23,29 @@ from .model_manager import LCMModelAnchor
 from .dataset_family_manager import DatasetSplit
 
 
-@dataclass
-class TrainingCheckpoint:
+class TrainingCheckpoint(BaseModel):
     """Training checkpoint metadata."""
 
-    checkpoint_id: str
-    epoch: int
-    step: int
-    metrics: Dict[str, float]
-    model_state_digest: str
-    optimizer_state_digest: str
-    timestamp: str = None
+    model_config = ConfigDict(protected_namespaces=())
 
-    def __post_init__(self):
+    checkpoint_id: str = Field(..., min_length=1, description="Checkpoint identifier")
+    epoch: int = Field(..., ge=0, description="Epoch number")
+    step: int = Field(..., ge=0, description="Step number")
+    metrics: Dict[str, float] = Field(
+        default_factory=dict, description="Checkpoint metrics"
+    )
+    model_state_digest: str = Field(..., min_length=1, description="Model state digest")
+    optimizer_state_digest: str = Field(
+        ..., min_length=1, description="Optimizer state digest"
+    )
+    timestamp: Optional[str] = Field(None, description="Timestamp")
+
+    @model_validator(mode="after")
+    def set_timestamp(self) -> "TrainingCheckpoint":
         """Initialize timestamp if not provided."""
         if self.timestamp is None:
             self.timestamp = datetime.now().isoformat()
+        return self
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
@@ -52,15 +60,16 @@ class TrainingCheckpoint:
         }
 
 
-@dataclass
-class TrainingMetrics:
+class TrainingMetrics(BaseModel):
     """Training metrics collection."""
 
-    train_metrics: Dict[
-        str, List[float]
-    ]  # e.g., {"loss": [1.0, 0.8, 0.6], "accuracy": [0.7, 0.8, 0.9]}
-    val_metrics: Dict[str, List[float]]
-    epochs: List[int]
+    train_metrics: Dict[str, List[float]] = Field(
+        default_factory=dict, description="Training metrics"
+    )
+    val_metrics: Dict[str, List[float]] = Field(
+        default_factory=dict, description="Validation metrics"
+    )
+    epochs: List[int] = Field(default_factory=list, description="Epoch numbers")
 
     def compute_metrics_digest(self) -> str:
         """Compute digest of training and validation metrics."""
@@ -80,6 +89,20 @@ class TrainingMetrics:
             "epochs": self.epochs,
             "metrics_digest": self.compute_metrics_digest(),
         }
+
+    @property
+    def final_loss(self) -> Optional[float]:
+        """Return final training loss (backward compatibility)."""
+        if "loss" in self.train_metrics and self.train_metrics["loss"]:
+            return self.train_metrics["loss"][-1]
+        return None
+
+    @property
+    def final_accuracy(self) -> Optional[float]:
+        """Return final training accuracy (backward compatibility)."""
+        if "accuracy" in self.train_metrics and self.train_metrics["accuracy"]:
+            return self.train_metrics["accuracy"][-1]
+        return None
 
 
 class LCMTrainingSession:
@@ -133,6 +156,16 @@ class LCMTrainingSession:
         print(f"🏋️ LCM Training Session '{self.session_id}' initialized")
         print(f"   🎯 Model: {model_anchor.model_name} v{model_anchor.version}")
         print(f"   📊 Data splits: {list(data_splits.keys())}")
+
+    @property
+    def model_ref(self) -> str:
+        """Return model anchor ID (backward compatibility property)."""
+        return self.model_anchor.anchor_id
+
+    @property
+    def model_id(self) -> str:
+        """Return model name (backward compatibility property)."""
+        return self.model_anchor.model_name
 
     def add_checkpoint(self, checkpoint: TrainingCheckpoint) -> None:
         """Add a training checkpoint."""
@@ -520,6 +553,10 @@ class LCMTrainingManager:
                     print(
                         f"⚠️  Potential overfitting detected (gap: {abs(final_train_acc - final_val_acc):.4f})"
                     )
+
+            # Complete training and create snapshot
+            session.complete_training(final_model_capsules=[])
+
         else:
             print("✅ Training session created (training not run)")
 

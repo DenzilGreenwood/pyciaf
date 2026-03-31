@@ -22,8 +22,6 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator, ConfigDict
 
-from ..core import sha256_hash
-
 # SHA-256 hash pattern
 SHA256_PATTERN = re.compile(r"^[a-f0-9]{64}$")
 
@@ -142,7 +140,6 @@ class SensitivityLevel(str, Enum):
     HIGHLY_RESTRICTED = "highly_restricted"
 
 
-
 class AgentEvent(BaseModel):
     """
     First-class agent governance event.
@@ -152,10 +149,7 @@ class AgentEvent(BaseModel):
     governance, audit, and compliance tracking.
     """
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
-    )
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
     # Primary identifiers (required)
     event_id: str = Field(..., description="Unique event identifier")
@@ -169,33 +163,44 @@ class AgentEvent(BaseModel):
     session_id: str = Field(..., description="Session identifier")
 
     # Action details (required)
-    action: str = Field(..., description="Action being performed (AgentActionType or custom)")
+    action: str = Field(
+        ..., description="Action being performed (AgentActionType or custom)"
+    )
     resource_type: str = Field(..., description="Type of resource")
     resource_id: str = Field(..., description="Resource identifier")
 
     # Organizational context (optional)
     org_id: Optional[str] = Field(None, description="Organization identifier")
     tenant_id: Optional[str] = Field(None, description="Tenant identifier")
-    environment: Optional[str] = Field(None, description="Environment (dev/staging/prod)")
+    environment: Optional[str] = Field(
+        None, description="Environment (dev/staging/prod)"
+    )
 
     # Action context (optional with defaults)
-    params: Dict[str, Any] = Field(default_factory=dict, description="Action parameters")
+    params: Dict[str, Any] = Field(
+        default_factory=dict, description="Action parameters"
+    )
     justification: str = Field(default="", description="Justification for action")
     correlation_id: Optional[str] = Field(None, description="Correlation identifier")
 
     # Authorization & policy (optional with defaults)
     policy_decision: PolicyDecision = Field(
-        default=PolicyDecision.NOT_EVALUATED,
-        description="Policy evaluation result"
+        default=PolicyDecision.NOT_EVALUATED, description="Policy evaluation result"
     )
     policy_rule_id: Optional[str] = Field(None, description="Policy rule identifier")
     policy_reason: Optional[str] = Field(None, description="Policy decision reason")
-    elevation_grant_id: Optional[str] = Field(None, description="Elevation grant ID if applicable")
+    elevation_grant_id: Optional[str] = Field(
+        None, description="Elevation grant ID if applicable"
+    )
     approved_by: Optional[str] = Field(None, description="Approver principal ID")
 
     # Data classification (optional)
-    sensitivity_level: Optional[SensitivityLevel] = Field(None, description="Data sensitivity level")
-    data_classification: Optional[str] = Field(None, description="Data classification label")
+    sensitivity_level: Optional[SensitivityLevel] = Field(
+        None, description="Data sensitivity level"
+    )
+    data_classification: Optional[str] = Field(
+        None, description="Data classification label"
+    )
 
     # Execution outcome (optional with defaults)
     executed: bool = Field(default=False, description="Whether action was executed")
@@ -209,39 +214,40 @@ class AgentEvent(BaseModel):
 
     # Cryptographic evidence
     signature: Optional[str] = Field(None, description="Cryptographic signature")
-    signature_algorithm: Optional[str] = Field(None, description="Signature algorithm used")
+    signature_algorithm: Optional[str] = Field(
+        None, description="Signature algorithm used"
+    )
 
     # Hash chaining (audit trail)
     prior_event_hash: str = Field(
-        default="0" * 64,
-        description="Hash of prior event for chain linking"
+        default="0" * 64, description="Hash of prior event for chain linking"
     )
 
     # Compliance & obligations
     compliance_frameworks: List[str] = Field(
-        default_factory=list,
-        description="Applicable compliance frameworks"
+        default_factory=list, description="Applicable compliance frameworks"
     )
     policy_obligations: List[str] = Field(
-        default_factory=list,
-        description="Policy obligations triggered"
+        default_factory=list, description="Policy obligations triggered"
     )
 
     # Metadata
-    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Additional metadata"
+    )
     tags: List[str] = Field(default_factory=list, description="Event tags")
 
-    @field_validator('occurred_at')
+    @field_validator("occurred_at")
     @classmethod
     def validate_timestamp(cls, v: str) -> str:
         """Validate ISO 8601 timestamp format."""
         try:
-            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            datetime.fromisoformat(v.replace("Z", "+00:00"))
             return v
         except ValueError:
             raise ValueError(f"Invalid ISO 8601 timestamp: {v}")
 
-    @field_validator('params_hash', 'input_hash', 'output_hash', 'prior_event_hash')
+    @field_validator("params_hash", "input_hash", "output_hash", "prior_event_hash")
     @classmethod
     def validate_sha256(cls, v: str) -> str:
         """Validate SHA-256 hash format if provided."""
@@ -295,7 +301,7 @@ class AgentEvent(BaseModel):
     def to_dict(self) -> Dict[str, Any]:
         """Convert event to dictionary for serialization."""
         # Use Pydantic's model_dump with exclude_none to omit None values
-        return self.model_dump(mode='json', exclude_none=True)
+        return self.model_dump(mode="json", exclude_none=True)
 
     def get_event_hash(self) -> str:
         """
@@ -316,6 +322,7 @@ class AgentEvent(BaseModel):
             "success": self.success,
             "prior_event_hash": self.prior_event_hash,
         }
+        from ciaf.core import sha256_hash
         return sha256_hash(str(event_data).encode("utf-8"))
 
     def requires_elevation(self) -> bool:
@@ -350,7 +357,6 @@ class AgentEvent(BaseModel):
         return self.action in high_risk_actions or self.is_sensitive()
 
 
-
 class AgentEventBatch(BaseModel):
     """
     Batch of agent events for efficient processing.
@@ -358,10 +364,7 @@ class AgentEventBatch(BaseModel):
     Used for bulk operations like batch storage or analysis.
     """
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
-    )
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
     batch_id: str = Field(..., description="Unique batch identifier")
     events: List[AgentEvent] = Field(..., description="List of agent events")
@@ -370,12 +373,12 @@ class AgentEventBatch(BaseModel):
     session_id: Optional[str] = Field(None, description="Session identifier")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Batch metadata")
 
-    @field_validator('created_at')
+    @field_validator("created_at")
     @classmethod
     def validate_timestamp(cls, v: str) -> str:
         """Validate ISO 8601 timestamp format."""
         try:
-            datetime.fromisoformat(v.replace('Z', '+00:00'))
+            datetime.fromisoformat(v.replace("Z", "+00:00"))
             return v
         except ValueError:
             raise ValueError(f"Invalid ISO 8601 timestamp: {v}")

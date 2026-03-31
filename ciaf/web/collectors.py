@@ -26,21 +26,21 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Optional, Dict, Any
+from typing import Optional, Any, Dict
+
+from pydantic import BaseModel, model_validator
 import hashlib
 
 from .events import WebAIEvent, EventType
 from .detectors import AIToolDetector, DetectionResult
-from .classifiers import ContentClassifier, ClassificationResult
-from .policy import PolicyEngine, PolicyResult, PolicyContext
-from .receipts import ReceiptGenerator, WebAIReceipt
+from .classifiers import ContentClassifier
+from .policy import PolicyEngine, PolicyContext
+from .receipts import ReceiptGenerator
 from .vault_adapter import WebAIVaultAdapter
 from .redaction import ContentRedactor
 
 
-@dataclass
-class CollectionConfig:
+class CollectionConfig(BaseModel):
     """
     Configuration for event collection.
 
@@ -48,7 +48,7 @@ class CollectionConfig:
     """
 
     # Detection
-    approved_tools: set[str] = None
+    approved_tools: Optional[set[str]] = None
     detect_shadow_ai: bool = True
 
     # Classification
@@ -57,7 +57,7 @@ class CollectionConfig:
 
     # Policy
     enforce_policy: bool = True
-    policy_rules: list = None
+    policy_rules: Optional[list] = None
 
     # Capture
     capture_raw_content: bool = False  # By default, only hash
@@ -72,9 +72,12 @@ class CollectionConfig:
     # Privacy
     anonymize_user_id: bool = False
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def set_defaults(self) -> "CollectionConfig":
+        """Initialize defaults after creation."""
         if self.approved_tools is None:
             self.approved_tools = set()
+        return self
 
 
 class EventCollector:
@@ -380,15 +383,14 @@ class EventCollector:
         )
 
 
-@dataclass
-class CollectionResult:
+class CollectionResult(BaseModel):
     """Result of event collection."""
 
     event: WebAIEvent
     detection: Optional[DetectionResult] = None
-    classification: Optional[ClassificationResult] = None
-    policy_result: Optional[PolicyResult] = None
-    receipt: Optional[WebAIReceipt] = None
+    classification: Optional[Any] = None  # ClassificationResult
+    policy_result: Optional[Any] = None  # PolicyResult
+    receipt: Optional[Any] = None  # WebAIReceipt
     action_allowed: bool = True
 
     def is_shadow_ai(self) -> bool:

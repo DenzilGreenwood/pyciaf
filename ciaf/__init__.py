@@ -15,7 +15,7 @@ Version: 1.3.2
 # Anchoring module removed - using LCM system instead
 from .lcm import LCMDatasetAnchor, LCMDatasetManager
 from .api.framework import CIAFFramework
-from .core import CryptoUtils, MerkleTree
+from .core import CryptoUtils, MerkleTree, sha256_hash
 from .inference import InferenceReceipt, ZKEConnections
 from .vault.metadata_config import (
     MetadataConfig,

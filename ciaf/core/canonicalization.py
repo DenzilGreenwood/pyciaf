@@ -12,14 +12,16 @@ Enforces non-bypassable invariants:
 - LCM: store anchors/logs by default; materialize inclusion proofs on demand
 
 Created: 2025-09-23
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
-from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
+
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 from .crypto import sha256_hash, compute_hash
 from .enums import RecordType, HashAlgorithm
@@ -73,38 +75,49 @@ REQUIRED_FIELDS = {
 }
 
 
-@dataclass
-class Policy:
+class Policy(BaseModel):
     """Audit policy configuration."""
 
-    policy_id: str
-    schema_version: str
-    domain_labels: List[str]
-    hash_algorithm: HashAlgorithm = HashAlgorithm.SHA256
-    external_timestamping: bool = False
-    high_risk_domains: List[str] = None
+    policy_id: str = Field(..., min_length=1, description="Policy identifier")
+    schema_version: str = Field(..., min_length=1, description="Schema version")
+    domain_labels: List[str] = Field(default_factory=list, description="Domain labels")
+    hash_algorithm: HashAlgorithm = Field(
+        default=HashAlgorithm.SHA256, description="Hash algorithm"
+    )
+    external_timestamping: bool = Field(
+        default=False, description="Use external timestamping"
+    )
+    high_risk_domains: Optional[List[str]] = Field(
+        None, description="High risk domain list"
+    )
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def set_default_high_risk_domains(self) -> "Policy":
+        """Set default high-risk domains if not provided."""
         if self.high_risk_domains is None:
             self.high_risk_domains = ["high_risk", "critical", "healthcare", "finance"]
+        return self
 
     def is_high_risk(self) -> bool:
         """Check if policy involves high-risk domains."""
         return any(domain in self.high_risk_domains for domain in self.domain_labels)
 
 
-@dataclass
-class AnchorRecord:
+class AnchorRecord(BaseModel):
     """Signed anchor record."""
 
-    root: str
-    policy_id: str
-    schema_version: str
-    timestamp: str
-    domain_labels: List[str]
-    signature: str
-    signing_key_id: str
-    external_anchor: Optional[str] = None
+    root: str = Field(..., min_length=1, description="Merkle root hash")
+    policy_id: str = Field(..., min_length=1, description="Policy identifier")
+    schema_version: str = Field(..., min_length=1, description="Schema version")
+    timestamp: str = Field(..., description="ISO format timestamp")
+    domain_labels: List[str] = Field(default_factory=list, description="Domain labels")
+    signature: str = Field(
+        default="", description="Digital signature"
+    )  # Allow empty for construction, filled after signing
+    signing_key_id: str = Field(..., min_length=1, description="Signing key identifier")
+    external_anchor: Optional[str] = Field(
+        None, description="External anchor reference"
+    )
 
     def get_anchor_bytes(self) -> bytes:
         """Get canonical anchor bytes for signing."""
@@ -118,20 +131,23 @@ class AnchorRecord:
         return canonical_json(anchor_data).encode("utf-8")
 
 
-@dataclass
-class Receipt:
+class Receipt(BaseModel):
     """Audit receipt containing metadata and anchor."""
 
-    metadata: Dict[str, Any]
-    anchor: AnchorRecord
-    leaf_hash: str
-    record_type: RecordType
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict, description="Receipt metadata"
+    )
+    anchor: AnchorRecord = Field(..., description="Anchor record")
+    leaf_hash: str = Field(..., min_length=1, description="Leaf hash")
+    record_type: RecordType = Field(..., description="Type of record")
 
     def get_receipt_hash(self) -> str:
         """Get hash of complete receipt."""
         receipt_data = {
             "metadata": self.metadata,
-            "anchor": asdict(self.anchor),
+            "anchor": self.anchor.model_dump(),
             "leaf_hash": self.leaf_hash,
             "record_type": self.record_type.value,
         }
@@ -559,7 +575,7 @@ class CapsuleBuilder:
         capsule_content = {
             "metadata": metadata,
             "merkle_path": merkle_path,
-            "anchor": asdict(anchor),
+            "anchor": anchor.model_dump(),
             "leaf_hash": leaf_hash,
             "record_type": record_type.value,
         }
@@ -587,7 +603,7 @@ class CapsuleBuilder:
                 "inclusion_proof_valid": verification_results["merkle_proof_valid"],
             },
             # Anchor information
-            "anchor": asdict(anchor),
+            "anchor": anchor.model_dump(),
             # Enhanced verification information
             "verification": verification_results,
         }

@@ -6,16 +6,18 @@ including reviewer workflows, override mechanisms, and alerting systems to
 comply with EU AI Act Article 14 requirements.
 
 Created: 2025-09-24
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 import uuid
-from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Callable
+
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 from ..inference import InferenceReceipt
 
@@ -58,45 +60,64 @@ class InterventionType(Enum):
     OVERRIDE = "override"  # Override system decision
 
 
-@dataclass
-class OversightAlert:
+class OversightAlert(BaseModel):
     """Alert requiring human oversight."""
 
-    alert_id: str
-    alert_type: str
-    severity: AlertSeverity
-    model_name: str
-    inference_id: Optional[str]
-    description: str
-    context: Dict[str, Any]
-    created_timestamp: str
-    threshold_triggered: str
-    risk_factors: List[str]
-    recommended_action: str
-    auto_escalate_after: Optional[int] = None  # minutes
-    requires_immediate_attention: bool = False
+    model_config = ConfigDict(protected_namespaces=())
 
-    def __post_init__(self):
+    alert_id: str = Field(..., min_length=1, description="Unique alert identifier")
+    alert_type: str = Field(..., min_length=1, description="Type of alert")
+    severity: AlertSeverity = Field(..., description="Alert severity level")
+    model_name: str = Field(..., min_length=1, description="Model name")
+    inference_id: Optional[str] = Field(None, description="Related inference ID")
+    description: str = Field(..., description="Alert description")
+    context: Dict[str, Any] = Field(default_factory=dict, description="Alert context")
+    created_timestamp: str = Field(..., description="ISO format creation timestamp")
+    threshold_triggered: str = Field(..., description="Threshold that triggered alert")
+    risk_factors: List[str] = Field(
+        default_factory=list, description="Identified risk factors"
+    )
+    recommended_action: str = Field(..., description="Recommended action")
+    auto_escalate_after: Optional[int] = Field(
+        None, description="Auto-escalation time in minutes"
+    )
+    requires_immediate_attention: bool = Field(
+        default=False, description="Immediate attention flag"
+    )
+
+    @model_validator(mode="after")
+    def set_immediate_attention(self) -> "OversightAlert":
+        """Set immediate attention flag for high/critical alerts."""
         if self.severity in [AlertSeverity.HIGH, AlertSeverity.CRITICAL]:
             self.requires_immediate_attention = True
+        return self
 
 
-@dataclass
-class OversightReview:
+class OversightReview(BaseModel):
     """Human review record."""
 
-    review_id: str
-    alert_id: str
-    reviewer_id: str
-    reviewer_role: str
-    decision: OversightDecision
-    rationale: str
-    intervention_type: Optional[InterventionType]
-    review_timestamp: str
-    response_time_seconds: float
-    additional_notes: str = ""
-    confidence_level: float = 1.0  # 0.0 - 1.0
-    escalation_needed: bool = False
+    model_config = ConfigDict(protected_namespaces=())
+
+    review_id: str = Field(..., min_length=1, description="Unique review identifier")
+    alert_id: str = Field(..., min_length=1, description="Related alert ID")
+    reviewer_id: str = Field(..., min_length=1, description="Reviewer identifier")
+    reviewer_role: str = Field(..., min_length=1, description="Reviewer role")
+    decision: OversightDecision = Field(..., description="Oversight decision")
+    rationale: str = Field(..., description="Decision rationale")
+    intervention_type: Optional[InterventionType] = Field(
+        None, description="Type of intervention"
+    )
+    review_timestamp: str = Field(..., description="ISO format review timestamp")
+    response_time_seconds: float = Field(
+        ..., ge=0, description="Response time in seconds"
+    )
+    additional_notes: str = Field(default="", description="Additional notes")
+    confidence_level: float = Field(
+        default=1.0, ge=0.0, le=1.0, description="Reviewer confidence level"
+    )
+    escalation_needed: bool = Field(
+        default=False, description="Escalation required flag"
+    )
 
     def to_audit_record(self) -> Dict[str, Any]:
         """Convert review to audit record format."""
@@ -469,9 +490,11 @@ class HumanOversightEngine:
             "oversight_level": self.oversight_level.value,
             "export_timestamp": datetime.now(timezone.utc).isoformat(),
             "metrics": self.get_oversight_metrics(),
-            "active_alerts": [asdict(alert) for alert in self.active_alerts.values()],
+            "active_alerts": [
+                alert.model_dump() for alert in self.active_alerts.values()
+            ],
             "recent_reviews": [
-                asdict(review) for review in self.get_review_history(50)
+                review.model_dump() for review in self.get_review_history(50)
             ],
         }
 

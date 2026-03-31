@@ -33,10 +33,7 @@ class BiasMetric(Enum):
 class BiasResult(BaseModel):
     """Result of bias assessment for a protected group."""
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
-    )
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
     protected_attribute: str = Field(..., description="Name of protected attribute")
     group_value: str = Field(..., description="Value of the protected group")
@@ -45,21 +42,26 @@ class BiasResult(BaseModel):
     threshold: float = Field(..., description="Fairness threshold")
     is_fair: bool = Field(..., description="Whether group meets fairness threshold")
     sample_size: int = Field(..., ge=0, description="Sample size for this group")
-    confidence_interval: Optional[Tuple[float, float]] = Field(None, description="95% confidence interval")
+    confidence_interval: Optional[Tuple[float, float]] = Field(
+        None, description="95% confidence interval"
+    )
 
 
 class BiasAssessment(BaseModel):
     """Comprehensive bias assessment results."""
 
-    model_config = ConfigDict(
-        validate_assignment=True,
-        extra='forbid'
-    )
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
-    overall_fairness_score: float = Field(..., ge=0.0, le=1.0, description="Overall fairness score (0-1)")
-    individual_results: List[BiasResult] = Field(..., description="Per-group bias results")
+    overall_fairness_score: float = Field(
+        ..., ge=0.0, le=1.0, description="Overall fairness score (0-1)"
+    )
+    individual_results: List[BiasResult] = Field(
+        ..., description="Per-group bias results"
+    )
     summary_statistics: Dict[str, Any] = Field(..., description="Summary statistics")
-    recommendations: List[str] = Field(..., description="Recommendations for improvement")
+    recommendations: List[str] = Field(
+        ..., description="Recommendations for improvement"
+    )
     compliance_status: str = Field(..., description="Compliance status assessment")
 
 

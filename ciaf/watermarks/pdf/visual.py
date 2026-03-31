@@ -28,11 +28,13 @@ if TYPE_CHECKING:
 try:
     from pypdf import PdfReader, PdfWriter, PageObject, Transformation
     from pypdf.generic import RectangleObject
+
     PYPDF_AVAILABLE = True
 except ImportError:
     try:
         from PyPDF2 import PdfReader, PdfWriter
         from PyPDF2.generic import RectangleObject
+
         PageObject = None
         Transformation = None
         PYPDF_AVAILABLE = True
@@ -49,6 +51,7 @@ try:
     from reportlab.lib.pagesizes import letter
     from reportlab.lib.units import inch
     from PIL import Image as PILImage
+
     REPORTLAB_AVAILABLE = True
 except ImportError:
     REPORTLAB_AVAILABLE = False
@@ -128,7 +131,8 @@ def create_qr_overlay_page(
     # Draw QR code
     c.drawInlineImage(
         qr_img,
-        x, y,
+        x,
+        y,
         width=qr_size_pts,
         height=qr_size_pts,
         preserveAspectRatio=True,
@@ -146,7 +150,7 @@ def create_qr_overlay_page(
     if page_number is not None:
         c.setFont("Helvetica", 9)
         c.setFillColorRGB(0.4, 0.4, 0.4)  # Gray
-        
+
         # Position page number based on QR position
         if qr_position == "bottom-left":
             num_x = x + qr_size_pts + 15  # To the right of QR
@@ -401,7 +405,7 @@ def build_pdf_artifact_with_visual_watermark(
     if add_text_stamp:
         if stamp_text is None:
             stamp_text = f"AI Generated Content | Verify at {verification_base_url}"
-        
+
         watermarked_bytes = apply_text_stamp_to_pdf(
             pdf_bytes=pdf_with_qr,
             stamp_text=stamp_text,
@@ -483,20 +487,20 @@ def verify_pdf_qr_watermark(pdf_bytes: bytes) -> bool:
 
     try:
         reader = PdfReader(BytesIO(pdf_bytes))
-        
+
         # Check if any page has images (QR codes are embedded as images)
         for page in reader.pages:
-            if hasattr(page, 'images') and len(page.images) > 0:
+            if hasattr(page, "images") and len(page.images) > 0:
                 return True
-        
+
         # Alternative: Check resources for XObject images
         for page in reader.pages:
-            if '/XObject' in page['/Resources']:
-                xobjects = page['/Resources']['/XObject'].get_object()
+            if "/XObject" in page["/Resources"]:
+                xobjects = page["/Resources"]["/XObject"].get_object()
                 for obj in xobjects.values():
-                    if obj['/Subtype'] == '/Image':
+                    if obj["/Subtype"] == "/Image":
                         return True
-        
+
         return False
     except Exception:
         return False

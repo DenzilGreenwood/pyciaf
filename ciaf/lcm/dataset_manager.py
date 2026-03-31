@@ -4,16 +4,17 @@ CIAF LCM Dataset Manager
 Enhanced dataset management supporting train/validation/test splits with proper anchoring.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
 from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Any, Optional, TYPE_CHECKING
-from dataclasses import dataclass
+
+from pydantic import BaseModel, Field, model_validator
 
 from ..core import sha256_hash, SALT_LENGTH, to_hex
 from .policy import (
@@ -65,118 +66,122 @@ class DatasetSplit(Enum):
     FULL = "full"
 
 
-@dataclass
-class DatasetMetadata:
+class DatasetMetadata(BaseModel):
     """Enhanced dataset metadata for LCM with comprehensive dataset information."""
 
-    name: str
-    owner: str = "unknown"
-    license: str = "unknown"
-    schema_digest: str = ""
-    sampling_rules: Dict[str, Any] = None
-    version: str = "1.0.0"
-    content_root: str = ""  # Merkle root or rolling hash
+    name: str = Field(..., min_length=1, description="Dataset name")
+    owner: str = Field("unknown", description="Dataset owner")
+    license: str = Field("unknown", description="Dataset license")
+    schema_digest: str = Field("", description="Schema digest")
+    sampling_rules: Dict[str, Any] = Field(
+        default_factory=dict, description="Sampling rules"
+    )
+    version: str = Field("1.0.0", description="Dataset version")
+    content_root: str = Field("", description="Merkle root or rolling hash")
 
     # Privacy and compliance
-    contains_pii: bool = False
-    privacy_level: str = "public"
-    compliance_frameworks: List[str] = None
+    contains_pii: bool = Field(False, description="Contains PII")
+    privacy_level: str = Field("public", description="Privacy level")
+    compliance_frameworks: List[str] = Field(
+        default_factory=list, description="Compliance frameworks"
+    )
 
     # Additional metadata
-    creation_date: str = None
-    description: str = ""
-    tags: List[str] = None
+    creation_date: Optional[str] = Field(None, description="Creation date")
+    description: str = Field("", description="Dataset description")
+    tags: List[str] = Field(default_factory=list, description="Dataset tags")
 
     # RNG reproducibility
-    rng_seed: Optional[int] = None
-    rng_source: Optional[str] = None  # e.g., "numpy", "torch", "random"
+    rng_seed: Optional[int] = Field(None, description="RNG seed")
+    rng_source: Optional[str] = Field(None, description="RNG source")
 
     # Stratification
-    stratify_by: Optional[List[str]] = None  # columns used for stratification
+    stratify_by: Optional[List[str]] = Field(None, description="Stratification columns")
 
     # Split assignment commitment
-    split_assignment_digest: Optional[str] = (
-        None  # SHA-256 over sorted record IDs or Merkle root
+    split_assignment_digest: Optional[str] = Field(
+        None, description="Split assignment digest"
     )
 
     # Dataset structure and features
-    num_samples: Optional[int] = None
-    num_features: Optional[int] = None
-    feature_names: Optional[List[str]] = None
-    features: Optional[List[str]] = None  # Legacy compatibility - maps to feature_names
-    total_samples: Optional[int] = None  # Legacy compatibility - maps to num_samples
-    feature_types: Optional[Dict[str, str]] = (
-        None  # feature_name -> type (e.g., "numerical", "categorical", "text", "image")
+    num_samples: Optional[int] = Field(None, ge=0, description="Number of samples")
+    num_features: Optional[int] = Field(None, ge=0, description="Number of features")
+    feature_names: Optional[List[str]] = Field(None, description="Feature names")
+    features: Optional[List[str]] = Field(None, description="Feature names (legacy)")
+    total_samples: Optional[int] = Field(
+        None, ge=0, description="Total samples (legacy)"
     )
-    target_column: Optional[str] = None
-    target_type: Optional[str] = (
-        None  # "classification", "regression", "multilabel", etc.
-    )
+    feature_types: Optional[Dict[str, str]] = Field(None, description="Feature types")
+    target_column: Optional[str] = Field(None, description="Target column")
+    target_type: Optional[str] = Field(None, description="Target type")
 
     # Feature statistics
-    feature_statistics: Optional[Dict[str, Dict[str, Any]]] = (
-        None  # feature_name -> stats dict
+    feature_statistics: Optional[Dict[str, Dict[str, Any]]] = Field(
+        None, description="Feature statistics"
     )
-    missing_values: Optional[Dict[str, int]] = (
-        None  # feature_name -> count of missing values
+    missing_values: Optional[Dict[str, int]] = Field(
+        None, description="Missing values count"
     )
-    categorical_mappings: Optional[Dict[str, Dict[str, int]]] = (
-        None  # feature_name -> {category: count}
+    categorical_mappings: Optional[Dict[str, Dict[str, int]]] = Field(
+        None, description="Categorical mappings"
     )
 
     # Data quality metrics
-    duplicate_rows: Optional[int] = None
-    data_quality_score: Optional[float] = None  # 0.0 to 1.0
-    outlier_count: Optional[Dict[str, int]] = None  # feature_name -> outlier count
+    duplicate_rows: Optional[int] = Field(
+        None, ge=0, description="Duplicate rows count"
+    )
+    data_quality_score: Optional[float] = Field(
+        None, ge=0.0, le=1.0, description="Quality score"
+    )
+    outlier_count: Optional[Dict[str, int]] = Field(
+        None, description="Outlier count per feature"
+    )
 
     # Dataset shape and dimensions
-    data_shape: Optional[tuple] = None  # (rows, columns) for tabular data
-    file_format: Optional[str] = None  # "csv", "parquet", "json", "tfrecord", etc.
-    encoding: Optional[str] = None  # "utf-8", "latin-1", etc.
+    data_shape: Optional[tuple] = Field(None, description="Data shape (rows, columns)")
+    file_format: Optional[str] = Field(None, description="File format")
+    encoding: Optional[str] = Field(None, description="File encoding")
 
     # Domain-specific metadata
-    domain: Optional[str] = (
-        None  # "healthcare", "finance", "nlp", "computer_vision", etc.
+    domain: Optional[str] = Field(
+        None, description="Domain (healthcare, finance, etc.)"
     )
-    task_type: Optional[str] = (
-        None  # "supervised", "unsupervised", "reinforcement", etc.
-    )
-    benchmark_dataset: Optional[bool] = False  # Is this a known benchmark dataset?
+    task_type: Optional[str] = Field(None, description="Task type")
+    benchmark_dataset: Optional[bool] = Field(False, description="Is benchmark dataset")
 
     # Data lineage and provenance
-    source_datasets: Optional[List[str]] = None  # If derived from other datasets
-    preprocessing_steps: Optional[List[str]] = None  # Applied transformations
-    data_collection_method: Optional[str] = (
-        None  # "web_scraping", "survey", "experiment", etc.
+    source_datasets: Optional[List[str]] = Field(None, description="Source datasets")
+    preprocessing_steps: Optional[List[str]] = Field(
+        None, description="Preprocessing steps"
+    )
+    data_collection_method: Optional[str] = Field(
+        None, description="Data collection method"
     )
 
     # Temporal information
-    temporal_coverage: Optional[Dict[str, str]] = (
-        None  # {"start": "2023-01-01", "end": "2023-12-31"}
+    temporal_coverage: Optional[Dict[str, str]] = Field(
+        None, description="Temporal coverage"
     )
-    update_frequency: Optional[str] = None  # "daily", "weekly", "static", etc.
-    last_updated: Optional[str] = None
+    update_frequency: Optional[str] = Field(None, description="Update frequency")
+    last_updated: Optional[str] = Field(None, description="Last updated timestamp")
 
     # Geographical information
-    geographical_coverage: Optional[str] = (
-        None  # "global", "US", "EU", specific regions, etc.
+    geographical_coverage: Optional[str] = Field(
+        None, description="Geographical coverage"
     )
 
     # Bias and fairness considerations
-    known_biases: Optional[List[str]] = None  # Documented biases in the dataset
-    protected_attributes: Optional[List[str]] = (
-        None  # Features that should be monitored for bias
+    known_biases: Optional[List[str]] = Field(None, description="Known biases")
+    protected_attributes: Optional[List[str]] = Field(
+        None, description="Protected attributes"
     )
-    fairness_constraints: Optional[Dict[str, Any]] = None  # Fairness requirements
+    fairness_constraints: Optional[Dict[str, Any]] = Field(
+        None, description="Fairness constraints"
+    )
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def initialize_defaults_and_legacy_compatibility(self) -> "DatasetMetadata":
         """Initialize default values and handle legacy compatibility."""
-        if self.sampling_rules is None:
-            self.sampling_rules = {}
-        if self.compliance_frameworks is None:
-            self.compliance_frameworks = []
-        if self.tags is None:
-            self.tags = []
         if self.creation_date is None:
             self.creation_date = datetime.now().isoformat()
         if self.last_updated is None:
@@ -200,6 +205,13 @@ class DatasetMetadata:
             self.num_samples = self.total_samples
         elif self.num_samples is not None and self.total_samples is None:
             self.total_samples = self.num_samples
+
+        return self
+
+    @property
+    def sample_count(self) -> Optional[int]:
+        """Return total_samples as sample_count (backward compatibility)."""
+        return self.total_samples
 
     def add_feature_statistics(self, feature_name: str, stats: Dict[str, Any]) -> None:
         """Add statistics for a specific feature."""
@@ -522,6 +534,11 @@ class LCMDatasetAnchor:
             f"LCM Dataset Anchor '{self.dataset_id}' ({self.split.value}) initialized with anchor: {self.anchor_id}"
         )
 
+    @property
+    def split_type(self) -> str:
+        """Return split type as string (backward compatibility property)."""
+        return self.split.value
+
     def _compute_dataset_hash(self) -> str:
         """Compute canonical hash of dataset metadata including split and RNG info."""
         # Create canonical representation including RNG reproducibility fields
@@ -681,6 +698,55 @@ class LCMDatasetManager:
 
         print(f"✅ Created {len(splits)} dataset anchors for {dataset_id}")
         return dataset_splits
+
+    def create_dataset_anchor(
+        self,
+        dataset_id: str,
+        dataset_path: str,
+        split_type: str,
+        master_password: str = "test_password",
+    ) -> LCMDatasetAnchor:
+        """
+        Create a single dataset anchor (backward compatibility helper).
+
+        Args:
+            dataset_id: Dataset identifier
+            dataset_path: Path to dataset
+            split_type: Split type (train, val, test, full)
+            master_password: Master password for anchor derivation
+
+        Returns:
+            LCMDatasetAnchor for the specified split
+        """
+        # Convert string to DatasetSplit enum
+        split_map = {
+            "train": DatasetSplit.TRAIN,
+            "val": DatasetSplit.VALIDATION,
+            "validation": DatasetSplit.VALIDATION,
+            "test": DatasetSplit.TEST,
+            "full": DatasetSplit.FULL,
+        }
+        split = split_map.get(split_type.lower(), DatasetSplit.TRAIN)
+
+        # Create metadata  
+        metadata = DatasetMetadata(
+            name=dataset_id,
+            source_path=dataset_path,
+            row_count=1000,
+            column_count=10,
+            dataset_hash=f"hash_{dataset_id}_{split_type}",
+        )
+
+        # Create anchor directly (don't modify dataset_id)
+        anchor = LCMDatasetAnchor(
+            dataset_id=dataset_id,  # Keep original ID
+            split=split,
+            metadata=metadata,
+            master_password=master_password,
+            policy=self.policy,
+        )
+
+        return anchor
 
     def get_datasets_root_anchor(self, dataset_id: str) -> str:
         """

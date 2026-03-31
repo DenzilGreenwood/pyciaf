@@ -5,16 +5,18 @@ This module generates comprehensive compliance reports for various regulatory
 frameworks, including executive summaries, detailed findings, and recommendations.
 
 Created: 2025-09-09
-Last Modified: 2025-09-11
+Last Modified: 2026-03-30
 Author: Denzil James Greenwood
-Version: 1.0.0
+Version: 2.0.0 - Converted to Pydantic models
 """
 
 import json
-from dataclasses import asdict, dataclass
 from datetime import datetime, timezone, timedelta
 from enum import Enum
 from typing import Any, Dict, List
+import hashlib
+
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 from .audit_trails import AuditTrailGenerator, ComplianceAuditRecord
 from .regulatory_mapping import ComplianceFramework, RegulatoryMapper
@@ -32,43 +34,71 @@ class ReportType(Enum):
     ANNUAL_REPORT = "annual_report"
 
 
-@dataclass
-class ComplianceReport:
+class ComplianceReport(BaseModel):
     """Comprehensive compliance report."""
 
+    model_config = ConfigDict(protected_namespaces=())
+
     # Report metadata
-    report_id: str
-    report_type: ReportType
-    frameworks: List[str]
-    model_name: str
-    model_version: str
-    generated_date: str
-    reporting_period_start: str
-    reporting_period_end: str
-    generated_by: str
+    report_id: str = Field(..., min_length=1, description="Unique report identifier")
+    report_type: ReportType = Field(..., description="Type of report")
+    frameworks: List[str] = Field(
+        default_factory=list, description="Compliance frameworks assessed"
+    )
+    model_name: str = Field(..., min_length=1, description="AI model name")
+    model_version: str = Field(..., min_length=1, description="Model version")
+    generated_date: str = Field(..., description="Report generation date")
+    reporting_period_start: str = Field(..., description="Reporting period start date")
+    reporting_period_end: str = Field(..., description="Reporting period end date")
+    generated_by: str = Field(
+        ..., min_length=1, description="Report generator identifier"
+    )
 
     # Executive summary
-    executive_summary: Dict[str, Any]
+    executive_summary: Dict[str, Any] = Field(
+        default_factory=dict, description="Executive summary data"
+    )
 
     # Detailed findings
-    compliance_status: Dict[str, Any]
-    requirements_assessment: List[Dict[str, Any]]
-    audit_findings: List[Dict[str, Any]]
-    risk_assessment: Dict[str, Any]
+    compliance_status: Dict[str, Any] = Field(
+        default_factory=dict, description="Compliance status summary"
+    )
+    requirements_assessment: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Requirements assessment details"
+    )
+    audit_findings: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Audit findings"
+    )
+    risk_assessment: Dict[str, Any] = Field(
+        default_factory=dict, description="Risk assessment data"
+    )
 
     # Recommendations and actions
-    recommendations: List[Dict[str, Any]]
-    action_items: List[Dict[str, Any]]
+    recommendations: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Recommendations"
+    )
+    action_items: List[Dict[str, Any]] = Field(
+        default_factory=list, description="Action items"
+    )
 
     # Supporting data
-    audit_statistics: Dict[str, Any]
-    compliance_metrics: Dict[str, Any]
-    appendices: Dict[str, Any]
+    audit_statistics: Dict[str, Any] = Field(
+        default_factory=dict, description="Audit statistics"
+    )
+    compliance_metrics: Dict[str, Any] = Field(
+        default_factory=dict, description="Compliance metrics"
+    )
+    appendices: Dict[str, Any] = Field(
+        default_factory=dict, description="Supporting appendices"
+    )
 
     # Report integrity
-    report_hash: str = ""
+    report_hash: str = Field(
+        default="", description="SHA-256 hash of report for integrity"
+    )
 
-    def __post_init__(self):
+    @model_validator(mode="after")
+    def compute_report_hash(self) -> "ComplianceReport":
         """Compute report hash for integrity."""
         report_data = {
             "report_id": self.report_id,
@@ -77,10 +107,9 @@ class ComplianceReport:
             "frameworks": self.frameworks,
             "compliance_status": self.compliance_status,
         }
-        import hashlib
-
         report_str = json.dumps(report_data, sort_keys=True)
         self.report_hash = hashlib.sha256(report_str.encode()).hexdigest()
+        return self
 
 
 class ComplianceReportGenerator:
@@ -362,7 +391,7 @@ class ComplianceReportGenerator:
         """Export compliance report in specified format."""
 
         if format.lower() == "json":
-            report_dict = asdict(report)
+            report_dict = report.model_dump()
             # Convert enum to string
             report_dict["report_type"] = report.report_type.value
 
