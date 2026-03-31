@@ -5,9 +5,9 @@ A modular framework for creating verifiable AI training and inference pipelines
 with lazy capsule materialization and cryptographic provenance tracking.
 
 Created: 2025-09-09
-Last Modified: 2026-03-28
+Last Modified: 2026-03-31
 Author: Denzil James Greenwood
-Version: 1.3.2
+Version: 1.3.3
 """
 
 # type: ignore  # Conditional imports set variables to None which mypy doesn't like

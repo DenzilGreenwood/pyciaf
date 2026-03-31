@@ -5,6 +5,58 @@ All notable changes to the Cognitive Insight Audit Framework (CIAF) will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3] - 2026-03-31
+
+### Patch Release: LCM Backward Compatibility and Wrapper Fixes
+
+**Critical fixes for LCM test suite and model wrapper serialization.**
+
+### Fixed
+
+- **LCM Backward Compatibility**: Added 20+ missing `@property` methods across LCM modules for backward compatibility
+  - `TrainingMetrics.final_loss` and `final_accuracy` properties in `training_manager.py`
+  - `LCMDeploymentAnchor.actual_digest`, `actual_environment`, `actual_location` properties in `deployment_manager.py`
+  - `LCMPreDeploymentAnchor.artifacts` property returning list instead of single object
+  - `LCMInferenceReceipt.inference_type` property for capsule header compatibility
+  - `DatasetMetadata.sample_count` property mapping to `total_samples`
+  - `LCMPolicy.merkle_policy` and `MerklePolicy.padding_strategy` property accessors
+- **Circular Import Resolution**: Fixed circular import between `ciaf.api` and `ciaf.wrappers` modules
+  - Changed `CIAFFramework` import to use `TYPE_CHECKING` and string annotations
+  - Implemented lazy loading in `CIAFModelWrapper.__init__` to avoid import-time circular dependency
+- **Model Wrapper Serialization**: Fixed pickle serialization failures with cryptographic objects
+  - Excluded unpicklable `Ed25519PrivateKey` objects from pickle state
+  - Implemented framework recreation on unpickle with proper state restoration
+  - Preserved LCM metadata trail through pickle/unpickle cycles
+- **Dataset Anchor Access**: Fixed incorrect attribute access in `framework.py`
+  - Changed `anchor.dataset_anchor` to correct dict structure access
+  - Fixed `'dict' object has no attribute 'dataset_anchor'` error
+- **Training Session Completion**: Added automatic training completion with snapshot creation
+  - Fixed root manager tests by ensuring `complete_training()` is called
+  - Ensured training sessions properly finalize with model snapshots
+
+### Changed
+
+- **Test Suite**: All 203 tests now passing (previously 12 failures)
+  - Fixed `test_create_deployment_anchor` 
+  - Fixed `test_create_comprehensive_capsule`
+  - Fixed `test_lcm_pickle_preservation`
+  - Fixed inference receipt chaining tests
+  - Fixed training session root computation tests
+
+### Technical Details
+
+- **Modules Modified**: 
+  - `ciaf/lcm/training_manager.py`
+  - `ciaf/lcm/deployment_manager.py`
+  - `ciaf/lcm/inference_manager.py`
+  - `ciaf/lcm/dataset_manager.py`
+  - `ciaf/lcm/policy.py`
+  - `ciaf/wrappers/model_wrapper.py`
+  - `ciaf/wrappers/__init__.py`
+  - `ciaf/api/framework.py`
+
+---
+
 ## [1.3.1] - 2026-03-28
 
 ### Patch Release: Bug Fixes and Export Corrections
