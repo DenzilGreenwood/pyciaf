@@ -261,17 +261,6 @@ except ImportError:
     generate_receipt = None  # type: ignore[assignment]
     WebAIVaultAdapter = None  # type: ignore[assignment,misc]
 
-# Vault Client for CIAF Vault integration (NEW in v1.4.0)
-try:
-    from .vault_client import VaultClient, VaultConfig, create_client
-
-    VAULT_CLIENT_AVAILABLE = True
-except ImportError:
-    VAULT_CLIENT_AVAILABLE = False
-    VaultClient = None  # type: ignore[assignment,misc]
-    VaultConfig = None  # type: ignore[assignment,misc]
-    create_client = None  # type: ignore[assignment]
-
 __version__ = "1.4.0"
 __all__ = [
     # Core components
@@ -361,10 +350,6 @@ __all__ = [
     "same_tenant_only",
     "same_environment_only",
     "sensitivity_level_check",
-    # Vault Client (v1.4.0)
-    "VaultClient",
-    "VaultConfig",
-    "create_client",
     # Feature availability flags
     "COMPLIANCE_AVAILABLE",
     "ENTERPRISE_COMPLIANCE_AVAILABLE",
@@ -376,7 +361,6 @@ __all__ = [
     "PREPROCESSING_AVAILABLE",
     "METADATA_TAGS_AVAILABLE",
     "AGENTS_AVAILABLE",
-    "VAULT_CLIENT_AVAILABLE",
 ]
 
 # Export enhanced API methods
