@@ -5,6 +5,52 @@ All notable changes to the Cognitive Insight Audit Framework (CIAF) will be docu
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-04-04
+
+### Minor Release: Cloud Vault Backend Abstraction
+
+**Unified interface for cloud-based vault storage across Azure and GCP.**
+
+### Added
+
+- **Cloud Vault Backend Interface** (`ciaf/vault/backends/cloud_backend.py`):
+  - `CloudVaultBackend` abstract base class defining unified API for cloud storage implementations
+  - 9 abstract methods for metadata storage, receipt management, and audit trails:
+    - `store_metadata()` - Store ML metadata with cryptographic signatures
+    - `get_metadata()` - Retrieve metadata by ID
+    - `query_metadata()` - Search metadata with filters
+    - `store_receipt()` - Store cryptographic receipts
+    - `get_receipt()` - Retrieve receipts by ID
+    - `store_audit_event()` - Record audit events
+    - `get_audit_trail()` - Retrieve audit history
+    - `verify_integrity()` - Verify cryptographic integrity
+    - `get_statistics()` - Get storage statistics
+  - Enables consistent API across Azure, GCP, and future cloud providers
+  - Type hints and comprehensive docstrings for all methods
+
+- **Vault Factory Functions** (`ciaf/vault/__init__.py`):
+  - `get_gcp_vault_backend()` - Factory for GCP vault backend instances
+  - `get_azure_vault_backend()` - Factory for Azure vault backend instances
+  - Lazy loading to avoid import-time dependencies on cloud SDKs
+  - Graceful error messages when cloud packages not installed
+
+### Changed
+
+- **Vault Backend Exports** (`ciaf/vault/backends/__init__.py`):
+  - Added `CloudVaultBackend` to public exports
+  - Updated module documentation to reflect cloud backend support
+
+### Technical Details
+
+- **Design Pattern**: Abstract base class with ABC module for interface enforcement
+- **Cloud Providers**: Implementations available in separate packages:
+  - `ciaf-gcp` - Google Cloud Platform (Cloud KMS + Cloud Storage)
+  - `ciaf-azure` - Microsoft Azure (Key Vault + Blob Storage)
+- **Architecture**: Namespace packages allow independent installation of cloud providers
+- **Compatibility**: Core CIAF package remains cloud-agnostic with optional cloud extensions
+
+---
+
 ## [1.3.3] - 2026-03-31
 
 ### Patch Release: LCM Backward Compatibility and Wrapper Fixes
