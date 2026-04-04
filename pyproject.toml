@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyciaf"
-version = "1.4.0"
-description = "Cognitive Insight Audit Framework - A comprehensive framework for verifiable AI training and inference pipelines"
+version = "1.7.0"
+description = "Cognitive Insight Audit Framework - A comprehensive framework for verifiable AI training and inference pipelines with advanced watermarking"
 readme = "README.md"
 license-files = ["LICENSE"]
 authors = [
@@ -39,10 +39,64 @@ dependencies = [
     "cryptography>=3.4.8",
     "blake3>=0.3.3",
     "numpy>=1.21.0",
-    "pydantic>=2.0.0,<3.0.0"
+    "pydantic>=2.0.0,<3.0.0",
+    # Watermarking dependencies
+    "Pillow>=10.2.0",
+    "ImageHash>=4.3.2",
+    "opencv-python>=4.8.0",
+    # Cloud storage
+    "boto3>=1.26.0",
+    "azure-storage-blob>=12.14.0"
 ]
 
 [project.optional-dependencies]
+# Full ML stack
+ml = [
+    "scikit-learn>=1.0.0",
+    "pandas>=1.3.0"
+]
+
+# Explainability and interpretability
+explainability = [
+    "shap>=0.41.0",
+    "lime>=0.2.0.1"
+]
+
+# Visualization
+viz = [
+    "matplotlib>=3.5.0",
+    "seaborn>=0.11.0",
+    "plotly>=5.0.0"
+]
+
+# Advanced audio analysis (requires librosa)
+audio-advanced = [
+    "librosa>=0.10.0",
+    "soundfile>=0.12.0"
+]
+
+# Multi-format support (requires ffmpeg binary)
+multiformat = [
+    "ffmpeg-python>=0.2.0"
+]
+
+# Audio fingerprinting (requires chromaprint library)
+audio-fingerprint = [
+    "pyacoustid>=2.3.0"
+]
+
+# Web interface (CIAF Vault)
+web = [
+    "flask>=2.0.0",
+    "flask-cors>=3.0.10"
+]
+
+# PDF generation
+pdf = [
+    "reportlab>=3.6.0"
+]
+
+# All ML and explainability features
 full = [
     "scikit-learn>=1.0.0",
     "shap>=0.41.0",
@@ -50,8 +104,19 @@ full = [
     "matplotlib>=3.5.0",
     "seaborn>=0.11.0",
     "pandas>=1.3.0",
-    "plotly>=5.0.0"
+    "plotly>=5.0.0",
+    "reportlab>=3.6.0"
 ]
+
+# All advanced watermarking features
+watermarking-full = [
+    "librosa>=0.10.0",
+    "soundfile>=0.12.0",
+    "ffmpeg-python>=0.2.0",
+    "pyacoustid>=2.3.0"
+]
+
+# Development dependencies
 dev = [
     "pytest>=6.0.0",
     "pytest-cov>=2.12.0",
@@ -60,10 +125,30 @@ dev = [
     "mypy>=0.910",
     "pre-commit>=2.15.0"
 ]
+
+# Documentation dependencies
 docs = [
     "sphinx>=4.0.0",
     "sphinx-rtd-theme>=1.0.0",
     "myst-parser>=0.15.0"
+]
+
+# Everything (kitchen sink)
+all = [
+    "scikit-learn>=1.0.0",
+    "shap>=0.41.0",
+    "lime>=0.2.0.1",
+    "matplotlib>=3.5.0",
+    "seaborn>=0.11.0",
+    "pandas>=1.3.0",
+    "plotly>=5.0.0",
+    "reportlab>=3.6.0",
+    "librosa>=0.10.0",
+    "soundfile>=0.12.0",
+    "ffmpeg-python>=0.2.0",
+    "pyacoustid>=2.3.0",
+    "flask>=2.0.0",
+    "flask-cors>=3.0.10"
 ]
 
 [project.urls]
