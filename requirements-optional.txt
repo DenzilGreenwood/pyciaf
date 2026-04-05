@@ -1,0 +1,101 @@
+# CIAF Optional Dependencies
+# Install with: pip install -r requirements-optional.txt
+#
+# These are optional dependencies that enable advanced features.
+# Install only what you need for your use case.
+
+# ============================================================================
+# MACHINE LEARNING & DATA SCIENCE
+# ============================================================================
+
+scikit-learn>=1.0.0              # ML algorithms and preprocessing
+pandas>=1.3.0                    # Data manipulation and analysis
+
+# ============================================================================
+# EXPLAINABILITY & INTERPRETABILITY
+# ============================================================================
+
+shap>=0.41.0                     # SHapley Additive exPlanations
+lime>=0.2.0.1                    # Local Interpretable Model-agnostic Explanations
+
+# ============================================================================
+# VISUALIZATION
+# ============================================================================
+
+matplotlib>=3.5.0                # Plotting library
+seaborn>=0.11.0                  # Statistical visualization
+plotly>=5.0.0                    # Interactive plots
+
+# ============================================================================
+# DOCUMENT GENERATION
+# ============================================================================
+
+reportlab>=3.6.0                 # PDF generation
+
+# ============================================================================
+# WEB INTERFACE (CIAF Vault)
+# ============================================================================
+
+flask>=2.0.0                     # Web framework
+flask-cors>=3.0.10               # Cross-Origin Resource Sharing
+
+# ============================================================================
+# ADVANCED AUDIO ANALYSIS
+# ============================================================================
+
+librosa>=0.10.0                  # Audio analysis (MFCCs, chroma, tempo)
+soundfile>=0.12.0                # Audio file I/O
+
+# ============================================================================
+# MULTI-FORMAT SUPPORT
+# ============================================================================
+
+ffmpeg-python>=0.2.0             # FFmpeg Python bindings
+# Note: Also requires ffmpeg binary to be installed:
+# - Windows: Download from https://ffmpeg.org/download.html
+# - Linux: sudo apt install ffmpeg
+# - macOS: brew install ffmpeg
+
+# ============================================================================
+# AUDIO FINGERPRINTING
+# ============================================================================
+
+pyacoustid>=2.3.0                # AcousticID fingerprinting
+# Note: Also requires chromaprint library:
+# - Windows: Download from https://acoustid.org/chromaprint
+# - Linux: sudo apt install libchromaprint-dev
+# - macOS: brew install chromaprint
+
+# ============================================================================
+# DATABASE SUPPORT
+# ============================================================================
+
+# sqlalchemy>=1.4.0              # SQL database ORM (if using DB storage)
+# psycopg2-binary>=2.9.0         # PostgreSQL adapter
+# pymongo>=3.12.0                # MongoDB driver
+
+# ============================================================================
+# ADDITIONAL ML FRAMEWORKS (as needed)
+# ============================================================================
+
+# tensorflow>=2.8.0              # TensorFlow (for deep learning)
+# torch>=1.10.0                  # PyTorch (for deep learning)
+# transformers>=4.15.0           # Hugging Face transformers
+# xgboost>=1.5.0                 # Gradient boosting
+# lightgbm>=3.3.0                # Light Gradient Boosting Machine
+
+# ============================================================================
+# QUICK INSTALL COMMANDS
+# ============================================================================
+#
+# Full ML stack:
+#   pip install scikit-learn pandas shap lime matplotlib seaborn plotly
+#
+# Advanced audio features:
+#   pip install librosa soundfile
+#
+# Web interface:
+#   pip install flask flask-cors
+#
+# Everything (may take a while):
+#   pip install -r requirements-optional.txt

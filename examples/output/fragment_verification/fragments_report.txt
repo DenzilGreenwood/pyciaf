@@ -1,0 +1,61 @@
+IMAGE FRAGMENT VERIFICATION REPORT
+==================================================
+
+Total Fragments: 8
+
+Fragment: img_patch_0_64_0
+  Position: (64, 0)
+  Size: (64, 64) pixels
+  Entropy: 0.615566
+  Hash (before): 54a2061008a19fa9...
+  Hash (after): 54a2061008a19fa9...
+
+Fragment: img_patch_1_192_128
+  Position: (192, 128)
+  Size: (64, 64) pixels
+  Entropy: 0.614905
+  Hash (before): 5feebc6dccf4d38e...
+  Hash (after): 5feebc6dccf4d38e...
+
+Fragment: img_patch_2_0_0
+  Position: (0, 0)
+  Size: (64, 64) pixels
+  Entropy: 0.613723
+  Hash (before): 871c9fb232a1bad5...
+  Hash (after): 871c9fb232a1bad5...
+
+Fragment: img_patch_3_0_128
+  Position: (0, 128)
+  Size: (64, 64) pixels
+  Entropy: 0.613636
+  Hash (before): 2c83022c2270f7ff...
+  Hash (after): 2c83022c2270f7ff...
+
+Fragment: img_patch_4_128_0
+  Position: (128, 0)
+  Size: (64, 64) pixels
+  Entropy: 0.613352
+  Hash (before): f12e28c5f9f9a1db...
+  Hash (after): f12e28c5f9f9a1db...
+
+Fragment: img_patch_5_256_192
+  Position: (256, 192)
+  Size: (64, 64) pixels
+  Entropy: 0.613108
+  Hash (before): e911f9be6bccc7d8...
+  Hash (after): e911f9be6bccc7d8...
+
+Fragment: img_patch_6_320_0
+  Position: (320, 0)
+  Size: (64, 64) pixels
+  Entropy: 0.612114
+  Hash (before): a377576b92c74328...
+  Hash (after): a377576b92c74328...
+
+Fragment: img_patch_7_0_192
+  Position: (0, 192)
+  Size: (64, 64) pixels
+  Entropy: 0.611532
+  Hash (before): 0e3f20c2192428ec...
+  Hash (after): 0e3f20c2192428ec...
+

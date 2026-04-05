@@ -27,9 +27,10 @@ try:
 except ImportError:
     PANDAS_AVAILABLE = False
     pd = None
-    warnings.warn(
-        "pandas not available. PreIngestionValidator features will be limited."
-    )
+    # Suppress warning - pandas is optional
+    # warnings.warn(
+    #     "pandas not available. PreIngestionValidator features will be limited.", stacklevel=2
+    # )
 
 
 class ValidationSeverity(Enum):

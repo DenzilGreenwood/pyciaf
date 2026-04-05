@@ -1,0 +1,57 @@
+FRAGMENT VERIFICATION RESULTS
+==================================================
+
+Total Fragments: 8
+Matched: 8
+Confidence: 95.00%
+Legal Defensibility: high
+
+Fragment Details:
+
+  img_patch_0_64_0:
+    Matched: True
+    Position: 64
+    Confidence: 1.0000
+    Details: Found at region (64, 0)
+
+  img_patch_1_192_128:
+    Matched: True
+    Position: 1280192
+    Confidence: 1.0000
+    Details: Found at region (192, 128)
+
+  img_patch_2_0_0:
+    Matched: True
+    Position: 0
+    Confidence: 1.0000
+    Details: Found at region (0, 0)
+
+  img_patch_3_0_128:
+    Matched: True
+    Position: 1280000
+    Confidence: 1.0000
+    Details: Found at region (0, 128)
+
+  img_patch_4_128_0:
+    Matched: True
+    Position: 128
+    Confidence: 1.0000
+    Details: Found at region (128, 0)
+
+  img_patch_5_256_192:
+    Matched: True
+    Position: 1920256
+    Confidence: 1.0000
+    Details: Found at region (256, 192)
+
+  img_patch_6_320_0:
+    Matched: True
+    Position: 320
+    Confidence: 1.0000
+    Details: Found at region (320, 0)
+
+  img_patch_7_0_192:
+    Matched: True
+    Position: 1920000
+    Confidence: 1.0000
+    Details: Found at region (0, 192)

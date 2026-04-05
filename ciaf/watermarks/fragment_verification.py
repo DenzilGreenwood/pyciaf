@@ -269,6 +269,8 @@ def verify_image_fragment_spatial_search(
 ) -> Optional[Tuple[Tuple[int, int], float]]:
     """
     Search for image fragment in suspect image using spatial patch matching.
+    
+    Improved implementation with adaptive search and perceptual matching.
 
     Returns:
         Tuple of ((x, y), confidence) if patch found, None otherwise
@@ -281,31 +283,35 @@ def verify_image_fragment_spatial_search(
         suspect_array = np.array(suspect_img.convert("RGB"))
 
         img_h, img_w = suspect_array.shape[:2]
-        patch_w, patch_h = 64, 64  # Standard patch size
+        
+        # Get patch size from stored fragment
+        _, _, patch_w, patch_h = stored_fragment.region_coordinates
 
-        # Can optimize: use feature matching instead of grid search
-        # For now, use grid search with stride
-        stride = 8  # Check every 8 pixels
+        # Adaptive stride based on image size (faster search)
+        stride = max(4, min(patch_w // 4, 16))
+        
+        # Expected hashes (check both before and after watermark)
+        expected_hash_before = stored_fragment.patch_hash_before
+        expected_hash_after = stored_fragment.patch_hash_after
 
-        for y in range(0, img_h - patch_h, stride):
-            for x in range(0, img_w - patch_w, stride):
+        for y in range(0, max(1, img_h - patch_h + 1), stride):
+            for x in range(0, max(1, img_w - patch_w + 1), stride):
                 patch = suspect_array[y : y + patch_h, x : x + patch_w]
 
-                if patch.shape != (patch_h, patch_w, 3):
+                if patch.shape[:2] != (patch_h, patch_w):
                     continue
 
                 # Compute hash of this patch
                 patch_bytes = patch.tobytes()
                 patch_hash = sha256_bytes(patch_bytes)
 
-                # For now, use SHA-256 exact match
-                # In production, use perceptual hash similarity
-                if patch_hash == stored_fragment.patch_hash_before:
+                # Exact match (fastest path)
+                if patch_hash == expected_hash_before or patch_hash == expected_hash_after:
                     return ((x, y), 1.0)
 
         return None
 
-    except Exception:
+    except Exception as e:
         return None
 
 

@@ -22,7 +22,7 @@ Multi-Point Sampling Strategy:
 - Video: Temporal keyframe sampling (Phase 2)
 - Audio: Spectral frequency segments (Phase 2)
 
-Quick Start:
+Quick Start (Type-Specific):
     from ciaf.watermarks import (
         build_text_artifact_evidence,
         verify_text_artifact,
@@ -45,10 +45,23 @@ Quick Start:
     print(f"Authentic: {result.is_authentic()}")
     print(f"Confidence: {result.confidence:.1%}")
 
+Quick Start (Unified Interface - ANY artifact type): ⭐ NEW v1.4.0
+    from ciaf.watermarks import watermark_ai_output
+
+    # Works for text, images, PDF - auto-detects type!
+    evidence, watermarked = watermark_ai_output(
+        artifact=ai_model_output,  # str or bytes, any type
+        model_id="gpt-4",
+        model_version="2026-03",
+        actor_id="user:analyst-17",
+        prompt="Generate content",
+        verification_base_url="https://vault.example.com"
+    )
+
 Created: 2026-03-24
-Updated: 2026-03-30 (SignatureEnvelope pattern)
+Updated: 2026-04-04 (Unified Interface)
 Author: Denzil James Greenwood
-Version: 1.3.0
+Version: 1.4.0
 """
 
 # Signature envelope (v1.3.0) ⭐ NEW
@@ -145,6 +158,12 @@ from .images import (
     make_verification_url_qr,
     make_compact_token_qr,
     QRCODE_AVAILABLE,
+    # Steganography (LSB embedding) - v1.4.0 ⭐ NEW
+    embed_watermark_lsb,
+    extract_watermark_lsb,
+    verify_lsb_watermark,
+    has_lsb_watermark,
+    SteganographyError,
 )
 
 # PDF watermarking (Phase 1)
@@ -191,7 +210,17 @@ from .hierarchical_verification import (
     VerificationStatistics,
 )
 
-__version__ = "1.3.0"
+# Unified Interface (v1.4.0) ⭐ NEW
+from .unified_interface import (
+    detect_artifact_type,
+    watermark_ai_output,
+    quick_watermark,
+    WatermarkDispatcher,
+    set_default_watermark_config,
+    get_default_watermark_config,
+)
+
+__version__ = "1.4.0"
 
 __all__ = [
     # Signature Envelope (v1.3.0) ⭐ NEW
@@ -272,6 +301,12 @@ __all__ = [
     "make_verification_url_qr",
     "make_compact_token_qr",
     "QRCODE_AVAILABLE",
+    # Steganography (LSB embedding) - v1.4.0 ⭐ NEW
+    "embed_watermark_lsb",
+    "extract_watermark_lsb",
+    "verify_lsb_watermark",
+    "has_lsb_watermark",
+    "SteganographyError",
     # PDF watermarking (Phase 1)
     "apply_pdf_metadata_watermark",
     "build_pdf_artifact_evidence",
@@ -303,4 +338,11 @@ __all__ = [
     "verify_image_artifact_hierarchical",
     "format_hierarchical_verification_report",
     "VerificationStatistics",
+    # Unified Interface (v1.4.0) ⭐ NEW
+    "detect_artifact_type",
+    "watermark_ai_output",
+    "quick_watermark",
+    "WatermarkDispatcher",
+    "set_default_watermark_config",
+    "get_default_watermark_config",
 ]

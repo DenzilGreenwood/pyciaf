@@ -349,13 +349,44 @@ def build_image_artifact_evidence(
         except Exception:
             pass  # QR generation failed, continue without it
 
-    # Apply watermark
-    watermarked_bytes = apply_combined_watermark(
-        image_bytes=image_bytes,
-        text=watermark_text,
-        qr_bytes=qr_bytes,
-        spec=watermark_spec,
-    )
+    # Apply watermark based on mode
+    if watermark_spec.mode == "steganographic":
+        # LSB steganography only (invisible)
+        from .steganography import embed_watermark_lsb
+        
+        watermarked_bytes = embed_watermark_lsb(
+            image_bytes=image_bytes,
+            watermark_id=watermark_id,
+            verification_url=verification_url,
+            created_at=utc_now_iso(),
+            artifact_id=artifact_id,
+        )
+    elif watermark_spec.mode == "hybrid":
+        # Apply visual watermark first
+        visual_watermarked = apply_combined_watermark(
+            image_bytes=image_bytes,
+            text=watermark_text,
+            qr_bytes=qr_bytes,
+            spec=watermark_spec,
+        )
+        # Then embed LSB watermark
+        from .steganography import embed_watermark_lsb
+        
+        watermarked_bytes = embed_watermark_lsb(
+            image_bytes=visual_watermarked,
+            watermark_id=watermark_id,
+            verification_url=verification_url,
+            created_at=utc_now_iso(),
+            artifact_id=artifact_id,
+        )
+    else:
+        # Visual only (default)
+        watermarked_bytes = apply_combined_watermark(
+            image_bytes=image_bytes,
+            text=watermark_text,
+            qr_bytes=qr_bytes,
+            spec=watermark_spec,
+        )
 
     # Compute hashes
     prompt_hash = sha256_text(prompt)
@@ -413,19 +444,28 @@ def build_image_artifact_evidence(
             pass  # Perceptual hashing failed, continue without it
 
     # Build watermark descriptor
+    if watermark_spec.mode == "steganographic":
+        watermark_type = WatermarkType.EMBEDDED
+        embed_method = "lsb_steganography"
+        removal_resistance = "medium"  # Survives viewing, not compression
+    elif watermark_spec.mode == "hybrid":
+        watermark_type = WatermarkType.HYBRID
+        embed_method = f"pillow_visual_{watermark_spec.position}+lsb"
+        removal_resistance = "medium"
+    else:
+        watermark_type = WatermarkType.VISIBLE
+        embed_method = f"pillow_visual_{watermark_spec.position}"
+        removal_resistance = "low"
+    
     watermark = WatermarkDescriptor(
         watermark_id=watermark_id,
-        watermark_type=(
-            WatermarkType.VISIBLE
-            if watermark_spec.mode == "visual"
-            else WatermarkType.HYBRID
-        ),
-        tag_text=watermark_text,
+        watermark_type=watermark_type,
+        tag_text=watermark_text if watermark_spec.mode != "steganographic" else None,
         verification_url=verification_url,
         qr_payload=verification_url if qr_bytes else None,
-        embed_method=f"pillow_visual_{watermark_spec.position}",
-        removal_resistance="low",  # Visual watermarks are easy to crop
-        location=watermark_spec.position,
+        embed_method=embed_method,
+        removal_resistance=removal_resistance,
+        location=watermark_spec.position if watermark_spec.mode != "steganographic" else None,
     )
 
     # Build metadata

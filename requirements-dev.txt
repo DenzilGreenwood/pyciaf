@@ -22,6 +22,26 @@ sphinx-rtd-theme>=1.0.0
 # Configuration reading
 toml>=0.10.0
 
-# images
+# Images and video
 Pillow>=10.2.0
 ImageHash>=4.3.2
+opencv-python>=4.8.0
+
+# Advanced features (optional - install as needed)
+# Uncomment to enable:
+
+# Advanced audio analysis (MFCCs, chroma, tempo)
+# librosa>=0.10.0
+# soundfile>=0.12.0
+
+# Multi-format support (MP3, AAC, H.265, etc.)
+# ffmpeg-python>=0.2.0
+# Note: Also requires ffmpeg binary: https://ffmpeg.org/download.html
+
+# Audio fingerprinting (chromaprint/AcousticID)
+# pyacoustid>=2.3.0
+# Note: Also requires chromaprint library: https://acoustid.org/chromaprint
+
+# Cloud storage
+boto3>=1.26.0  # AWS S3
+azure-storage-blob>=12.14.0  # Azure Blob Storage

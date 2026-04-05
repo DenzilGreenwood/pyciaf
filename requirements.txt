@@ -1,0 +1,83 @@
+# CIAF Core Dependencies
+# Install with: pip install -r requirements.txt
+
+# ============================================================================
+# CORE DEPENDENCIES (Required for all features)
+# ============================================================================
+
+# Cryptography and hashing
+cryptography>=3.4.8
+blake3>=0.3.3
+
+# Data handling and validation
+numpy>=1.21.0
+pydantic>=2.0.0,<3.0.0
+
+# ============================================================================
+# WATERMARKING DEPENDENCIES
+# ============================================================================
+
+# Text watermarking (steganography)
+# (Uses standard library only - no additional deps)
+
+# Image watermarking
+Pillow>=10.2.0
+ImageHash>=4.3.2
+
+# Video watermarking
+opencv-python>=4.8.0
+
+# Audio watermarking (basic)
+# (Uses wave module from standard library)
+
+# ============================================================================
+# CLOUD STORAGE (for forensic fragment storage)
+# ============================================================================
+
+boto3>=1.26.0                    # AWS S3
+azure-storage-blob>=12.14.0      # Azure Blob Storage
+
+# ============================================================================
+# OPTIONAL DEPENDENCIES
+# ============================================================================
+# The following are optional and can be installed separately as needed.
+# Uncomment the ones you need or install with:
+# pip install -r requirements-optional.txt
+
+# Machine Learning (for full ML features)
+# scikit-learn>=1.0.0
+# pandas>=1.3.0
+
+# Explainability
+# shap>=0.41.0
+# lime>=0.2.0.1
+
+# Visualization
+# matplotlib>=3.5.0
+# seaborn>=0.11.0
+# plotly>=5.0.0
+
+# PDF generation
+# reportlab>=3.6.0
+
+# Web framework (for Vault web interface)
+# flask>=2.0.0
+# flask-cors>=3.0.10
+
+# ============================================================================
+# NOTES
+# ============================================================================
+# 
+# For advanced audio analysis (MFCCs, chroma, tempo):
+#   pip install librosa soundfile
+#
+# For multi-format support (MP3, AAC, H.265, etc.):
+#   pip install ffmpeg-python
+#   Also requires ffmpeg binary: https://ffmpeg.org/download.html
+#
+# For audio fingerprinting (chromaprint/AcousticID):
+#   pip install pyacoustid
+#   Also requires chromaprint library: https://acoustid.org/chromaprint
+#
+# For development and testing:
+#   pip install -r requirements-dev.txt

@@ -68,7 +68,8 @@ try:
     METADATA_TAGS_AVAILABLE = True
 except ImportError:
     METADATA_TAGS_AVAILABLE = False
-    warnings.warn("Metadata tags module not available")
+    # Suppress warning - metadata tags are optional
+    # warnings.warn("Metadata tags module not available", stacklevel=2)
 
 
 class CIAFModelWrapper:

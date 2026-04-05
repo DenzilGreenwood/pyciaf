@@ -49,6 +49,14 @@ from .qr import (
     QRCODE_AVAILABLE,
 )
 
+from .steganography import (
+    embed_watermark_lsb,
+    extract_watermark_lsb,
+    verify_lsb_watermark,
+    has_lsb_watermark,
+    SteganographyError,
+)
+
 __all__ = [
     # Visual watermarking
     "ImageWatermarkSpec",
@@ -74,4 +82,10 @@ __all__ = [
     "make_verification_url_qr",
     "make_compact_token_qr",
     "QRCODE_AVAILABLE",
+    # Steganography (LSB embedding)
+    "embed_watermark_lsb",
+    "extract_watermark_lsb",
+    "verify_lsb_watermark",
+    "has_lsb_watermark",
+    "SteganographyError",
 ]

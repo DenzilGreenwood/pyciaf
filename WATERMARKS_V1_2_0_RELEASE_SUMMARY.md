@@ -3,15 +3,15 @@
 **Date**: March 28, 2026  
 **Release**: v1.0.0 → v1.2.0  
 **Feature**: Sub-segment Forensic Records (DNA Sampling)  
-**Status**: ✅ Complete and Production Ready
+**Status**: ✅ Fully Implemented with Passing Tests
 
 ---
 
 ## What's New in v1.2.0
 
-### 🧬 Core Innovation: DNA Sampling Architecture
+### Core Feature: DNA Sampling Architecture
 
-Instead of verifying entire documents, we verify high-entropy fragments (the "DNA") of AI-generated content. This revolutionary approach enables:
+Instead of verifying entire documents, we verify high-entropy fragments (the "DNA") of AI-generated content. This approach enables:
 
 - **Granular Proof**: Prove specific sections are AI-generated, not entire documents
 - **Privacy Protection**: Never store sensitive full documents in vault
@@ -368,19 +368,19 @@ def compute_image_patch_entropy(image, x, y, w, h):
 
 ## Conclusion
 
-**v1.2.0 represents a fundamental shift in forensic AI watermarking:**
+**v1.2.0 represents a significant development in forensic AI watermarking:**
 
 From: "Is this document authentic?"  
 To: "Can we cryptographically prove which sections are AI-generated?"
 
 The DNA sampling approach provides:
 - ✅ Forensic-grade evidence (P < 10^-15)
-- ✅ Enterprise efficiency (99% storage reduction)
+- ✅ Efficient storage (99% reduction)
 - ✅ Privacy protection (never store full content)
 - ✅ Backward compatibility (no breaking changes)
-- ✅ Extensible architecture (ready for video/audio)
+- ✅ Extensible architecture (supports video/audio)
 
-**Status**: Production Ready as of March 28, 2026
+**Implementation Status**: Fully implemented and tested as of March 28, 2026
 
 ---
 

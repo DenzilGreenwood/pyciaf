@@ -25,9 +25,10 @@ try:
 except ImportError:
     PANDAS_AVAILABLE = False
     pd = None
-    warnings.warn(
-        "pandas not available. Data quality validation features will be limited."
-    )
+    # Suppress warning - pandas is optional
+    # warnings.warn(
+    #     "pandas not available. Data quality validation features will be limited.", stacklevel=2
+    # )
 
 
 class ValidationResult:

@@ -122,6 +122,9 @@ class LCMPolicy(BaseModel):
             ]
         ):
             self._init_default_protocols()
+        
+        # Must return self for Pydantic model validators
+        return self
 
     def _init_default_protocols(self):
         """Initialize default protocol implementations."""
